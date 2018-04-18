@@ -17,6 +17,7 @@ class CreateUserDadosTable extends Migration
             $table->increments('id');
             $table->integer('user_id');
             $table->integer('escola_id');
+            $table->enum('group', ['PROFESSOR', 'AUXILIAR', 'CLASSE', 'COORDENADOR']);
             $table->timestamps();
         });
     }
