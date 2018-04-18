@@ -15,15 +15,16 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-//Encaminha para o Controller ContatoController > app/Http/Controllers/ContatoController
-//Rota - index
+//Encaminhamentos para o Controller ContatoController > app/Http/Controllers/ContatoController
+//Rota de teste - index
 Route::get('/salas/{id?}', ['uses' => 'ContatoController@index']);
-//Rota - criar
+//Rota de teste - criar
 Route::post('/controle/{id?}', ['uses' => 'ContatoController@criar']);
-//Rota - editar
+//Rota de teste - editar
 Route::put('/controle/{id?}', ['uses' => 'ContatoController@editar']);
-//Rota 
-Route::get('/admin/cadastro', ['as' => 'admin.cadastra', 'uses' => 'Admin\CadastroController@index']);
+
+//Rotas para o formulário de cadastro
+Route::get('/admin/cadastro', ['as' => 'admin.cadastrar', 'uses' => 'Admin\CadastroController@index']);
 Route::get('/admin/cadastro/adicionar', ['as' => 'admin.adiciona', 'uses' => 'Admin\CadastroController@add']);
 Route::post('/admin/cadastro/salvar', ['as' => 'admin.salva', 'uses' => 'Admin\CadastroController@save']);
 Route::get('/admin/cadastro/editar/{id}', ['as' => 'admin.edita', 'uses' => 'Admin\CadastroController@edit']);
