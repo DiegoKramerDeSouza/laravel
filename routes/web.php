@@ -25,11 +25,6 @@ Route::put('/controle/{id?}', ['uses' => 'ContatoController@editar']);
 
 //Rotas para o formulário de cadastro de usuários
 Route::get('/admin/cadastro', ['as' => 'admin.cadastro', 'uses' => 'Admin\CadastroController@index']);
-Route::get('/admin/cadastro/adicionar', ['as' => 'admin.cadastro.adiciona', 'uses' => 'Admin\CadastroController@add']);
-Route::post('/admin/cadastro/salvar', ['as' => 'admin.cadastro.salva', 'uses' => 'Admin\CadastroController@save']);
-Route::get('/admin/cadastro/editar/{id}', ['as' => 'admin.cadastro.edita', 'uses' => 'Admin\CadastroController@edit']);
-Route::put('/admin/cadastro/atualizar/{id}', ['as' => 'admin.cadastro.atualiza', 'uses' => 'Admin\CadastroController@update']);
-Route::get('/admin/cadastro/deletar/{id}', ['as' => 'admin.cadastro.deleta', 'uses' => 'Admin\CadastroController@delete']);
 
 //Rotas para o formulário de cadastro de usuários
 Route::get('/admin/cadastro/usuarios', ['as' => 'admin.cadastro.usuarios', 'uses' => 'Admin\CadastroUsuarioController@index']);
@@ -46,3 +41,5 @@ Route::post('/admin/cadastro/escolas/salvar', ['as' => 'admin.cadastro.escolas.s
 Route::get('/admin/cadastro/escolas/editar/{id}', ['as' => 'admin.cadastro.escolas.edita', 'uses' => 'Admin\CadastroEscolaController@edit']);
 Route::put('/admin/cadastro/escolas/atualizar/{id}', ['as' => 'admin.cadastro.escolas.atualiza', 'uses' => 'Admin\CadastroEscolaController@update']);
 Route::get('/admin/cadastro/escolas/deletar/{id}', ['as' => 'admin.cadastro.escolas.deleta', 'uses' => 'Admin\CadastroEscolaController@delete']);
+
+Route::get('/admin/cadastro/escolas/coletar/{cep?}', ['as' => 'admin.cadastro.escolas.coleta', 'uses' => 'Admin\CadastroEscolaController@collect']);

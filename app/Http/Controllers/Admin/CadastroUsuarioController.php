@@ -85,7 +85,9 @@ class CadastroUsuarioController extends Controller
         UserDado::where('user_id', $id)->first()->update($userdata);
         return redirect()->route('admin.cadastro.usuarios');
     }
-    public function delete(){
-        //
+    public function delete($id){
+        User::find($id)->delete();
+        UserDado::where('user_id', $id)->first()->delete();
+        return redirect()->route('admin.cadastro.usuarios');
     }
 }

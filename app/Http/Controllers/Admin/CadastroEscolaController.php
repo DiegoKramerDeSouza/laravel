@@ -11,80 +11,77 @@ use App\EnderecoEscola;
 class CadastroEscolaController extends Controller
 {
     public function index(){
-        $users = User::all();
-        $escolas = Escola::all();
         //Habilita uma view a receber e enviar dados via WEBRTC
-        //$streamPage = true; 
-        return view('admin.cadastro.index', compact('users'));
+        //$streamPage = true;
+        $escolas = Escola::all();
+        return view('admin.cadastro.escolas.index', compact('escolas'));
     }
     public function add(){
-        //Coleta todas as escolas cadastradas
-        $escolas = Escola::all();
-        return view('admin.cadastro.adicionar', compact('escolas'));
+        return view('admin.cadastro.escolas.adicionar');
     }
     public function save(Request $req){
-        //Define os campos enviados que devem ser gravados no banco
-        $user = [
-            '_token'=>$req->_token,
-            'name'=>$req->name,
-            'email'=>$req->email,
-            'password'=>$req->password
-        ];
-        //Coleta todos os dados recebidos
-        $data = $req->all();
-        //Tratamento de imagem. Se necessário
-        if(isset($data->imagem)){
-            if($req->hasfile("imagem")){
-                $img = $req->file('imagem');
-                $num = rand(1111,9999);
-                $dir = 'img/users/';
-                $ext = $img->guessClientExtension();
-                $imgName = 'IMG' . $num . "." . $ext;
-                $img->move('$dir', $imgName);
-                $data["imagem"] = $dir . "/" . $imgName;
-            }
+        //Ajusta cep para decimal
+        $postal = str_replace('-', '.', $req->postal);
+        $postal = floatval($postal);
+        //Ajusta cep e localiza coordenadas **MOVER PARA O JAVASCRIPT**
+        $cep = $req->postal;
+        $cep = explode('-', $cep, 2);
+        $postalcode =$cep[0] . $cep[1][0];
+        $url = 'http://maps.googleapis.com/maps/api/geocode/json?address=' . $postalcode;
+        $json = json_decode(file_get_contents($url), true);
+        if(isset($json['results'][0]['geometry']['location']['lat']) && isset($json['results'][0]['geometry']['location']['lng'])){
+            $lat = $json['results'][0]['geometry']['location']['lat'];
+            $lng = $json['results'][0]['geometry']['location']['lng'];
+            $location = $lat . ";" . $lng;
+        } else{
+            return redirect()->route('admin.cadastro.escolas');
         }
-        //Insere dados na base User
-        $created = User::create($user);
         //Define os campos enviados que devem ser criados no banco
-        //user_id recebe o id criado durante o cadastro do usuário $created
-        $userdata = [
+        $escola = [
             '_token'=>$req->_token,
-            'user_id'=>$created->id,
-            'escola_id'=>$req->escola_id,
-            'group'=>$req->group
+            'name'=>$req->name
         ];
+        //Insere dados na base Escolas
+        $created = Escola::create($escola);
+
+        //Define os campos enviados que devem ser gravados no banco
+        $enderecoescola = [
+            '_token'=>$req->_token,
+            'school_id'=>$created->id,
+            'postal'=>$postal,
+            'address'=>$req->address,
+            'complement'=>$req->complement,
+            'st'=>$req->st,
+            'coordinates'=>$location
+        ];
+        echo $created->id . '<br>' . $postal . '<br>' . $req->address . '<br>' . $req->complement . '<br>' . $req->st . '<br>' . $location;
         //Insere dados na base UserDados
-        UserDado::create($userdata);
-        return redirect()->route('admin.cadastro');
+        EnderecoEscola::create($enderecoescola);
+        return redirect()->route('admin.cadastro.escolas');
     }
     public function edit($id){
-        //Direciona para View de edição
-        $user = User::find($id);
-        $userdata = UserDado::where('user_id', $id)->first();
-        $escolas = Escola::all();
-        return view('admin.cadastro.editar', compact('user', 'userdata', 'escolas'));
+        //
     }
     public function update(Request $req, $id){
-        //Define os campos enviados que devem ser atualizados no banco
-        $user = [
-            '_token'=>$req->_token,
-            'name'=>$req->name,
-            'email'=>$req->email,
-        ];
-        //Atualiza base de dados Users
-        User::find($id)->update($user);
-        //Define os campos enviados que devem ser atualizados no banco
-        $userdata = [
-            '_token'=>$req->_token,
-            'escola_id'=>$req->escola_id,
-            'group'=>$req->group
-        ];
-        //Atualiza base de dados UserDados
-        UserDado::where('user_id', $id)->first()->update($userdata);
-        return redirect()->route('admin.cadastro');
-    }
-    public function delete(){
         //
+    }
+    public function delete($id){
+        Escola::find($id)->delete();
+        EnderecoEscola::where('school_id', $id)->first()->delete();
+        return redirect()->route('admin.cadastro.escolas');
+    }
+    //teste
+    public function collect($data){
+
+        $cep = explode('-', $data, 2);
+        $postalcode =$cep[0] . $cep[1][0] . '00';
+
+        $url = 'http://maps.googleapis.com/maps/api/geocode/json?address=' . $postalcode;
+        $json = json_decode(file_get_contents($url), true);
+        $lat = $json['results'][0]['geometry']['location']['lat'];
+        $lng = $json['results'][0]['geometry']['location']['lng'];
+        $location = $lat . ";" . $lng;
+        echo $location;
+
     }
 }

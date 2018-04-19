@@ -7,7 +7,7 @@
 @section('content')
     <div class='card'>
         <div class='card-content'>
-            <div class='card-title'>Novo Usuário:</div>
+            <h3 class='card-title'>Novo Usuário:</h3>
             @if(count($escolas) > 0)
                 <form class='' action='{{ route('admin.cadastro.usuarios.salva') }}' method='post' enctype="multipart/form-data">
                     <!--Formulário de cadastro e edição de usuários--> 

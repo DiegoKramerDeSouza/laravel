@@ -30,7 +30,7 @@
                                 <td><i class='fa fa-envelope fa-lg'></i> {{ $user->email }}</td>
                                 <td><i class='fa fa-watch fa-lg'></i> {{ $user->created_at }}</td>
                                 <td class='right'>
-                                    <a class='btn-flat waves-effect waves-red red-text text-darken-3' href='{{ route('admin.cadastro.usuarios.deleta', $user->id) }}'>deletar</a>
+                                    <a class='btn-flat waves-effect waves-red red-text text-darken-3 modal-trigger' href='#confirm-message-{{$user->id}}'>deletar</a>
                                     <a class='btn-flat waves-effect waves-orange amber-text text-darken-3' href='{{ route('admin.cadastro.usuarios.edita', $user->id) }}'>editar</a>
                                 </td>
                             </tr>
@@ -43,4 +43,18 @@
             </div>
         </div>
     </div>
+    @foreach($users as $user)
+        <div id='confirm-message-{{$user->id}}' class='modal bottom-sheet'>
+            <div class-'modal-content'>
+                <h5>Deseja remover {{$user->name}}?</h5>
+                <div class='right'>
+                    <a class='btn waves-effect waves-light red darken-3' href='{{ route('admin.cadastro.usuarios.deleta', $user->id) }}'>Deletar</a>
+                    <a class='btn waves-effect waves-light blue' href='#'>Cancelar</a>
+                </div>
+            </div>
+            <div class='modal-footer'>
+                <br>
+            </div>
+        </div>
+    @endforeach
 @endsection

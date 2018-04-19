@@ -7,8 +7,9 @@
 @section('content')
     <div class='card'>
         <div class='card-content'>
-            <div class='card-title'>
-                Editar {{ $user->name }}:</div>
+            <h3 class='card-title'>
+                Editar {{ $user->name }}:
+            </h3>
             @if(isset($user->id))
                 <form class='' action='{{ route('admin.cadastro.usuarios.atualiza', $user->id) }}' method='post' enctype="multipart/form-data">
                     <!--Formulário de cadastro e edição de usuários--> 

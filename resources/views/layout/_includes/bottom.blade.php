@@ -20,6 +20,7 @@
                 M.updateTextFields();
                 $('input#input_text, textarea#textarea2').characterCounter();
                 $('select').formSelect();
+                $('.modal').modal();
             });
         </script>
 
