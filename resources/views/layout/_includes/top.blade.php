@@ -21,8 +21,6 @@
         <!-- Styles -->
         <style>
             html, body {
-                background-color: #fff;
-                color: #636b6f;
                 font-family: 'Raleway', sans-serif;
             }
         </style>
@@ -103,6 +101,9 @@
 
         </header>
         <main>
+            <div>
+				<img id="backgroundLayer" src="{!! asset('img/bg.jpg') !!}" />
+			</div>
             <div class='container'>
 
     

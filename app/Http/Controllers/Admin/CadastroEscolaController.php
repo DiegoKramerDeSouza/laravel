@@ -4,23 +4,23 @@ namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\User;
-use App\UserDado;
-use App\Escola;
 
-class CadastroController extends Controller
+use App\Escola;
+use App\EnderecoEscola;
+
+class CadastroEscolaController extends Controller
 {
     public function index(){
         $users = User::all();
         $escolas = Escola::all();
         //Habilita uma view a receber e enviar dados via WEBRTC
         //$streamPage = true; 
-        return view('admin.cadastro.usuarios.index', compact('users'));
+        return view('admin.cadastro.index', compact('users'));
     }
     public function add(){
         //Coleta todas as escolas cadastradas
         $escolas = Escola::all();
-        return view('admin.cadastro.usuarios.adicionar', compact('escolas'));
+        return view('admin.cadastro.adicionar', compact('escolas'));
     }
     public function save(Request $req){
         //Define os campos enviados que devem ser gravados no banco
@@ -56,14 +56,14 @@ class CadastroController extends Controller
         ];
         //Insere dados na base UserDados
         UserDado::create($userdata);
-        return redirect()->route('admin.cadastro.usuarios');
+        return redirect()->route('admin.cadastro');
     }
     public function edit($id){
         //Direciona para View de edição
         $user = User::find($id);
         $userdata = UserDado::where('user_id', $id)->first();
         $escolas = Escola::all();
-        return view('admin.cadastro.usuarios.editar', compact('user', 'userdata', 'escolas'));
+        return view('admin.cadastro.editar', compact('user', 'userdata', 'escolas'));
     }
     public function update(Request $req, $id){
         //Define os campos enviados que devem ser atualizados no banco
@@ -82,7 +82,7 @@ class CadastroController extends Controller
         ];
         //Atualiza base de dados UserDados
         UserDado::where('user_id', $id)->first()->update($userdata);
-        return redirect()->route('admin.cadastro.usuarios');
+        return redirect()->route('admin.cadastro');
     }
     public function delete(){
         //

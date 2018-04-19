@@ -4,11 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+
 use App\User;
 use App\UserDado;
 use App\Escola;
 
-class CadastroController extends Controller
+class CadastroUsuarioController extends Controller
 {
     public function index(){
         $users = User::all();
