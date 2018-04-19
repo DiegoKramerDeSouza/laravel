@@ -17,7 +17,7 @@ Route::get('/', function () {
 
 //Encaminhamentos para o Controller ContatoController > app/Http/Controllers/ContatoController
 //Rota de teste - index
-Route::get('/salas/{id?}', ['uses' => 'ContatoController@index']);
+Route::get('/salas/{id?}', ['as' => 'salas', 'uses' => 'ContatoController@index']);
 //Rota de teste - criar
 Route::post('/controle/{id?}', ['uses' => 'ContatoController@criar']);
 //Rota de teste - editar
@@ -28,5 +28,5 @@ Route::get('/admin/cadastro', ['as' => 'admin.cadastro', 'uses' => 'Admin\Cadast
 Route::get('/admin/cadastro/adicionar', ['as' => 'admin.cadastro.adiciona', 'uses' => 'Admin\CadastroController@add']);
 Route::post('/admin/cadastro/salvar', ['as' => 'admin.cadastro.salva', 'uses' => 'Admin\CadastroController@save']);
 Route::get('/admin/cadastro/editar/{id}', ['as' => 'admin.cadastro.edita', 'uses' => 'Admin\CadastroController@edit']);
-Route::get('/admin/cadastro/atualizar/{id}', ['as' => 'admin.cadastro.atualiza', 'uses' => 'Admin\CadastroController@update']);
+Route::put('/admin/cadastro/atualizar/{id}', ['as' => 'admin.cadastro.atualiza', 'uses' => 'Admin\CadastroController@update']);
 Route::get('/admin/cadastro/deletar/{id}', ['as' => 'admin.cadastro.deleta', 'uses' => 'Admin\CadastroController@delete']);

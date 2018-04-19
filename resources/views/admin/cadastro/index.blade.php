@@ -2,11 +2,12 @@
 @extends('layout.site')
 <!--Define yield('titulo') em layout._includes.top-->
 @section('titulo', 'Cadastro de Usuários')
+@section('nome', 'Professor')
 <!--Define yield('content') em layout.site-->
 @section('content')
     <h3>Cadastro:</h3>
     <div class='row right'>
-        Usuários cadastrados: <b>{{ count($usuarios) }}</b>
+        Usuários cadastrados: <b>{{ count($users) }}</b>
     </div>
     <div class='row'>
         <table class='striped'>
@@ -19,7 +20,7 @@
             </thead>
 
             <tbody>
-                @foreach($usuarios as $user)
+                @foreach($users as $user)
                     <tr>
                         <td><i class='fa fa-user fa-lg'></i> {{ $user->name }}</td>
                         <td><i class='fa fa-envelope fa-lg'></i> {{ $user->email }}</td>
@@ -33,7 +34,7 @@
             </tbody>
         </table>
     </div>
-    <div alig='center'>
+    <div class='center'>
         <a class='btn-flat waves-effect waves-green green-text text-darken-2' href='{{ route('admin.cadastro.adiciona') }}'><i class='fa fa-plus'></i> novo</a>
     </div>
 @endsection
