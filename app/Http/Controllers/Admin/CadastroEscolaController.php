@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 
 use App\Escola;
 use App\EnderecoEscola;
+use App\RecursoApi;
 
 class CadastroEscolaController extends Controller
 {
@@ -17,7 +18,8 @@ class CadastroEscolaController extends Controller
         return view('admin.cadastro.escolas.index', compact('escolas'));
     }
     public function add(){
-        return view('admin.cadastro.escolas.adicionar');
+        $api = RecursoApi::where('name', 'Google Maps Geolocation')->first();
+        return view('admin.cadastro.escolas.adicionar', compact('api'));
     }
     public function save(Request $req){
         //Ajusta cep para decimal
