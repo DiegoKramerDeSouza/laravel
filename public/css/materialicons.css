@@ -39,7 +39,7 @@
 .hoverarchor {
     -webkit-transition-duration: 0.2s;
     transition-duration: 0.2s;
-    border-radius: 10px;
+    border-radius: 40px;
     margin-top: 40px;
 }
 

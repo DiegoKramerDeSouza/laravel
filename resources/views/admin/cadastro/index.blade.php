@@ -7,7 +7,7 @@
 @section('content')
     <div class='card z-depth-5'>
         <div class='card-content'>
-            <div class='row center'>
+            <div class='row center container'>
                 <div class='col s12 m6 hoverarchor'>
                     <a class='blue-text' href='{{ route('admin.cadastro.escolas') }}' style='padding:40px;'>
                         <h1><i class='fa fa-graduation-cap fa-2x'></i></h1>
