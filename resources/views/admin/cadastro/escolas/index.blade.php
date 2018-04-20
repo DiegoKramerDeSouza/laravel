@@ -10,10 +10,11 @@
             <div class='card-title'>
                 Cadastro:
             </div>
-            <div class='row right'>
+            <div class='row' align='right'>
                 Instituições cadastradas: <b>{{ count($escolas) }}</b>
                 <h6><a class='green-text text-darken-1' href='{{ route('admin.cadastro.escolas.adiciona') }}'><i class='fa fa-plus-circle fa-lg'></i> Nova Instituição</a></h6>
             </div>
+            <div class='divider'></div>
             <div class='row'>
                 <table class='striped'>
                     <thead>

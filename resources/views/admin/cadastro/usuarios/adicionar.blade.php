@@ -8,6 +8,7 @@
     <div class='card z-depth-5'>
         <div class='card-content'>
             <h3 class='card-title'>Novo Usuário:</h3>
+            <div class='divider'></div>
             @if(count($escolas) > 0)
                 <form class='' action='{{ route('admin.cadastro.usuarios.salva') }}' method='post' enctype="multipart/form-data">
                     <!--Formulário de cadastro e edição de usuários--> 
@@ -15,7 +16,8 @@
                     @include('admin.cadastro.usuarios._form')
 
                     <div class='card-action' align='right'>
-                        <button type='submit' class='btn green darken-2 waves-effect waves-light'><i class='fa fa-check'></i> Salvar</button>
+                        <a href='{{ route('admin.cadastro.usuarios') }}' class='btn-flat red-text text-darken-3 waves-effect waves-red'><i class='fa fa-times'></i> Cancelar</a>
+                        <button type='submit' class='btn-flat green-text text-darken-2 waves-effect waves-green'><i class='fa fa-check'></i> Salvar</button>
                     </div>
                 </form>
             @else

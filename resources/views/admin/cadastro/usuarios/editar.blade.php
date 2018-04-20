@@ -10,6 +10,7 @@
             <h3 class='card-title'>
                 Editar {{ $user->name }}:
             </h3>
+            <div class='divider'></div>
             @if(isset($user->id))
                 <form class='' action='{{ route('admin.cadastro.usuarios.atualiza', $user->id) }}' method='post' enctype="multipart/form-data">
                     <!--Formulário de cadastro e edição de usuários--> 
@@ -18,7 +19,8 @@
 
                     <input type='hidden' name='_method' value='put' />
                     <div class='card-action' align='right'>
-                        <button type='submit' class='btn green darken-2 waves-effect waves-light'><i class='fa fa-check'></i> Atualizar</button>
+                        <a href='{{ route('admin.cadastro.usuarios') }}' class='btn-flat red-text text-darken-3 waves-effect waves-red'><i class='fa fa-times'></i> Cancelar</a>
+                        <button type='submit' class='btn-flat green-text text-darken-2 waves-effect waves-green'><i class='fa fa-check'></i> Atualizar</button>
                     </div>
                 </form>
             @else
