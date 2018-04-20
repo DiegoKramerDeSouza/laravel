@@ -23,8 +23,10 @@ class CadastroEscolaController extends Controller
     }
     //->View para adição de novas escolas
     public function add(){
+        
         $api = RecursoApi::where('name', 'Google Maps Geolocation')->first();
-        return view('admin.cadastro.escolas.adicionar', compact('api'));
+        $apicep = RecursoApi::where('name', 'ViaCEP Consulta')->first();
+        return view('admin.cadastro.escolas.adicionar', compact('api', 'apicep', 'ufs'));
     }
     //->View para salvar uma nova escola na base de dados
     public function save(Request $req){
@@ -56,9 +58,10 @@ class CadastroEscolaController extends Controller
     //->View para editar dados de escolas
     public function edit($id){
         $api = RecursoApi::where('name', 'Google Maps Geolocation')->first();
+        $apicep = RecursoApi::where('name', 'ViaCEP Consulta')->first();
         $escolas = Escola::find($id);
         $endereco = EnderecoEscola::where('school_id', $id)->first();
-        return view('admin.cadastro.escolas.editar', compact('api', 'escolas', 'endereco'));
+        return view('admin.cadastro.escolas.editar', compact('api', 'apicep', 'escolas', 'endereco'));
     }
     //->View para atualizar dados de escola e grava-los na base
     public function update(Request $req, $id){
@@ -72,9 +75,10 @@ class CadastroEscolaController extends Controller
         //Define os campos enviados que devem ser atualizados no banco
         $enderecoescola = [
             '_token'=>$req->_token,
-            'school_id'=>$created->id,
             'postal'=>$req->postal,
             'address'=>$req->address,
+            'city'=>$req->city,
+            'number'=>$req->number,
             'complement'=>$req->complement,
             'st'=>$req->st,
             'coordinates'=>$req->location

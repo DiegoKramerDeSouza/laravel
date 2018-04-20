@@ -12,14 +12,25 @@
 </div>
 
 <div class='row'>
-    <div class='input-field col s10'>
+    <div class='input-field col s6 m9'>
         <input class='validate' required type='text' name='address' id='address' value='{{ isset($endereco->address) ? $endereco->address : ''}}'>
         <label class='active' for='address'><i class='fa fa-map-marker'></i> Endereço</label>
     </div>
 
-    <div class='input-field col s2'>
-        <input class='validate' required type='text' name='st' id='st' value='{{ isset($endereco->st) ? $endereco->st : ''}}'>
-        <label class='active' for='st'><i class='fa fa-globe'></i> UF</label>
+    <div class='input-field col s6 m3'>
+        <select id='st' required name='st'>
+            @if(isset($endereco->st))
+                @foreach($ufs as $uf)
+                    <option value="{{ array_search($uf, $ufs) }}" {{ ($endereco->st == array_search($uf, $ufs)) ? 'selected' : ''}}>{{ $uf }}</option>
+                @endforeach
+            @else
+                <option value="" disabled selected>Selecione</option>
+                @foreach($ufs as $uf)
+                    <option value="{{ array_search($uf, $ufs) }}">{{ $uf }}</option>
+                @endforeach
+            @endif
+        </select>
+        <label for='st'><i class='fa fa-globe'></i> Estado</label>
     </div>
 </div>
 
@@ -34,12 +45,14 @@
         </div>
     <div class='input-field col s12 m4'>
         <input class='validate' required type='text' name='complement' id='complement' value='{{ isset($endereco->complement) ? $endereco->complement : ''}}'>
-        <label for='complement'><i class='fa fa-pencil-square-o'></i> Complemento</label>
+        <label for='complement'><i class='fa fa-plus-square-o'></i> Complemento</label>
     </div>
     
     <input required type='hidden' name='location' id='location' value='{{ isset($endereco->coordinates) ? $endereco->coordinates : ''}}'>
     <input required type='hidden' name='url' id='url' value='{{ $api->details }}'>
     <input required type='hidden' name='lock' id='lock' value='{{ $api->key}}'>
+    <input required type='hidden' name='urlcep' id='urlcep' value='{{ $apicep->details }}'>
+    <input required type='hidden' name='lockcep' id='lockcep' value='{{ $apicep->key}}'>
     
 </div>
 <script type="text/javascript" src="{!! asset('js/formEscola.js') !!}"></script>

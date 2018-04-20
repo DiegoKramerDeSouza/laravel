@@ -40,7 +40,7 @@ document.getElementById('postal').onchange = function(evt) {
     if (value.length != 8) {
         toastContent = '<span class="white-text"><i class="fa fa-times fa-lg"></i> CEP inválido!</span>';
         M.toast({ html: toastContent, classes: 'red darken-3' });
-        document.getElementById('save').disabled = true;
+        document.querySelector('button[type="submit"]').disabled = true;
         return false;
     } else {
         this.value = value.slice(0, 5) + '-' + value.slice(5, value.length);
@@ -48,6 +48,8 @@ document.getElementById('postal').onchange = function(evt) {
     //Consulta a API do Google para retornar dados de geolocalização
     //Sincronização do AJAX - Modo assincrono habilitado [true]
     //$.ajaxSetup({ async: true });
+    //Debug
+    //console.log(url + '?address=' + value + '&key=' + val);
     $.post(url + '?address=' + value + '&key=' + val,
         function(data, status) {
             try {
@@ -60,22 +62,25 @@ document.getElementById('postal').onchange = function(evt) {
 
                     //Trata resultado - lat;lng
                     document.getElementById('location').value = lat + ';' + lng;
-                    document.getElementById('save').disabled = false;
+                    document.querySelector('button[type="submit"]').disabled = false;
                     toastContent = '<span class="white-text"><i class="fa fa-check fa-lg"></i> Localização determinada com sucesso!</span>';
                     M.toast({ html: toastContent, classes: 'green darken-1' });
                     //Trata campos de texto e efetua a pesquisa do CEP
                     waitResponse();
-                    M.updateTextFields();
+
                     searchcep(value);
+                    M.updateTextFields();
+                    document.getElementById('number').focus();
                 } else {
                     enderecoClearData();
-                    document.getElementById('save').disabled = true;
+                    document.querySelector('button[type="submit"]').disabled = true;
                     toastContent = '<span class="white-text"><i class="fa fa-times fa-lg"></i> CEP inválido ou localização não determinada!</span>';
                     M.toast({ html: toastContent, classes: 'red darken-3' });
                 }
             } catch (err) {
+                console.log(err);
                 enderecoClearData();
-                document.getElementById('save').disabled = true;
+                document.querySelector('button[type="submit"]').disabled = true;
                 toastContent = '<span class="white-text"><i class="fa fa-times fa-lg"></i> Localização não encontrada!<br>Verifique se o mesmo está correto ou utilize o CEP geral de sua localidade.</span>';
                 M.toast({ html: toastContent, classes: 'red darken-3' }, 1000);
             }
@@ -101,7 +106,6 @@ function enderecoClearData() {
 function waitResponse() {
     document.getElementById('address').value = "Verificando...";
     document.getElementById('city').value = "Verificando...";
-    document.getElementById('st').value = "Verificando...";
 }
 /*
  *   Alimenta os campos de endereço, cidade e estado a partir do resultado da consulta
@@ -110,10 +114,11 @@ function meu_callback(conteudo) {
     if (!("erro" in conteudo)) {
         document.getElementById('address').value = (conteudo.logradouro);
         document.getElementById('city').value = (conteudo.localidade);
-        document.getElementById('st').value = (conteudo.uf);
+        document.getElementById('st').value = (conteudo.uf).toUpperCase();
     } else {
         enderecoClearData();
-        alert("CEP não encontrado.");
+        toastContent = '<span class="white-text"><i class="fa fa-times fa-lg"></i> CEP não localizado!</span>';
+        M.toast({ html: toastContent, classes: 'red darken-3' });
     }
 }
 /*
@@ -127,16 +132,20 @@ function searchcep(valor) {
         var validacep = /^[0-9]{8}$/;
         //Valida o formato do CEP.
         if (validacep.test(cep)) {
+            //Coleta informações do webservice
+            var url = document.getElementById('urlcep').value;
+            var query = document.getElementById('lockcep').value;
             //Cria um elemento javascript.
             var script = document.createElement('script');
             //Sincroniza com o callback.
-            script.src = 'https://viacep.com.br/ws/' + cep + '/json/?callback=meu_callback';
+            script.src = url + cep + query;
             //Insere script no documento e carrega o conteúdo.
             document.body.appendChild(script);
         } else {
             //cep é inválido.
             enderecoClearData();
-            alert("Formato de CEP inválido.");
+            toastContent = '<span class="white-text"><i class="fa fa-times fa-lg"></i> Formato do CEP inválido!</span>';
+            M.toast({ html: toastContent, classes: 'red darken-3' });
         }
     } else {
         enderecoClearData();
