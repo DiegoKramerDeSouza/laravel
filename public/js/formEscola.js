@@ -35,32 +35,47 @@ document.getElementById('postal').onchange = function(evt) {
     var val = document.getElementById('lock').value;
 
     var value = this.value;
-    var code = value.split('-');
-    try {
-        value = code[0] + code[1];
-    } catch (err) {
-        toastContent = '<span class="white-text"><i class="fa fa-times fa-lg"></i> CEP não localizado!</span>';
+    //Trata e verifica o valor do CEP
+    value = value.replace(/\D/g, '');
+    if (value.length != 8) {
+        toastContent = '<span class="white-text"><i class="fa fa-times fa-lg"></i> CEP inválido!</span>';
         M.toast({ html: toastContent, classes: 'red darken-3' });
+        document.getElementById('save').disabled = true;
         return false;
+    } else {
+        this.value = value.slice(0, 5) + '-' + value.slice(5, value.length);
     }
-    $.ajaxSetup({ async: false });
+    //Consulta a API do Google para retornar dados de geolocalização
+    //Sincronização do AJAX - Modo assincrono habilitado [true]
+    //$.ajaxSetup({ async: true });
     $.post(url + '?address=' + value + '&key=' + val,
         function(data, status) {
             try {
                 obj = data;
+                //Se o resultado conter o valor de latitude, prossegue
                 if (obj['results'][0]['geometry']['location']['lat']) {
+                    //Guarda valores re latitude e longitude
                     var lat = obj['results'][0]['geometry']['location']['lat'];
                     var lng = obj['results'][0]['geometry']['location']['lng'];
+
+                    //Trata resultado - lat;lng
                     document.getElementById('location').value = lat + ';' + lng;
                     document.getElementById('save').disabled = false;
                     toastContent = '<span class="white-text"><i class="fa fa-check fa-lg"></i> Localização determinada com sucesso!</span>';
                     M.toast({ html: toastContent, classes: 'green darken-1' });
+                    //Trata campos de texto e efetua a pesquisa do CEP
+                    waitResponse();
+                    M.updateTextFields();
+                    searchcep(value);
                 } else {
+                    enderecoClearData();
+                    document.getElementById('save').disabled = true;
                     toastContent = '<span class="white-text"><i class="fa fa-times fa-lg"></i> CEP inválido ou localização não determinada!</span>';
                     M.toast({ html: toastContent, classes: 'red darken-3' });
                 }
             } catch (err) {
-                console.log(err);
+                enderecoClearData();
+                document.getElementById('save').disabled = true;
                 toastContent = '<span class="white-text"><i class="fa fa-times fa-lg"></i> Localização não encontrada!<br>Verifique se o mesmo está correto ou utilize o CEP geral de sua localidade.</span>';
                 M.toast({ html: toastContent, classes: 'red darken-3' }, 1000);
             }
@@ -68,28 +83,62 @@ document.getElementById('postal').onchange = function(evt) {
     );
 };
 
-function getEndereco() {
-    if ($.trim($("#campoCep").val()) != "") {
-        //var url = "http://cep.republicavirtual.com.br/web_cep.php?formato=javascript&cep=";
-        var url = "viacep.com.br/ws/" + $("#campoCep").val() + "/json/?callback=callback_name"
-        $.getScript(url, function() {
-            // o getScript dá um eval no script, então é só ler!
-            //Se o resultado for igual a 1
-            if (resultadoCEP["resultado"]) {
-                // troca o valor dos elementos
-                $("#campoLogradouro").val(unescape(resultadoCEP["tipo_logradouro"]) + " " + unescape(resultadoCEP["logradouro"]));
-                //$("#campoBairro").val(unescape(resultadoCEP["bairro"]));
-                $("#campoCidade").val(unescape(resultadoCEP["cidade"]));
-                $("#campoEstado").val(unescape(resultadoCEP["uf"]));
-                //$("#enderecoCompleto").show("slow");
-                $("#campoNumero").focus();
-            } else {
-                alert("Endereço não encontrado");
-                return false;
-            }
-        });
-    } else {
-        alert('Antes, preencha o campo CEP!')
-    }
+/*
+ *   -FUNÇÕES:
+ */
 
+/*
+ *   Limpa campos de endereço, cidade e estado
+ */
+function enderecoClearData() {
+    document.getElementById('address').value = ("");
+    document.getElementById('city').value = ("");
+    document.getElementById('st').value = ("");
 }
+/*
+ *   Preenche os campos com "Verificando..." enquanto consulta webservice
+ */
+function waitResponse() {
+    document.getElementById('address').value = "Verificando...";
+    document.getElementById('city').value = "Verificando...";
+    document.getElementById('st').value = "Verificando...";
+}
+/*
+ *   Alimenta os campos de endereço, cidade e estado a partir do resultado da consulta
+ */
+function meu_callback(conteudo) {
+    if (!("erro" in conteudo)) {
+        document.getElementById('address').value = (conteudo.logradouro);
+        document.getElementById('city').value = (conteudo.localidade);
+        document.getElementById('st').value = (conteudo.uf);
+    } else {
+        enderecoClearData();
+        alert("CEP não encontrado.");
+    }
+}
+/*
+ *   Efetua a pesquisa no webservice
+ */
+function searchcep(valor) {
+    //Nova variável "cep" somente com dígitos.
+    var cep = valor.replace(/\D/g, '');
+    if (cep != "") {
+        //Expressão regular para validar o CEP.
+        var validacep = /^[0-9]{8}$/;
+        //Valida o formato do CEP.
+        if (validacep.test(cep)) {
+            //Cria um elemento javascript.
+            var script = document.createElement('script');
+            //Sincroniza com o callback.
+            script.src = 'https://viacep.com.br/ws/' + cep + '/json/?callback=meu_callback';
+            //Insere script no documento e carrega o conteúdo.
+            document.body.appendChild(script);
+        } else {
+            //cep é inválido.
+            enderecoClearData();
+            alert("Formato de CEP inválido.");
+        }
+    } else {
+        enderecoClearData();
+    }
+};

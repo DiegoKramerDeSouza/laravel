@@ -14,19 +14,19 @@
 <div class='row'>
     <div class='input-field col s10'>
         <input class='validate' required type='text' name='address' id='address' value='{{ isset($endereco->address) ? $endereco->address : ''}}'>
-        <label for='address'><i class='fa fa-map-marker'></i> Endereço</label>
+        <label class='active' for='address'><i class='fa fa-map-marker'></i> Endereço</label>
     </div>
 
     <div class='input-field col s2'>
         <input class='validate' required type='text' name='st' id='st' value='{{ isset($endereco->st) ? $endereco->st : ''}}'>
-        <label for='st'><i class='fa fa-globe'></i> UF</label>
+        <label class='active' for='st'><i class='fa fa-globe'></i> UF</label>
     </div>
 </div>
 
 <div class='row'>
     <div class='input-field col s6 m4'>
         <input class='validate' required type='text' name='city' id='city' value='{{ isset($endereco->city) ? $endereco->city : ''}}'>
-        <label for='city'><i class='fa fa-map-o'></i> Cidade</label>
+        <label class='active' for='city'><i class='fa fa-map-o'></i> Cidade</label>
     </div>
     <div class='input-field col s6 m4'>
             <input class='validate' required type='text' name='number' id='number' value='{{ isset($endereco->number) ? $endereco->number : ''}}'>
