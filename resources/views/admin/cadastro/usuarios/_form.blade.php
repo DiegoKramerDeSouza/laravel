@@ -24,10 +24,10 @@
 
 <div class='row'>
     <div class='input-field col s12 m6'>
-        <select id='escola_id' required name='escola_id'>
+        <select id='school_id' required name='school_id'>
             @if(isset($userdata->group))
                 @foreach($escolas as $escola)
-                    <option value="{{ $escola->id }}" {{ ($escola->id == $userdata->escola_id) ? 'selected' : ''}}>{{ $escola->name }}</option>
+                    <option value="{{ $escola->id }}" {{ ($escola->id == $userdata->school_id) ? 'selected' : ''}}>{{ $escola->name }}</option>
                 @endforeach
             @else
                 <option value="" disabled selected>Escola do usuário</option>
@@ -36,7 +36,7 @@
                 @endforeach
             @endif
         </select>
-        <label for='escola_id'><i class='fa fa-building'></i> Escola</label>
+        <label for='school_id'><i class='fa fa-building'></i> Escola</label>
     </div>
     <div class='input-field col s12 m6'>
         <select id='group' required name='group'>

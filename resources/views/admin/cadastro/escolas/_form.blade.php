@@ -24,7 +24,15 @@
 </div>
 
 <div class='row'>
-    <div class='input-field col s12'>
+    <div class='input-field col s6 m4'>
+        <input class='validate' required type='text' name='city' id='city' value='{{ isset($endereco->city) ? $endereco->city : ''}}'>
+        <label for='city'><i class='fa fa-map-o'></i> Cidade</label>
+    </div>
+    <div class='input-field col s6 m4'>
+            <input class='validate' required type='text' name='number' id='number' value='{{ isset($endereco->number) ? $endereco->number : ''}}'>
+            <label for='number'><i class='fa fa-tag'></i> Número</label>
+        </div>
+    <div class='input-field col s12 m4'>
         <input class='validate' required type='text' name='complement' id='complement' value='{{ isset($endereco->complement) ? $endereco->complement : ''}}'>
         <label for='complement'><i class='fa fa-pencil-square-o'></i> Complemento</label>
     </div>

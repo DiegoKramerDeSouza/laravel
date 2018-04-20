@@ -16,27 +16,33 @@
             </div>
             <div class='divider'></div>
             <div class='row'>
-                <table class='striped'>
-                    <thead>
-                        <tr>
-                            <th>Nome</th>
-                            <th>Criação</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        @foreach($escolas as $escola)
+                @if(count($escolas) > 0)
+                    <table class='striped'>
+                        <thead>
                             <tr>
-                                <td><i class='fa fa-user fa-lg'></i> {{ $escola->name }}</td>
-                                <td><i class='fa fa-watch fa-lg'></i> {{ $escola->created_at }}</td>
-                                <td class='right'>
-                                    <a class='btn-flat waves-effect waves-red red-text text-darken-3 modal-trigger' href='#confirm-message-{{$escola->id}}'>deletar</a>
-                                    <a class='btn-flat waves-effect waves-orange amber-text text-darken-3' href='{{ route('admin.cadastro.escolas.edita', $escola->id) }}'>editar</a>
-                                </td>
+                                <th>Nome</th>
+                                <th>Criação</th>
                             </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                        </thead>
+
+                        <tbody>
+                            @foreach($escolas as $escola)
+                                <tr>
+                                    <td><i class='fa fa-user fa-lg'></i> {{ $escola->name }}</td>
+                                    <td><i class='fa fa-watch fa-lg'></i> {{ $escola->created_at }}</td>
+                                    <td class='right'>
+                                        <a class='btn-flat waves-effect waves-red red-text text-darken-3 modal-trigger' href='#confirm-message-{{$escola->id}}'><i class='fa fa-trash-o'></i> deletar</a>
+                                        <a class='btn-flat waves-effect waves-orange amber-text text-darken-3' href='{{ route('admin.cadastro.escolas.edita', $escola->id) }}'><i class='fa fa-edit'></i> editar</a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @else
+                    <div class='grey-text center' style='margin-top:40px; margin-bottom:40px;'>
+                        <h5><i class='red-text text-darken-3 fa fa-times'></i> Não há registros de instituições!</h5>
+                    </div>
+                @endif
             </div>
             <div class='divider'></div>
             <br>
@@ -46,6 +52,10 @@
         <div id='confirm-message-{{$escola->id}}' class='modal bottom-sheet'>
             <div class-'modal-content'>
                 <h5>Deseja remover a instituição {{$escola->name}}?</h5>
+                <div class='center red-text text-darken-3'>
+                    <h6><b><i class='fa fa-exclamation-triangle'></i> ATENÇÃO:</b></h6>
+                    <p><b>A remoção desta instituição implica na remoção automática de todos os usuários vinculados a esta.</b></p>
+                </div>
                 <div class='divider'></div>
                 <div class='right'>
                     <br>

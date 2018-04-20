@@ -52,7 +52,7 @@ class CadastroUsuarioController extends Controller
         $userdata = [
             '_token'=>$req->_token,
             'user_id'=>$created->id,
-            'escola_id'=>$req->escola_id,
+            'school_id'=>$req->school_id,
             'group'=>$req->group
         ];
         //Insere dados na base UserDados
@@ -78,7 +78,7 @@ class CadastroUsuarioController extends Controller
         //Define os campos enviados que devem ser atualizados no banco
         $userdata = [
             '_token'=>$req->_token,
-            'escola_id'=>$req->escola_id,
+            'school_id'=>$req->school_id,
             'group'=>$req->group
         ];
         //Atualiza base de dados UserDados

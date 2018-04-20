@@ -18,6 +18,8 @@ class CreateEnderecoEscolasTable extends Migration
             $table->integer('school_id');
             $table->string('postal', 9);
             $table->string('address');
+            $table->string('city');
+            $table->integer('number');          
             $table->string('complement')->nullable();
             $table->string('st');
             $table->string('coordinates');

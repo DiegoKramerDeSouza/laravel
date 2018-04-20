@@ -65,3 +65,29 @@ document.getElementById('postal').onchange = function(evt) {
         }
     );
 };
+
+function getEndereco() {
+    if ($.trim($("#campoCep").val()) != "") {
+        //var url = "http://cep.republicavirtual.com.br/web_cep.php?formato=javascript&cep=";
+        var url = "viacep.com.br/ws/" + $("#campoCep").val() + "/json/?callback=callback_name"
+        $.getScript(url, function() {
+            // o getScript dá um eval no script, então é só ler!
+            //Se o resultado for igual a 1
+            if (resultadoCEP["resultado"]) {
+                // troca o valor dos elementos
+                $("#campoLogradouro").val(unescape(resultadoCEP["tipo_logradouro"]) + " " + unescape(resultadoCEP["logradouro"]));
+                //$("#campoBairro").val(unescape(resultadoCEP["bairro"]));
+                $("#campoCidade").val(unescape(resultadoCEP["cidade"]));
+                $("#campoEstado").val(unescape(resultadoCEP["uf"]));
+                //$("#enderecoCompleto").show("slow");
+                $("#campoNumero").focus();
+            } else {
+                alert("Endereço não encontrado");
+                return false;
+            }
+        });
+    } else {
+        alert('Antes, preencha o campo CEP!')
+    }
+
+}

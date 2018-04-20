@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
+use App\User;
+use App\UserDado;
 use App\Escola;
 use App\EnderecoEscola;
 use App\RecursoApi;
@@ -41,6 +43,8 @@ class CadastroEscolaController extends Controller
             'school_id'=>$created->id,
             'postal'=>$req->postal,
             'address'=>$req->address,
+            'city'=>$req->city,
+            'number'=>$req->number,
             'complement'=>$req->complement,
             'st'=>$req->st,
             'coordinates'=>$req->location
@@ -81,6 +85,10 @@ class CadastroEscolaController extends Controller
     }
     //->View para deletar escolas registradas
     public function delete($id){
+        $todelete = UserDado::where('school_id', $id)->first();
+        //dd($todelete);
+        $todelete->delete();
+        User::find($todelete->user_id)->delete();
         Escola::find($id)->delete();
         EnderecoEscola::where('school_id', $id)->first()->delete();
         return redirect()->route('admin.cadastro.escolas');

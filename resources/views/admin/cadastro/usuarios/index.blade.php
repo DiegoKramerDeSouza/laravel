@@ -16,29 +16,35 @@
             </div>
             <div class='divider'></div>
             <div class='row'>
-                <table class='striped'>
-                    <thead>
-                        <tr>
-                            <th>Nome</th>
-                            <th>E-mail</th>
-                            <th>Criação</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        @foreach($users as $user)
+                @if(count($users) > 0)
+                    <table class='striped'>
+                        <thead>
                             <tr>
-                                <td><i class='fa fa-user fa-lg'></i> {{ $user->name }}</td>
-                                <td><i class='fa fa-envelope fa-lg'></i> {{ $user->email }}</td>
-                                <td><i class='fa fa-watch fa-lg'></i> {{ $user->created_at }}</td>
-                                <td class='right'>
-                                    <a class='btn-flat waves-effect waves-red red-text text-darken-3 modal-trigger' href='#confirm-message-{{$user->id}}'>deletar</a>
-                                    <a class='btn-flat waves-effect waves-orange amber-text text-darken-3' href='{{ route('admin.cadastro.usuarios.edita', $user->id) }}'>editar</a>
-                                </td>
+                                <th>Nome</th>
+                                <th>E-mail</th>
+                                <th>Criação</th>
                             </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                        </thead>
+
+                        <tbody>
+                            @foreach($users as $user)
+                                <tr>
+                                    <td><i class='fa fa-user fa-lg'></i> {{ $user->name }}</td>
+                                    <td><i class='fa fa-envelope fa-lg'></i> {{ $user->email }}</td>
+                                    <td><i class='fa fa-clock-o fa-lg'></i> {{ $user->created_at }}</td>
+                                    <td class='right'>
+                                        <a class='btn-flat waves-effect waves-red red-text text-darken-3 modal-trigger' href='#confirm-message-{{$user->id}}'><i class='fa fa-trash-o'></i> deletar</a>
+                                        <a class='btn-flat waves-effect waves-orange amber-text text-darken-3' href='{{ route('admin.cadastro.usuarios.edita', $user->id) }}'><i class='fa fa-edit'></i> editar</a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @else
+                    <div class='grey-text center' style='margin-top:40px; margin-bottom:40px;'>
+                        <h5><i class='red-text text-darken-3 fa fa-times'></i> Não há registros de usuários!</h5>
+                    </div>
+                @endif
             </div>
             <div class='divider'></div>
             <br>
