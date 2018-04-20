@@ -1,6 +1,6 @@
 <div class='row'>
     <div class='input-field col s12 m6'>
-        <input class='validate' required type='text' name='name' id='name' value='{{ isset($escolas->name) ? $escolas->name : ''}}'>
+        <input class='validate' autofocus required type='text' name='name' id='name' value='{{ isset($escolas->name) ? $escolas->name : ''}}'>
         <label for='name'><i class='fa fa-graduation-cap'></i> Nome</label>
     </div>
 
@@ -29,9 +29,9 @@
         <label for='complement'><i class='fa fa-pencil-square-o'></i> Complemento</label>
     </div>
     
-    <input required type='text' name='location' id='location' value='{{ isset($endereco->location) ? $endereco->location : ''}}'>
+    <input required type='hidden' name='location' id='location' value='{{ isset($endereco->coordinates) ? $endereco->coordinates : ''}}'>
     <input required type='hidden' name='url' id='url' value='{{ $api->details }}'>
     <input required type='hidden' name='lock' id='lock' value='{{ $api->key}}'>
     
 </div>
-<script type="text/javascript" src="{!! asset('js/ready.js') !!}"></script>
+<script type="text/javascript" src="{!! asset('js/formEscola.js') !!}"></script>

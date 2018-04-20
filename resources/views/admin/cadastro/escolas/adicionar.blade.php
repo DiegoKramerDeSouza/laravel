@@ -5,7 +5,7 @@
 @section('nome', 'Professor')
 <!--Define yield('content') em layout.site-->
 @section('content')
-    <div class='card'>
+    <div class='card z-depth-5'>
         <div class='card-content'>
             <h3 class='card-title'>Nova Escola:</h3>
             <form class='' action='{{ route('admin.cadastro.escolas.salva') }}' method='post' enctype="multipart/form-data">
@@ -14,7 +14,8 @@
                 @include('admin.cadastro.escolas._form')
 
                 <div class='card-action' align='right'>
-                    <button type='submit' class='btn green darken-2 waves-effect waves-light'><i class='fa fa-check'></i> Salvar</button>
+                    <a href='{{ route('admin.cadastro.escolas') }}' class='btn-flat red-text text-darken-3 waves-effect waves-red'><i class='fa fa-times'></i> Cancelar</a>
+                    <button id='save' disabled type='submit' class='btn-flat green-text text-darken-2 waves-effect waves-green'><i class='fa fa-check'></i> Salvar</button>
                 </div>
             </form>
         </div>

@@ -5,13 +5,14 @@
 @section('nome', 'Professor')
 <!--Define yield('content') em layout.site-->
 @section('content')
-    <div class='card'>
+    <div class='card z-depth-5'>
         <div class='card-content'>
             <div class='card-title'>
                 Cadastro:
             </div>
             <div class='row right'>
                 Instituições cadastradas: <b>{{ count($escolas) }}</b>
+                <h6><a class='green-text text-darken-1' href='{{ route('admin.cadastro.escolas.adiciona') }}'><i class='fa fa-plus-circle fa-lg'></i> Nova Instituição</a></h6>
             </div>
             <div class='row'>
                 <table class='striped'>
@@ -36,19 +37,21 @@
                     </tbody>
                 </table>
             </div>
-            <div class='center'>
-                <a class='btn-flat waves-effect waves-green green-text text-darken-2' href='{{ route('admin.cadastro.escolas.adiciona') }}'><i class='fa fa-plus'></i> nova</a>
-            </div>
+            <div class='divider'></div>
+            <br>
         </div>
     </div>
     @foreach($escolas as $escola)
         <div id='confirm-message-{{$escola->id}}' class='modal bottom-sheet'>
             <div class-'modal-content'>
-                <h5>Deseja remover {{$escola->name}}?</h5>
+                <h5>Deseja remover a instituição {{$escola->name}}?</h5>
+                <div class='divider'></div>
                 <div class='right'>
-                    <a class='btn waves-effect waves-light red darken-3' href='{{ route('admin.cadastro.escolas.deleta', $escola->id) }}'>Deletar</a>
-                    <a class='btn waves-effect waves-light blue' href='#'>Cancelar</a>
+                    <br>
+                    <a class='btn-flat waves-effect waves-red red-text text-darken-3' href='{{ route('admin.cadastro.escolas.deleta', $escola->id) }}'><i class='fa fa-trash-o'></i> Deletar</a>
+                    <a class='modal-action modal-close btn-flat waves-effect waves-blue blue-text' href='#'><i class='fa fa-times'></i> Cancelar</a>
                 </div>
+                <br>
             </div>
             <div class='modal-footer'>
                 <br>

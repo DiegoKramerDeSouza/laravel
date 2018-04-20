@@ -5,7 +5,7 @@
 @section('nome', 'Professor')
 <!--Define yield('content') em layout.site-->
 @section('content')
-    <div class='card'>
+    <div class='card z-depth-5'>
         <div class='card-content'>
             <h3 class='card-title'>
                 Editar {{ $user->name }}:

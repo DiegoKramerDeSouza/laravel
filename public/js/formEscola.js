@@ -39,7 +39,7 @@ document.getElementById('postal').onchange = function(evt) {
     try {
         value = code[0] + code[1][0] + '00';
     } catch (err) {
-        toastContent = '<span class="white-text"><i class="fa fa-times fa-lg"></i> Não foi possível identificar a localização</span>';
+        toastContent = '<span class="white-text"><i class="fa fa-times fa-lg"></i> CEP não localizado!</span>';
         M.toast({ html: toastContent, classes: 'red darken-3' });
         return false;
     }
@@ -52,13 +52,14 @@ document.getElementById('postal').onchange = function(evt) {
                     var lat = obj['results'][0]['geometry']['location']['lat'];
                     var lng = obj['results'][0]['geometry']['location']['lng'];
                     document.getElementById('location').value = lat + ';' + lng;
+                    document.getElementById('save').disabled = false;
                 } else {
-                    toastContent = '<span class="white-text"><i class="fa fa-times fa-lg"></i> Não foi possível identificar a localização</span>';
+                    toastContent = '<span class="white-text"><i class="fa fa-times fa-lg"></i> CEP inválido ou localização não determinada!</span>';
                     M.toast({ html: toastContent, classes: 'red darken-3' });
                 }
             } catch (err) {
                 console.log(err);
-                toastContent = '<span class="white-text"><i class="fa fa-times fa-lg"></i> Falha ao identificar localização</span>';
+                toastContent = '<span class="white-text"><i class="fa fa-times fa-lg"></i> CEP inválido ou localização não determinada!</span>';
                 M.toast({ html: toastContent, classes: 'red darken-3' });
             }
         }

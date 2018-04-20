@@ -5,13 +5,14 @@
 @section('nome', 'Professor')
 <!--Define yield('content') em layout.site-->
 @section('content')
-    <div class='card'>
+    <div class='card z-depth-5'>
         <div class='card-content'>
             <div class='card-title'>
                 Cadastro:
             </div>
             <div class='row right'>
                 Usuários cadastrados: <b>{{ count($users) }}</b>
+                <h6><a class='green-text text-darken-1' href='{{ route('admin.cadastro.usuarios.adiciona') }}'><i class='fa fa-plus-circle fa-lg'></i> Novo Usuário</a></h6>
             </div>
             <div class='row'>
                 <table class='striped'>
@@ -38,19 +39,21 @@
                     </tbody>
                 </table>
             </div>
-            <div class='center'>
-                <a class='btn-flat waves-effect waves-green green-text text-darken-2' href='{{ route('admin.cadastro.usuarios.adiciona') }}'><i class='fa fa-plus'></i> novo</a>
-            </div>
+            <div class='divider'></div>
+            <br>
         </div>
     </div>
     @foreach($users as $user)
         <div id='confirm-message-{{$user->id}}' class='modal bottom-sheet'>
             <div class-'modal-content'>
-                <h5>Deseja remover {{$user->name}}?</h5>
+                <h5>Deseja remover o usuário {{$user->name}}?</h5>
+                <div class='divider'></div>
                 <div class='right'>
-                    <a class='btn waves-effect waves-light red darken-3' href='{{ route('admin.cadastro.usuarios.deleta', $user->id) }}'>Deletar</a>
-                    <a class='btn waves-effect waves-light blue' href='#'>Cancelar</a>
+                    <br>
+                    <a class='btn-flat waves-effect waves-red red-text darken-3' href='{{ route('admin.cadastro.usuarios.deleta', $user->id) }}'><i class='fa fa-trash-o'></i> Deletar</a>
+                    <a class='modal-action modal-close btn-flat waves-effect waves-blue blue-text' href='#'><i class='fa fa-times'></i> Cancelar</a>
                 </div>
+                <br>
             </div>
             <div class='modal-footer'>
                 <br>
