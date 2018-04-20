@@ -8,7 +8,6 @@
             <input class='validate' required type='text' maxlength='9' name='postal' id='postal' value='{{ isset($endereco->postal) ? $endereco->postal : ''}}'>
             <label for='postal'><i class='fa fa-envelope-o'></i> CEP</label>
     </div>
-    
 </div>
 
 <div class='row'>

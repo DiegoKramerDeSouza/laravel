@@ -30,7 +30,7 @@
         <header>
             <nav class="nav-wrapper grey darken-4">
                 <div class="">
-                    <a href='#!' class='sidenav-trigger green-text text-darken-2 right' data-target='side-bar' title='Menu'><i class='fa fa-bars fa-2x'></i></a>
+                    <a href='#!' class='sidenav-trigger blue-text blue-darken-3 right' data-target='side-bar' title='Menu'><i class='fa fa-bars fa-2x'></i></a>
                     <a href='#' class='brand-logo'><span class='blue-text'><b>WebTv</b></span></a>
                     <ul id='nav-mobile' class='right hide-on-med-and-down blue-text'>
                         <li>
