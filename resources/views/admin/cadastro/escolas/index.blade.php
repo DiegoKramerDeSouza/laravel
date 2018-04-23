@@ -1,8 +1,8 @@
 <!--Estende layout/site.blade.php-->
 @extends('layout.site')
 <!--Define yield('titulo') em layout._includes.top-->
-@section('titulo', 'Cadastro de Escolas')
-@section('nome', 'Professor')
+@section('titulo', 'Cadastro de Instituições')
+
 <!--Define yield('content') em layout.site-->
 @section('content')
     <div class='card z-depth-5'>

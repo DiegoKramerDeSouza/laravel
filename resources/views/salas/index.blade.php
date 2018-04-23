@@ -2,6 +2,7 @@
 @extends('layout.site')
 <!--Define yield('titulo') em layout._includes.top-->
 @section('titulo', 'Salas de aula')
+
 <!--Define yield('content') em layout.site-->
 @section('content')
     <h3>Salas</h3>

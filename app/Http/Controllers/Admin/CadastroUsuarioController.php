@@ -24,7 +24,7 @@ class CadastroUsuarioController extends Controller
         return view('admin.cadastro.usuarios.adicionar', compact('escolas'));
     }
     public function save(Request $req){
-        if(User::where('register', $req->email)->count() == 0){
+        if(User::where('email', $req->email)->count() == 0){
             //Define os campos enviados que devem ser gravados no banco
             $user = [
                 '_token'=>$req->_token,
