@@ -24,42 +24,46 @@ class CadastroUsuarioController extends Controller
         return view('admin.cadastro.usuarios.adicionar', compact('escolas'));
     }
     public function save(Request $req){
-        //Define os campos enviados que devem ser gravados no banco
-        $user = [
-            '_token'=>$req->_token,
-            'name'=>$req->name,
-            'email'=>$req->email,
-            'password'=>bcrypt($req->password)
-        ];
-        //IMAGENS--------------------------------
-        //Coleta todos os dados recebidos
-        $data = $req->all();
-        //Tratamento de imagem. Se necessário
-        if(isset($data->imagem)){
-            if($req->hasfile("imagem")){
-                $img = $req->file('imagem');
-                $num = rand(1111,9999);
-                $dir = 'img/users/';
-                $ext = $img->guessClientExtension();
-                $imgName = 'IMG' . $num . "." . $ext;
-                $img->move('$dir', $imgName);
-                $data["imagem"] = $dir . "/" . $imgName;
+        if(User::where('register', $req->email)->count() == 0){
+            //Define os campos enviados que devem ser gravados no banco
+            $user = [
+                '_token'=>$req->_token,
+                'name'=>$req->name,
+                'email'=>$req->email,
+                'password'=>bcrypt($req->password)
+            ];
+            //IMAGENS--------------------------------
+            //Coleta todos os dados recebidos
+            $data = $req->all();
+            //Tratamento de imagem. Se necessário
+            if(isset($data->imagem)){
+                if($req->hasfile("imagem")){
+                    $img = $req->file('imagem');
+                    $num = rand(1111,9999);
+                    $dir = 'img/users/';
+                    $ext = $img->guessClientExtension();
+                    $imgName = 'IMG' . $num . "." . $ext;
+                    $img->move('$dir', $imgName);
+                    $data["imagem"] = $dir . "/" . $imgName;
+                }
             }
+            //---------------------------------------
+            //Insere dados na base User
+            $created = User::create($user);
+            //Define os campos enviados que devem ser criados no banco
+            //user_id recebe o id criado durante o cadastro do usuário $created
+            $userdata = [
+                '_token'=>$req->_token,
+                'user_id'=>$created->id,
+                'school_id'=>$req->school_id,
+                'group'=>$req->group
+            ];
+            //Insere dados na base UserDados
+            UserDado::create($userdata);
+            return redirect()->route('admin.cadastro.usuarios');
+        } else {
+            echo "<h4>O endereço de e-mail " . $req->email . " já encontra-se cadastrado!</h4>";
         }
-        //---------------------------------------
-        //Insere dados na base User
-        $created = User::create($user);
-        //Define os campos enviados que devem ser criados no banco
-        //user_id recebe o id criado durante o cadastro do usuário $created
-        $userdata = [
-            '_token'=>$req->_token,
-            'user_id'=>$created->id,
-            'school_id'=>$req->school_id,
-            'group'=>$req->group
-        ];
-        //Insere dados na base UserDados
-        UserDado::create($userdata);
-        return redirect()->route('admin.cadastro.usuarios');
     }
     public function edit($id){
         //Direciona para View de edição

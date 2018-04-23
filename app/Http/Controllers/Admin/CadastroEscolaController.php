@@ -27,37 +27,38 @@ class CadastroEscolaController extends Controller
         $apicep = RecursoApi::where('name', 'ViaCEP Consulta')->first();
         return view('admin.cadastro.escolas.adicionar', compact('api', 'apicep', 'ufs'));
     }
-    //->View para salvar uma nova escola na base de dados
+    //Salvar uma nova escola na base de dados
     public function save(Request $req){
+        if(Escola::where('register', $req->register)->count() == 0){
+            //Define os campos enviados que devem ser criados no banco
+            $escola = [
+                '_token'=>$req->_token,
+                'register'=>$req->register,
+                'name'=>$req->name
+            ];
+            //Insere dados na base Escolas
+            $created = Escola::create($escola);
 
-        if(Escola::where('register', $req->register)->count()){
-
+            //Define os campos enviados que devem ser gravados no banco
+            //Referencia o school_id ao id criado na criação da escola ($created->id)
+            $enderecoescola = [
+                '_token'=>$req->_token,
+                'school_id'=>$created->id,
+                'postal'=>$req->postal,
+                'address'=>$req->address,
+                'city'=>$req->city,
+                'number'=>$req->number,
+                'complement'=>$req->complement,
+                'st'=>$req->st,
+                'coordinates'=>$req->location
+            ];
+            //Insere dados na base UserDados
+            EnderecoEscola::create($enderecoescola);
+            return redirect()->route('admin.cadastro.escolas');
+        } else {
+            echo "<h4>Instituição com registro " . $req->register . " já existente!</h4>";
         }
-        //Define os campos enviados que devem ser criados no banco
-        $escola = [
-            '_token'=>$req->_token,
-            'register'=>$req->register,
-            'name'=>$req->name
-        ];
-        //Insere dados na base Escolas
-        $created = Escola::create($escola);
-
-        //Define os campos enviados que devem ser gravados no banco
-        //Referencia o school_id ao id criado na criação da escola ($created->id)
-        $enderecoescola = [
-            '_token'=>$req->_token,
-            'school_id'=>$created->id,
-            'postal'=>$req->postal,
-            'address'=>$req->address,
-            'city'=>$req->city,
-            'number'=>$req->number,
-            'complement'=>$req->complement,
-            'st'=>$req->st,
-            'coordinates'=>$req->location
-        ];
-        //Insere dados na base UserDados
-        EnderecoEscola::create($enderecoescola);
-        return redirect()->route('admin.cadastro.escolas');
+        
     }
     //->View para editar dados de escolas
     public function edit($id){
@@ -67,7 +68,7 @@ class CadastroEscolaController extends Controller
         $endereco = EnderecoEscola::where('school_id', $id)->first();
         return view('admin.cadastro.escolas.editar', compact('api', 'apicep', 'escolas', 'endereco'));
     }
-    //->View para atualizar dados de escola e gravar na base
+    //Atualizar dados de escola e gravar na base
     public function update(Request $req, $id){
         //Define os campos enviados que devem ser atualizados no banco
         $escola = [
@@ -92,7 +93,7 @@ class CadastroEscolaController extends Controller
         EnderecoEscola::where('school_id', $id)->first()->update($enderecoescola);
         return redirect()->route('admin.cadastro.escolas');
     }
-    //->View para deletar escolas registradas e todos os usuários vinculados a esta
+    //Deletar escolas registradas e todos os usuários vinculados a esta
     public function delete($id){
         $todelete = UserDado::where('school_id', '=', $id)->get();
         //Para cada usuário vinculado à instituição

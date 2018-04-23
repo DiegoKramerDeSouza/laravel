@@ -89,7 +89,7 @@ document.getElementById('postal').onchange = function(evt) {
 };
 
 /*
- *   -FUNÇÕES:
+ *   #FUNÇÕES
  */
 
 /*
