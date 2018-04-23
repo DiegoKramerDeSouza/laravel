@@ -12,8 +12,11 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('home');
 });
+
+//Rota para página inicial
+Route::get('/', ['as' => 'home', 'uses' => 'Site\HomeController@index']);
 
 //Encaminhamentos para o Controller ContatoController > app/Http/Controllers/ContatoController
 //Rota de teste - index
@@ -23,7 +26,7 @@ Route::post('/controle/{id?}', ['uses' => 'ContatoController@criar']);
 //Rota de teste - editar
 Route::put('/controle/{id?}', ['uses' => 'ContatoController@editar']);
 
-//Rotas para o formulário de cadastro de usuários
+//Rotas para o formulário de cadastro de usuários e instituições
 Route::get('/admin/cadastro', ['as' => 'admin.cadastro', 'uses' => 'Admin\CadastroController@index']);
 
 //Rotas para o formulário de cadastro de usuários
@@ -42,4 +45,5 @@ Route::get('/admin/cadastro/escolas/editar/{id}', ['as' => 'admin.cadastro.escol
 Route::put('/admin/cadastro/escolas/atualizar/{id}', ['as' => 'admin.cadastro.escolas.atualiza', 'uses' => 'Admin\CadastroEscolaController@update']);
 Route::get('/admin/cadastro/escolas/deletar/{id}', ['as' => 'admin.cadastro.escolas.deleta', 'uses' => 'Admin\CadastroEscolaController@delete']);
 
+//Rota de teste para colleta de dados a prtir de cep
 Route::get('/admin/cadastro/escolas/coletar/{cep?}', ['as' => 'admin.cadastro.escolas.coleta', 'uses' => 'Admin\CadastroEscolaController@collect']);

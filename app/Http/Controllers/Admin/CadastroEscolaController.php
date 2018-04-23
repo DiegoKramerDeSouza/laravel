@@ -16,23 +16,27 @@ class CadastroEscolaController extends Controller
     //->View escolas cadastradas
     public function index(){
         //Habilita uma view a receber e enviar dados via WEBRTC
-        //Encaminhada em compact()
+        //Deve ser encaminhada em compact()
         //$streamPage = true;
         $escolas = Escola::all();
         return view('admin.cadastro.escolas.index', compact('escolas'));
     }
     //->View para adição de novas escolas
     public function add(){
-        
         $api = RecursoApi::where('name', 'Google Maps Geolocation')->first();
         $apicep = RecursoApi::where('name', 'ViaCEP Consulta')->first();
         return view('admin.cadastro.escolas.adicionar', compact('api', 'apicep', 'ufs'));
     }
     //->View para salvar uma nova escola na base de dados
     public function save(Request $req){
+
+        if(Escola::where('register', $req->register)->count()){
+
+        }
         //Define os campos enviados que devem ser criados no banco
         $escola = [
             '_token'=>$req->_token,
+            'register'=>$req->register,
             'name'=>$req->name
         ];
         //Insere dados na base Escolas
@@ -63,11 +67,12 @@ class CadastroEscolaController extends Controller
         $endereco = EnderecoEscola::where('school_id', $id)->first();
         return view('admin.cadastro.escolas.editar', compact('api', 'apicep', 'escolas', 'endereco'));
     }
-    //->View para atualizar dados de escola e grava-los na base
+    //->View para atualizar dados de escola e gravar na base
     public function update(Request $req, $id){
         //Define os campos enviados que devem ser atualizados no banco
         $escola = [
             '_token'=>$req->_token,
+            'register'=>$req->register,
             'name'=>$req->name
         ];
         //Atualiza base de dados Escola
@@ -87,12 +92,14 @@ class CadastroEscolaController extends Controller
         EnderecoEscola::where('school_id', $id)->first()->update($enderecoescola);
         return redirect()->route('admin.cadastro.escolas');
     }
-    //->View para deletar escolas registradas
+    //->View para deletar escolas registradas e todos os usuários vinculados a esta
     public function delete($id){
-        $todelete = UserDado::where('school_id', $id)->first();
-        //dd($todelete);
-        $todelete->delete();
-        User::find($todelete->user_id)->delete();
+        $todelete = UserDado::where('school_id', '=', $id)->get();
+        //Para cada usuário vinculado à instituição
+        foreach($todelete as $deleteUser){
+            $deleted = $deleteUser->delete();
+            User::find($deleteUser->user_id)->delete();
+        }
         Escola::find($id)->delete();
         EnderecoEscola::where('school_id', $id)->first()->delete();
         return redirect()->route('admin.cadastro.escolas');

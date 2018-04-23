@@ -31,10 +31,10 @@
             <nav class="nav-wrapper grey darken-4">
                 <div class="">
                     <a href='#!' class='sidenav-trigger blue-text blue-darken-3 right' data-target='side-bar' title='Menu'><i class='fa fa-bars fa-2x'></i></a>
-                    <a href='#' class='brand-logo'><span class='blue-text'><b>WebTv</b></span></a>
+                    <a href='{{ route('home') }}' class='brand-logo'><span class='blue-text'><b>WebTv</b></span></a>
                     <ul id='nav-mobile' class='right hide-on-med-and-down blue-text'>
                         <li>
-                            <a id='homeicon' href='#'>
+                            <a id='homeicon' href='{{ route('home') }}'>
                                 <span class='blue-text'><span class='fa fa-home fa-lg'></span> <b>Início</b></span>
                             </a>
                         </li>
@@ -69,7 +69,7 @@
             <div id='side-bar' class='sidenav'>
                 <ul>
                     <li>
-                        <a id='homeicon' href='#'>
+                        <a id='homeicon' href='{{ route('home') }}'>
                             <span class='blue-text'><span class='fa fa-home fa-lg'></span> <b>Início</b></span>
                         </a>
                     </li>

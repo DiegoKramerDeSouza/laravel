@@ -10,7 +10,7 @@
             <div class='row center container'>
                 <div class='col s12 m6 hoverarchor'>
                     <a class='blue-text' href='{{ route('admin.cadastro.escolas') }}' style='padding:40px;'>
-                        <h1><i class='fa fa-graduation-cap fa-2x'></i></h1>
+                        <h1><i class='fa fa-institution fa-2x'></i></h1>
                         <h3>Instituições</h3>
                         <p>Instituições cadastradas: <b>{{ count($escolas) }}</b></p>
                     </a>

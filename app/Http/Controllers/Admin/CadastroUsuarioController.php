@@ -29,8 +29,9 @@ class CadastroUsuarioController extends Controller
             '_token'=>$req->_token,
             'name'=>$req->name,
             'email'=>$req->email,
-            'password'=>$req->password
+            'password'=>bcrypt($req->password)
         ];
+        //IMAGENS--------------------------------
         //Coleta todos os dados recebidos
         $data = $req->all();
         //Tratamento de imagem. Se necessário
@@ -45,6 +46,7 @@ class CadastroUsuarioController extends Controller
                 $data["imagem"] = $dir . "/" . $imgName;
             }
         }
+        //---------------------------------------
         //Insere dados na base User
         $created = User::create($user);
         //Define os campos enviados que devem ser criados no banco
