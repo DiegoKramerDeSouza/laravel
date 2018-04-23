@@ -4,24 +4,25 @@ namespace App\Http\Controllers\Site;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Auth;
 
 use App\Escola;
+use App\User;
+use App\UserDado;
 
 class RoomController extends Controller
 {
     public function index(){
-        $salas = [
-            (object)["numero"=>1, "status"=>'livre'],
-            (object)["numero"=>2, "status"=>'livre'],
-            (object)["numero"=>3, "status"=>'ocupada'],
-            (object)["numero"=>4, "status"=>'livre'],
-            (object)["numero"=>5, "status"=>'ocupada']
-        ];
+        //Deve ser encaminhada em compact()
+        $streamPage = true;
+        $userid = Auth::user()->id;
+        $school = UserDado::where('user_id', $userid)->first();
+
         //Instancia a classe Escola
-        $escola = new Escola();
+        //$escola = new Escola();
         //Chama a função lista()
         //dd($escola->lista());
         
-        return view('salas.index', compact('salas'));
+        return view('salas.index', compact('school', 'streamPage'));
     }
 }

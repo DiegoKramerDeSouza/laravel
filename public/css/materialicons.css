@@ -47,3 +47,7 @@
     transform: scale(1.1);
     box-shadow: 5px 10px 18px rgba(80, 80, 80, 0.5);
 }
+
+.d-none {
+    display: none;
+}

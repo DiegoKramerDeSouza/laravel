@@ -14,12 +14,35 @@ use App\RecursoApi;
 class CadastroEscolaController extends Controller
 {
     //->View escolas cadastradas
-    public function index(){
+    public function index($page){
         //Habilita uma view a receber e enviar dados via WEBRTC
         //Deve ser encaminhada em compact()
         //$streamPage = true;
-        $escolas = Escola::all();
-        return view('admin.cadastro.escolas.index', compact('escolas'));
+
+        //Construção da paginação personalizada
+        $escolas = Escola::paginate(5);
+        $prev = $page-1;
+        $next = $page+1;
+        $last = $escolas->lastPage();
+        $paginate = '';
+        if($page == 1){
+            $paginate .= '<li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a></li>';
+        } else {
+            $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/escolas/' . $prev . '?page=' . $prev . '"><i class="material-icons">chevron_left</i></a></li>';
+        }
+        for($i = 1; $i<=$last; $i++){
+            if($i == $page){
+                $paginate .= '<li class="active blue white-text"><a href="#">' . $i . '</a></li>';
+            } else {
+                $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/escolas/' . $i . '?page=' . $i . '">' . $i . '</a></li>';
+            }
+        }
+        if($page == $last){
+            $paginate .= '<li class="disabled"><a href="#!"><i class="material-icons">chevron_right</i></a></li>';
+        } else {
+            $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/escolas/' . $next . '?page=' . $next . '"><i class="material-icons">chevron_right</i></a></li>';
+        }
+        return view('admin.cadastro.escolas.index', compact('escolas', 'paginate'));
     }
     //->View para adição de novas escolas
     public function add(){

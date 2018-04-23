@@ -3,7 +3,7 @@ $(document).ready(function() {
     var connection = new RTCMultiConnection();
     var status = false;
     var usuario = '';
-	var cameras;
+    var cameras;
 
     //Conexão com serviço de websocket
     //Servidor  de signaling gratúito https://rtcmulticonnection.herokuapp.com:443/
@@ -36,23 +36,23 @@ $(document).ready(function() {
         if (e.keyCode != 13) return;
         // Tratando entrada
         this.value = this.value.replace(/^\s+|\s+$/g, '');
-        this.value = usuario + ": " + this.value;
         if (!this.value.length) return;
+        this.value = usuario + ": " + this.value;
         connection.send(this.value);
         appendDIV(this.value);
         this.value = '';
     };
-	document.getElementById('send-message-btn').onclick = function() {
+    document.getElementById('send-message-btn').onclick = function() {
         // Tratando entrada
         var texto = document.getElementById('text-message').value
         texto = texto.replace(/^\s+|\s+$/g, '');
-		texto = usuario + ": " + texto;
         if (!texto.length) return;
+        texto = usuario + ": " + texto;
         connection.send(texto);
         appendDIV(texto);
         document.getElementById('text-message').value = '';
     };
-	//Envio de mensagem
+    //Envio de mensagem
     connection.onmessage = appendDIV;
 
 
@@ -85,9 +85,9 @@ $(document).ready(function() {
             materia.disabled = true;
             assunto.disabled = true;
 
-            if (hasClass(elem, "btn-success")) {
-                elem.classList.remove("btn-success");
-                elem.classList.add("btn-default");
+            if (hasClass(elem, "green")) {
+                elem.classList.remove("green");
+                elem.classList.add("grey");
             }
             //Elementos do documento apontados
             connection.teacherVideosContainer = document.getElementById('main-video');
@@ -191,48 +191,48 @@ $(document).ready(function() {
                     var labelMateria = labelRoom.split('|')[2];
                     var labelEscola = labelRoom.split('|')[3];
                     var minhaEscola = document.getElementById('codEscola').value;
-					var countRooms = 0;
+                    var countRooms = 0;
 
                     if (minhaEscola == labelEscola) {
-						countRooms++;
+                        countRooms++;
                         //cria elemento div para exibição de salas disponíveis em bloco
                         /*
                         	var card
                         */
                         usuario = document.getElementById('meuNome').value;
                         var divOpen = document.createElement('div');
-                        var card = "<div class='card m-2'>" +
-                            "<h5 class='card-header'>" +
+                        var card = "<div class='card'>" +
+                            "<div class='card-content'>" +
+                            "<h5 class='card-title'>" +
                             "<i class='fa fa-desktop'></i> " + labelClasse +
                             "</h5>" +
-                            "<div class='card-body'>" +
                             "<div class='row'>" +
-                            "<div class='col-sm-6 col-md-8 col-lg-9'>" +
-                            "<h5 class='card-title'>" +
+                            "<div class='col s6 m8 l9'>" +
+                            "<h6 class='card-title'>" +
                             "Professor: " + labelProfessor + "<br>" +
                             "Assunto: " + labelMateria +
-                            "</h5>" +
+                            "</h6>" +
                             "<p class='card-text'>Acesse esta sala de aula clicando no botão ao lado.</p>" +
                             "</div>" +
-                            "<div id=" + moderator.userid + " class='col-sm-6 col-md-4 col-lg-3 text-center'>" +
+                            "<div id=" + moderator.userid + " class='col s6 m4 l3' align='center'>" +
                             "</div>" +
                             "</div>" +
                             "</div>";
 
                         divOpen.innerHTML = card;
-                        divOpen.className = "col-sm-12 col-lg-6";
+                        divOpen.className = "col s12 l6";
 
                         var button = document.createElement('button');
                         button.id = moderator.userid;
-                        button.className = 'btn btn-info';
+                        button.className = 'btn blue waves-effect waves-light white-text';
 
                         //console.log(connection.userid + "||" + connection.sessionid);
                         button.onclick = function() {
                             this.disabled = true;
                             var elem = document.getElementById(this.id);
-                            if (hasClass(elem, "btn-info")) {
-                                elem.classList.remove("btn-info");
-                                elem.classList.add("btn-default");
+                            if (hasClass(elem, "blue")) {
+                                elem.classList.remove("blue");
+                                elem.classList.add("grey");
                             }
                             callTeacherStream();
                             connection.classVideosContainer = document.getElementById('class-video');
@@ -335,20 +335,20 @@ $(document).ready(function() {
                         var divClose = document.getElementById(moderator.userid);
                         divClose.appendChild(button);
                     }
-					if(countRooms == 0){
-						var divOpen = document.createElement('div');
-						var message = "<div class='light-bg text-center text-secondary h5 mt-5'>" +
-							"<i class='fa fa-times fa-lg text-danger'></i> Não há salas de aula disponíveis." +
-							"</div>";
-						divOpen.innerHTML = message;
-						publicRoomsDiv.appendChild(divOpen);
-						
-					}
+                    if (countRooms == 0) {
+                        var divOpen = document.createElement('div');
+                        var message = "<div class='grey-text' style='margin-top:20px;'>" +
+                            "<i class='fa fa-times fa-lg red-text'></i> Não há salas de aula disponíveis." +
+                            "</div>";
+                        divOpen.innerHTML = message;
+                        publicRoomsDiv.appendChild(divOpen);
+
+                    }
                 });
             } else {
                 var divOpen = document.createElement('div');
-                var message = "<div class='light-bg text-center text-secondary h5 mt-5'>" +
-                    "<i class='fa fa-times fa-lg text-danger'></i> Não há salas de aula disponíveis." +
+                var message = "<div class='grey-text' style='margin-top:20px;'>" +
+                    "<i class='fa fa-times fa-lg red-text'></i> Não há salas de aula disponíveis." +
                     "</div>";
                 divOpen.innerHTML = message;
                 publicRoomsDiv.appendChild(divOpen);
@@ -429,8 +429,9 @@ function setStatus(st) {
     var videoPanel
 */
 function callTeacherStream() {
-    $('#teacher-access').slideUp(300);
-    $('#opend-rooms').slideUp(300);
+    //$('#teacher-access').slideUp(300);
+    //$('#opend-rooms').slideUp(300);
+    $('#initial-access').slideUp(300);
     var videoPanel = document.getElementById('video-panel');
     videoPanel.classList.remove("d-none");
 }
@@ -452,7 +453,7 @@ function setRoomLabel(label) {
 function showRoomURL(roomid, className, classTheme) {
     var roomHashURL = '#' + roomid;
     var roomQueryStringURL = '?roomid=' + roomid;
-    var html = '<div class="card-title h5"><i class="fa fa-desktop"></i> Aula iniciada.</div>';
+    var html = '<h6 class="card-title"><i class="fa fa-desktop"></i> Aula iniciada.</h6>';
     /*
     html += '<div class="card-text">';
     html += '   Hash URL: <a href="' + roomHashURL + '" target="_blank">' + roomHashURL + '</a><br />';
@@ -471,5 +472,12 @@ function appendDIV(event) {
     var text = event.data || event;
     var message = text;
 
-    chatContainer.value += message + '\n';
+    //Versão anterior
+    //chatContainer.value += message + '\n';
+
+    //Versão com adaptação para o Materialize
+    $('#chat-panel').val(chatContainer.value + message + '\n');
+    M.textareaAutoResize($('#chat-panel'));
+    M.updateTextFields();
+
 }

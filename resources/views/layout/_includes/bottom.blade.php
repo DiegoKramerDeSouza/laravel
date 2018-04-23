@@ -10,6 +10,11 @@
             <script type="text/javascript" src="{!! asset('js/webrtc/getHTMLMediaElement.js') !!}"></script>
             <script type="text/javascript" src="{!! asset('js/webrtc/RTCMultiConnection.min.js') !!}"></script>
             <script type="text/javascript" src="{!! asset('js/webrtc/application.js') !!}"></script>
+            <script>
+                $(document).ready(function(){
+                    M.textareaAutoResize($('#chat-panel'));
+                });
+            </script>
         @endif
         <!--Inicialização in-page de elementos padrões-->
         <script>

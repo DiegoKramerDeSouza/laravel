@@ -40,6 +40,12 @@
                             @endforeach
                         </tbody>
                     </table>
+                    <div class='row center'>
+                        <ul class="pagination">
+                            {!! $paginate !!}
+                        </ul>
+                        <br>
+                    </div>
                 @else
                     <div class='grey-text center' style='margin-top:40px; margin-bottom:40px;'>
                         <h5><i class='red-text text-darken-3 fa fa-times'></i> Não há registros de usuários!</h5>

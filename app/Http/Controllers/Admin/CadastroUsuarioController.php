@@ -11,12 +11,36 @@ use App\Escola;
 
 class CadastroUsuarioController extends Controller
 {
-    public function index(){
-        $users = User::all();
+    public function index($page){
+        $users = User::paginate(1);
         $escolas = Escola::all();
+
+        //Construção da paginação personalizada
+        $prev = $page-1;
+        $next = $page+1;
+        $last = $users->lastPage();
+        $paginate = '';
+        if($page == 1){
+            $paginate .= '<li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a></li>';
+        } else {
+            $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/usuarios/' . $prev . '?page=' . $prev . '"><i class="material-icons">chevron_left</i></a></li>';
+        }
+        for($i = 1; $i<=$last; $i++){
+            if($i == $page){
+                $paginate .= '<li class="active blue white-text"><a href="#">' . $i . '</a></li>';
+            } else {
+                $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/usuarios/' . $i . '?page=' . $i . '">' . $i . '</a></li>';
+            }
+        }
+        if($page == $last){
+            $paginate .= '<li class="disabled"><a href="#!"><i class="material-icons">chevron_right</i></a></li>';
+        } else {
+            $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/usuarios/' . $next . '?page=' . $next . '"><i class="material-icons">chevron_right</i></a></li>';
+        }
+
         //Habilita uma view a receber e enviar dados via WEBRTC
         //$streamPage = true; 
-        return view('admin.cadastro.usuarios.index', compact('users'));
+        return view('admin.cadastro.usuarios.index', compact('users', 'paginate'));
     }
     public function add(){
         //Coleta todas as escolas cadastradas

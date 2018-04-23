@@ -7,6 +7,11 @@
 @section('content')
     <div class='card z-depth-5'>
         <div class='card-content'>
+            <h2 class='card-title'>
+                <b class='red-text text-darken-3'><i class='fa fa-exclamation-triangle'></i> Acesso restrito.</b><br>
+                Por favor efetue o login para acessar este recurso.
+            </h2>
+            <div class='divider'></div>
             <div class='row container'>
                 <h3 class='card-title'>Login</h3>
                 <form class='' action='{{ route('login.access') }}' method='post' enctype="multipart/form-data">
