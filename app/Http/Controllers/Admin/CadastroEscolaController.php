@@ -20,7 +20,7 @@ class CadastroEscolaController extends Controller
         //$streamPage = true;
 
         //Construção da paginação personalizada
-        $escolas = Escola::paginate(5);
+        $escolas = Escola::paginate(10);
         $prev = $page-1;
         $next = $page+1;
         $last = $escolas->lastPage();
@@ -28,19 +28,19 @@ class CadastroEscolaController extends Controller
         if($page == 1){
             $paginate .= '<li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a></li>';
         } else {
-            $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/escolas/' . $prev . '?page=' . $prev . '"><i class="material-icons">chevron_left</i></a></li>';
+            $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/escolas/p' . $prev . '?page=' . $prev . '"><i class="material-icons">chevron_left</i></a></li>';
         }
         for($i = 1; $i<=$last; $i++){
             if($i == $page){
                 $paginate .= '<li class="active blue white-text"><a href="#">' . $i . '</a></li>';
             } else {
-                $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/escolas/' . $i . '?page=' . $i . '">' . $i . '</a></li>';
+                $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/escolas/p' . $i . '?page=' . $i . '">' . $i . '</a></li>';
             }
         }
         if($page == $last){
             $paginate .= '<li class="disabled"><a href="#!"><i class="material-icons">chevron_right</i></a></li>';
         } else {
-            $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/escolas/' . $next . '?page=' . $next . '"><i class="material-icons">chevron_right</i></a></li>';
+            $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/escolas/p' . $next . '?page=' . $next . '"><i class="material-icons">chevron_right</i></a></li>';
         }
         return view('admin.cadastro.escolas.index', compact('escolas', 'paginate'));
     }
@@ -77,7 +77,7 @@ class CadastroEscolaController extends Controller
             ];
             //Insere dados na base UserDados
             EnderecoEscola::create($enderecoescola);
-            return redirect()->route('admin.cadastro.escolas');
+            return redirect()->route('admin.cadastro.escolas', ['page' => '1']);
         } else {
             echo "<h4>Instituição com registro " . $req->register . " já existente!</h4>";
         }
@@ -114,7 +114,7 @@ class CadastroEscolaController extends Controller
         ];
         //Atualiza base de dados EnderecoEscola
         EnderecoEscola::where('school_id', $id)->first()->update($enderecoescola);
-        return redirect()->route('admin.cadastro.escolas');
+        return redirect()->route('admin.cadastro.escolas', ['page' => '1']);
     }
     //Deletar escolas registradas e todos os usuários vinculados a esta
     public function delete($id){
@@ -126,7 +126,7 @@ class CadastroEscolaController extends Controller
         }
         Escola::find($id)->delete();
         EnderecoEscola::where('school_id', $id)->first()->delete();
-        return redirect()->route('admin.cadastro.escolas');
+        return redirect()->route('admin.cadastro.escolas', ['page' => '1']);
     }
     //Função de teste para coleta de geolocalização 
     //Apenas Debug

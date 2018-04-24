@@ -8,7 +8,7 @@
     <div class='card z-depth-5'>
         <div class='card-content'>
             <div class='card-title'>
-                Cadastro:
+                <i class='fa fa-institution'></i> Cadastro de Instituição:
             </div>
             <div class='row' align='right'>
                 Instituições cadastradas: <b>{{ count($escolas) }}</b>
@@ -60,7 +60,7 @@
                 <h5>Deseja remover a instituição {{$escola->name}}?</h5>
                 <div class='center red-text text-darken-3'>
                     <h6><b><i class='fa fa-exclamation-triangle'></i> ATENÇÃO:</b></h6>
-                    <p><b>A remoção desta instituição implica na remoção automática de todos os usuários vinculados a esta.</b></p>
+                    <p><b>A remoção desta instituição implica na remoção automática de todos os usuários e turmas vinculados a esta.</b></p>
                 </div>
                 <div class='divider'></div>
                 <div class='right'>

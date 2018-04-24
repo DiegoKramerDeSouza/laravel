@@ -12,7 +12,7 @@ use App\Escola;
 class CadastroUsuarioController extends Controller
 {
     public function index($page){
-        $users = User::paginate(1);
+        $users = User::paginate(10);
         $escolas = Escola::all();
 
         //Construção da paginação personalizada
@@ -23,19 +23,19 @@ class CadastroUsuarioController extends Controller
         if($page == 1){
             $paginate .= '<li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a></li>';
         } else {
-            $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/usuarios/' . $prev . '?page=' . $prev . '"><i class="material-icons">chevron_left</i></a></li>';
+            $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/usuarios/p' . $prev . '?page=' . $prev . '"><i class="material-icons">chevron_left</i></a></li>';
         }
         for($i = 1; $i<=$last; $i++){
             if($i == $page){
                 $paginate .= '<li class="active blue white-text"><a href="#">' . $i . '</a></li>';
             } else {
-                $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/usuarios/' . $i . '?page=' . $i . '">' . $i . '</a></li>';
+                $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/usuarios/p' . $i . '?page=' . $i . '">' . $i . '</a></li>';
             }
         }
         if($page == $last){
             $paginate .= '<li class="disabled"><a href="#!"><i class="material-icons">chevron_right</i></a></li>';
         } else {
-            $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/usuarios/' . $next . '?page=' . $next . '"><i class="material-icons">chevron_right</i></a></li>';
+            $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/usuarios/p' . $next . '?page=' . $next . '"><i class="material-icons">chevron_right</i></a></li>';
         }
 
         //Habilita uma view a receber e enviar dados via WEBRTC
@@ -84,7 +84,7 @@ class CadastroUsuarioController extends Controller
             ];
             //Insere dados na base UserDados
             UserDado::create($userdata);
-            return redirect()->route('admin.cadastro.usuarios');
+            return redirect()->route('admin.cadastro.usuarios', ['page' => '1']);
         } else {
             echo "<h4>O endereço de e-mail " . $req->email . " já encontra-se cadastrado!</h4>";
         }
@@ -113,11 +113,11 @@ class CadastroUsuarioController extends Controller
         ];
         //Atualiza base de dados UserDados
         UserDado::where('user_id', $id)->first()->update($userdata);
-        return redirect()->route('admin.cadastro.usuarios');
+        return redirect()->route('admin.cadastro.usuarios', ['page' => '1']);
     }
     public function delete($id){
         User::find($id)->delete();
         UserDado::where('user_id', $id)->first()->delete();
-        return redirect()->route('admin.cadastro.usuarios');
+        return redirect()->route('admin.cadastro.usuarios', ['page' => '1']);
     }
 }
