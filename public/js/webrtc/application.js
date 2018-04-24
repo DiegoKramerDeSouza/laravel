@@ -55,8 +55,6 @@ $(document).ready(function() {
     //Envio de mensagem
     connection.onmessage = appendDIV;
 
-
-
     document.getElementById('btn-join-as-teacher').onclick = function() {
         //Ação de criar uma sala de aula ao clicar em 'btn-join-as-teacher'
         /*
@@ -78,6 +76,7 @@ $(document).ready(function() {
         var roomEscola = document.getElementById('codEscola').value;
         var roomHash = btoa(materia + "|" + roomName + "|" + assunto + "|" + roomEscola);
         usuario = roomName;
+        callTeacherStream();
 
         //Verifica os campos materia e assunto, ambos devem ser informados
         if (materia && assunto) {
@@ -99,6 +98,7 @@ $(document).ready(function() {
             connection.onstream = function(event) {
                 //Verifica se a conexão é local ou remota
                 if (event.type === 'local') {
+                    //Se a criação da sala for uma conexão local: Exibe
                     connection.teacherVideosContainer.innerHTML = '';
                     //As definições de conexão local para um usuário do tipo professor são definidas por padrão com alta prioridade
                     connection.teacherVideosContainer.appendChild(event.mediaElement);
@@ -108,7 +108,6 @@ $(document).ready(function() {
                     }, 5000);
                     event.mediaElement.muted = true;
                     event.mediaElement.owner = 'User';
-                    //event.mediaElement.elem = roomHash;
                     document.getElementById('room-id').value = roomHash;
 
                     setStatus('online');
@@ -117,12 +116,16 @@ $(document).ready(function() {
 
                     var width = parseInt(connection.teacherVideosContainer.clientWidth);
                     event.mediaElement.width = width;
+                    event.mediaElement.className = 'constructed-videos z-depth-3';
 
                     console.log('Stream: ' + event.mediaElement.id);
                     connection.extra.modifiedValue = event.mediaElement.id;
                     connection.updateExtraData();
                 } else {
+                    //Se a criação da sala for de uma conexão remota: Não faça nada.
+                    /*
                     //Conexões efetuadas a partir de um ponto remoto recebem tratamento de entradas de vídeo comuns
+                    connection.classVideosContainer.innerHTML = '<br><br>';
                     connection.classVideosContainer.appendChild(event.mediaElement);
                     event.mediaElement.play();
                     setTimeout(function() {
@@ -138,26 +141,9 @@ $(document).ready(function() {
 
                     var width = parseInt(connection.classVideosContainer.clientWidth);
                     event.mediaElement.width = width;
+                    event.mediaElement.className = 'constructed-videos z-depth-3';
+                    */
                 }
-
-                //Método secundário para a criação de elementos de audio/vídeo
-                /*
-                var video = document.createElement('video');
-                video.controls = true;
-                if (event.type === 'local') {
-                    video.muted = true;
-                }
-                video.srcObject = event.stream;
-                console.log(video.srcObject.id);
-                var width = parseInt(connection.teacherVideosContainer.clientWidth / 2) - 20;
-                var mediaElement = getHTMLMediaElement(video, {
-                    //    title: roomLabel,
-                    buttons: ['full-screen'],
-                    width: width,
-                    showOnMouseEnter: false
-                });
-                */
-                // connection.teacherVideosContainer.appendChild(mediaElement);
             }
         }
     }
@@ -202,25 +188,26 @@ $(document).ready(function() {
                         usuario = document.getElementById('meuNome').value;
                         var divOpen = document.createElement('div');
                         var card = "<div class='card'>" +
-                            "<div class='card-content'>" +
-                            "<h5 class='card-title'>" +
-                            "<i class='fa fa-desktop'></i> " + labelClasse +
-                            "</h5>" +
-                            "<div class='row'>" +
-                            "<div class='col s6 m8 l9'>" +
-                            "<h6 class='card-title'>" +
-                            "Professor: " + labelProfessor + "<br>" +
-                            "Assunto: " + labelMateria +
+                            "<div class='card-content' align='left'>" +
+                            "<h6 class='blue-text'>" +
+                            "<i class='fa fa-desktop'></i> <b>" + labelClasse + "</b>" +
                             "</h6>" +
-                            "<p class='card-text'>Acesse esta sala de aula clicando no botão ao lado.</p>" +
+                            "<div class='row'>" +
+                            "<div class='col s12 m8 l9'>" +
+                            "<p class='card-text'>" +
+                            "<b>Professor:</b> " + labelProfessor +
+                            "</p>" +
+                            "<p class='card-text'>" +
+                            "<b>Assunto:</b> " + labelMateria +
+                            "</p>" +
                             "</div>" +
-                            "<div id=" + moderator.userid + " class='col s6 m4 l3' align='center'>" +
+                            "<div id=" + moderator.userid + " class='col s12 m4 l3' align='right'>" +
                             "</div>" +
                             "</div>" +
                             "</div>";
 
                         divOpen.innerHTML = card;
-                        divOpen.className = "col s12 l6";
+                        divOpen.className = "col s12";
 
                         var button = document.createElement('button');
                         button.id = moderator.userid;
@@ -236,6 +223,7 @@ $(document).ready(function() {
                             }
                             callTeacherStream();
                             connection.classVideosContainer = document.getElementById('class-video');
+                            connection.classVideosContainer.className = 'center';
                             connection.teacherVideosContainer = document.getElementById('main-video');
 
                             connection.join(this.id);
@@ -251,75 +239,48 @@ $(document).ready(function() {
 
                                 //Define se a conexão é local ou remota
                                 if (event.type === 'local') {
+                                    //Se a conexão for local: Não faça nada
+                                    /*
                                     userVideo.muted = true;
-
                                     connection.classVideosContainer.appendChild(event.mediaElement);
                                     event.mediaElement.play();
                                     setTimeout(function() {
                                         event.mediaElement.play();
                                     }, 5000);
-                                    var width = parseInt(connection.classVideosContainer.clientWidth);
+                                    var width = parseInt(connection.classVideosContainer.clientWidth - 10);
                                     event.mediaElement.width = width;
+                                    event.mediaElement.className = 'constructed-videos z-depth-3';
                                     event.mediaElement.title = 'Minha CAM';
-
-                                    /*
-                                    userVideo.srcObject = event.stream;
-                                    //console.log(userVideo.srcObject);
-                                    var width = parseInt(connection.classVideosContainer.clientWidth);
-                                    var mediaElement = getHTMLMediaElement(userVideo, {
-                                    	title: 'Minha Cam',
-                                    	buttons: ['full-screen'],
-                                    	width: width,
-                                    	showOnMouseEnter: false
-                                    });
-                                    connection.classVideosContainer.appendChild(mediaElement);
                                     */
-
                                 } else {
                                     //console.log(owner + "||" + event.mediaElement.id);
 
                                     if (event.extra.modifiedValue == event.mediaElement.id) {
+                                        //Se a conexão for do dono da sala: Exibe
                                         connection.teacherVideosContainer.innerHTML = '';
                                         connection.teacherVideosContainer.appendChild(event.mediaElement);
                                         event.mediaElement.play();
                                         setTimeout(function() {
                                             event.mediaElement.play();
                                         }, 5000);
-                                        var width = parseInt(connection.teacherVideosContainer.clientWidth);
+                                        var width = parseInt(connection.teacherVideosContainer.clientWidth - 10);
                                         event.mediaElement.width = width;
+                                        event.mediaElement.className = 'constructed-videos z-depth-3';
                                         event.mediaElement.title = labelClasse + ' (' + labelMateria + ')';
-                                        //} else if (event.extra.modifiedValue === undefined) {
-                                        //console.log('Waiting...');
                                     } else {
+                                        //Se a conexão for de outra sala: Não faça nada.
+                                        /*
                                         connection.classVideosContainer.appendChild(event.mediaElement);
                                         event.mediaElement.play();
                                         setTimeout(function() {
                                             event.mediaElement.play();
                                         }, 5000);
-                                        var width = parseInt(connection.classVideosContainer.clientWidth);
+                                        var width = parseInt(connection.classVideosContainer.clientWidth - 10);
                                         event.mediaElement.width = width;
+                                        event.mediaElement.className = 'constructed-videos z-depth-3';
                                         event.mediaElement.title = event.mediaElement.id;
+                                        */
                                     }
-
-
-
-                                    //event.mediaElement.elem = roomHash;
-                                    //document.getElementById('room-id').value = roomHash;
-
-                                    //Método secundário para a criação de elementos de audio/vídeo
-                                    /*
-                                    userVideo.srcObject = event.stream;
-                                    //console.log(userVideo.srcObject);
-                                    console.log(event.mediaElement.elem);
-                                    var width = parseInt(connection.teacherVideosContainer.clientWidth);
-                                    var mediaElement = getHTMLMediaElement(userVideo, {
-                                    	//title: labelClasse + " (" + labelMateria + ")",
-                                    	buttons: ['full-screen'],
-                                    	width: width,
-                                    	showOnMouseEnter: false
-                                    });
-                                    connection.teacherVideosContainer.appendChild(mediaElement);
-                                    */
                                 }
                                 setRoomLabel(labelClasse + " (" + labelMateria + ")");
                             };
@@ -334,6 +295,7 @@ $(document).ready(function() {
 
                         var divClose = document.getElementById(moderator.userid);
                         divClose.appendChild(button);
+                        $('#div-chat-panel').fadeIn(300);
                     }
                     if (countRooms == 0) {
                         var divOpen = document.createElement('div');
@@ -432,42 +394,44 @@ function callTeacherStream() {
     //$('#teacher-access').slideUp(300);
     //$('#opend-rooms').slideUp(300);
     $('#initial-access').slideUp(300);
-    var videoPanel = document.getElementById('video-panel');
-    videoPanel.classList.remove("d-none");
+    $('#video-panel').slideDown(300);
+
+    //var videoPanel = document.getElementById('video-panel');
+    //videoPanel.classList.remove("d-none");
 }
 //Define label da sala acessada
 /*
-    var roomtitle
-*/
+ *   var roomtitle
+ */
 function setRoomLabel(label) {
     var roomtitle = document.getElementById('class-title');
     roomtitle.innerHTML = label;
 }
 //Cria elementos com as definições da sala criada
 /*
-    var roomHashURL
-    var roomQueryStringURL
-    var html
-    var roomURLsDiv
-*/
+ *    var roomHashURL
+ *    var roomQueryStringURL
+ *    var html
+ *    var roomURLsDiv
+ */
 function showRoomURL(roomid, className, classTheme) {
     var roomHashURL = '#' + roomid;
     var roomQueryStringURL = '?roomid=' + roomid;
     var html = '<h6 class="card-title"><i class="fa fa-desktop"></i> Aula iniciada.</h6>';
-    /*
-    html += '<div class="card-text">';
-    html += '   Hash URL: <a href="' + roomHashURL + '" target="_blank">' + roomHashURL + '</a><br />';
-    html += '   QueryString URL: <a href="' + roomQueryStringURL + '" target="_blank">' + roomQueryStringURL + '</a>';
-    html += '</div>';
-    */
     var roomURLsDiv = document.getElementById('room-urls');
     roomURLsDiv.innerHTML = html;
     roomURLsDiv.style.display = 'block';
-    callTeacherStream();
+    //callTeacherStream();
+    $('#div-chat-panel').fadeIn(300);
+
 }
 //Trata e escreve mensagem de chat
+/*
+ *    var chatContainer
+ *    var text
+ *    var message
+ */
 function appendDIV(event) {
-
     var chatContainer = document.getElementById('chat-panel');
     var text = event.data || event;
     var message = text;

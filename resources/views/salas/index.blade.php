@@ -48,73 +48,75 @@
             <input type='hidden' id='meuNome' value='{{Auth::user()->name}}' />
         </div>
     </div>
-    <div class=''>
-        <!--Video Panel-->
-        <div id='video-panel' class='row d-none'>
-            <!--Painel de Debug-->
-            <div class='hidden-panel'>
-                <input type='hidden' id='connected-class' readonly />
-                <input type='hidden' id='connected-content' readonly />
-                <input type='hidden' id='current-user' value='{{ Auth::user()->name}}' readonly />
-            </div>
-            <div class='col s12 m8'>
-                <!--Card de vídeo e chat-->
-                <div class='card'>
-                    <div class='card-content'>
-                        <div id='class-suptitle' class='card-title'>
-                            <i class="fa fa-circle light-green-text"></i>
-                            <span id='class-title'>
-                                <!--Título da aula - Matéria (Assunto)-->
-                            </span>
-                        </div>
-                        <div class='row'>
-                            <div class='col s12'>
-                                <div id='room-urls'>
-                                    <!--Definições da Sala-->
-                                </div>
-                                <div id='main-video' class='inroom mainView'>
-                                    <!--Vídeo principal-->
-                                    <div id='div-connect'>
-                                        <div align='center'>
-                                            <h6 class='blue-text'>Conectando...</h6>
-                                        </div>
-                                        <div class="progress">
-                                            <div class="indeterminate"></div>
-                                        </div>
+    <!--Video Panel-->
+    <div id='video-panel' class='d-none'>
+        <!--Painel de Debug-->
+        <div class='hidden-panel'>
+            <input type='hidden' id='connected-class' readonly />
+            <input type='hidden' id='connected-content' readonly />
+            <input type='hidden' id='current-user' value='{{ Auth::user()->name}}' readonly />
+        </div>
+        <div class='col s12'>
+            <!--Card de vídeo e chat-->
+            <div class='card'>
+                <div class='card-content'>
+                    <div id='class-suptitle'>
+                        <i class="fa fa-circle light-green-text text-accent-4"></i>
+                        <span id='class-title'>
+                            <!--Título da aula - Matéria (Assunto)-->
+                        </span>
+                    </div>
+                    <div class='row'>
+                        <div class='col s12'>
+                            <div id='room-urls'>
+                                <!--Definições da Sala-->
+                            </div>
+                            <div id='main-video' class='inroom mainView'>
+
+                                <!--Vídeo principal-->
+
+                                <div id='div-connect'>
+                                    <div align='center'>
+                                        <h6 class='blue-text'>Conectando...</h6>
+                                    </div>
+                                    <div class="progress">
+                                        <div class="indeterminate"></div>
                                     </div>
                                 </div>
                             </div>
-                            <!--Formação de chat-->
-                            <div class='col s12'>
-                                <div class='row'>
-                                    <div class='col s8 m10'>
-                                        <!--Input de mensagem-->
-                                        <input type='text' id='text-message'>
-                                    </div>
-                                    <div class='col s4 m2' align='right'>
-                                        <!--Botão de envio-->
-                                        <a id='send-message-btn' class='btn-floating waves-effect waves-teal blue'><i class="material-icons">send</i></a>
-                                    </div>
-                                </div>
-                                <div class='input-field col s12' style='max-height:200px; overflow-y:scroll;'>
-                                    <!--Output de mensagem-->
-                                    <textarea class='white materialize-textarea' readonly id='chat-panel'></textarea>
-                                    <label for="chat-panel"><i class='fa fa-send'></i> Mensagens</label>
-                                </div>
-                            </div>    
                         </div>
-                    </div>
-                    <div id='teacher-name' class='card-action' align='center'>
-                        <h5><span id='prof-room-name'></span></h5>
+                        <div class='divider'></div>
+                        <!--Formação de chat-->
+                        <div id='div-chat-panel' class='col s12 d-none'>
+                            <div class='row'>
+                                <div class='col s8 m10 input-field'>
+                                    <!--Input de mensagem-->
+                                    <input type='text' id='text-message'>
+                                    <label for='text-message'><i class='fa fa-comment'></i> Chat</label>
+                                </div>
+                                <div class='col s4 m2' align='right'>
+                                    <!--Botão de envio-->
+                                    <a id='send-message-btn' class='btn waves-effect waves-teal blue' style='width:100%;'><i class='fa fa-send'></i></a>
+                                </div>
+                            </div>
+                            <div class='input-field col s12' style='max-height:200px; overflow-y:scroll;'>
+                                <!--Output de mensagem-->
+                                <textarea class='white materialize-textarea' readonly id='chat-panel'></textarea>
+                                <label for="chat-panel"><i class='fa fa-comments-o'></i> Mensagens</label>
+                            </div>
+                        </div>    
                     </div>
                 </div>
-            </div>
-            <!--Painel com os vídeos dos espectadores-->
-            <div class='col s12 m4' style='display:block;'>
-                <div id='class-video' class='inroom otherView'>
-                    <!--Outros vídeos-->
+                <div id='teacher-name' class='card-action' align='center'>
+                    <h5><span id='prof-room-name'></span></h5>
                 </div>
             </div>
-        </div> 
-    </div>
+        </div>
+        <!--Painel com os vídeos dos espectadores-->
+        <div id='second-video' class='col s12 m4 incoming-videos'>
+            <div id='class-video' class='inroom otherView'>
+                <!--Outros vídeos-->
+            </div>
+        </div>
+    </div> 
 @endsection
