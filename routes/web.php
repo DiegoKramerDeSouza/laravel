@@ -49,6 +49,14 @@ Route::group(['middleware' => 'auth'], function(){
     Route::put('/admin/cadastro/usuarios/atualizar/{id}', ['as' => 'admin.cadastro.usuarios.atualiza', 'uses' => 'Admin\CadastroUsuarioController@update']);
     Route::get('/admin/cadastro/usuarios/deletar/{id}', ['as' => 'admin.cadastro.usuarios.deleta', 'uses' => 'Admin\CadastroUsuarioController@delete']);
 
+    //Rotas para o formulário de cadastro de turmas
+    Route::get('/admin/cadastro/turmas/p{page?}', ['as' => 'admin.cadastro.turmas', 'uses' => 'Admin\CadastroTurmaController@index']);
+    Route::get('/admin/cadastro/turmas/adicionar', ['as' => 'admin.cadastro.turmas.adiciona', 'uses' => 'Admin\CadastroTurmaController@add']);
+    Route::post('/admin/cadastro/turmas/salvar', ['as' => 'admin.cadastro.turmas.salva', 'uses' => 'Admin\CadastroTurmaController@save']);
+    Route::get('/admin/cadastro/turmas/editar/{id}', ['as' => 'admin.cadastro.turmas.edita', 'uses' => 'Admin\CadastroTurmaController@edit']);
+    Route::put('/admin/cadastro/turmas/atualizar/{id}', ['as' => 'admin.cadastro.turmas.atualiza', 'uses' => 'Admin\CadastroTurmaController@update']);
+    Route::get('/admin/cadastro/turmas/deletar/{id}', ['as' => 'admin.cadastro.turmas.deleta', 'uses' => 'Admin\CadastroTurmaController@delete']);
+
     //Rotas para o formulário de cadastro de escolas
     Route::get('/admin/cadastro/escolas/p{page?}', ['as' => 'admin.cadastro.escolas', 'uses' => 'Admin\CadastroEscolaController@index']);
     Route::get('/admin/cadastro/escolas/adicionar', ['as' => 'admin.cadastro.escolas.adiciona', 'uses' => 'Admin\CadastroEscolaController@add']);

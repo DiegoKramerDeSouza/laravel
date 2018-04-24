@@ -8,16 +8,23 @@
     <div class='card z-depth-5'>
         <div class='card-content'>
             <div class='row center'>
-                <div class='col s12 m6 hoverarchor'>
+                <div class='col s12 m4 hoverarchor'>
                     <a class='blue-text' href='{{ route('admin.cadastro.escolas', ['page' => '1']) }}' style='padding:40px;'>
-                        <h1><i class='fa fa-institution fa-2x'></i></h1>
+                        <h2><i class='fa fa-institution fa-2x'></i></h2>
                         <h3>Instituições</h3>
                         <p>Instituições cadastradas: <b>{{ count($escolas) }}</b></p>
                     </a>
                 </div>
-                <div class='col s12 m6 hoverarchor'>
+                <div class='col s12 m4 hoverarchor'>
+                    <a class=' blue-text' href='{{ route('admin.cadastro.turmas', ['page' => '1']) }}' style='padding:40px;'>
+                        <h2><i class='fa fa-graduation-cap fa-2x'></i></h2>
+                        <h3>Turmas</h3>
+                        <p>Turmas cadastradas: <b>{{ count($turmas) }}</b></p>
+                    </a>
+                </div>
+                <div class='col s12 m4 hoverarchor'>
                     <a class=' blue-text' href='{{ route('admin.cadastro.usuarios', ['page' => '1']) }}' style='padding:40px;'>
-                        <h1><i class='fa fa-users fa-2x'></i></h1>
+                        <h2><i class='fa fa-users fa-2x'></i></h2>
                         <h3>Usuários</h3>
                         <p>Usuários cadastrados: <b>{{ count($users) }}</b></p>
                     </a>

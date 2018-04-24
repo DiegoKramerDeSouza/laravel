@@ -27,7 +27,7 @@ class CadastroUsuarioController extends Controller
         }
         for($i = 1; $i<=$last; $i++){
             if($i == $page){
-                $paginate .= '<li class="active blue white-text"><a href="#">' . $i . '</a></li>';
+                $paginate .= '<li class="active blue white-text"><a>' . $i . '</a></li>';
             } else {
                 $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/usuarios/p' . $i . '?page=' . $i . '">' . $i . '</a></li>';
             }

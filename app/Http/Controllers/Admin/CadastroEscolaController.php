@@ -9,18 +9,16 @@ use App\User;
 use App\UserDado;
 use App\Escola;
 use App\EnderecoEscola;
+use App\Turma;
 use App\RecursoApi;
 
 class CadastroEscolaController extends Controller
 {
     //->View escolas cadastradas
     public function index($page){
-        //Habilita uma view a receber e enviar dados via WEBRTC
-        //Deve ser encaminhada em compact()
-        //$streamPage = true;
-
-        //Construção da paginação personalizada
+        //Paginação dos valores coletados na entidade Escolas
         $escolas = Escola::paginate(10);
+        //Construção da paginação personalizada
         $prev = $page-1;
         $next = $page+1;
         $last = $escolas->lastPage();
@@ -32,7 +30,7 @@ class CadastroEscolaController extends Controller
         }
         for($i = 1; $i<=$last; $i++){
             if($i == $page){
-                $paginate .= '<li class="active blue white-text"><a href="#">' . $i . '</a></li>';
+                $paginate .= '<li class="active blue white-text"><a>' . $i . '</a></li>';
             } else {
                 $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/escolas/p' . $i . '?page=' . $i . '">' . $i . '</a></li>';
             }
@@ -119,10 +117,15 @@ class CadastroEscolaController extends Controller
     //Deletar escolas registradas e todos os usuários vinculados a esta
     public function delete($id){
         $todelete = UserDado::where('school_id', '=', $id)->get();
+        $todeleteTurma = Turma::where('school_id', '=', $id)->get();
         //Para cada usuário vinculado à instituição
         foreach($todelete as $deleteUser){
             $deleted = $deleteUser->delete();
             User::find($deleteUser->user_id)->delete();
+        }
+        //Para cada turma vinculada à instituição
+        foreach($todeleteTurma as $deleteTurma){
+            $deleteTurma->delete();
         }
         Escola::find($id)->delete();
         EnderecoEscola::where('school_id', $id)->first()->delete();
