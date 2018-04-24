@@ -16,7 +16,7 @@ class LoginController extends Controller
         if(Auth::attempt(['email' => $data['email'], 'password' => $data['password']])){
             return redirect()->route('home');
         };
-        return redirect()->route('access.login');
+        return redirect()->route('login');
     }
     public function logout(){
         Auth::logout();

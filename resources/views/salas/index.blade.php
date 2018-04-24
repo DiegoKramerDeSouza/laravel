@@ -21,24 +21,39 @@
                     <!--Salas disponíveis-->
                 </div>
             </div>
+            <!--Acesso para criação de sala-->
             <div id='teacher-access' class='col s12 m6'>
                 <div class='card-title blue-text'>
                     <h5><i class='fa fa-desktop'></i> Criar sala de aula</h5>
                 </div>
                 <div class='row'>
+                    <!--Formulário de criação de salas-->
                     <form id='criar-sala' action='#' method='post'>
                         {{ csrf_field() }}
+                        <!--Assunto da aula (Obrigatório)-->
                         <div class='input-field col s12'>
                             <input type='text' class='validate' id='materia' name='materia' required>
-                            <label for='materia'><i class='fa fa-book'></i> Nome da Matéria:</label>
+                            <label for='materia'><i class='fa fa-book'></i> Assunto da Aula:</label>
                         </div>
+
+                        <input type='hidden' class='validate' id='escola' name='escola' required value='{{ isset($school->school_id) ? $school->school_id . "|" . $escolas->name : ''}}'>
+                        
                         <div class='input-field col s12'>
-                            <input type='text' class='validate' id='assunto' name='assunto' required>
-                            <label for='assunto'><i class='fa fa-tag'></i> Assunto da Aula:</label>
+                            <!--Select de turmas (Obrigatório)-->
+                            <select id='turma' required name='turma'>
+                                <option value="" disabled selected>Selecione</option>
+                                @if(isset($turmas))
+                                    @foreach($turmas as $turma)
+                                        <option value="{{ $turma->id . '|' . $turma->name }}">{{ $turma->name }}</option>
+                                    @endforeach
+                                @endif
+                            </select>
+                            <label for='turma'><i class='fa fa-graduation-cap'></i> Turma</label>
                         </div>
                         <div class='divider'></div>
                         <div align='right'>
-                            <button type='submit' id='btn-join-as-teacher' class='btn blue white-text waves-effect waves-light'><i class='fa fa-desktop'></i> Criar Sala</button>
+                            <!--Submit-->
+                            <button type='submit' id='btn-join-as-teacher' disabled class='btn blue white-text waves-effect waves-light'><i class='fa fa-desktop'></i> Criar Sala</button>
                         </div>
                         <input type='hidden' id='room-id' />
                     </form>
