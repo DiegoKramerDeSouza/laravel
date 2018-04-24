@@ -72,9 +72,7 @@
                                 <!--Definições da Sala-->
                             </div>
                             <div id='main-video' class='inroom mainView'>
-
-                                <!--Vídeo principal-->
-
+                                <!--VÍDEO PRINCIPAL-->
                                 <div id='div-connect'>
                                     <div align='center'>
                                         <h6 class='blue-text'>Conectando...</h6>
@@ -85,26 +83,6 @@
                                 </div>
                             </div>
                         </div>
-                        <div class='divider'></div>
-                        <!--Formação de chat-->
-                        <div id='div-chat-panel' class='col s12 d-none'>
-                            <div class='row'>
-                                <div class='col s8 m10 input-field'>
-                                    <!--Input de mensagem-->
-                                    <input type='text' id='text-message'>
-                                    <label for='text-message'><i class='fa fa-comment'></i> Chat</label>
-                                </div>
-                                <div class='col s4 m2' align='right'>
-                                    <!--Botão de envio-->
-                                    <a id='send-message-btn' class='btn waves-effect waves-teal blue' style='width:100%;'><i class='fa fa-send'></i></a>
-                                </div>
-                            </div>
-                            <div class='input-field col s12' style='max-height:200px; overflow-y:scroll;'>
-                                <!--Output de mensagem-->
-                                <textarea class='white materialize-textarea' readonly id='chat-panel'></textarea>
-                                <label for="chat-panel"><i class='fa fa-comments-o'></i> Mensagens</label>
-                            </div>
-                        </div>    
                     </div>
                 </div>
                 <div id='teacher-name' class='card-action' align='center'>

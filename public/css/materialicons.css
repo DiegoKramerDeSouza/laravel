@@ -36,6 +36,30 @@
     z-index: -1;
 }
 
+#nav-footer {
+    position: fixed;
+    bottom: 0px;
+}
+
+#div-chat-panel {
+    position: fixed;
+    bottom: 49px;
+    width: 100%;
+}
+
+#chat-textarea {
+    min-height: 100px;
+    max-height: 100px;
+    overflow-y: auto;
+}
+
+#toast-container {
+    top: auto !important;
+    left: auto !important;
+    bottom: 10%;
+    right: 10%;
+}
+
 .hoverarchor {
     -webkit-transition-duration: 0.2s;
     transition-duration: 0.2s;
@@ -64,4 +88,14 @@
     margin: 5px;
     border: 1px solid black;
     border-radius: 4px;
+}
+
+body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+main {
+    flex: 1 0 auto;
 }

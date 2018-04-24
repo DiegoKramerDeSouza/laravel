@@ -15,6 +15,56 @@
                     M.textareaAutoResize($('#chat-panel'));
                 });
             </script>
+
+            @if(! Auth::guest())
+                <!--Chat apenas para salas de aulas-->
+                <!--Formação de chat-->
+                <div id='div-chat-panel' class='grey darken-4 card d-none'>
+                    <div class='row white' style='margin:10px;'>
+                        <div class='file-field input-field' style='padding:5px;'>
+                            <a id='send-message-btn' class='btn-floating waves-effect waves-light blue right'>
+                                <i class='material-icons'>send</i>
+                            </a>
+                            <div class='file-path-wrapper'>
+                                <!--Input de mensagem-->
+                                <input type='text' class='white' id='text-message' placeholder='Chat'>
+                            </div>
+                        </div>
+                        <div id='chat-textarea' class='input-field'>
+                            <!--Output de mensagem-->
+                            <textarea class='grey lighten-3 materialize-textarea' readonly id='chat-panel'></textarea>
+                        </div>
+                    </div>
+                </div>
+                <!--Barra de footer menu-->
+                <nav id='nav-footer' class="nav-wrapper grey darken-4">
+                    <div class="">
+                        <a href='#!' class='sidenav-trigger blue-text blue-darken-3 right' data-target='side-bar' title='Menu'><i class='fa fa-bars fa-2x'></i></a>
+                        <ul id='nav-mobile' class='right hide-on-med-and-down blue-text'>
+                            <li>
+                                <a href='#'>
+                                    <span class='blue-text blue-darken-1'><i class='material-icons left'>volume_up</i> <b>Volume</b></span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <span class='blue-text blue-darken-1'><i class='material-icons left'>mic_off</i> <b>Mudo</b></span>
+                                </a>
+                            </li>
+                            <li>
+                                <a id='toggle-chat' class='blue-text text-darken-1'>
+                                    <i class='material-icons left'>forum</i> <b>Chat</b>
+                                </a>
+                            </li>
+                            <li>
+                                <a href='#'>
+                                    <span class='blue-text blue-darken-1'><i class='material-icons left'>pan_tool</i> <b>Pedir a vez</b></span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>		
+                </nav>
+            @endif
         @endif
         <!--Inicialização in-page de elementos padrões-->
         <script>

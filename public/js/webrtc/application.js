@@ -31,6 +31,7 @@ $(document).ready(function() {
         OfferToReceiveVideo: true
     }
 
+    //Controles de envio e recebimento de mensagens
     document.getElementById('text-message').onkeyup = function(e) {
         //Se a tecla apertada não for ENTER -> não faça nada
         if (e.keyCode != 13) return;
@@ -121,6 +122,9 @@ $(document).ready(function() {
                     console.log('Stream: ' + event.mediaElement.id);
                     connection.extra.modifiedValue = event.mediaElement.id;
                     connection.updateExtraData();
+                    document.getElementById('toggle-chat').onclick = function() {
+                        showChat();
+                    }
                 } else {
                     //Se a criação da sala for de uma conexão remota: Não faça nada.
                     /*
@@ -267,6 +271,9 @@ $(document).ready(function() {
                                         event.mediaElement.width = width;
                                         event.mediaElement.className = 'constructed-videos z-depth-3';
                                         event.mediaElement.title = labelClasse + ' (' + labelMateria + ')';
+                                        document.getElementById('toggle-chat').onclick = function() {
+                                            showChat();
+                                        }
                                     } else {
                                         //Se a conexão for de outra sala: Não faça nada.
                                         /*
@@ -295,7 +302,7 @@ $(document).ready(function() {
 
                         var divClose = document.getElementById(moderator.userid);
                         divClose.appendChild(button);
-                        $('#div-chat-panel').fadeIn(300);
+                        //$('#div-chat-panel').fadeIn(300);
                     }
                     if (countRooms == 0) {
                         var divOpen = document.createElement('div');
@@ -319,8 +326,7 @@ $(document).ready(function() {
         });
     })();
 
-
-    //
+    //Tratamento de URI para casos de conexão direta
     (function() {
         var params = {},
             r = /([^&=]+)=?([^&]*)/g;
@@ -335,7 +341,7 @@ $(document).ready(function() {
         window.params = params;
     })();
 
-    //
+    //Ciclo de verificação de presença de uma sala aberta nesse servidor
     var roomid = '';
     if (localStorage.getItem(connection.socketMessageEvent)) {
         roomid = localStorage.getItem(connection.socketMessageEvent);
@@ -395,9 +401,6 @@ function callTeacherStream() {
     //$('#opend-rooms').slideUp(300);
     $('#initial-access').slideUp(300);
     $('#video-panel').slideDown(300);
-
-    //var videoPanel = document.getElementById('video-panel');
-    //videoPanel.classList.remove("d-none");
 }
 //Define label da sala acessada
 /*
@@ -422,7 +425,7 @@ function showRoomURL(roomid, className, classTheme) {
     roomURLsDiv.innerHTML = html;
     roomURLsDiv.style.display = 'block';
     //callTeacherStream();
-    $('#div-chat-panel').fadeIn(300);
+    //$('#div-chat-panel').fadeIn(300);
 
 }
 //Trata e escreve mensagem de chat
@@ -435,7 +438,10 @@ function appendDIV(event) {
     var chatContainer = document.getElementById('chat-panel');
     var text = event.data || event;
     var message = text;
-
+    if (!$('#div-chat-panel').is(":visible")) {
+        toastContent = '<span class="white-text"><i class="fa fa-comment-o blue-text"></i> ' + message + '</span>';
+        M.toast({ html: toastContent, classes: 'grey darken-4' });
+    }
     //Versão anterior
     //chatContainer.value += message + '\n';
 
@@ -444,4 +450,13 @@ function appendDIV(event) {
     M.textareaAutoResize($('#chat-panel'));
     M.updateTextFields();
 
+
+}
+
+function showChat() {
+    if ($('#div-chat-panel').is(":visible")) {
+        $('#div-chat-panel').slideUp(500);
+    } else {
+        $('#div-chat-panel').slideDown(500);
+    }
 }
