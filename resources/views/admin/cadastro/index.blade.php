@@ -29,6 +29,20 @@
                         <p>Usuários cadastrados: <b>{{ count($users) }}</b></p>
                     </a>
                 </div>
+                <div class='col s12 m6 hoverarchor'>
+                    <a class=' blue-text' href='{{ route('admin.cadastro.modulos', ['page' => '1']) }}' style='padding:40px;'>
+                        <h2><i class='fa fa-database fa-2x'></i></h2>
+                        <h3>Módulos</h3>
+                        <p>Módulos cadastrados: <b>{{ count($modulos) }}</b></p>
+                    </a>
+                </div>
+                <div class='col s12 m6 hoverarchor'>
+                        <a class=' blue-text' href='{{ route('admin.cadastro.cursos', ['page' => '1']) }}' style='padding:40px;'>
+                            <h2><i class='fa fa-cubes fa-2x'></i></h2>
+                            <h3>Cursos</h3>
+                            <p>Cursos cadastrados: <b>{{ count($cursos) }}</b></p>
+                        </a>
+                    </div>
             </div>
             <br>
             <br>

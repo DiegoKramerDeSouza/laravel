@@ -65,8 +65,8 @@ $(document).ready(function() {
     //Envio de mensagem
     connection.onmessage = appendDIV;
 
-    document.getElementById('btn-join-as-teacher').onclick = function() {
-        //Ação de criar uma sala de aula ao clicar em 'btn-join-as-teacher'
+    document.getElementById('btn-join-as-productor').onclick = function() {
+        //Ação de criar uma sala de aula ao clicar em 'btn-join-as-productor'
         /*
          *    var isPublicModerator Boolean
          *    var elem  html elem.
@@ -83,10 +83,13 @@ $(document).ready(function() {
         var isPublicModerator = true;
         var elem = document.getElementById(this.id);
         var materia = document.querySelector('#materia').value;
-        var assunto = document.querySelector('#materia').value;
-        var escola = document.querySelector('#escola').value;
+        var assunto = document.querySelector('#assunto').value;
+
         var turma = document.querySelector('#turma').value;
+        console.log(turma.value);
+        var escola = document.querySelector('#escola').value;
         var roomLabel = escola.split('|')[1] + " (" + turma.split('|')[1] + ")" + ": " + materia;
+
         var roomId = Math.floor((Math.random() * 999999) + 0);
         var roomName = document.getElementById('current-user').value;
         var roomEscola = document.getElementById('codEscola').value;
@@ -412,13 +415,22 @@ $(document).ready(function() {
      *  var btnRoom html elem.
      */
     //Verifica campo select id=turma
+
+    /*
     document.getElementById('turma').onchange = function(evt) {
+        var instance = M.FormSelect.init(this);
+        var selected = instance.getSelectedValues();
+        //console.log(selected);
+
+        
         var matVal = document.getElementById('materia').value;
-        var btnRoom = document.getElementById('btn-join-as-teacher');
+        var btnRoom = document.getElementById('btn-join-as-productor');
         if (this.value && matVal) {
             btnRoom.disabled = false;
         }
+        
     }
+    */
 
 });
 

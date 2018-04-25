@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use App\User;
 use App\Escola;
 use App\Turma;
+use App\Modulo;
+use App\Curso;
 
 class CadastroController extends Controller
 {
@@ -14,7 +16,9 @@ class CadastroController extends Controller
         $users = User::all();
         $turmas = Turma::all();
         $escolas = Escola::all();
-        return view('admin.cadastro.index', compact('users', 'escolas', 'turmas'));
+        $modulos = Modulo::all();
+        $cursos = Curso::all();
+        return view('admin.cadastro.index', compact('users', 'escolas', 'turmas', 'modulos', 'cursos'));
     }
     
 }

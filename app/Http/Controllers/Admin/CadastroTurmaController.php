@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 
 use App\Escola;
 use App\Turma;
+use App\Curso;
 
 class CadastroTurmaController extends Controller
 {
@@ -43,7 +44,8 @@ class CadastroTurmaController extends Controller
     public function add(){
         //Coleta todas as escolas cadastradas
         $escolas = Escola::all();
-        return view('admin.cadastro.turmas.adicionar', compact('escolas'));
+        $cursos = Curso::all();
+        return view('admin.cadastro.turmas.adicionar', compact('escolas', 'cursos'));
     }
     public function save(Request $req){
         //Define os campos enviados que devem ser gravados no banco
@@ -54,8 +56,11 @@ class CadastroTurmaController extends Controller
         $turmas = [
             '_token'=>$req->_token,
             'name'=>$req->name,
-            'school_id'=>$schoolId,
             'school_name'=>$schoolName,
+            'login'=>$req->login,
+            'password'=>bcrypt($req->password),
+            'school_id'=>$schoolId,
+            'curso_id'=>$req->curso_id,
             'description'=>$req->description
         ];
         //Insere dados na base Turma
@@ -77,8 +82,11 @@ class CadastroTurmaController extends Controller
         $turma = [
             '_token'=>$req->_token,
             'name'=>$req->name,
-            'school_id'=>$schoolId,
             'school_name'=>$schoolName,
+            'login'=>$req->login,
+            'password'=>bcrypt($req->password),
+            'school_id'=>$schoolId,
+            'curso_id'=>$req->curso_id,
             'description'=>$req->description
         ];
         //Atualiza base de dados Turma

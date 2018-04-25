@@ -49,6 +49,22 @@ Route::group(['middleware' => 'auth'], function(){
     Route::put('/admin/cadastro/usuarios/atualizar/{id}', ['as' => 'admin.cadastro.usuarios.atualiza', 'uses' => 'Admin\CadastroUsuarioController@update']);
     Route::get('/admin/cadastro/usuarios/deletar/{id}', ['as' => 'admin.cadastro.usuarios.deleta', 'uses' => 'Admin\CadastroUsuarioController@delete']);
 
+    //Rotas para o formulário de cadastro de modulos
+    Route::get('/admin/cadastro/modulos/p{page?}', ['as' => 'admin.cadastro.modulos', 'uses' => 'Admin\CadastroModuloController@index']);
+    Route::get('/admin/cadastro/modulos/adicionar', ['as' => 'admin.cadastro.modulos.adiciona', 'uses' => 'Admin\CadastroModuloController@add']);
+    Route::post('/admin/cadastro/modulos/salvar', ['as' => 'admin.cadastro.modulos.salva', 'uses' => 'Admin\CadastroModuloController@save']);
+    Route::get('/admin/cadastro/modulos/editar/{id}', ['as' => 'admin.cadastro.modulos.edita', 'uses' => 'Admin\CadastroModuloController@edit']);
+    Route::put('/admin/cadastro/modulos/atualizar/{id}', ['as' => 'admin.cadastro.modulos.atualiza', 'uses' => 'Admin\CadastroModuloController@update']);
+    Route::get('/admin/cadastro/modulos/deletar/{id}', ['as' => 'admin.cadastro.modulos.deleta', 'uses' => 'Admin\CadastroModuloController@delete']);
+
+    //Rotas para o formulário de cadastro de cursos
+    Route::get('/admin/cadastro/cursos/p{page?}', ['as' => 'admin.cadastro.cursos', 'uses' => 'Admin\CadastroCursoController@index']);
+    Route::get('/admin/cadastro/cursos/adicionar', ['as' => 'admin.cadastro.cursos.adiciona', 'uses' => 'Admin\CadastroCursoController@add']);
+    Route::post('/admin/cadastro/cursos/salvar', ['as' => 'admin.cadastro.cursos.salva', 'uses' => 'Admin\CadastroCursoController@save']);
+    Route::get('/admin/cadastro/cursos/editar/{id}', ['as' => 'admin.cadastro.cursos.edita', 'uses' => 'Admin\CadastroCursoController@edit']);
+    Route::put('/admin/cadastro/cursos/atualizar/{id}', ['as' => 'admin.cadastro.cursos.atualiza', 'uses' => 'Admin\CadastroCursoController@update']);
+    Route::get('/admin/cadastro/cursos/deletar/{id}', ['as' => 'admin.cadastro.cursos.deleta', 'uses' => 'Admin\CadastroCursoController@delete']);
+
     //Rotas para o formulário de cadastro de turmas
     Route::get('/admin/cadastro/turmas/p{page?}', ['as' => 'admin.cadastro.turmas', 'uses' => 'Admin\CadastroTurmaController@index']);
     Route::get('/admin/cadastro/turmas/adicionar', ['as' => 'admin.cadastro.turmas.adiciona', 'uses' => 'Admin\CadastroTurmaController@add']);

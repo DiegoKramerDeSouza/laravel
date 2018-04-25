@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTurmasTable extends Migration
+class CreateModulosTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,9 @@ class CreateTurmasTable extends Migration
      */
     public function up()
     {
-        Schema::create('turmas', function (Blueprint $table) {
+        Schema::create('modulos', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->string('school_name');
-            $table->string('login')->unique();
-            $table->string('password');
-            $table->integer('school_id');
-            $table->integer('curso_id');
-            $table->string('description')->nullable();
             $table->timestamps();
         });
     }
@@ -33,6 +27,6 @@ class CreateTurmasTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('turmas');
+        Schema::dropIfExists('modulos');
     }
 }
