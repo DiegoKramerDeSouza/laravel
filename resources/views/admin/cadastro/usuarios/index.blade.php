@@ -20,18 +20,18 @@
                     <table class='striped'>
                         <thead>
                             <tr>
-                                <th>Nome</th>
-                                <th>E-mail</th>
-                                <th>Criação</th>
+                                <th><i class='fa fa-user-o fa-lg'></i> Nome</th>
+                                <th><i class='fa fa-envelope-o fa-lg'></i> E-mail</th>
+                                <th><i class='fa fa-clock-o fa-lg'></i> Criação</th>
                             </tr>
                         </thead>
 
                         <tbody>
                             @foreach($users as $user)
                                 <tr>
-                                    <td><i class='fa fa-user-o fa-lg'></i> {{ $user->name }}</td>
-                                    <td><i class='fa fa-envelope fa-lg'></i> {{ $user->email }}</td>
-                                    <td><i class='fa fa-clock-o fa-lg'></i> {{ $user->created_at }}</td>
+                                    <td><b> {{ $user->name }}</b></td>
+                                    <td> {{ $user->email }}</td>
+                                    <td> {{ $user->created_at }}</td>
                                     <td class='right'>
                                         <a class='btn-flat waves-effect waves-red red-text text-darken-3 modal-trigger' href='#confirm-message-{{$user->id}}'><i class='fa fa-trash-o'></i> deletar</a>
                                         <a class='btn-flat waves-effect waves-orange amber-text text-darken-3' href='{{ route('admin.cadastro.usuarios.edita', $user->id) }}'><i class='fa fa-edit'></i> editar</a>

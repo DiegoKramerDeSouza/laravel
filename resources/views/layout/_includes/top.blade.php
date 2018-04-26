@@ -40,7 +40,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="{{ route('salas') }}"><span class='white-text'><span class='fa fa-desktop fa-lg'></span> <b>Salas</b></span></a>
+                                <a href="{{ route('salas') }}"><span class='white-text'><span class='fa fa-television fa-lg'></span> <b>Salas</b></span></a>
                             </li>
                             <li>
                                 <a class='' id='gerDrop' href='{{ route('admin.cadastro') }}'>
@@ -84,7 +84,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('salas') }}"><span class='white-text'><span class='fa fa-desktop fa-lg'></span> <b>Salas</b></span></a>
+                            <a href="{{ route('salas') }}"><span class='white-text'><span class='fa fa-television fa-lg'></span> <b>Salas</b></span></a>
                         </li>
                         <li>
                             <a class='' id='gerDrop' href='{{ route('admin.cadastro') }}'>

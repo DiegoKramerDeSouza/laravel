@@ -20,18 +20,18 @@
                     <table class='striped'>
                         <thead>
                             <tr>
-                                <th>Nome</th>
-                                <th>Módulo</ht>
-                                <th>Criação</th>
+                                <th><i class='fa fa-cube fa-lg'></i> Nome</th>
+                                <th><i class='fa fa-database fa-lg'></i> Módulo</ht>
+                                <th><i class='fa fa-clock-o fa-lg'></i> Criação</th>
                             </tr>
                         </thead>
 
                         <tbody>
                             @foreach($cursos as $curso)
                                 <tr>
-                                    <td><i class='fa fa-cube fa-lg'></i> {{ $curso->name }}</td>
-                                    <td><i class='fa fa-database fa-lg'></i> {{ $modulos[$curso->modulo_id] }}</td>
-                                    <td><i class='fa fa-clock-o fa-lg'></i> {{ $curso->created_at }}</td>
+                                    <td><b> {{ $curso->name }}</b></td>
+                                    <td> {{ $modulos[$curso->modulo_id] }}</td>
+                                    <td> {{ $curso->created_at }}</td>
                                     <td class='right'>
                                         <a class='btn-flat waves-effect waves-red red-text text-darken-3 modal-trigger' href='#confirm-message-{{$curso->id}}'><i class='fa fa-trash-o'></i> deletar</a>
                                         <a class='btn-flat waves-effect waves-orange amber-text text-darken-3' href='{{ route('admin.cadastro.cursos.edita', $curso->id) }}'><i class='fa fa-edit'></i> editar</a>

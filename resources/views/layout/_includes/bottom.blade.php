@@ -66,6 +66,25 @@
                 </nav>
             @endif
         @endif
+        @if(isset($grant))
+            <script>
+                document.querySelector('button').onclick = function(evt) {
+                    var values = $('#grantList').val();
+                    var strValues = '';
+                    for($i = 0; $i<values.length; $i++){
+                        strValues += values[$i]
+                        if($i != (values.length - 1)){
+                            strValues += ';';
+                        }
+                    }
+                    if(strValues == ''){
+                        strValues = '0';
+                    }
+                    document.getElementById('grant').value = strValues;
+                    //console.log(strValues);                    
+                }
+            </script>
+        @endif
         <!--Inicialização in-page de elementos padrões-->
         <script>
             $(document).ready(function(){

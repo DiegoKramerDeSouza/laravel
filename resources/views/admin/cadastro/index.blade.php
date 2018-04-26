@@ -37,10 +37,10 @@
                     </a>
                 </div>
                 <div class='col s12 m4 hoverarchor'>
-                    <a class=' blue-text' href='{{ route('admin.cadastro.cursos', ['page' => '1']) }}' style='padding:40px;'>
-                        <h2><i class='fa fa-id-badge fa-2x'></i></h2>
+                    <a class=' blue-text' href='{{ route('admin.cadastro.perfis', ['page' => '1']) }}' style='padding:40px;'>
+                        <h2><i class='fa fa-vcard-o fa-2x'></i></h2>
                         <h5>Perfis</h5>
-                        <p>Cadastrados: <b>{{ count($cursos) }}</b></p>
+                        <p>Cadastrados: <b>{{ count($perfis) }}</b></p>
                     </a>
                 </div>
                 <div class='col s12 m4 hoverarchor'>

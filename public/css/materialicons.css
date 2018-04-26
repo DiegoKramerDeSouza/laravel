@@ -74,6 +74,10 @@ nav {
     /*box-shadow: 5px 10px 18px rgba(80, 80, 80, 0.5);*/
 }
 
+.hoverarchor:hover a {
+    color: #000 !important;
+}
+
 .d-none {
     display: none;
 }

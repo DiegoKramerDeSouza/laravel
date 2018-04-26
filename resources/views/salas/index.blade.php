@@ -9,7 +9,7 @@
         <div class='white-text'>
             <div id='opend-rooms' class='col s12 m6'>
                 <h5 class='row'>
-                    <span><b><i class='fa fa-desktop'></i> Salas disponíveis</b></span>
+                    <span><b><i class='fa fa-television'></i> Salas disponíveis</b></span>
                 </h5>
                 <div class='divider'></div>
                 <div id='public-conference' align='center'>
@@ -23,8 +23,8 @@
             <!--Acesso para criação de sala-->
             <div id='teacher-access' class='card z-depth-5 col s12 m6'>
                 <div class='card-content'>
-                    <div class='card-title blue-text'>
-                        <h5>Iniciar nova sala</h5>
+                    <div class='card-title black-text'>
+                        <h5><i class='fa fa-plus-circle blue-text'></i> Iniciar nova sala</h5>
                     </div>
                     <div class='row'>
                         <!--Formulário de criação de salas-->

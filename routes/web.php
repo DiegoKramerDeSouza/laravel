@@ -49,6 +49,14 @@ Route::group(['middleware' => 'auth'], function(){
     Route::put('/admin/cadastro/usuarios/atualizar/{id}', ['as' => 'admin.cadastro.usuarios.atualiza', 'uses' => 'Admin\CadastroUsuarioController@update']);
     Route::get('/admin/cadastro/usuarios/deletar/{id}', ['as' => 'admin.cadastro.usuarios.deleta', 'uses' => 'Admin\CadastroUsuarioController@delete']);
 
+    //Rotas para o formulário de cadastro de perfis
+    Route::get('/admin/cadastro/perfis/p{page?}', ['as' => 'admin.cadastro.perfis', 'uses' => 'Admin\CadastroPerfilController@index']);
+    Route::get('/admin/cadastro/perfis/adicionar', ['as' => 'admin.cadastro.perfis.adiciona', 'uses' => 'Admin\CadastroPerfilController@add']);
+    Route::post('/admin/cadastro/perfis/salvar', ['as' => 'admin.cadastro.perfis.salva', 'uses' => 'Admin\CadastroPerfilController@save']);
+    Route::get('/admin/cadastro/perfis/editar/{id}', ['as' => 'admin.cadastro.perfis.edita', 'uses' => 'Admin\CadastroPerfilController@edit']);
+    Route::put('/admin/cadastro/perfis/atualizar/{id}', ['as' => 'admin.cadastro.perfis.atualiza', 'uses' => 'Admin\CadastroPerfilController@update']);
+    Route::get('/admin/cadastro/perfis/deletar/{id}', ['as' => 'admin.cadastro.perfis.deleta', 'uses' => 'Admin\CadastroPerfilController@delete']);
+
     //Rotas para o formulário de cadastro de modulos
     Route::get('/admin/cadastro/modulos/p{page?}', ['as' => 'admin.cadastro.modulos', 'uses' => 'Admin\CadastroModuloController@index']);
     Route::get('/admin/cadastro/modulos/adicionar', ['as' => 'admin.cadastro.modulos.adiciona', 'uses' => 'Admin\CadastroModuloController@add']);
@@ -80,6 +88,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/admin/cadastro/escolas/editar/{id}', ['as' => 'admin.cadastro.escolas.edita', 'uses' => 'Admin\CadastroEscolaController@edit']);
     Route::put('/admin/cadastro/escolas/atualizar/{id}', ['as' => 'admin.cadastro.escolas.atualiza', 'uses' => 'Admin\CadastroEscolaController@update']);
     Route::get('/admin/cadastro/escolas/deletar/{id}', ['as' => 'admin.cadastro.escolas.deleta', 'uses' => 'Admin\CadastroEscolaController@delete']);
+
 });
 
 

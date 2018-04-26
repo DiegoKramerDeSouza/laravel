@@ -20,16 +20,16 @@
                     <table class='striped'>
                         <thead>
                             <tr>
-                                <th>Instituição</th>
-                                <th>Cadastrada em</th>
+                                <th><i class='fa fa-institution fa-lg'></i> Instituição</th>
+                                <th><i class='fa fa-watch fa-lg'></i> Cadastrada em</th>
                             </tr>
                         </thead>
 
                         <tbody>
                             @foreach($escolas as $escola)
                                 <tr>
-                                    <td><i class='fa fa-institution fa-lg'></i> {{ $escola->name }}</td>
-                                    <td><i class='fa fa-watch fa-lg'></i> {{ $escola->created_at }}</td>
+                                    <td><b> {{ $escola->name }}</b></td>
+                                    <td> {{ $escola->created_at }}</td>
                                     <td class='right'>
                                         <a class='btn-flat waves-effect waves-red red-text text-darken-3 modal-trigger' href='#confirm-message-{{$escola->id}}'><i class='fa fa-trash-o'></i> deletar</a>
                                         <a class='btn-flat waves-effect waves-orange amber-text text-darken-3' href='{{ route('admin.cadastro.escolas.edita', $escola->id) }}'><i class='fa fa-edit'></i> editar</a>

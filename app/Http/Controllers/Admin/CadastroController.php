@@ -9,6 +9,7 @@ use App\Escola;
 use App\Turma;
 use App\Modulo;
 use App\Curso;
+use App\Perfil;
 
 class CadastroController extends Controller
 {
@@ -18,7 +19,8 @@ class CadastroController extends Controller
         $escolas = Escola::all();
         $modulos = Modulo::all();
         $cursos = Curso::all();
-        return view('admin.cadastro.index', compact('users', 'escolas', 'turmas', 'modulos', 'cursos'));
+        $perfis = Perfil::all();
+        return view('admin.cadastro.index', compact('users', 'escolas', 'turmas', 'modulos', 'cursos', 'perfis'));
     }
     
 }

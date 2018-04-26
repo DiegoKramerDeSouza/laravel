@@ -20,20 +20,20 @@
                     <table class='striped'>
                         <thead>
                             <tr>
-                                <th>Nome</th>
-                                <th>Login</th>
-                                <th>Instituição</th>
-                                <th>Criação</th>
+                                <th><i class='fa fa-graduation-cap fa-lg'></i> Nome</th>
+                                <th><i class='fa fa-user-circle fa-lg'></i> Login</th>
+                                <th><i class='fa fa-institution fa-lg'></i> Instituição</th>
+                                <th><i class='fa fa-clock-o fa-lg'></i> Criação</th>
                             </tr>
                         </thead>
 
                         <tbody>
                             @foreach($turmas as $turma)
                                 <tr>
-                                    <td><i class='fa fa-graduation-cap fa-lg'></i> {{ $turma->name }}</td>
-                                    <td><i class='fa fa-user-circle fa-lg'></i> {{ $turma->login }}</td>
-                                    <td><i class='fa fa-institution fa-lg'></i> {{ $turma->school_name }}</td>
-                                    <td><i class='fa fa-clock-o fa-lg'></i> {{ $turma->created_at }}</td>
+                                    <td><b> {{ $turma->name }}</b></td>
+                                    <td> {{ $turma->login }}</td>
+                                    <td> {{ $turma->school_name }}</td>
+                                    <td> {{ $turma->created_at }}</td>
                                     <td class='right'>
                                         <a class='btn-flat waves-effect waves-red red-text text-darken-3 modal-trigger' href='#confirm-message-{{$turma->id}}'><i class='fa fa-trash-o'></i> deletar</a>
                                         <a class='btn-flat waves-effect waves-orange amber-text text-darken-3' href='{{ route('admin.cadastro.turmas.edita', $turma->id) }}'><i class='fa fa-edit'></i> editar</a>
