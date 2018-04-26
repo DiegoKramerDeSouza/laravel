@@ -61,6 +61,8 @@ class CadastroPerfilController extends Controller
         //Direciona para View de edição
         $grant = true;
         $perfis = Perfil::find($id);
+        //Efetua o controle de valores coletados do campo $perfis->grant
+        //Escreve um html para marcar os objetos de $perfis->grant, separado em ';' e devolve para a View um select já pronto
         if($perfis->grant != '0'){
             $componentes = Componente::all()->toArray();
             $granted = explode(';', $perfis->grant);
@@ -77,9 +79,11 @@ class CadastroPerfilController extends Controller
                 if(!$checked)
                     $html .= '<option value="' . $tag['id'] . '">' . $tag['name'] . '</option>';
             }
+            //returna tudo para a View caso a lista de permissões de $perfis->grant seja diferente de '0'
             return view('admin.cadastro.perfis.editar', compact('perfis', 'grant', 'html'));
         } else {
             $componentes = Componente::all();
+            //returna tudo para a View caso $perfis->grant seja igual a '0'
             return view('admin.cadastro.perfis.editar', compact('perfis', 'grant', 'componentes'));
         }
     }

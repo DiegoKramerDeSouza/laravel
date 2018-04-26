@@ -100,11 +100,15 @@ class CadastroTurmaController extends Controller
         $users = User::find($turmas->user_id);
         $escolas = Escola::all();
         $cursos = Curso::all();
+        
+        //Efetua relação de cada Modulo e seu respectivo nome e os coloca em um array
         $allmodulos = Modulo::all()->toArray();
         $modulos = array();
         foreach($allmodulos as $modulo){
             $modulos[$modulo['id']] = $modulo['name'];
         }
+        //Efetua o controle de valores coletados do campo $turmas->curso_id
+        //Escreve um html para marcar os objetos de $tumas->curso_id, separado em ';' e devolve para a View um select já pronto
         $html = '';
         $listCursos = explode(';', $turmas->curso_id);
         foreach($cursos as $objCurso){
@@ -119,7 +123,7 @@ class CadastroTurmaController extends Controller
             if(!$checked)
                     $html .= '<option value="' . $objCurso->id . '">' . $modulos[$objCurso->modulo_id] . ' - ' . $objCurso->name . '</option>';
         }
-
+        //returna tudo para a View
         return view('admin.cadastro.turmas.editar', compact('users', 'turmas', 'escolas', 'cursos', 'modulos', 'html', 'classroom'));
     }
     public function update(Request $req, $id){
