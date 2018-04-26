@@ -8,7 +8,7 @@
     <div class='card z-depth-5'>
         <div class='card-content'>
             <div class='card-title'>
-                <i class='fa fa-database'></i> Cadastro de Módulos:
+                Cadastro de Módulos:
             </div>
             <div class='row' align='right'>
                 Módulos cadastrados: <b>{{ count($modulos) }}</b>

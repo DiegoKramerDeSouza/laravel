@@ -16,9 +16,8 @@ class CreateTurmasTable extends Migration
         Schema::create('turmas', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
+            $table->integer('user_id');
             $table->string('school_name');
-            $table->string('login')->unique();
-            $table->string('password');
             $table->integer('school_id');
             $table->integer('curso_id');
             $table->string('description')->nullable();

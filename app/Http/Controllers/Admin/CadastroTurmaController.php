@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
+use App\User;
 use App\Escola;
 use App\Turma;
 use App\Curso;
@@ -16,6 +17,11 @@ class CadastroTurmaController extends Controller
         //Paginação dos valores coletados na entidade Turmas
         $turmas = Turma::paginate(10);
         $escolas = Escola::all();
+        $accounts = User::where('type', 1)->get()->toArray();
+        $users = array();
+        foreach($accounts as $account){
+            $users[$account['id']] = $account['login'];
+        }
 
         //Construção da paginação personalizada
         $prev = $page-1;
@@ -40,7 +46,7 @@ class CadastroTurmaController extends Controller
             $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/turmas/p' . $next . '?page=' . $next . '"><i class="material-icons">chevron_right</i></a></li>';
         }
 
-        return view('admin.cadastro.turmas.index', compact('turmas', 'paginate'));
+        return view('admin.cadastro.turmas.index', compact('turmas', 'users', 'paginate'));
     }
     public function add(){
         //Coleta todas as escolas cadastradas
@@ -55,6 +61,17 @@ class CadastroTurmaController extends Controller
     }
     public function save(Request $req){
         //Define os campos enviados que devem ser gravados no banco
+        $users = [
+            '_token'=>$req->_token,
+            'name'=>$req->name,
+            'login'=>$req->login,
+            'password'=>bcrypt($req->password),
+            'type'=>1
+        ];
+        //Insere dados na base Users
+        $created = User::create($users);
+
+        //Define os campos enviados que devem ser gravados no banco
         $school = $req->school_id;
         $school = explode('|', $school, 2);
         $schoolId = $school[0];
@@ -62,6 +79,7 @@ class CadastroTurmaController extends Controller
         $turmas = [
             '_token'=>$req->_token,
             'name'=>$req->name,
+            'user_id'=>$created->id,
             'school_name'=>$schoolName,
             'login'=>$req->login,
             'password'=>bcrypt($req->password),
@@ -71,11 +89,13 @@ class CadastroTurmaController extends Controller
         ];
         //Insere dados na base Turma
         Turma::create($turmas);
+
         return redirect()->route('admin.cadastro.turmas', ['page' => '1']);
     }
     public function edit($id){
         //Direciona para View de edição
         $turmas = Turma::find($id);
+        $users = User::find($turmas->user_id);
         $escolas = Escola::all();
         $cursos = Curso::all();
         $allmodulos = Modulo::all()->toArray();
@@ -83,9 +103,20 @@ class CadastroTurmaController extends Controller
         foreach($allmodulos as $modulo){
             $modulos[$modulo['id']] = $modulo['name'];
         }
-        return view('admin.cadastro.turmas.editar', compact('turmas', 'escolas', 'cursos', 'modulos'));
+        return view('admin.cadastro.turmas.editar', compact('users', 'turmas', 'escolas', 'cursos', 'modulos'));
     }
     public function update(Request $req, $id){
+        //Define os campos enviados que devem ser atualizados no banco
+        $users = [
+            '_token'=>$req->_token,
+            'name'=>$req->name,
+            'login'=>$req->login,
+            'password'=>bcrypt($req->password),
+            'type'=>1
+        ];
+        //Insere dados na base Users
+        $created = User::find($id)->update($users);
+
         $school = $req->school_id;
         $school = explode('|', $school, 2);
         $schoolId = $school[0];
@@ -95,18 +126,19 @@ class CadastroTurmaController extends Controller
             '_token'=>$req->_token,
             'name'=>$req->name,
             'school_name'=>$schoolName,
-            'login'=>$req->login,
-            'password'=>bcrypt($req->password),
             'school_id'=>$schoolId,
             'curso_id'=>$req->curso_id,
             'description'=>$req->description
         ];
         //Atualiza base de dados Turma
-        Turma::find($id)->update($turma);
+        Turma::where('user_id', $id)->first()->update($turma);
+
         return redirect()->route('admin.cadastro.turmas', ['page' => '1']);
     }
     public function delete($id){
-        Turma::find($id)->delete();
+        $turmas = Turma::find($id);
+        User::find($turmas->user_id)->delete();
+        $turmas->delete();
         return redirect()->route('admin.cadastro.turmas', ['page' => '1']);
     }
 }

@@ -8,11 +8,12 @@ use App\Http\Controllers\Controller;
 use App\User;
 use App\UserDado;
 use App\Escola;
+use App\Perfil;
 
 class CadastroUsuarioController extends Controller
 {
     public function index($page){
-        $users = User::paginate(10);
+        $users = User::where('type', 0)->paginate(10);
         $escolas = Escola::all();
 
         //Construção da paginação personalizada
@@ -45,7 +46,8 @@ class CadastroUsuarioController extends Controller
     public function add(){
         //Coleta todas as escolas cadastradas
         $escolas = Escola::all();
-        return view('admin.cadastro.usuarios.adicionar', compact('escolas'));
+        $perfis = Perfil::all();
+        return view('admin.cadastro.usuarios.adicionar', compact('escolas', 'perfis'));
     }
     public function save(Request $req){
         if(User::where('email', $req->email)->count() == 0){
@@ -53,8 +55,10 @@ class CadastroUsuarioController extends Controller
             $user = [
                 '_token'=>$req->_token,
                 'name'=>$req->name,
+                'login'=>$req->login,
                 'email'=>$req->email,
-                'password'=>bcrypt($req->password)
+                'password'=>bcrypt($req->password),
+                'type'=>0
             ];
             //IMAGENS--------------------------------
             //Coleta todos os dados recebidos
@@ -79,7 +83,6 @@ class CadastroUsuarioController extends Controller
             $userdata = [
                 '_token'=>$req->_token,
                 'user_id'=>$created->id,
-                'school_id'=>$req->school_id,
                 'group'=>$req->group
             ];
             //Insere dados na base UserDados
@@ -94,21 +97,23 @@ class CadastroUsuarioController extends Controller
         $user = User::find($id);
         $userdata = UserDado::where('user_id', $id)->first();
         $escolas = Escola::all();
-        return view('admin.cadastro.usuarios.editar', compact('user', 'userdata', 'escolas'));
+        $perfis = Perfil::all();
+        return view('admin.cadastro.usuarios.editar', compact('user', 'userdata', 'escolas', 'perfis'));
     }
     public function update(Request $req, $id){
         //Define os campos enviados que devem ser atualizados no banco
         $user = [
             '_token'=>$req->_token,
             'name'=>$req->name,
+            'login'=>$req->login,
             'email'=>$req->email,
+            'type'=>0
         ];
         //Atualiza base de dados Users
         User::find($id)->update($user);
         //Define os campos enviados que devem ser atualizados no banco
         $userdata = [
             '_token'=>$req->_token,
-            'school_id'=>$req->school_id,
             'group'=>$req->group
         ];
         //Atualiza base de dados UserDados

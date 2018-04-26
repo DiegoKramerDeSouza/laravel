@@ -8,7 +8,7 @@
     <div class='card z-depth-5'>
         <div class='card-content'>
             <div class='card-title'>
-                <i class='fa fa-institution'></i> Cadastro de Instituição:
+                Cadastro de Instituição:
             </div>
             <div class='row' align='right'>
                 Instituições cadastradas: <b>{{ count($escolas) }}</b>

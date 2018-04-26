@@ -12,7 +12,7 @@
             </h3>
             <div class='divider'></div>
             @if(isset($turmas->id))
-                <form class='' action='{{ route('admin.cadastro.turmas.atualiza', $turmas->id) }}' method='post' enctype="multipart/form-data">
+                <form class='' action='{{ route('admin.cadastro.turmas.atualiza', $turmas->user_id) }}' method='post' enctype="multipart/form-data">
                     <!--Formulário de cadastro e edição de turmas--> 
                     {{ csrf_field() }}
                     @include('admin.cadastro.turmas._form')

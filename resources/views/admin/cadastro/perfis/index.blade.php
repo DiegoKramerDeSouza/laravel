@@ -8,7 +8,7 @@
     <div class='card z-depth-5'>
         <div class='card-content'>
             <div class='card-title'>
-                <i class='fa fa-vcard-o'></i> Cadastro de Perfis:
+                Cadastro de Perfis:
             </div>
             <div class='row' align='right'>
                 Perfis cadastrados: <b>{{ count($perfis) }}</b>

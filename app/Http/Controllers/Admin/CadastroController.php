@@ -14,7 +14,7 @@ use App\Perfil;
 class CadastroController extends Controller
 {
     public function index(){
-        $users = User::all();
+        $users = User::where('type', 0)->get();
         $turmas = Turma::all();
         $escolas = Escola::all();
         $modulos = Modulo::all();

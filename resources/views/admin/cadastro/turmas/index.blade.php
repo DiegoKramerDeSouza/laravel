@@ -8,7 +8,7 @@
     <div class='card z-depth-5'>
         <div class='card-content'>
             <div class='card-title'>
-                <i class='fa fa-graduation-cap'></i> Cadastro de Turmas:
+                Cadastro de Turmas:
             </div>
             <div class='row' align='right'>
                 Turmas cadastradas: <b>{{ count($turmas) }}</b>
@@ -31,7 +31,7 @@
                             @foreach($turmas as $turma)
                                 <tr>
                                     <td><b> {{ $turma->name }}</b></td>
-                                    <td> {{ $turma->login }}</td>
+                                    <td> {{ $users[$turma->user_id] }}</td>
                                     <td> {{ $turma->school_name }}</td>
                                     <td> {{ $turma->created_at }}</td>
                                     <td class='right'>

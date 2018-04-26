@@ -8,7 +8,7 @@
     <div class='card z-depth-5'>
         <div class='card-content'>
             <div class='card-title'>
-                <i class='fa fa-users'></i> Cadastro de Usuários:
+                Cadastro de Usuários:
             </div>
             <div class='row' align='right'>
                 Usuários cadastrados: <b>{{ count($users) }}</b>

@@ -13,8 +13,12 @@ class LoginController extends Controller
     }
     public function access(Request $req){
         $data = $req->all();
-        if(Auth::attempt(['email' => $data['email'], 'password' => $data['password']])){
-            return redirect()->route('home');
+        if(Auth::attempt(['login' => $data['login'], 'password' => $data['password']])){
+            if(Auth::user()->type == 0){
+                return redirect()->route('home');
+            } else {
+                return redirect()->route('salas');
+            }
         };
         return redirect()->route('login');
     }

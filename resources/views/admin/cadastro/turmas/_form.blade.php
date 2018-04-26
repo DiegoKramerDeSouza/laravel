@@ -4,16 +4,16 @@
         <label for='name'><i class='fa fa-graduation-cap'></i> Nome</label>
     </div>
     <div class='input-field col s12 m6'>
-        <input class='validate' required type='text' name='login' id='login' value='{{ isset($turmas->login) ? $turmas->login : ''}}'>
+        <input class='validate' required type='text' name='login' id='login' value='{{ isset($users->login) ? $users->login : ''}}'>
         <label for='login'><i class='fa fa-user-circle'></i> Login</label>
     </div>
 
     <div class='input-field col s12 m6'>
-        <input class='validate' required type='password' name='password' id='password' {{ isset($turmas->password) ? 'disabled' : ''}} value='{{ isset($turmas->password) ? '12345678' : ''}}'>
+        <input class='validate' required type='password' name='password' id='password' {{ isset($users->password) ? 'disabled' : ''}} value='{{ isset($users->password) ? '12345678' : ''}}'>
         <label for='password'><i class='fa fa-lock'></i> Senha</label>
     </div>
     <div class='input-field col s12 m6'>
-        <input class='validate' required type='password' name='confpassword' id='confpassword' {{ isset($turmas->password) ? 'disabled' : ''}} value='{{ isset($turmas->password) ? '12345678' : ''}}'>
+        <input class='validate' required type='password' name='confpassword' id='confpassword' {{ isset($users->password) ? 'disabled' : ''}} value='{{ isset($users->password) ? '12345678' : ''}}'>
         <label for='confpassword'><i class='fa fa-lock'></i> Confirmar senha</label>
     </div>
 

@@ -34,19 +34,21 @@
                     <a href='{{ route('home') }}' class='brand-logo'><span class='white-text'>&nbsp;&nbsp;<b><span class='blue-text'>Web</span>Tv</b></span></a>
                     <ul id='nav-mobile' class='right hide-on-med-and-down white-text'>
                         @if(! Auth::guest())
-                            <li>
-                                <a id='homeicon' href='{{ route('home') }}'>
-                                    <span class='white-text'><span class='fa fa-home fa-lg'></span> <b>Início</b></span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ route('salas') }}"><span class='white-text'><span class='fa fa-television fa-lg'></span> <b>Salas</b></span></a>
-                            </li>
-                            <li>
-                                <a class='' id='gerDrop' href='{{ route('admin.cadastro') }}'>
-                                    <b><span class='white-text'><span class='fa fa-user-plus fa-lg'></span> Cadastro</span></b>
-                                </a>
-                            </li>
+                            @if(Auth::user()->type == 0)
+                                <li>
+                                    <a id='homeicon' href='{{ route('home') }}'>
+                                        <span class='white-text'><span class='fa fa-home fa-lg'></span> <b>Início</b></span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('salas') }}"><span class='white-text'><span class='fa fa-television fa-lg'></span> <b>Salas</b></span></a>
+                                </li>
+                                <li>
+                                    <a class='' id='gerDrop' href='{{ route('admin.cadastro') }}'>
+                                        <b><span class='white-text'><span class='fa fa-user-plus fa-lg'></span> Cadastro</span></b>
+                                    </a>
+                                </li>
+                            @endif
                             <li>
                                 <a class='dropdown-trigger' id='userDropDown' href='#!' data-target='myProfile'>
                                     <!--Chip com as informações de usuário-->
@@ -78,19 +80,21 @@
                             <a href="{{ route('login') }}"><span class='white-text'><span class='fa fa-user-circle fa-lg'></span> <b>Login</b></span></a>
                         </li>
                     @else
-                        <li>
-                            <a id='homeicon' href='{{ route('home') }}'>
-                                <span class='white-text'><span class='fa fa-home fa-lg'></span> <b>Início</b></span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('salas') }}"><span class='white-text'><span class='fa fa-television fa-lg'></span> <b>Salas</b></span></a>
-                        </li>
-                        <li>
-                            <a class='' id='gerDrop' href='{{ route('admin.cadastro') }}'>
-                                <b><span class='white-text'><span class='fa fa-user-plus fa-lg'></span> Cadastro</span></b>
-                            </a>
-                        </li>						
+                        @if(Auth::user()->type == 0)
+                            <li>
+                                <a id='homeicon' href='{{ route('home') }}'>
+                                    <span class='white-text'><span class='fa fa-home fa-lg'></span> <b>Início</b></span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('salas') }}"><span class='white-text'><span class='fa fa-television fa-lg'></span> <b>Salas</b></span></a>
+                            </li>
+                            <li>
+                                <a class='' id='gerDrop' href='{{ route('admin.cadastro') }}'>
+                                    <b><span class='white-text'><span class='fa fa-user-plus fa-lg'></span> Cadastro</span></b>
+                                </a>
+                            </li>
+                        @endif					
                         <li>
                             <a class='dropdown-trigger' id='userDropDown' href='#!' data-target='side-myProfile'>
                                 <div id='userChip' class='chip white darken-1 blue-text'>

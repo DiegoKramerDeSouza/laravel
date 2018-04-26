@@ -1,12 +1,12 @@
 <div class='row'>
     <div class='input-field col s12 m6'>
         <input class='validate' required type='text' name='name' id='name' value='{{ isset($user->name) ? $user->name : ''}}'>
-        <label for='name'><i class='fa fa-user-circle'></i> Nome</label>
+        <label for='name'><i class='fa fa-user-o'></i> Nome</label>
     </div>
 
     <div class='input-field col s12 m6'>
-        <input class='validate' required type='text' name='email' id='email' value='{{ isset($user->email) ? $user->email : ''}}'>
-        <label for='email'><i class='fa fa-envelope-o'></i> E-mail</label>
+        <input class='validate' required type='text' name='login' id='login' value='{{ isset($user->login) ? $user->login : ''}}'>
+        <label for='login'><i class='fa fa-user-circle'></i> Usuário</label>
     </div>
 </div>
 
@@ -24,31 +24,21 @@
 
 <div class='row'>
     <div class='input-field col s12 m6'>
-        <select id='school_id' required name='school_id'>
-            @if(isset($userdata->group))
-                @foreach($escolas as $escola)
-                    <option value="{{ $escola->id }}" {{ ($escola->id == $userdata->school_id) ? 'selected' : ''}}>{{ $escola->name }}</option>
-                @endforeach
-            @else
-                <option value="" disabled selected>Escola do usuário</option>
-                @foreach($escolas as $escola)
-                    <option value="{{ $escola->id }}">{{ $escola->name }}</option>
-                @endforeach
-            @endif
-        </select>
-        <label for='school_id'><i class='fa fa-building'></i> Escola</label>
+        <input class='validate' required type='text' name='email' id='email' value='{{ isset($user->email) ? $user->email : ''}}'>
+        <label for='email'><i class='fa fa-envelope-o'></i> E-mail</label>
     </div>
     <div class='input-field col s12 m6'>
         <select id='group' required name='group'>
             @if(isset($userdata->group))
-                <option value="PROFESSOR" {{ ($userdata->group == 'PROFESSOR') ? 'selected' : ''}}>Professor</option>
-                <option value="AUXILIAR" {{ ($userdata->group == 'AUXILIAR') ? 'selected' : ''}}>Professor Auxiliar</option>
-                <option value="CLASSE" {{ ($userdata->group == 'CLASSE') ? 'selected' : '' }}>Sala de Aula</option>
+                <option value="" >Selecione um grupo</option>
+                @foreach($perfis as $perfil)
+                    <option value="{{ $perfil->id }}" {{ ($userdata->group == $perfil->id) ? 'selected' : ''}}>{{ $perfil->name }}</option>
+                @endforeach
             @else
-                <option value="" disabled selected>Perfil do usuário</option>
-                <option value="PROFESSOR" >Professor</option>
-                <option value="AUXILIAR">Professor Auxiliar</option>
-                <option value="CLASSE">Sala de Aula</option>
+                <option value="" selected >Selecione um grupo</option>
+                @foreach($perfis as $perfil)
+                    <option value="{{ $perfil->id }}" >{{ $perfil->name }}</option>
+                @endforeach
             @endif
         </select>
         <label for='group'><i class='fa fa-address-card'></i> Perfil</label>
