@@ -43,6 +43,11 @@
                         <ul id='nav-mobile' class='right hide-on-med-and-down blue-text'>
                             <li>
                                 <a href='#'>
+                                    <span class='blue-text text-darken-3'><i class='material-icons left'>videocam</i> <b>Camera</b></span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href='#'>
                                     <span class='blue-text text-darken-3'><i class='material-icons left'>volume_up</i> <b>Volume</b></span>
                                 </a>
                             </li>
@@ -72,7 +77,7 @@
                     var values = $('#grantList').val();
                     var strValues = '';
                     for($i = 0; $i<values.length; $i++){
-                        strValues += values[$i]
+                        strValues += values[$i];
                         if($i != (values.length - 1)){
                             strValues += ';';
                         }
@@ -80,8 +85,25 @@
                     if(strValues == ''){
                         strValues = '0';
                     }
-                    document.getElementById('grant').value = strValues;
-                    //console.log(strValues);                    
+                    document.getElementById('grant').value = strValues;                  
+                }
+            </script>
+        @endif
+        @if(isset($classroom))
+            <script>
+                document.querySelector('button').onclick = function(evt) {
+                    var values = $('#curso_id_list').val();
+                    var strValues = '';
+                    for($i = 0; $i<values.length; $i++){
+                        strValues += values[$i];
+                        if($i != (values.length - 1)){
+                            strValues += ';';
+                        }
+                    }
+                    if(strValues == ''){
+                        strValues = '0';
+                    }
+                    document.getElementById('curso_id').value = strValues;                  
                 }
             </script>
         @endif

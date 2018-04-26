@@ -10,6 +10,8 @@ use App\Escola;
 use App\Turma;
 use App\User;
 use App\UserDado;
+use App\Curso;
+use App\Modulo;
 
 class RoomController extends Controller
 {
@@ -20,9 +22,9 @@ class RoomController extends Controller
         $userdado = UserDado::where('user_id', $userid)->first();
         $escolas = Escola::all();
         $turmas = Turma::all();
-        //$escolas = Escola::find($userdado->school_id);
-        //$turmas = Turma::where('school_id', '=', $escolas->id)->get();
+        $modulos = Modulo::all();
+        $cursos = Curso::all();
         
-        return view('salas.index', compact('userdado', 'escolas', 'turmas', 'streamPage'));
+        return view('salas.index', compact('userdado', 'escolas', 'turmas', 'modulos', 'cursos', 'streamPage'));
     }
 }

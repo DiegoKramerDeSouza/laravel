@@ -18,19 +18,18 @@
     </div>
 
     <div class='input-field col s12 m6'>
-        <select id='curso_id' required name='curso_id'>
-            @if(isset($turmas->curso_id))
-                @foreach($cursos as $curso)
-                    <option value="{{ $curso->id }}" {{ ($curso->id == $turmas->curso_id) ? 'selected' : ''}}> {{ $modulos[$curso->modulo_id] }} - {{ $curso->name }}</option>
-                @endforeach
+        <select id='curso_id_list' multiple required name='curso_id_list'>
+            @if(isset($html))
+                {!! $html !!}
             @else
-                <option value="" disabled selected>Escolha um curso</option>
+                <option value="" disabled>Escolha um curso</option>
                 @foreach($cursos as $curso)
                     <option value="{{ $curso->id }}">{{ $modulos[$curso->modulo_id] }} - {{ $curso->name }}</option>
                 @endforeach
             @endif
         </select>
-        <label for='school_id'><i class='fa fa-cube'></i> Curso</label>
+        <label for='curso_id_list'><i class='fa fa-cube'></i> Cursos</label>
+        <input type='hidden' id='curso_id' name='curso_id' readonly>
     </div>
 
     <div class='input-field col s12 m6'>

@@ -48,21 +48,26 @@
                                 <input type='hidden' class='validate' id='escola' name='escola' readonly value=''>
                                 
                                 <div class='input-field col s12'>
-                                    <!--Select de turmas (Obrigatório)-->
-                                    <select multiple id='turma' required name='turma'>
-                                        @if(isset($escolas))
-                                            @foreach($escolas as $escola)
-                                                <optgroup label="Instituição: {{ $escola->name }}">
-                                                    @foreach($turmas as $turma)
-                                                        @if($turma->school_id == $escola->id)
-                                                            <option value="{{ $escola->id . '|' . $escola->name . '|' . $turma->id . '|' . $turma->name }}">{{ $escola->name }} - {{ $turma->name }}</option>
-                                                        @endif
-                                                    @endforeach
-                                                </optgroup>
+                                    <!--Select de modulos (Obrigatório)-->
+                                    <select multiple id='modulo' required name='modulo'>
+                                        @if(isset($modulos))
+                                            @foreach($modulos as $modulo)
+                                                <option value="{{ $modulo->id . '|' . $modulo->name }}">{{ $modulo->name }}</option>
                                             @endforeach
                                         @endif
                                     </select>
-                                    <label for='turma'><i class='fa fa-graduation-cap'></i> Seleção de turmas</label>
+                                    <label for='turma'><i class='fa fa-graduation-cap'></i> Seleção de Módulos</label>
+                                </div>
+                                <div class='input-field col s12'>
+                                    <!--Select de cursos (Obrigatório)-->
+                                    <select multiple id='curso' required name='curso'>
+                                        @if(isset($cursos))
+                                            @foreach($cursos as $curso)
+                                                <option value="{{ $curso->id . '|' . $curso->name }}">{{ $curso->name }}</option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                    <label for='turma'><i class='fa fa-graduation-cap'></i> Seleção de Curso</label>
                                 </div>
                                 
                                 <div class='divider'></div>
@@ -77,6 +82,9 @@
                     <input type='hidden' id='codEscola' readonly value='{{ $userdado->school_id}}' />
                     <input type='hidden' id='meuNome' readonly value='{{Auth::user()->name}}' />
                 </div>
+            @else
+                <input type='hidden' id='btn-join-as-productor' disabled >
+                <input type='hidden' id='room-id' disabled >
             @endif
         </div>
     </div>

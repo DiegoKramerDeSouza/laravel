@@ -19,7 +19,7 @@ class CreateTurmasTable extends Migration
             $table->integer('user_id');
             $table->string('school_name');
             $table->integer('school_id');
-            $table->integer('curso_id');
+            $table->string('curso_id');
             $table->string('description')->nullable();
             $table->timestamps();
         });

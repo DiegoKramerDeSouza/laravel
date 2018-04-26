@@ -50,6 +50,7 @@ class CadastroTurmaController extends Controller
     }
     public function add(){
         //Coleta todas as escolas cadastradas
+        $classroom = true;
         $escolas = Escola::all();
         $cursos = Curso::all();
         $allmodulos = Modulo::all()->toArray();
@@ -57,7 +58,7 @@ class CadastroTurmaController extends Controller
         foreach($allmodulos as $modulo){
             $modulos[$modulo['id']] = $modulo['name'];
         }
-        return view('admin.cadastro.turmas.adicionar', compact('escolas', 'cursos', 'modulos'));
+        return view('admin.cadastro.turmas.adicionar', compact('escolas', 'cursos', 'modulos', 'classroom'));
     }
     public function save(Request $req){
         //Define os campos enviados que devem ser gravados no banco
@@ -94,6 +95,7 @@ class CadastroTurmaController extends Controller
     }
     public function edit($id){
         //Direciona para View de edição
+        $classroom = true;
         $turmas = Turma::find($id);
         $users = User::find($turmas->user_id);
         $escolas = Escola::all();
@@ -103,7 +105,22 @@ class CadastroTurmaController extends Controller
         foreach($allmodulos as $modulo){
             $modulos[$modulo['id']] = $modulo['name'];
         }
-        return view('admin.cadastro.turmas.editar', compact('users', 'turmas', 'escolas', 'cursos', 'modulos'));
+        $html = '';
+        $listCursos = explode(';', $turmas->curso_id);
+        foreach($cursos as $objCurso){
+            $checked = false;
+            foreach($listCursos as $curso){
+                if($curso == $objCurso->id){
+                    $html .= '<option value="' . $objCurso->id . '" selected>' . $modulos[$objCurso->modulo_id] . ' - ' . $objCurso->name . '</option>';
+                    $checked = true;
+                } elseif($checked)
+                    break;
+            }
+            if(!$checked)
+                    $html .= '<option value="' . $objCurso->id . '">' . $modulos[$objCurso->modulo_id] . ' - ' . $objCurso->name . '</option>';
+        }
+
+        return view('admin.cadastro.turmas.editar', compact('users', 'turmas', 'escolas', 'cursos', 'modulos', 'html', 'classroom'));
     }
     public function update(Request $req, $id){
         //Define os campos enviados que devem ser atualizados no banco
