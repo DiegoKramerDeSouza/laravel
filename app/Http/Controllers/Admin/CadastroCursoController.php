@@ -13,8 +13,11 @@ class CadastroCursoController extends Controller
     public function index($page){
         //Paginação dos valores coletados na entidade Cursos
         $cursos = Curso::paginate(10);
-        $modulos = Modulo::all();
-
+        $allmodulos = Modulo::all()->toArray();
+        $modulos = array();
+        foreach($allmodulos as $modulo){
+            $modulos[$modulo['id']] = $modulo['name'];
+        }
         //Construção da paginação personalizada
         $prev = $page-1;
         $next = $page+1;
@@ -42,9 +45,9 @@ class CadastroCursoController extends Controller
     }
     public function add(){
         //Coleta todos cursos cadastrados
-        $modulos = Modulo::all();
         $cursos = Curso::all();
-        return view('admin.cadastro.cursos.adicionar', compact('modulos', 'cursos'));
+        $modulos = Modulo::all();
+        return view('admin.cadastro.cursos.adicionar', compact('cursos', 'modulos'));
     }
     public function save(Request $req){
         //Define os campos enviados que devem ser gravados no banco

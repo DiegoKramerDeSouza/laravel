@@ -217,7 +217,7 @@ $(document).ready(function() {
                          */
                         usuario = document.getElementById('meuNome').value;
                         var divOpen = document.createElement('div');
-                        var card = "<div class='card'>" +
+                        var card = "<div class='card z-depth-5'>" +
                             "<div class='card-content' align='left'>" +
                             "<h6 class='blue-text'>" +
                             "<i class='fa fa-desktop'></i> <b>" + labelClasse + "</b>" +
@@ -340,8 +340,8 @@ $(document).ready(function() {
                     if (countRooms == 0) {
                         //Mensagem de retorno para 0 salas encontradas na escola determinada
                         var divOpen = document.createElement('div');
-                        var message = "<div class='grey-text' style='margin-top:20px;'>" +
-                            "<i class='fa fa-times fa-lg red-text'></i> Não há salas de aula disponíveis." +
+                        var message = "<div class='red-text' style='margin-top:20px;'>" +
+                            "<i class='fa fa-times fa-lg red-text text-darken-3'></i> <b>Não há salas disponíveis.</b>" +
                             "</div>";
                         divOpen.innerHTML = message;
                         publicRoomsDiv.appendChild(divOpen);
@@ -350,8 +350,8 @@ $(document).ready(function() {
             } else {
                 //Mensagem de retorno para 0 salas encontradas
                 var divOpen = document.createElement('div');
-                var message = "<div class='grey-text' style='margin-top:20px;'>" +
-                    "<i class='fa fa-times fa-lg red-text'></i> Não há salas de aula disponíveis." +
+                var message = "<div class='red-text' style='margin-top:20px;'>" +
+                    "<i class='fa fa-times fa-lg red-text text-darken-3'></i> <b>Não há salas disponíveis.</b>" +
                     "</div>";
                 divOpen.innerHTML = message;
                 publicRoomsDiv.appendChild(divOpen);

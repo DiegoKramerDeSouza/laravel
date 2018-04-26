@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Escola;
 use App\Turma;
 use App\Curso;
+use App\Modulo;
 
 class CadastroTurmaController extends Controller
 {
@@ -45,7 +46,12 @@ class CadastroTurmaController extends Controller
         //Coleta todas as escolas cadastradas
         $escolas = Escola::all();
         $cursos = Curso::all();
-        return view('admin.cadastro.turmas.adicionar', compact('escolas', 'cursos'));
+        $allmodulos = Modulo::all()->toArray();
+        $modulos = array();
+        foreach($allmodulos as $modulo){
+            $modulos[$modulo['id']] = $modulo['name'];
+        }
+        return view('admin.cadastro.turmas.adicionar', compact('escolas', 'cursos', 'modulos'));
     }
     public function save(Request $req){
         //Define os campos enviados que devem ser gravados no banco
@@ -71,7 +77,13 @@ class CadastroTurmaController extends Controller
         //Direciona para View de edição
         $turmas = Turma::find($id);
         $escolas = Escola::all();
-        return view('admin.cadastro.turmas.editar', compact('turmas', 'escolas'));
+        $cursos = Curso::all();
+        $allmodulos = Modulo::all()->toArray();
+        $modulos = array();
+        foreach($allmodulos as $modulo){
+            $modulos[$modulo['id']] = $modulo['name'];
+        }
+        return view('admin.cadastro.turmas.editar', compact('turmas', 'escolas', 'cursos', 'modulos'));
     }
     public function update(Request $req, $id){
         $school = $req->school_id;

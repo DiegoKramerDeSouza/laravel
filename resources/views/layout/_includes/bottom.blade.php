@@ -37,28 +37,28 @@
                     </div>
                 </div>
                 <!--Barra de footer menu-->
-                <nav id='nav-footer' class="nav-wrapper grey darken-4">
+                <nav id='nav-footer' class="nav-wrapper black">
                     <div class="">
                         <a href='#!' class='sidenav-trigger blue-text blue-darken-3 right' data-target='side-bar' title='Menu'><i class='fa fa-bars fa-2x'></i></a>
                         <ul id='nav-mobile' class='right hide-on-med-and-down blue-text'>
                             <li>
                                 <a href='#'>
-                                    <span class='blue-text blue-darken-1'><i class='material-icons left'>volume_up</i> <b>Volume</b></span>
+                                    <span class='blue-text text-darken-3'><i class='material-icons left'>volume_up</i> <b>Volume</b></span>
                                 </a>
                             </li>
                             <li>
                                 <a href="#">
-                                    <span class='blue-text blue-darken-1'><i class='material-icons left'>mic_off</i> <b>Mudo</b></span>
+                                    <span class='blue-text text-darken-3'><i class='material-icons left'>mic_off</i> <b>Mudo</b></span>
                                 </a>
                             </li>
                             <li>
-                                <a id='toggle-chat' class='blue-text text-darken-1'>
+                                <a id='toggle-chat' class='blue-text text-darken-3'>
                                     <i class='material-icons left'>forum</i> <b>Chat</b>
                                 </a>
                             </li>
                             <li>
                                 <a href='#'>
-                                    <span class='blue-text blue-darken-1'><i class='material-icons left'>pan_tool</i> <b>Pedir a vez</b></span>
+                                    <span class='blue-text text-darken-3'><i class='material-icons left'>pan_tool</i> <b>Pedir a vez</b></span>
                                 </a>
                             </li>
                         </ul>

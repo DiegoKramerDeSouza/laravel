@@ -15,7 +15,7 @@
                     </h2>
                     <div class='divider'></div>
                     <div class='row'>
-                        <h3 class='card-title' align='left'><i class='fa fa-user-circle'></i> Login</h3>
+                        <h3 class='card-title' align='left'><i class='fa fa-user-circle blue-text'></i> Login</h3>
                         <form class='' action='{{ route('login.access') }}' method='post' enctype="multipart/form-data">
                             {{ csrf_field() }}
                             <div class='row'>
@@ -29,7 +29,7 @@
                                 </div>
                             </div>
                             <div class='card-action' align='right'>
-                                <button id='access' type='submit' class='btn green darken-2 waves-effect waves-light'>Entrar <i class='fa fa-sign-in'></i></button>
+                                <button id='access' type='submit' class='btn-flat green-text text-darken-2 waves-effect waves-green'>Entrar <i class='fa fa-sign-in'></i></button>
                             </div>
                         </form>
                     </div>

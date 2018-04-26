@@ -5,16 +5,15 @@
 
 <!--Define yield('content') em layout.site-->
 @section('content')
-    <div id='initial-access' class='row card z-depth-5'>
-        <div class='card-content'>
+    <div id='initial-access' class='row'>
+        <div class='white-text'>
             <div id='opend-rooms' class='col s12 m6'>
                 <h5 class='row'>
-                    <span class='col s8'>Salas disponíveis</span>
-                    <span class='col s4' align='right'></span>
+                    <span><b><i class='fa fa-desktop'></i> Salas disponíveis</b></span>
                 </h5>
                 <div class='divider'></div>
                 <div id='public-conference' align='center'>
-                    <div class="center blue-text">
+                    <div class="center blue-text text-darken-2">
                         <h5>Encontrando salas...</h5>
                         <a class="btn-floating btn-large cyan pulse"><i class="material-icons">search</i></a>
                     </div>
@@ -22,55 +21,57 @@
                 </div>
             </div>
             <!--Acesso para criação de sala-->
-            <div id='teacher-access' class='col s12 m6'>
-                <div class='card-title blue-text'>
-                    <h5><i class='fa fa-desktop'></i> Criar sala</h5>
-                </div>
-                <div class='row'>
-                    <!--Formulário de criação de salas-->
-                    <form id='criar-sala' action='#' method='post'>
-                        {{ csrf_field() }}
-                        <!--Assunto da aula (Obrigatório)-->
-                        <div class='input-field col s12'>
-                            <input type='text' class='validate' id='materia' name='materia' required>
-                            <label for='materia'><i class='fa fa-book'></i> Matéria da Aula:</label>
-                        </div>
-                        <div class='input-field col s12'>
-                            <input type='text' class='validate' id='assunto' name='assunto' required>
-                            <label for='assunto'><i class='fa fa-tags'></i> Assunto da Aula:</label>
-                        </div>
+            <div id='teacher-access' class='card z-depth-5 col s12 m6'>
+                <div class='card-content'>
+                    <div class='card-title blue-text'>
+                        <h5>Iniciar nova sala</h5>
+                    </div>
+                    <div class='row'>
+                        <!--Formulário de criação de salas-->
+                        <form id='criar-sala' action='#' method='post'>
+                            {{ csrf_field() }}
+                            <!--Assunto da aula (Obrigatório)-->
+                            <div class='input-field col s12'>
+                                <input type='text' class='validate' id='materia' name='materia' required>
+                                <label for='materia'><i class='fa fa-book'></i> Matéria da Aula:</label>
+                            </div>
+                            <div class='input-field col s12'>
+                                <input type='text' class='validate' id='assunto' name='assunto' required>
+                                <label for='assunto'><i class='fa fa-tags'></i> Assunto da Aula:</label>
+                            </div>
 
-                        <input type='hidden' class='validate' id='escola' name='escola' readonly value=''>
-                        
-                        <div class='input-field col s12'>
-                            <!--Select de turmas (Obrigatório)-->
-                            <select multiple id='turma' required name='turma'>
-                                @if(isset($escolas))
-                                    @foreach($escolas as $escola)
-                                        <optgroup label="Instituição: {{ $escola->name }}">
-                                            @foreach($turmas as $turma)
-                                                @if($turma->school_id == $escola->id)
-                                                    <option value="{{ $escola->id . '|' . $escola->name . '|' . $turma->id . '|' . $turma->name }}">{{ $escola->name }} - {{ $turma->name }}</option>
-                                                @endif
-                                            @endforeach
-                                        </optgroup>
-                                    @endforeach
-                                @endif
-                            </select>
-                            <label for='turma'><i class='fa fa-graduation-cap'></i> Seleção de turmas</label>
-                        </div>
-                        
-                        <div class='divider'></div>
-                        <div align='right'>
-                            <!--Submit-->
-                            <button type='submit' id='btn-join-as-productor' class='btn blue white-text waves-effect waves-light'><i class='fa fa-check'></i> Criar</button>
-                        </div>
-                        <input type='hidden' readonly id='room-id' />
-                    </form>
-                </div> 
+                            <input type='hidden' class='validate' id='escola' name='escola' readonly value=''>
+                            
+                            <div class='input-field col s12'>
+                                <!--Select de turmas (Obrigatório)-->
+                                <select multiple id='turma' required name='turma'>
+                                    @if(isset($escolas))
+                                        @foreach($escolas as $escola)
+                                            <optgroup label="Instituição: {{ $escola->name }}">
+                                                @foreach($turmas as $turma)
+                                                    @if($turma->school_id == $escola->id)
+                                                        <option value="{{ $escola->id . '|' . $escola->name . '|' . $turma->id . '|' . $turma->name }}">{{ $escola->name }} - {{ $turma->name }}</option>
+                                                    @endif
+                                                @endforeach
+                                            </optgroup>
+                                        @endforeach
+                                    @endif
+                                </select>
+                                <label for='turma'><i class='fa fa-graduation-cap'></i> Seleção de turmas</label>
+                            </div>
+                            
+                            <div class='divider'></div>
+                            <div align='right'>
+                                <!--Submit-->
+                                <button type='submit' id='btn-join-as-productor' class='btn blue white-text waves-effect waves-light'><i class='fa fa-check'></i> Criar</button>
+                            </div>
+                            <input type='hidden' readonly id='room-id' />
+                        </form>
+                    </div> 
+                </div>
+                <input type='hidden' id='codEscola' readonly value='{{ $userdado->school_id}}' />
+                <input type='hidden' id='meuNome' readonly value='{{Auth::user()->name}}' />
             </div>
-            <input type='hidden' id='codEscola' readonly value='{{ $userdado->school_id}}' />
-            <input type='hidden' id='meuNome' readonly value='{{Auth::user()->name}}' />
         </div>
     </div>
     <!--Video Panel-->

@@ -30,7 +30,7 @@
                             @foreach($cursos as $curso)
                                 <tr>
                                     <td><i class='fa fa-cube fa-lg'></i> {{ $curso->name }}</td>
-                                    <td><i class='fa fa-database fa-lg'></i> {{ $curso->modulo_id }}</td>
+                                    <td><i class='fa fa-database fa-lg'></i> {{ $modulos[$curso->modulo_id] }}</td>
                                     <td><i class='fa fa-clock-o fa-lg'></i> {{ $curso->created_at }}</td>
                                     <td class='right'>
                                         <a class='btn-flat waves-effect waves-red red-text text-darken-3 modal-trigger' href='#confirm-message-{{$curso->id}}'><i class='fa fa-trash-o'></i> deletar</a>

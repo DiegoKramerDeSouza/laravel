@@ -26,6 +26,10 @@
     -webkit-font-smoothing: antialiased;
 }
 
+nav {
+    box-shadow: 5px 10px 18px transparent !important;
+}
+
 #backgroundLayer {
     position: fixed;
     top: 0;
@@ -63,13 +67,11 @@
 .hoverarchor {
     -webkit-transition-duration: 0.2s;
     transition-duration: 0.2s;
-    border-radius: 40px;
-    margin-top: 40px;
 }
 
 .hoverarchor:hover {
     transform: scale(1.1);
-    box-shadow: 5px 10px 18px rgba(80, 80, 80, 0.5);
+    /*box-shadow: 5px 10px 18px rgba(80, 80, 80, 0.5);*/
 }
 
 .d-none {

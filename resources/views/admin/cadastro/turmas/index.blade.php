@@ -21,6 +21,7 @@
                         <thead>
                             <tr>
                                 <th>Nome</th>
+                                <th>Login</th>
                                 <th>Instituição</th>
                                 <th>Criação</th>
                             </tr>
@@ -30,6 +31,7 @@
                             @foreach($turmas as $turma)
                                 <tr>
                                     <td><i class='fa fa-graduation-cap fa-lg'></i> {{ $turma->name }}</td>
+                                    <td><i class='fa fa-user-circle fa-lg'></i> {{ $turma->login }}</td>
                                     <td><i class='fa fa-institution fa-lg'></i> {{ $turma->school_name }}</td>
                                     <td><i class='fa fa-clock-o fa-lg'></i> {{ $turma->created_at }}</td>
                                     <td class='right'>

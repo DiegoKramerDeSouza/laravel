@@ -29,7 +29,7 @@
                         <tbody>
                             @foreach($users as $user)
                                 <tr>
-                                    <td><i class='fa fa-user fa-lg'></i> {{ $user->name }}</td>
+                                    <td><i class='fa fa-user-o fa-lg'></i> {{ $user->name }}</td>
                                     <td><i class='fa fa-envelope fa-lg'></i> {{ $user->email }}</td>
                                     <td><i class='fa fa-clock-o fa-lg'></i> {{ $user->created_at }}</td>
                                     <td class='right'>
