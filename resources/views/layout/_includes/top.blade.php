@@ -64,9 +64,9 @@
                     <li class='grey darken-4'><a href='{{ route('login.destroy')}}' class='red-text text-darken-3'><i class='fa fa-sign-out fa-lg'></i> <b>Sair</b></a></li>
                 </ul>
                 <ul id='myProfile' class='dropdown-content'>
-                    <li class='grey darken-4'><a href='#' class='white-text'><i class='fa fa-cog'></i> Configurações</a></li>
-                    <li class='grey darken-4'><a href='#' class='white-text'><i class='fa fa-book'></i> Aulas</a></li>
-                    <li class='grey darken-4'><a href='{{ route('login.destroy')}}' class='red-text text-darken-2'><i class='fa fa-sign-out fa-lg'></i>Sair</a></li>
+                    <li class='white'><a href='#' class=''><i class='fa fa-cog blue-text'></i> Configurações</a></li>
+                    <li class='white'><a href='#' class=''><i class='fa fa-book blue-text'></i> Aulas</a></li>
+                    <li class='white'><a href='{{ route('login.destroy')}}' class='red-text text-darken-2'><i class='fa fa-sign-out fa-lg'></i>Sair</a></li>
                 </ul>
                 
             </nav>

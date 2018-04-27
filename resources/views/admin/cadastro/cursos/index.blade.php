@@ -20,9 +20,9 @@
                     <table class='striped'>
                         <thead>
                             <tr>
-                                <th><i class='fa fa-cube fa-lg'></i> Nome</th>
-                                <th><i class='fa fa-database fa-lg'></i> Módulo</ht>
-                                <th><i class='fa fa-clock-o fa-lg'></i> Criação</th>
+                                <th><i class='fa fa-cube fa-lg blue-text'></i> Nome</th>
+                                <th><i class='fa fa-database fa-lg blue-text'></i> Módulo</ht>
+                                <th><i class='fa fa-clock-o fa-lg blue-text'></i> Criação</th>
                             </tr>
                         </thead>
 

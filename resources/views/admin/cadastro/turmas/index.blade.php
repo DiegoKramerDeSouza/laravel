@@ -20,10 +20,10 @@
                     <table class='striped'>
                         <thead>
                             <tr>
-                                <th><i class='fa fa-graduation-cap fa-lg'></i> Nome</th>
-                                <th><i class='fa fa-user-circle fa-lg'></i> Login</th>
-                                <th><i class='fa fa-institution fa-lg'></i> Instituição</th>
-                                <th><i class='fa fa-clock-o fa-lg'></i> Criação</th>
+                                <th><i class='fa fa-graduation-cap fa-lg blue-text'></i> Nome</th>
+                                <th><i class='fa fa-user-circle fa-lg blue-text'></i> Login</th>
+                                <th><i class='fa fa-institution fa-lg blue-text'></i> Instituição</th>
+                                <th><i class='fa fa-clock-o fa-lg blue-text'></i> Criação</th>
                             </tr>
                         </thead>
 

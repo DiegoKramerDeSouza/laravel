@@ -20,8 +20,8 @@
                     <table class='striped'>
                         <thead>
                             <tr>
-                                <th><i class='fa fa-institution fa-lg'></i> Instituição</th>
-                                <th><i class='fa fa-watch fa-lg'></i> Cadastrada em</th>
+                                <th><i class='fa fa-institution fa-lg blue-text'></i> Instituição</th>
+                                <th><i class='fa fa-clock-o fa-lg blue-text'></i> Cadastrada em</th>
                             </tr>
                         </thead>
 

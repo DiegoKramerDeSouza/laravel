@@ -48,26 +48,15 @@
                                 <input type='hidden' class='validate' id='escola' name='escola' readonly value=''>
                                 
                                 <div class='input-field col s12'>
-                                    <!--Select de modulos (Obrigatório)-->
-                                    <select multiple id='modulo' required name='modulo'>
-                                        @if(isset($modulos))
-                                            @foreach($modulos as $modulo)
-                                                <option value="{{ $modulo->id . '|' . $modulo->name }}">{{ $modulo->name }}</option>
+                                    <!--Select de turmas (Obrigatório)-->
+                                    <select multiple id='turmas' required name='turmas'>
+                                        @if(isset($turmas))
+                                            @foreach($turmas as $turma)
+                                                <option value="{{ $turma->id . '|' . $turma->name }}">{{$turma->school_name}}: {{ $turma->name }}</option>
                                             @endforeach
                                         @endif
                                     </select>
-                                    <label for='turma'><i class='fa fa-graduation-cap'></i> Seleção de Módulos</label>
-                                </div>
-                                <div class='input-field col s12'>
-                                    <!--Select de cursos (Obrigatório)-->
-                                    <select multiple id='curso' required name='curso'>
-                                        @if(isset($cursos))
-                                            @foreach($cursos as $curso)
-                                                <option value="{{ $curso->id . '|' . $curso->name }}">{{ $curso->name }}</option>
-                                            @endforeach
-                                        @endif
-                                    </select>
-                                    <label for='turma'><i class='fa fa-graduation-cap'></i> Seleção de Curso</label>
+                                    <label for='turma'><i class='fa fa-graduation-cap'></i> Seleção de Turmas</label>
                                 </div>
                                 
                                 <div class='divider'></div>

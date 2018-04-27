@@ -20,9 +20,9 @@
                     <table class='striped'>
                         <thead>
                             <tr>
-                                <th><i class='fa fa-vcard-o fa-lg'></i> Nome</th>
-                                <th><i class='fa fa-commenting fa-lg'></i> Descrição</ht>
-                                <th><i class='fa fa-clock-o fa-lg'></i> Criação</th>
+                                <th><i class='fa fa-vcard-o fa-lg blue-text'></i> Nome</th>
+                                <th><i class='fa fa-commenting fa-lg blue-text'></i> Descrição</ht>
+                                <th><i class='fa fa-clock-o fa-lg blue-text'></i> Criação</th>
                             </tr>
                         </thead>
 
