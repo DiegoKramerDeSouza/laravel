@@ -116,13 +116,7 @@ class CadastroEscolaController extends Controller
     }
     //Deletar escolas registradas e todos os usuários vinculados a esta
     public function delete($id){
-        $todelete = UserDado::where('school_id', '=', $id)->get();
         $todeleteTurma = Turma::where('school_id', '=', $id)->get();
-        //Para cada usuário vinculado à instituição
-        foreach($todelete as $deleteUser){
-            $deleted = $deleteUser->delete();
-            User::find($deleteUser->user_id)->delete();
-        }
         //Para cada turma vinculada à instituição
         foreach($todeleteTurma as $deleteTurma){
             $deleteTurma->delete();
@@ -131,6 +125,7 @@ class CadastroEscolaController extends Controller
         EnderecoEscola::where('school_id', $id)->first()->delete();
         return redirect()->route('admin.cadastro.escolas', ['page' => '1']);
     }
+    
     //Função de teste para coleta de geolocalização 
     //Apenas Debug
     public function collect($data){

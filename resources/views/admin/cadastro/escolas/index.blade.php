@@ -57,10 +57,10 @@
     @foreach($escolas as $escola)
         <div id='confirm-message-{{$escola->id}}' class='modal bottom-sheet'>
             <div class-'modal-content'>
-                <h5>Deseja remover a instituição {{$escola->name}}?</h5>
+                <h5>Deseja remover a instituição <b>{{$escola->name}}</b>?</h5>
                 <div class='center red-text text-darken-3'>
                     <h6><b><i class='fa fa-exclamation-triangle'></i> ATENÇÃO:</b></h6>
-                    <p><b>A remoção desta instituição implica na remoção automática de todos os usuários e turmas vinculados a esta.</b></p>
+                    <h6><b>A remoção desta instituição implica na remoção automática de todas as turmas vinculadas a esta.</b></h6>
                 </div>
                 <div class='divider'></div>
                 <div class='right'>
