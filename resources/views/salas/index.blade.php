@@ -48,15 +48,15 @@
                                 <input type='hidden' class='validate' id='escola' name='escola' readonly value=''>
                                 
                                 <div class='input-field col s12'>
-                                    <!--Select de turmas (Obrigatório)-->
-                                    <select multiple id='turmas' required name='turmas'>
-                                        @if(isset($turmas))
-                                            @foreach($turmas as $turma)
-                                                <option value="{{ $turma->id . '|' . $turma->name }}">{{$turma->school_name}}: {{ $turma->name }}</option>
+                                    <!--Select de Cursos (Obrigatório)-->
+                                    <select multiple id='cursos' required name='cursos'>
+                                        @if(isset($cursos))
+                                            @foreach($cursos as $curso)
+                                                <option value="{{ $curso->id }}">{{ $modulos[$curso->modulo_id] }} {{ $curso->name }}</option>
                                             @endforeach
                                         @endif
                                     </select>
-                                    <label for='turma'><i class='fa fa-graduation-cap'></i> Seleção de Turmas</label>
+                                    <label for='cursos'><i class='fa fa-cubes'></i> Seleção de Cursos</label>
                                 </div>
                                 
                                 <div class='divider'></div>

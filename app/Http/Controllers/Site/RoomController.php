@@ -22,7 +22,11 @@ class RoomController extends Controller
         $userdado = UserDado::where('user_id', $userid)->first();
         $escolas = Escola::all();
         $turmas = Turma::all();
-        $modulos = Modulo::all();
+        $allmodulos = Modulo::all()->toArray();
+        $modulos = array();
+        foreach($allmodulos as $modulo){
+            $modulos[$modulo['id']] = $modulo['name'];
+        }
         $cursos = Curso::all();
         
         return view('salas.index', compact('userdado', 'escolas', 'turmas', 'modulos', 'cursos', 'streamPage'));
