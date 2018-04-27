@@ -29,7 +29,12 @@ Route::get('/login/destroy', ['as' => 'login.destroy', 'uses' => 'Site\LoginCont
 
 Route::group(['middleware' => 'auth'], function(){
     /**
-     *  Rotas de Salas
+     *  Rotas de Salas type 0
+     */
+    Route::get('/salas/turma', ['as' => 'turmas', 'uses' => 'Site\RoomController@turma']);
+
+    /**
+     *  Rotas de Salas type 1
      */
 
     Route::get('/salas', ['as' => 'salas', 'uses' => 'Site\RoomController@index']);
@@ -88,6 +93,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/admin/cadastro/escolas/editar/{id}', ['as' => 'admin.cadastro.escolas.edita', 'uses' => 'Admin\CadastroEscolaController@edit']);
     Route::put('/admin/cadastro/escolas/atualizar/{id}', ['as' => 'admin.cadastro.escolas.atualiza', 'uses' => 'Admin\CadastroEscolaController@update']);
     Route::get('/admin/cadastro/escolas/deletar/{id}', ['as' => 'admin.cadastro.escolas.deleta', 'uses' => 'Admin\CadastroEscolaController@delete']);
+    
 
 });
 

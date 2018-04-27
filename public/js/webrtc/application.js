@@ -66,6 +66,17 @@ $(document).ready(function() {
     connection.onmessage = appendDIV;
 
     document.getElementById('btn-join-as-productor').onclick = function() {
+
+        var values = $('#cursos-list').val();
+        var strValues = '';
+        for ($i = 0; $i < values.length; $i++) {
+            strValues += values[$i];
+            if ($i != (values.length - 1)) {
+                strValues += ';';
+            }
+        }
+        document.getElementById('cursos').value = strValues;
+
         //Ação de criar uma sala de aula ao clicar em 'btn-join-as-productor'
         /*
          *    var isPublicModerator Boolean
@@ -85,15 +96,15 @@ $(document).ready(function() {
         var materia = document.querySelector('#materia').value;
         var assunto = document.querySelector('#assunto').value;
 
-        var turma = document.querySelector('#turma').value;
-        console.log(turma.value);
-        var escola = document.querySelector('#escola').value;
-        var roomLabel = escola.split('|')[1] + " (" + turma.split('|')[1] + ")" + ": " + materia;
+        var turma = document.querySelector('#cursos').value;
+        console.log(turma);
+        //var escola = document.querySelector('#escola').value;
+        //var roomLabel = escola.split('|')[1] + " (" + turma.split('|')[1] + ")" + ": " + materia;
 
         var roomId = Math.floor((Math.random() * 999999) + 0);
         var roomName = document.getElementById('current-user').value;
-        var roomEscola = document.getElementById('codEscola').value;
-        var roomHash = btoa(materia + "|" + roomName + "|" + escola.split('|')[1] + "|" + roomEscola + "|" + turma.split('|')[1]);
+        var roomEscola = document.getElementById('cursos').value;
+        var roomHash = btoa(materia + "|" + roomName + "|" + assunto + "|" + roomEscola);
         usuario = roomName;
         callTeacherStream();
 
@@ -129,10 +140,11 @@ $(document).ready(function() {
                     event.mediaElement.owner = 'User';
                     document.getElementById('room-id').value = roomHash;
 
-                    setStatus('online');
-                    showRoomURL(roomHash, materia, assunto);
-                    setRoomLabel(roomLabel);
+                    //setStatus('online');
+                    //showRoomURL(roomHash, materia, assunto);
+                    //setRoomLabel(roomLabel);
 
+                    console.log('Created room: ' + roomHash);
                     var width = parseInt(connection.teacherVideosContainer.clientWidth);
                     event.mediaElement.width = width;
                     event.mediaElement.className = 'constructed-videos z-depth-3';
@@ -165,6 +177,7 @@ $(document).ready(function() {
                     event.mediaElement.className = 'constructed-videos z-depth-3';
                     */
                 }
+
             }
         }
     }
@@ -191,23 +204,29 @@ $(document).ready(function() {
                      *  var labelClasse string
                      *  var labelNomeEscola string
                      *  var labelProfessor  string
-                     *  var labelEscola integer
-                     *  var labelTurma  string
-                     *  var minhaEscola integer
+                     *  var labelCurso  string
+                     *  var myClass     string
                      *  var countRoom   integer
                      */
                     var labelRoom = moderator.userid;
                     labelRoom = atob(labelRoom);
-                    console.log(labelRoom);
                     var labelClasse = labelRoom.split('|')[0];
                     var labelProfessor = labelRoom.split('|')[1];
                     var labelNomeEscola = labelRoom.split('|')[2];
-                    var labelEscola = labelRoom.split('|')[3];
-                    var labelTurma = labelRoom.split('|')[4];
-                    var minhaEscola = document.getElementById('codEscola').value;
-                    var countRooms = 0;
+                    var labelCurso = labelRoom.split('|')[3];
 
-                    if (minhaEscola == labelEscola) {
+                    var myClass = document.getElementById('target').value;
+                    var countRooms = 0;
+                    console.log(myClass);
+                    var allowed = false;
+                    var classes = myClass.split(';')
+                    for ($i = 0; $i < classes.length; $i++) {
+                        if (labelCurso.indexOf(classes[$i]) > -1) {
+                            allowed = true;
+                        }
+                    }
+
+                    if (allowed) {
                         countRooms++;
                         //cria elemento div para exibição de salas disponíveis em bloco
                         /*
@@ -215,36 +234,25 @@ $(document).ready(function() {
                          *  var divOpen html elem.
                          *  var button  html elem.
                          */
-                        usuario = document.getElementById('meuNome').value;
-                        var divOpen = document.createElement('div');
-                        var card = "<div class='card z-depth-5'>" +
-                            "<div class='card-content' align='left'>" +
-                            "<h6 class='blue-text'>" +
-                            "<i class='fa fa-desktop'></i> <b>" + labelClasse + "</b>" +
-                            "</h6>" +
-                            "<div class='row'>" +
-                            "<div class='col s12 m8'>" +
-                            "<p class='card-text'>" +
-                            "<b>Professor:</b> " + labelProfessor +
-                            "</p>" +
-                            "<p class='card-text'>" +
-                            "<b>Escola:</b> " + labelNomeEscola +
-                            "</p>" +
-                            "<p class='card-text'>" +
-                            "<b>Turma:</b> " + labelTurma +
-                            "</p>" +
-                            "</div>" +
-                            "<div id=" + moderator.userid + " class='col s12 m4' align='right'>" +
-                            "</div>" +
-                            "</div>" +
-                            "</div>";
+                        usuario = document.getElementById('myName').value;
+                        var divOpen = document.createElement('ul');
+                        var card = '<li class="collection-item avatar grey-text text-darken-3">' +
+                            '<i class="material-icons circle blue">videocam</i>' +
+                            '<span class="title"><b>' + labelClasse + ' (' + labelNomeEscola + ')' + '</b></span>' +
+                            '<p>' +
+                            '<b class="blue-text">Professor:</b> ' + labelProfessor +
+                            '</p>' +
+                            '<span id=' + moderator.userid + '>' +
+                            '</span>' +
+                            '</li>';
 
                         divOpen.innerHTML = card;
-                        divOpen.className = "col s12";
+                        divOpen.className = "collection";
 
-                        var button = document.createElement('button');
+                        var button = document.createElement('a');
                         button.id = moderator.userid;
-                        button.className = 'btn blue waves-effect waves-light white-text';
+                        button.title = 'Entrar';
+                        button.className = 'btn-floating blue waves-effect waves-light secondary-content';
                         //Debug
                         //console.log(connection.userid + "||" + connection.sessionid);
                         button.onclick = function() {
@@ -260,6 +268,7 @@ $(document).ready(function() {
                             connection.classVideosContainer.className = 'center';
                             connection.teacherVideosContainer = document.getElementById('main-video');
 
+                            console.log('Try to connect: ' + this.id);
                             connection.join(this.id);
                             //Definições de vídeo para quem acessa a sala
                             /*
@@ -275,7 +284,7 @@ $(document).ready(function() {
                                 userVideo.controls = false;
                                 //Debug
                                 //console.log(event.extra);
-                                console.log(event.extra.modifiedValue);
+                                //console.log(event.extra.modifiedValue);
                                 console.log(event.mediaElement.id);
 
                                 //Define se a conexão é local ou remota
@@ -305,7 +314,7 @@ $(document).ready(function() {
                                         var width = parseInt(connection.teacherVideosContainer.clientWidth - 10);
                                         event.mediaElement.width = width;
                                         event.mediaElement.className = 'constructed-videos z-depth-3';
-                                        event.mediaElement.title = labelNomeEscola + " (" + labelTurma + "): " + labelClasse;
+                                        event.mediaElement.title = labelNomeEscola + " (" + "): " + labelClasse;
                                         document.getElementById('toggle-chat').onclick = function() {
                                             showChat();
                                         }
@@ -324,10 +333,10 @@ $(document).ready(function() {
                                         */
                                     }
                                 }
-                                setRoomLabel(labelNomeEscola + " (" + labelTurma + "): " + labelClasse);
+                                setRoomLabel(labelNomeEscola + " (" + "): " + labelClasse);
                             };
                         };
-                        button.innerHTML = 'Entrar';
+                        button.innerHTML = '<i class="material-icons white-text">play_arrow</i>';
                         if (moderator.userid == connection.sessionid) {
                             // Se já estiver conectado na sala não faz nada
                             button.disabled = true;
@@ -340,7 +349,7 @@ $(document).ready(function() {
                     if (countRooms == 0) {
                         //Mensagem de retorno para 0 salas encontradas na escola determinada
                         var divOpen = document.createElement('div');
-                        var message = "<div class='red-text' style='margin-top:20px;'>" +
+                        var message = "<div class='red-text' style='margin-top:20px;' align='center'>" +
                             "<i class='fa fa-times fa-lg red-text text-darken-3'></i> <b>Não há salas disponíveis.</b>" +
                             "</div>";
                         divOpen.innerHTML = message;
@@ -350,7 +359,7 @@ $(document).ready(function() {
             } else {
                 //Mensagem de retorno para 0 salas encontradas
                 var divOpen = document.createElement('div');
-                var message = "<div class='red-text' style='margin-top:20px;'>" +
+                var message = "<div class='red-text' style='margin-top:20px;' align='center'>" +
                     "<i class='fa fa-times fa-lg red-text text-darken-3'></i> <b>Não há salas disponíveis.</b>" +
                     "</div>";
                 divOpen.innerHTML = message;
@@ -477,7 +486,7 @@ function setRoomLabel(label) {
 function showRoomURL(roomid, className, classTheme) {
     var roomHashURL = '#' + roomid;
     var roomQueryStringURL = '?roomid=' + roomid;
-    var html = '<h6 class="card-title"><i class="fa fa-desktop"></i> Aula iniciada.</h6>';
+    var html = '<h6 class="card-title"><i class="fa fa-circle light-green-text text-accent-4"></i> Aula iniciada.</h6>';
     var roomURLsDiv = document.getElementById('room-urls');
     roomURLsDiv.innerHTML = html;
     roomURLsDiv.style.display = 'block';

@@ -4,6 +4,8 @@
         <!--JavaScript at end of body for optimized loading-->
         <script type="text/javascript" src="{!! asset('js/jquery-3.1.1.min.js') !!}"></script>
         <script type="text/javascript" src="{!! asset('js/materialize.min.js') !!}"></script>
+
+        <!--Inicialização in-page condicional de elementos para a formação de uma sala-->
         @if(isset($streamPage))
             <!--Adição dos scripts de utilização do WEBRTC-->
             <script type="text/javascript" src="{!! asset('js/webrtc/socket.io.js') !!}"></script>
@@ -36,6 +38,7 @@
                         </div>
                     </div>
                 </div>
+                
                 <!--Barra de footer menu-->
                 <nav id='nav-footer' class="nav-wrapper black">
                     <div class="">
@@ -71,6 +74,7 @@
                 </nav>
             @endif
         @endif
+        <!--Inicialização in-page condicional de elementos para cadastro de perfis de usuários-->
         @if(isset($grant))
             <script>
                 document.querySelector('button').onclick = function(evt) {
@@ -89,6 +93,7 @@
                 }
             </script>
         @endif
+        <!--Inicialização in-page condicional de elementos para cadastro de turmas-->
         @if(isset($classroom))
             <script>
                 document.querySelector('button').onclick = function(evt) {
@@ -107,6 +112,7 @@
                 }
             </script>
         @endif
+
         <!--Inicialização in-page de elementos padrões-->
         <script>
             $(document).ready(function(){
@@ -119,6 +125,5 @@
                 $('.modal').modal();
             });
         </script>
-
     </body>
 </html>

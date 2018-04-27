@@ -7,6 +7,7 @@
 @section('content')
     <div id='initial-access' class='row'>
         <div class='white-text'>
+            <!--Diferenciação por tipo de usuário (Espectador/Agente)-->
             @if(Auth::user()->type == 0)
                 <div id='opend-rooms' class='col s12 m6'>
             @else
@@ -16,15 +17,18 @@
                     <span><b><i class='fa fa-television'></i> Salas disponíveis</b></span>
                 </h5>
                 <div class='divider'></div>
-                <div id='public-conference' align='center'>
-                    <div class="center blue-text text-darken-2">
+                <div id='public-conference'>
+                    <!--Div de loading de conteúdo. Apenas demonstrativa-->
+                    <div class="center blue-text text-darken-2" align='center'>
                         <h5>Encontrando salas...</h5>
                         <a class="btn-floating btn-large cyan pulse"><i class="material-icons">search</i></a>
                     </div>
-                    <!--Salas disponíveis-->
+                    
+                    <!--Listagem de Salas disponíveis-->
+
                 </div>
             </div>
-            <!--Acesso para criação de sala-->
+            <!--Acesso para criação de sala: Apenas para usuários do tipo 0 (Agente)-->
             @if(Auth::user()->type == 0)
                 <div id='teacher-access' class='card z-depth-5 col s12 m6'>
                     <div class='card-content'>
@@ -33,9 +37,9 @@
                         </div>
                         <div class='row'>
                             <!--Formulário de criação de salas-->
-                            <form id='criar-sala' action='#' method='post'>
+                            <form id='criar-sala' method='post'>
                                 {{ csrf_field() }}
-                                <!--Assunto da aula (Obrigatório)-->
+                                <!--Matéria e Assunto da aula (Obrigatório)-->
                                 <div class='input-field col s12'>
                                     <input type='text' class='validate' id='materia' name='materia' required>
                                     <label for='materia'><i class='fa fa-book'></i> Matéria da Aula:</label>
@@ -44,53 +48,55 @@
                                     <input type='text' class='validate' id='assunto' name='assunto' required>
                                     <label for='assunto'><i class='fa fa-tags'></i> Assunto da Aula:</label>
                                 </div>
-
-                                <input type='hidden' class='validate' id='escola' name='escola' readonly value=''>
                                 
                                 <div class='input-field col s12'>
                                     <!--Select de Cursos (Obrigatório)-->
-                                    <select multiple id='cursos' required name='cursos'>
+                                    <select multiple id='cursos-list' required name='cursos-list'>
                                         @if(isset($cursos))
                                             @foreach($cursos as $curso)
                                                 <option value="{{ $curso->id }}">{{ $modulos[$curso->modulo_id] }} {{ $curso->name }}</option>
                                             @endforeach
                                         @endif
                                     </select>
-                                    <label for='cursos'><i class='fa fa-cubes'></i> Seleção de Cursos</label>
+                                    <label for='cursos-list'><i class='fa fa-cubes'></i> Seleção de Cursos</label>
                                 </div>
                                 
                                 <div class='divider'></div>
                                 <div align='right'>
                                     <!--Submit-->
-                                    <button type='submit' id='btn-join-as-productor' class='btn blue white-text waves-effect waves-light'><i class='fa fa-check'></i> Criar</button>
+                                    <button type='submit' id='btn-join-as-productor' class='btn blue white-text waves-effect waves-light'><i class='fa fa-check'></i> Iniciar</button>
                                 </div>
-                                <input type='hidden' readonly id='room-id' />
                             </form>
                         </div> 
                     </div>
-                    <input type='hidden' id='codEscola' readonly value='{{ $userdado->school_id}}' />
-                    <input type='hidden' id='meuNome' readonly value='{{Auth::user()->name}}' />
                 </div>
+                <input type='hidden' id='target' name='target' disabled />
             @else
                 <input type='hidden' id='btn-join-as-productor' disabled >
-                <input type='hidden' id='room-id' disabled >
+                <input type='hidden' id='target' name='target' readonly value='{{ $turmas->curso_id }}' />
             @endif
         </div>
     </div>
-    <!--Video Panel-->
+
+    <!--Campos de controle-->
+    <input type='hidden' id='room-id' name='room-id' readonly />
+    <input type='hidden' id='cursos' name='cursos' readonly />
+    <input type='hidden' id='myName' name='myName' readonly value='{{Auth::user()->name}}' />
+
+    <!--Video Panel - Não exibido a princípio-->
     <div id='video-panel' class='d-none'>
         <!--Painel de Debug-->
         <div class='hidden-panel'>
+            <!--Campos de controle-->
             <input type='hidden' id='connected-class' readonly />
             <input type='hidden' id='connected-content' readonly />
             <input type='hidden' id='current-user' value='{{ Auth::user()->name}}' readonly />
         </div>
         <div class='col s12'>
-            <!--Card de vídeo e chat-->
+            <!--Card de vídeo-->
             <div class='card'>
                 <div class='card-content'>
                     <div id='class-suptitle'>
-                        <i class="fa fa-circle light-green-text text-accent-4"></i>
                         <span id='class-title'>
                             <!--Título da aula - Matéria (Assunto)-->
                         </span>
@@ -98,10 +104,13 @@
                     <div class='row'>
                         <div class='col s12'>
                             <div id='room-urls'>
-                                <!--Definições da Sala-->
+                                <!--Definições da Sala criada-->
                             </div>
                             <div id='main-video' class='inroom mainView'>
+
                                 <!--VÍDEO PRINCIPAL-->
+
+                                <!--Div de loading de conteúdo. Apenas demonstrativa-->
                                 <div id='div-connect'>
                                     <div align='center'>
                                         <h6 class='blue-text'>Conectando...</h6>
