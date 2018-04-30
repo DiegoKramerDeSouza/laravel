@@ -37,15 +37,15 @@
                             @if(Auth::user()->type == 0)
                                 <li>
                                     <a id='homeicon' href='{{ route('home') }}'>
-                                        <span class='white-text'><span class='fa fa-home fa-lg'></span> <b>Início</b></span>
+                                        <span class='white-text'><span class='fa fa-home fa-lg blue-text'></span> <b>Início</b></span>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="{{ route('salas') }}"><span class='white-text'><span class='fa fa-television fa-lg'></span> <b>Salas</b></span></a>
+                                    <a href="{{ route('salas') }}"><span class='white-text'><span class='fa fa-television fa-lg blue-text'></span> <b>Salas</b></span></a>
                                 </li>
                                 <li>
                                     <a class='' id='gerDrop' href='{{ route('admin.cadastro') }}'>
-                                        <b><span class='white-text'><span class='fa fa-user-plus fa-lg'></span> Cadastro</span></b>
+                                        <b><span class='white-text'><span class='fa fa-user-plus fa-lg blue-text'></span> Cadastro</span></b>
                                     </a>
                                 </li>
                             @endif
@@ -60,9 +60,6 @@
                         @endif
                     </ul>
                 </div>		
-                <ul id='dropGer' class='dropdown-content'>
-                    <li class='grey darken-4'><a href='{{ route('login.destroy')}}' class='red-text text-darken-3'><i class='fa fa-sign-out fa-lg'></i> <b>Sair</b></a></li>
-                </ul>
                 <ul id='myProfile' class='dropdown-content'>
                     <li class='white'><a href='#' class=''><i class='fa fa-cog blue-text'></i> Configurações</a></li>
                     <li class='white'><a href='#' class=''><i class='fa fa-book blue-text'></i> Aulas</a></li>
@@ -72,32 +69,32 @@
             </nav>
             
             <div id='side-bar' class='sidenav'>
-                <h4 class='white-text' style='margin:10px;'><b>WebTv</b></h4>
+                <h4 class='blue-text' style='margin:10px;'><b>Web<span class='grey-text text-darken-3'>Tv</span></b></h4>
                 <div class='divider'></div>
                 <ul>
                     @if(Auth::guest())
                         <li>
-                            <a href="{{ route('login') }}"><span class='white-text'><span class='fa fa-user-circle fa-lg'></span> <b>Login</b></span></a>
+                            <a href="{{ route('login') }}"><span class='grey-text text-darken-3'><span class='fa fa-user-circle fa-lg blue-text'></span> <b>Login</b></span></a>
                         </li>
                     @else
                         @if(Auth::user()->type == 0)
                             <li>
                                 <a id='homeicon' href='{{ route('home') }}'>
-                                    <span class='white-text'><span class='fa fa-home fa-lg'></span> <b>Início</b></span>
+                                    <span class='grey-text text-darken-3'><span class='fa fa-home fa-lg blue-text'></span> <b>Início</b></span>
                                 </a>
                             </li>
                             <li>
-                                <a href="{{ route('salas') }}"><span class='white-text'><span class='fa fa-television fa-lg'></span> <b>Salas</b></span></a>
+                                <a href="{{ route('salas') }}"><span class='grey-text text-darken-3'><span class='fa fa-television fa-lg blue-text'></span> <b>Salas</b></span></a>
                             </li>
                             <li>
                                 <a class='' id='gerDrop' href='{{ route('admin.cadastro') }}'>
-                                    <b><span class='white-text'><span class='fa fa-user-plus fa-lg'></span> Cadastro</span></b>
+                                    <b><span class='grey-text text-darken-3'><span class='fa fa-user-plus fa-lg blue-text'></span> Cadastro</span></b>
                                 </a>
                             </li>
                         @endif					
                         <li>
                             <a class='dropdown-trigger' id='userDropDown' href='#!' data-target='side-myProfile'>
-                                <div id='userChip' class='chip white darken-1 blue-text'>
+                                <div id='userChip' class='chip blue darken-1 white-text'>
                                     {{Auth::user()->name}}
                                 </div>
                             </a>
@@ -108,8 +105,8 @@
                     <li class='grey darken-4'><a href='{{ route('login.destroy')}}' class='red-text text-darken-3'><i class='fa fa-sign-out fa-lg'></i> <b>Sair</b></a></li>
                 </ul>
                 <ul id='side-myProfile' class='dropdown-content'>
-                    <li><a href='#' class='white-text'><i class='fa fa-cog white-text'></i> Configurações</a></li>
-                    <li><a href='#' class='white-text'><i class='fa fa-book white-text'></i> Aulas</a></li>
+                    <li><a href='#' class='grey-text text-darken-3'><i class='fa fa-cog blue-text'></i> Configurações</a></li>
+                    <li><a href='#' class='grey-text text-darken-3'><i class='fa fa-book blue-text'></i> Aulas</a></li>
                     <li><a href='{{ route('login.destroy')}}' class='red-text text-darken-3'><i class='fa fa-sign-out fa-lg red-text'></i>Sair</a></li>
                 </ul>
             </div>
@@ -119,6 +116,6 @@
             <div>
 				<img id="backgroundLayer" src="{!! asset('img/bg.jpg') !!}" />
 			</div>
-            <div class='container' style='margin-top:40px;'>
+            <div class='container' style='margin-top:40px; padding-bottom:60px;'>
 
     
