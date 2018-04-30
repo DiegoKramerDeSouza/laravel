@@ -6,6 +6,8 @@ use App\UserDado;
 use App\Perfil;
 use App\Common;
 
+//Traits para reutilização de métodos e funções criadas para o projeto
+
 trait EspecialMethods{
 
     public function validade($id){
