@@ -12,12 +12,12 @@
 
 <div class='row'>
     <div class='input-field col s12 m6'>
-        <input class='validate' required {{ isset($user->password) ? 'disabled' : ''}} type='password' name='password' id='password' value='{{ isset($user->password) ? '1234567890' : ''}}'>
+        <input class='validate' required type='password' name='password' id='password' value='{{ isset($user->password) ? 'Old Password' : ''}}'>
         <label for='password'><i class='fa fa-lock'></i> Senha</label>
     </div>
 
     <div class='input-field col s12 m6'>
-        <input class='validate' required {{ isset($user->password) ? 'disabled' : ''}} type='password' name='confpassword' id='confpassword' value='{{ isset($user->password) ? '1234567890' : ''}}'>
+        <input class='validate' required type='password' name='confpassword' id='confpassword' value='{{ isset($user->password) ? 'Old Password' : ''}}'>
         <label for='confpassword'><i class='fa fa-lock'></i> Confirmar Senha</label>
     </div>
 </div>

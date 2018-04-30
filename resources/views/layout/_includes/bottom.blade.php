@@ -38,7 +38,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!--Barra de footer menu-->
                 <nav id='nav-footer' class="nav-wrapper black">
                     <div class="">
@@ -124,6 +124,11 @@
                 $('select').formSelect();
                 $('.modal').modal();
             });
+
+            function goback(){
+                window.history.back();
+            }
+            
         </script>
     </body>
 </html>

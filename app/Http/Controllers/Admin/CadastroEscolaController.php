@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-
+use App\Traits\EspecialMethods;
 use App\User;
 use App\UserDado;
 use App\Escola;
@@ -14,57 +14,114 @@ use App\RecursoApi;
 
 class CadastroEscolaController extends Controller
 {
+    use EspecialMethods;
+
     //->View escolas cadastradas
     public function index($page){
-        //Paginação dos valores coletados na entidade Escolas
-        $escolas = Escola::paginate(10);
-        //Construção da paginação personalizada
-        $prev = $page-1;
-        $next = $page+1;
-        $last = $escolas->lastPage();
-        $paginate = '';
-        if($page == 1){
-            $paginate .= '<li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a></li>';
-        } else {
-            $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/escolas/p' . $prev . '?page=' . $prev . '"><i class="material-icons">chevron_left</i></a></li>';
-        }
-        for($i = 1; $i<=$last; $i++){
-            if($i == $page){
-                $paginate .= '<li class="active blue white-text"><a>' . $i . '</a></li>';
+        
+        if($this->validade('4')){
+            //Paginação dos valores coletados na entidade Escolas
+            $escolas = Escola::paginate(10);
+            //Construção da paginação personalizada
+            $prev = $page-1;
+            $next = $page+1;
+            $last = $escolas->lastPage();
+            $paginate = '';
+            if($page == 1){
+                $paginate .= '<li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a></li>';
             } else {
-                $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/escolas/p' . $i . '?page=' . $i . '">' . $i . '</a></li>';
+                $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/escolas/p' . $prev . '?page=' . $prev . '"><i class="material-icons">chevron_left</i></a></li>';
             }
-        }
-        if($page == $last){
-            $paginate .= '<li class="disabled"><a href="#!"><i class="material-icons">chevron_right</i></a></li>';
+            for($i = 1; $i<=$last; $i++){
+                if($i == $page){
+                    $paginate .= '<li class="active blue white-text"><a>' . $i . '</a></li>';
+                } else {
+                    $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/escolas/p' . $i . '?page=' . $i . '">' . $i . '</a></li>';
+                }
+            }
+            if($page == $last){
+                $paginate .= '<li class="disabled"><a href="#!"><i class="material-icons">chevron_right</i></a></li>';
+            } else {
+                $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/escolas/p' . $next . '?page=' . $next . '"><i class="material-icons">chevron_right</i></a></li>';
+            }
+            return view('admin.cadastro.escolas.index', compact('escolas', 'paginate'));
         } else {
-            $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/escolas/p' . $next . '?page=' . $next . '"><i class="material-icons">chevron_right</i></a></li>';
+            return redirect()->route('denied');
         }
-        return view('admin.cadastro.escolas.index', compact('escolas', 'paginate'));
     }
     //->View para adição de novas escolas
     public function add(){
-        $api = RecursoApi::where('name', 'Google Maps Geolocation')->first();
-        $apicep = RecursoApi::where('name', 'ViaCEP Consulta')->first();
-        return view('admin.cadastro.escolas.adicionar', compact('api', 'apicep', 'ufs'));
+        if($this->validade('4')){
+            $api = RecursoApi::where('name', 'Google Maps Geolocation')->first();
+            $apicep = RecursoApi::where('name', 'ViaCEP Consulta')->first();
+            return view('admin.cadastro.escolas.adicionar', compact('api', 'apicep', 'ufs'));
+        } else {
+            return redirect()->route('denied');
+        }
     }
     //Salvar uma nova escola na base de dados
     public function save(Request $req){
-        if(Escola::where('register', $req->register)->count() == 0){
-            //Define os campos enviados que devem ser criados no banco
+        if($this->validade('4')){
+            if(Escola::where('register', $req->register)->count() == 0){
+                //Define os campos enviados que devem ser criados no banco
+                $escola = [
+                    '_token'=>$req->_token,
+                    'register'=>$req->register,
+                    'name'=>$req->name
+                ];
+                //Insere dados na base Escolas
+                $created = Escola::create($escola);
+
+                //Define os campos enviados que devem ser gravados no banco
+                //Referencia o school_id ao id criado na criação da escola ($created->id)
+                $enderecoescola = [
+                    '_token'=>$req->_token,
+                    'school_id'=>$created->id,
+                    'postal'=>$req->postal,
+                    'address'=>$req->address,
+                    'city'=>$req->city,
+                    'number'=>$req->number,
+                    'complement'=>$req->complement,
+                    'st'=>$req->st,
+                    'coordinates'=>$req->location
+                ];
+                //Insere dados na base UserDados
+                EnderecoEscola::create($enderecoescola);
+                return redirect()->route('admin.cadastro.escolas', ['page' => '1']);
+            } else {
+                echo "<h4>Instituição com registro " . $req->register . " já existente!</h4>";
+            }
+        } else {
+            return redirect()->route('denied');
+        }
+        
+    }
+    //->View para editar dados de escolas
+    public function edit($id){
+        if($this->validade('4')){
+            $api = RecursoApi::where('name', 'Google Maps Geolocation')->first();
+            $apicep = RecursoApi::where('name', 'ViaCEP Consulta')->first();
+            $escolas = Escola::find($id);
+            $endereco = EnderecoEscola::where('school_id', $id)->first();
+            return view('admin.cadastro.escolas.editar', compact('api', 'apicep', 'escolas', 'endereco'));
+        } else {
+            return redirect()->route('denied');
+        }
+    }
+    //Atualizar dados de escola e gravar na base
+    public function update(Request $req, $id){
+        if($this->validade('4')){
+            //Define os campos enviados que devem ser atualizados no banco
             $escola = [
                 '_token'=>$req->_token,
                 'register'=>$req->register,
                 'name'=>$req->name
             ];
-            //Insere dados na base Escolas
-            $created = Escola::create($escola);
-
-            //Define os campos enviados que devem ser gravados no banco
-            //Referencia o school_id ao id criado na criação da escola ($created->id)
+            //Atualiza base de dados Escola
+            Escola::find($id)->update($escola);
+            //Define os campos enviados que devem ser atualizados no banco
             $enderecoescola = [
                 '_token'=>$req->_token,
-                'school_id'=>$created->id,
                 'postal'=>$req->postal,
                 'address'=>$req->address,
                 'city'=>$req->city,
@@ -73,57 +130,27 @@ class CadastroEscolaController extends Controller
                 'st'=>$req->st,
                 'coordinates'=>$req->location
             ];
-            //Insere dados na base UserDados
-            EnderecoEscola::create($enderecoescola);
+            //Atualiza base de dados EnderecoEscola
+            EnderecoEscola::where('school_id', $id)->first()->update($enderecoescola);
             return redirect()->route('admin.cadastro.escolas', ['page' => '1']);
         } else {
-            echo "<h4>Instituição com registro " . $req->register . " já existente!</h4>";
+            return redirect()->route('denied');
         }
-        
-    }
-    //->View para editar dados de escolas
-    public function edit($id){
-        $api = RecursoApi::where('name', 'Google Maps Geolocation')->first();
-        $apicep = RecursoApi::where('name', 'ViaCEP Consulta')->first();
-        $escolas = Escola::find($id);
-        $endereco = EnderecoEscola::where('school_id', $id)->first();
-        return view('admin.cadastro.escolas.editar', compact('api', 'apicep', 'escolas', 'endereco'));
-    }
-    //Atualizar dados de escola e gravar na base
-    public function update(Request $req, $id){
-        //Define os campos enviados que devem ser atualizados no banco
-        $escola = [
-            '_token'=>$req->_token,
-            'register'=>$req->register,
-            'name'=>$req->name
-        ];
-        //Atualiza base de dados Escola
-        Escola::find($id)->update($escola);
-        //Define os campos enviados que devem ser atualizados no banco
-        $enderecoescola = [
-            '_token'=>$req->_token,
-            'postal'=>$req->postal,
-            'address'=>$req->address,
-            'city'=>$req->city,
-            'number'=>$req->number,
-            'complement'=>$req->complement,
-            'st'=>$req->st,
-            'coordinates'=>$req->location
-        ];
-        //Atualiza base de dados EnderecoEscola
-        EnderecoEscola::where('school_id', $id)->first()->update($enderecoescola);
-        return redirect()->route('admin.cadastro.escolas', ['page' => '1']);
     }
     //Deletar escolas registradas e todos os usuários vinculados a esta
     public function delete($id){
-        $todeleteTurma = Turma::where('school_id', '=', $id)->get();
-        //Para cada turma vinculada à instituição
-        foreach($todeleteTurma as $deleteTurma){
-            $deleteTurma->delete();
+        if($this->validade('4')){
+            $todeleteTurma = Turma::where('school_id', '=', $id)->get();
+            //Para cada turma vinculada à instituição
+            foreach($todeleteTurma as $deleteTurma){
+                $deleteTurma->delete();
+            }
+            Escola::find($id)->delete();
+            EnderecoEscola::where('school_id', $id)->first()->delete();
+            return redirect()->route('admin.cadastro.escolas', ['page' => '1']);
+        } else {
+            return redirect()->route('denied');
         }
-        Escola::find($id)->delete();
-        EnderecoEscola::where('school_id', $id)->first()->delete();
-        return redirect()->route('admin.cadastro.escolas', ['page' => '1']);
     }
     
     //Função de teste para coleta de geolocalização 

@@ -7,8 +7,8 @@
 @section('content')
     <div class='card z-depth-5'>
         <div class='card-content'>
-            <div class='row center container'>
-                @if(Auth::guest())
+            @if(Auth::guest())
+                <div class='row center container'>
                     <h2 class='card-title' align='left'>
                         <b>Bem vindo ao <span class='blue-text'>WebTV</span>.</b><br>
                         Efetue seu acesso para começar.
@@ -33,17 +33,19 @@
                             </div>
                         </form>
                     </div>
-                @else
+                </div>
+            @else
+                <div class='row center'>
                     <h2 class='card-title' align='left'>
-                        <b>Bem vindo(a) <span class='blue-text'>{{ Auth::user()->name }}</span>.</b><br>
+                        <b>Bem vindo(a) <br><span class='blue-text'><i class='fa fa-user-circle'></i> {{ Auth::user()->name }}</span>.</b><br>
                     </h2>
                     <div class='divider'></div>
                     <div class='row'>
                         
                         
                     </div>
-                @endif
-            </div>
+                </div>
+            @endif 
         </div>
     </div>
     

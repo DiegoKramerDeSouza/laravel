@@ -9,11 +9,11 @@
     </div>
 
     <div class='input-field col s12 m6'>
-        <input class='validate' required type='password' name='password' id='password' {{ isset($users->password) ? 'disabled' : ''}} value='{{ isset($users->password) ? '12345678' : ''}}'>
+        <input class='validate' required type='password' name='password' id='password' value='{{ isset($users->password) ? 'Old Password' : ''}}'>
         <label for='password'><i class='fa fa-lock'></i> Senha</label>
     </div>
     <div class='input-field col s12 m6'>
-        <input class='validate' required type='password' name='confpassword' id='confpassword' {{ isset($users->password) ? 'disabled' : ''}} value='{{ isset($users->password) ? '12345678' : ''}}'>
+        <input class='validate' required type='password' name='confpassword' id='confpassword' value='{{ isset($users->password) ? 'Old Password' : ''}}'>
         <label for='confpassword'><i class='fa fa-lock'></i> Confirmar senha</label>
     </div>
 

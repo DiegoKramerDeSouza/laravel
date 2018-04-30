@@ -17,7 +17,7 @@ class LoginController extends Controller
             if(Auth::user()->type == 0){
                 return redirect()->route('home');
             } else {
-                return redirect()->route('turmas');
+                return redirect()->route('salas');
             }
         };
         return redirect()->route('login');

@@ -29,18 +29,18 @@ Route::get('/login/destroy', ['as' => 'login.destroy', 'uses' => 'Site\LoginCont
 
 Route::group(['middleware' => 'auth'], function(){
     /**
-     *  Rotas de Salas type 0
+     *  Rota de acesso negado
      */
-    Route::get('/salas/turma', ['as' => 'turmas', 'uses' => 'Site\RoomController@turma']);
+    Route::get('/denied', ['as' => 'denied', 'uses' => 'Site\AccessController@index']);
 
     /**
-     *  Rotas de Salas type 1
+     *  Rota de Salas
      */
 
     Route::get('/salas', ['as' => 'salas', 'uses' => 'Site\RoomController@index']);
 
     /**
-     *  Rotas de Cadastros
+     *  Rota de Cadastros
      */
 
     //Rotas para o formulário de cadastro de usuários e instituições
