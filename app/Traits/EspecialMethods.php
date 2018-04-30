@@ -11,7 +11,6 @@ use App\Common;
 trait EspecialMethods{
 
     public function validade($id){
-        //dd(Auth::user()->type);
         if(Auth::user()->type == 0){
             $userid = Auth::user()->id;
             $userGroup = UserDado::where('user_id', $userid)->first();
@@ -25,6 +24,7 @@ trait EspecialMethods{
             return false;
         }    
     }
+    
     public function validadeCadastro($userid){
         $dados = UserDado::where('user_id', $userid)->first();
         $granted = Perfil::find($dados->group);

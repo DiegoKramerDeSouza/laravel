@@ -30,7 +30,12 @@ class CadastroController extends Controller
             $modulos = Modulo::all();
             $cursos = Curso::all();
             $perfis = Perfil::all();
-            return view('admin.cadastro.index', compact('users', 'granted', 'escolas', 'turmas', 'modulos', 'cursos', 'perfis'));
+            $countModulos = count(explode(';', $granted));
+            $grid = (12/$countModulos);
+            if($grid <= 3){
+                $grid = (24/$countModulos);
+            }
+            return view('admin.cadastro.index', compact('users', 'granted', 'grid', 'escolas', 'turmas', 'modulos', 'cursos', 'perfis'));
         } else {
             return redirect()->route('denied');
         }
