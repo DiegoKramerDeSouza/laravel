@@ -21,20 +21,21 @@
             @if(! Auth::guest())
                 <!--Chat apenas para salas de aulas-->
                 <!--Formação de chat-->
-                <div id='div-chat-panel' class='grey darken-4 card d-none'>
-                    <div class='row white' style='margin:10px;'>
+                <div id='div-chat-panel' class='black card d-none'>
+                    <div class='row white' style='margin:5px;'>
                         <div class='file-field input-field' style='padding:5px;'>
                             <a id='send-message-btn' class='btn-floating waves-effect waves-light blue right'>
                                 <i class='material-icons'>send</i>
                             </a>
                             <div class='file-path-wrapper'>
                                 <!--Input de mensagem-->
+                                <i class='fa fa-comments-o fa-1x prefix'></i>
                                 <input type='text' class='white' id='text-message' placeholder='Chat'>
                             </div>
                         </div>
-                        <div id='chat-textarea' class='input-field'>
+                        <div id='chat-textarea' class='input-field grey lighten-4' style='padding:5px; margin:5px; border:1px solid rgba(80,80,80,0.5); border-radius:5px;'>
                             <!--Output de mensagem-->
-                            <textarea class='grey lighten-3 materialize-textarea' readonly id='chat-panel'></textarea>
+                            <textarea class='grey lighten-4 materialize-textarea' style='border:0px;' readonly id='chat-panel'></textarea>
                         </div>
                     </div>
                 </div>

@@ -37,7 +37,7 @@
                         </div>
                         <div class='row'>
                             <!--Formulário de criação de salas-->
-                            <form id='criar-sala' method='post'>
+                            <!--<form id='criar-sala' method='post'>-->
                                 {{ csrf_field() }}
                                 <!--Matéria e Assunto da aula (Obrigatório)-->
                                 <div class='input-field col s12'>
@@ -51,8 +51,9 @@
                                 
                                 <div class='input-field col s12'>
                                     <!--Select de Cursos (Obrigatório)-->
-                                    <select multiple id='cursos-list' required name='cursos-list'>
+                                    <select multiple id='cursos-list' required name='cursos-list' title='Selecione ao menos um curso'>
                                         @if(isset($cursos))
+                                            <option value='' disabled>Selecione ao menos um curso</option>
                                             @foreach($cursos as $curso)
                                                 <option value="{{ $curso->id }}">{{ $modulos[$curso->modulo_id] }} {{ $curso->name }}</option>
                                             @endforeach
@@ -66,7 +67,7 @@
                                     <!--Submit-->
                                     <button type='submit' id='btn-join-as-productor' class='btn blue white-text waves-effect waves-light'><i class='fa fa-check'></i> Iniciar</button>
                                 </div>
-                            </form>
+                            <!--</form>-->
                         </div> 
                     </div>
                 </div>
@@ -97,34 +98,36 @@
             <div class='card'>
                 <div class='card-content'>
                     <div id='class-suptitle'>
-                        <span id='class-title'>
+                        <span id='class-title' class='card-title'>
                             <!--Título da aula - Matéria (Assunto)-->
                         </span>
                     </div>
+                    <div class='divider'></div>
                     <div class='row'>
                         <div class='col s12'>
+
+                            <div class='card-title' align='right' id="broadcast-viewers-counter"></div>
+
                             <div id='room-urls'>
                                 <!--Definições da Sala criada-->
                             </div>
-                            <div id='main-video' class='inroom mainView'>
-
-                                <!--VÍDEO PRINCIPAL-->
-
+                            <div id='main-video' align='center' class='inroom mainView'>
                                 <!--Div de loading de conteúdo. Apenas demonstrativa-->
                                 <div id='div-connect'>
                                     <div align='center'>
                                         <h6 class='blue-text'>Conectando...</h6>
                                     </div>
                                     <div class="progress">
-                                        <div class="indeterminate"></div>
+                                        <div class="indeterminate blue-text"></div>
                                     </div>
                                 </div>
+
+                                <!--VÍDEO PRINCIPAL-->
+                                <video id="video-preview" loop></video>
+
                             </div>
                         </div>
                     </div>
-                </div>
-                <div id='teacher-name' class='card-action' align='center'>
-                    <h5><span id='prof-room-name'></span></h5>
                 </div>
             </div>
         </div>
