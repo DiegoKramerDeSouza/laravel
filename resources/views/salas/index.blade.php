@@ -37,7 +37,7 @@
                         </div>
                         <div class='row'>
                             <!--Formulário de criação de salas-->
-                            <!--<form id='criar-sala' method='post'>-->
+                            <form id='criar-sala' method='post'>
                                 {{ csrf_field() }}
                                 <!--Matéria e Assunto da aula (Obrigatório)-->
                                 <div class='input-field col s12'>
@@ -67,7 +67,7 @@
                                     <!--Submit-->
                                     <button type='submit' id='btn-join-as-productor' class='btn blue white-text waves-effect waves-light'><i class='fa fa-check'></i> Iniciar</button>
                                 </div>
-                            <!--</form>-->
+                            </form>
                         </div> 
                     </div>
                 </div>

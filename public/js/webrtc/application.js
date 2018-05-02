@@ -1,3 +1,15 @@
+/**
+ *  Javascript + JQuery + WebRTC
+ *  Controle de transmissão de mídia com stream;
+ *  Controle de acesso de usuários por perfil;
+ *  Configurações do WebRTC -> Sockets e RTCMulticonnection
+ *                          -> Transmissão escalável em Broadcast
+ *                          -> Controles do Chat
+ *                          -> Controles de envio e recebimento de mensagens;
+ *  Validação de campos de formulários;
+ *  Utilizado EXCLUSIVAMENTE em /salas/;
+ */
+
 $(document).ready(function() {
     //Application - Inicia a chamada e tratamento de multiconexão
     /**
@@ -33,7 +45,8 @@ $(document).ready(function() {
         socket.on('logs', function(log) {
             //document.querySelector('h1').innerHTML = log.replace(/</g, '----').replace(/>/g, '___').replace(/----/g, '(<span style="color:red;">').replace(/___/g, '</span>)');
         });
-        // Evento emitido quando a transmissão já existe 
+        //Socket - Join
+        // Evento emitido quando a transmissão já existe
         socket.on('join-broadcaster', function(hintsToJoinBroadcast) {
             console.log('**join-broadcaster', hintsToJoinBroadcast);
             connection.session = hintsToJoinBroadcast.typeOfStreams;
@@ -46,6 +59,7 @@ $(document).ready(function() {
             toastContent = '<span class="white-text"><i class="fa fa-play-circle-o fa-lg"></i> Transmissão iniciada!</span>';
             M.toast({ html: toastContent, classes: 'blue' });
         });
+        //Socket - Rejoin
         socket.on('rejoin-broadcast', function(broadcastId) {
             console.log('**rejoin-broadcast', broadcastId);
             connection.attachStreams = [];
@@ -61,6 +75,7 @@ $(document).ready(function() {
                 });
             });
         });
+        //Socket - Stopped
         socket.on('broadcast-stopped', function(broadcastId) {
             // Transmissão interrompida 
             console.error('broadcast-stopped', broadcastId);
