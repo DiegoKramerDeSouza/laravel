@@ -39,14 +39,14 @@
                             <!--Formulário de criação de salas-->
                             <form id='criar-sala' method='post'>
                                 {{ csrf_field() }}
-                                <!--Matéria e Assunto da aula (Obrigatório)-->
+                                <!--Tema e Assunto da aula (Obrigatório)-->
                                 <div class='input-field col s12'>
-                                    <input type='text' class='validate' id='materia' name='materia' required>
-                                    <label for='materia'><i class='fa fa-book'></i> Matéria da Aula:</label>
+                                    <input type='text' class='validate' id='tema' name='tema' required>
+                                    <label for='tema'><i class='fa fa-book'></i> Tema da sala:</label>
                                 </div>
                                 <div class='input-field col s12'>
                                     <input type='text' class='validate' id='assunto' name='assunto' required>
-                                    <label for='assunto'><i class='fa fa-tags'></i> Assunto da Aula:</label>
+                                    <label for='assunto'><i class='fa fa-tag'></i> Assunto da sala:</label>
                                 </div>
                                 
                                 <div class='input-field col s12'>
@@ -123,7 +123,7 @@
                                 </div>
 
                                 <!--VÍDEO PRINCIPAL-->
-                                <video id="video-preview" loop></video>
+                                <video id="video-preview" controls loop></video>
 
                             </div>
                         </div>

@@ -22,7 +22,7 @@ $(document).ready(function() {
     var enableRecordings = false;
     var isPublicModerator = true;
 
-    var connection = new RTCMultiConnection();
+    var connection = new RTCMultiConnection('room-id');
 
     connection.enableScalableBroadcast = true;
     connection.maxRelayLimitPerUser = 1;
@@ -30,12 +30,20 @@ $(document).ready(function() {
 
     connection.socketMessageEvent = 'scalable-media-broadcast-demonstrativo';
     connection.teacherVideosContainer = document.getElementById('main-video');
-    var width;
 
+    var width;
     var status = false;
     var usuario = '';
     var cameras;
     var publicRoomsDiv = document.getElementById('public-conference');
+    var videoPreview = document.getElementById('video-preview');
+
+    var audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+    var gainNode = audioCtx.createGain();
+    var mute = document.getElementById('toggle-mute');
+    var vol = document.getElementById('toggle-volume');
+    var cam = document.getElementById('toggle-camera');
+    var source;
 
     //Conexão com serviço de websocket
     //Servidor de signaling de teste - gratúito https://rtcmulticonnection.herokuapp.com:443/
@@ -48,15 +56,17 @@ $(document).ready(function() {
         //Socket - Join
         // Evento emitido quando a transmissão já existe
         socket.on('join-broadcaster', function(hintsToJoinBroadcast) {
-            console.log('**join-broadcaster', hintsToJoinBroadcast);
+            console.log('2**join-broadcaster', hintsToJoinBroadcast);
             connection.session = hintsToJoinBroadcast.typeOfStreams;
+            console.log(connection.session);
             connection.sdpConstraints.mandatory = {
                 OfferToReceiveVideo: !!connection.session.video,
                 OfferToReceiveAudio: !!connection.session.audio
             };
             connection.broadcastId = hintsToJoinBroadcast.broadcastId;
             connection.join(hintsToJoinBroadcast.userid);
-            toastContent = '<span class="white-text"><i class="fa fa-play-circle-o fa-lg"></i> Transmissão iniciada!</span>';
+            console.log('Joined at: ' + hintsToJoinBroadcast.userid);
+            toastContent = '<span class="white-text"><i class="fa fa-play-circle fa-lg"></i> Transmissão iniciada!</span>';
             M.toast({ html: toastContent, classes: 'blue' });
         });
         //Socket - Rejoin
@@ -79,7 +89,7 @@ $(document).ready(function() {
         socket.on('broadcast-stopped', function(broadcastId) {
             // Transmissão interrompida 
             console.error('broadcast-stopped', broadcastId);
-            toastContent = '<span class="white-text"><i class="fa fa-stop-circle-o fa-lg"></i> Transmissão finalizada!</span>';
+            toastContent = '<span class="white-text"><i class="fa fa-stop-circle fa-lg"></i> Transmissão finalizada!</span>';
             M.toast({ html: toastContent, classes: 'red darken-3' });
         });
         // this event is emitted when a broadcast is absent.
@@ -92,79 +102,210 @@ $(document).ready(function() {
             };
             connection.session = typeOfStreams;
             //Início da captura de mídia
-            connection.open(connection.userid, true, function() {
-                console.log('**Open transmition...');
-                showRoomURL(roomHash, materia, assunto);
-                toastContent = '<span class="white-text"><i class="fa fa-video-camera fa-lg"></i> Transmissão iniciada!</span>';
-                M.toast({ html: toastContent, classes: 'blue' });
-            });
+            connection.open(connection.userid, true);
+            console.log('Open: ' + connection.userid);
         });
     });
     window.onbeforeunload = function() {
         document.getElementById('btn-join-as-productor').disabled = false;
     };
-    var videoPreview = document.getElementById('video-preview');
     connection.onstream = function(event) {
         if (connection.isInitiator && event.type !== 'local') {
             return;
         }
-        connection.isUpperUserLeft = false;
-        videoPreview.srcObject = event.stream;
-        //Definições de video
-        width = parseInt(connection.teacherVideosContainer.clientWidth);
-        videoPreview.width = width;
-        $('#div-connect').hide();
-        videoPreview.play();
-        videoPreview.userid = event.userid;
-        if (event.type === 'local') {
-            videoPreview.muted = true;
-        }
-        if (connection.isInitiator == false && event.type === 'remote') {
-            /**
-             * Verifica se a pessoa que está conectando é o produtor do conteúdo (broadcaster)
-             * e se a conexão é local. Se não:
-             * ->Está apenas fazendo um relaying de media
-             */
-            connection.dontCaptureUserMedia = true;
-            connection.attachStreams = [event.stream];
-            connection.sdpConstraints.mandatory = {
-                OfferToReceiveAudio: false,
-                OfferToReceiveVideo: false
-            };
-            var socket = connection.getSocket();
-            socket.emit('can-relay-broadcast');
-            if (connection.DetectRTC.browser.name === 'Chrome') {
-                connection.getAllParticipants().forEach(function(p) {
-                    if (p + '' != event.userid + '') {
-                        var peer = connection.peers[p].peer;
-                        peer.getLocalStreams().forEach(function(localStream) {
-                            peer.removeStream(localStream);
-                        });
-                        event.stream.getTracks().forEach(function(track) {
-                            peer.addTrack(track, event.stream);
-                        });
-                        connection.dontAttachStream = true;
-                        connection.renegotiate(p);
-                        connection.dontAttachStream = false;
-                    }
-                });
-            }
-            if (connection.DetectRTC.browser.name === 'Firefox') {
+        if (event.type === 'remote') {
+            connection.isUpperUserLeft = false;
+            videoPreview.srcObject = event.stream;
+            //Definições de video
+            width = parseInt(connection.teacherVideosContainer.clientWidth);
+            videoPreview.width = width;
+            //videoPreview.controls = false;
+            $('#div-connect').hide();
+            videoPreview.play();
+            //console.log(event);
+
+            videoPreview.userid = event.userid;
+            if (connection.isInitiator == false && event.type === 'remote') {
                 /**
-                 *  Método alternativo para o Firefox utilizar 'removeStream'
-                 *  Possibilita rejoin para navegadores Firefox
+                 * Verifica se a pessoa que está conectando é o produtor do conteúdo (broadcaster)
+                 * e se a conexão é local. Se não:
+                 * ->Está apenas fazendo um relaying de media
                  */
-                connection.getAllParticipants().forEach(function(p) {
-                    if (p + '' != event.userid + '') {
-                        connection.replaceTrack(event.stream, p);
-                    }
-                });
+                console.log('3**STREAM Remoto!');
+                connection.dontCaptureUserMedia = true;
+                connection.attachStreams = [event.stream];
+                connection.sdpConstraints.mandatory = {
+                    OfferToReceiveAudio: false,
+                    OfferToReceiveVideo: false
+                };
+                var socket = connection.getSocket();
+                socket.emit('can-relay-broadcast');
+                if (connection.DetectRTC.browser.name === 'Chrome') {
+                    connection.getAllParticipants().forEach(function(p) {
+                        if (p + '' != event.userid + '') {
+                            var peer = connection.peers[p].peer;
+                            peer.getLocalStreams().forEach(function(localStream) {
+                                peer.removeStream(localStream);
+                            });
+                            event.stream.getTracks().forEach(function(track) {
+                                peer.addTrack(track, event.stream);
+                            });
+                            connection.dontAttachStream = true;
+                            connection.renegotiate(p);
+                            connection.dontAttachStream = false;
+                        }
+                    });
+                }
+                if (connection.DetectRTC.browser.name === 'Firefox') {
+                    /**
+                     *  Método alternativo para o Firefox utilizar 'removeStream'
+                     *  Possibilita rejoin para navegadores Firefox
+                     */
+                    connection.getAllParticipants().forEach(function(p) {
+                        if (p + '' != event.userid + '') {
+                            connection.replaceTrack(event.stream, p);
+                        }
+                    });
+                }
+                // Habilita recording para navegadores Chrome.
+                if (connection.DetectRTC.browser.name === 'Chrome') {
+                    repeatedlyRecordStream(event.stream);
+                }
+
+                mute.setAttribute('data-active', 'disabled');
+                mute.classList.remove("red-text");
+                mute.classList.add("grey-text");
+                mute.innerHTML = "<i class='material-icons left'>mic_off</i> <b class='hide-on-med-and-down'>Microfone</b>";
+
+                cam.setAttribute('data-active', 'disabled');
+                cam.classList.remove("blue-text");
+                cam.classList.add("grey-text");
+                cam.innerHTML = "<i class='material-icons left'>videocam_off</i> <b class='hide-on-med-and-down'>Camera</b>";
             }
-            // Habilita recording para navegadores Chrome.
-            if (connection.DetectRTC.browser.name === 'Chrome') {
-                repeatedlyRecordStream(event.stream);
+
+            //Tratamento de áudio on/off-----------------------------------------
+            document.getElementById('toggle-volume').onclick = function() {
+                if (vol.getAttribute('data-active') == 'enabled') {
+                    vol.setAttribute('data-active', 'disabled');
+                    vol.classList.remove("blue-text");
+                    vol.classList.add("grey-text");
+                    vol.innerHTML = "<i class='material-icons left'>volume_off</i> <b class='white-text hide-on-med-and-down'>Áudio</b>";
+                    toastContent = '<span class="white-text"><i class="material-icons left">volume_off</i> Áudio Desabilitado.</span>';
+                    M.toast({ html: toastContent, classes: 'red darken-3' });
+                    connection.attachStreams.forEach(function(stream) {
+                        stream.mute('audio');
+                    });
+                } else {
+                    vol.setAttribute('data-active', 'enabled');
+                    vol.classList.remove("grey-text");
+                    vol.classList.add("blue-text");
+                    vol.innerHTML = "<i class='material-icons left'>volume_up</i> <b class='white-text hide-on-med-and-down'>Áudio</b>";
+                    toastContent = '<span class="white-text"><i class="material-icons left">volume_up</i> Áudio Habilitado.</span>';
+                    M.toast({ html: toastContent, classes: 'blue darken-3' });
+                    connection.attachStreams.forEach(function(stream) {
+                        stream.unmute('audio');
+                    });
+                }
+            }
+
+
+        } else {
+            connection.isUpperUserLeft = false;
+            videoPreview.srcObject = event.stream;
+            //Definições de video
+            width = parseInt(connection.teacherVideosContainer.clientWidth);
+            videoPreview.width = width;
+            //videoPreview.controls = false;
+            $('#div-connect').hide();
+            videoPreview.play();
+
+            console.log('STREAM!');
+            console.log(event.stream);
+
+            videoPreview.userid = event.userid;
+            videoPreview.muted = true;
+
+            vol.setAttribute('data-active', 'disabled');
+            vol.classList.remove("blue-text");
+            vol.classList.add("grey-text");
+            vol.innerHTML = "<i class='material-icons left'>volume_off</i> <b class='hide-on-med-and-down'>Áudio</b>";
+
+            //Tratamento de microfone--------------------------------
+            document.getElementById('toggle-mute').onclick = function() {
+                if (mute.getAttribute('data-active') == 'enabled') {
+                    mute.setAttribute('data-active', 'disabled');
+                    mute.classList.remove("blue-text");
+                    mute.classList.add("grey-text");
+                    mute.innerHTML = "<i class='material-icons left'>mic_off</i> <b class='white-text hide-on-med-and-down'>Microfone</b>";
+                    toastContent = '<span class="white-text"><i class="material-icons left">mic_off</i> Microfone Desabilitado.</span>';
+                    M.toast({ html: toastContent, classes: 'red darken-3' });
+                    connection.attachStreams.forEach(function(stream) {
+                        stream.mute('audio');
+                    });
+                } else {
+                    mute.setAttribute('data-active', 'enabled');
+                    mute.classList.remove("grey-text");
+                    mute.classList.add("blue-text");
+                    mute.innerHTML = "<i class='material-icons left'>mic</i> <b class='white-text hide-on-med-and-down'>Microfone</b>";
+                    toastContent = '<span class="white-text"><i class="material-icons left">mic</i> Microfone Habilitado.</span>';
+                    M.toast({ html: toastContent, classes: 'blue darken-3' });
+                    connection.attachStreams.forEach(function(stream) {
+                        stream.unmute({
+                            audio: true,
+                            video: false,
+                            type: 'remote'
+                        });
+                    });
+                }
+            }
+
+            //Tratamento de Camera + Microfone on/off-----------------------------------------
+            document.getElementById('toggle-camera').onclick = function() {
+                if (cam.getAttribute('data-active') == 'enabled') {
+
+                    cam.setAttribute('data-active', 'disabled');
+                    cam.classList.remove("blue-text");
+                    cam.classList.add("grey-text");
+                    cam.innerHTML = "<i class='material-icons left'>videocam_off</i> <b class='white-text hide-on-med-and-down'>Camera</b>";
+
+                    mute.setAttribute('data-active', 'disabled');
+                    mute.classList.remove("blue-text");
+                    mute.classList.add("grey-text");
+                    mute.innerHTML = "<i class='material-icons left'>mic_off</i> <b class='white-text hide-on-med-and-down'>Microfone</b>";
+
+                    toastContent = '<span class="white-text"><i class="material-icons left">videocam_off</i> Camera Desabilitada.</span>';
+                    M.toast({ html: toastContent, classes: 'red darken-3' });
+                    connection.attachStreams.forEach(function(stream) {
+                        stream.mute('video');
+                        stream.mute('audio');
+                    });
+                } else {
+                    cam.setAttribute('data-active', 'enabled');
+                    cam.classList.remove("grey-text");
+                    cam.classList.add("blue-text");
+                    cam.innerHTML = "<i class='material-icons left'>videocam</i> <b class='white-text hide-on-med-and-down'>Camera</b>";
+
+                    mute.setAttribute('data-active', 'enabled');
+                    mute.classList.remove("grey-text");
+                    mute.classList.add("blue-text");
+                    mute.innerHTML = "<i class='material-icons left'>mic</i> <b class='white-text hide-on-med-and-down'>Microfone</b>";
+
+                    toastContent = '<span class="white-text"><i class="material-icons left">videocam</i> Camera Habilitada.</span>';
+                    M.toast({ html: toastContent, classes: 'blue darken-3' });
+                    connection.attachStreams.forEach(function(stream) {
+                        stream.unmute('video');
+                        stream.unmute('audio');
+                    });
+                }
             }
         }
+        connection.onmute = function(e) {
+            e.mediaElement.setAttribute('poster', '/img/bg.jpg');
+        };
+        connection.onunmute = function(e) {
+            e.mediaElement.removeAttribute('poster');
+        };
+
     };
 
     //Ação de criar uma sala de aula ao clicar em 'btn-join-as-productor'
@@ -184,7 +325,7 @@ $(document).ready(function() {
          */
         var elem = document.getElementById(this.id);
         var roomId = Math.floor((Math.random() * 999999) + 0);
-        var materia = document.querySelector('#materia').value;
+        var materia = document.querySelector('#tema').value;
         var assunto = document.querySelector('#assunto').value;
         var roomName = document.getElementById('current-user').value;
         var values = $('#cursos-list').val();
@@ -195,44 +336,56 @@ $(document).ready(function() {
                 strValues += ';';
             }
         }
-        var roomCursos = strValues;
-        var roomHash = btoa(materia + "|" + roomName + "|" + assunto + "|" + roomCursos + "|" + roomId);
-        usuario = roomName;
-        var broadcastId = roomHash;
+        if (strValues != '' && (materia != '' && assunto != '')) {
+            var roomCursos = strValues;
+            var roomHash = btoa(materia + "|" + roomName + "|" + assunto + "|" + roomCursos + "|" + roomId);
+            usuario = roomName;
+            var broadcastId = roomHash;
 
-        // Inicializa a tela de apresentação (video)
-        callTeacherStream();
-        // Modela e apresenta título do video
-        setRoomLabel("<i class='fa fa-video-camera blue-text'></i> <b>" + materia + "</b> (" + assunto + ")" +
-            "<span class='right'><a href='' title='Finalizar' class='red-text text-darken-3'>" +
-            "<i class='fa fa-times'></i></a></span>");
+            // Inicializa a tela de apresentação (video)
+            callTeacherStream();
+            // Modela e apresenta título do video
+            setRoomLabel("<i class='fa fa-video-camera blue-text'></i> <b>" + materia + "</b> (" + assunto + ")" +
+                "<span class='right'><a href='' title='Finalizar' class='red-text text-darken-3'>" +
+                "<i class='fa fa-times'></i></a></span>");
 
-        document.getElementById('btn-join-as-productor').disabled = true;
-        // Define inicialização de sessão
-        connection.session = {
-            audio: true,
-            video: true,
-            data: true,
-            oneway: true
-        };
-        // Inicializa Socket
-        var socket = connection.getSocket();
-        socket.emit('check-broadcast-presence', broadcastId, function(isBroadcastExists) {
-            if (!isBroadcastExists) {
-                // O broadcaster TEM de definir seu user-id
-                connection.userid = broadcastId;
-            }
-            console.log('check-broadcast-presence', broadcastId, isBroadcastExists);
-            socket.emit('join-broadcast', {
-                broadcastId: broadcastId,
-                userid: connection.userid,
-                typeOfStreams: connection.session
+            document.getElementById('btn-join-as-productor').disabled = true;
+            // Define inicialização de sessão
+            connection.session = {
+                audio: true,
+                video: true,
+                data: true,
+                oneway: true
+            };
+            // Inicializa Socket
+            var socket = connection.getSocket();
+            socket.emit('check-broadcast-presence', broadcastId, function(isBroadcastExists) {
+                if (!isBroadcastExists) {
+                    // O broadcaster TEM de definir seu user-id
+                    connection.userid = broadcastId;
+                }
+                console.log('check-broadcast-presence', broadcastId, isBroadcastExists);
+                socket.emit('join-broadcast', {
+                    broadcastId: broadcastId,
+                    userid: connection.userid,
+                    typeOfStreams: connection.session
+                });
+                //Habilita funções de chat
+                document.getElementById('toggle-chat').onclick = function() {
+                        toggleElem('#div-chat-panel');
+                        $('#text-message').focus();
+                    }
+                    /*
+                    document.getElementById('toggle-volume').onclick = function() {
+                        toggleElem('#div-volume-panel');
+                        $('#vol-control').focus();
+                    }
+                    */
             });
-            //Habilita funções de chat
-            document.getElementById('toggle-chat').onclick = function() {
-                showChat();
-            }
-        });
+        } else {
+            toastContent = '<span class="white-text"><i class="fa fa-exclamation-triangle fa-lg"></i> Por favor informe todos os campos indicados!</span>';
+            M.toast({ html: toastContent, classes: 'red darken-3' });
+        }
     }
 
     connection.onstreamended = function() {};
@@ -248,8 +401,10 @@ $(document).ready(function() {
             //Definições de video
             width = parseInt(connection.teacherVideosContainer.clientWidth);
             videoPreview.width = width;
+            //videoPreview.controls = false;
             $('#div-connect').hide();
             videoPreview.play();
+            console.log("VOLUME: " + videoPreview.volume);
             allRecordedBlobs = [];
         } else if (connection.currentRecorder) {
             var recorder = connection.currentRecorder;
@@ -260,8 +415,10 @@ $(document).ready(function() {
                 //Definições de video
                 width = parseInt(connection.teacherVideosContainer.clientWidth);
                 videoPreview.width = width;
+                //videoPreview.controls = false;
                 $('#div-connect').hide();
                 videoPreview.play();
+                console.log("VOLUME: " + videoPreview.volume);
             });
         }
         if (connection.currentRecorder) {
@@ -448,7 +605,7 @@ $(document).ready(function() {
                                     // O broadcaster TEM de definir seu user-id
                                     connection.userid = broadcastId;
                                 }
-                                console.log('**check-broadcast-presence', broadcastId, isBroadcastExists);
+                                console.log('1**check-broadcast-presence', broadcastId, isBroadcastExists);
                                 socket.emit('join-broadcast', {
                                     broadcastId: broadcastId,
                                     userid: connection.userid,
@@ -456,8 +613,16 @@ $(document).ready(function() {
                                 });
                                 //Habilita funções de Chat
                                 document.getElementById('toggle-chat').onclick = function() {
-                                    showChat();
-                                }
+                                    toggleElem('#div-chat-panel');
+                                    $('#text-message').focus();
+                                };
+                                //Habilita funções de Controle de Volume
+                                /*
+                                document.getElementById('toggle-volume').onclick = function() {
+                                    toggleElem('#div-volume-panel');
+                                    $('#vol-control').focus();
+                                };
+                                */
                             });
                             // Modela e apresenta título do video
                             setRoomLabel("<i class='fa fa-television blue-text'></i> <b>" + labelClasse + "</b> (" + labelAssunto + ")" +
@@ -591,11 +756,31 @@ function appendDIV(event) {
     M.textareaAutoResize($('#chat-panel'));
     M.updateTextFields();
 }
-//Controle para exibição do chat
-function showChat() {
-    if ($('#div-chat-panel').is(":visible")) {
-        $('#div-chat-panel').slideUp(500);
+//Controle de Volume
+window.SetVolume = function(val) {
+    var player = document.getElementById('video-preview');
+    console.log('Before: ' + player.volume);
+    player.volume = val / 100;
+    //player.controls = false;
+    player.play();
+    console.log('After: ' + player.volume);
+}
+
+//Toggle de controle de audio
+function toggleControls() {
+    var player = document.getElementById('video-preview');
+    if (player.hasAttribute("controls")) {
+        player.removeAttribute("controls");
     } else {
-        $('#div-chat-panel').slideDown(500);
+        player.setAttribute("controls", "controls");
+    }
+}
+
+//Controle para exibição do chat
+function toggleElem(elemId) {
+    if ($(elemId).is(":visible")) {
+        $(elemId).slideUp(500);
+    } else {
+        $(elemId).slideDown(500);
     }
 }

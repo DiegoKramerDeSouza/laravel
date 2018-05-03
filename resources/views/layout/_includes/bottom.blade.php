@@ -40,23 +40,31 @@
                     </div>
                 </div>
 
+                <!--Formação de controlador de volume-->
+                <div id='div-volume-panel' class='grey darken-4 card d-none' style='width:380px;'>
+                    <div class='card-content'>
+                        <input id="vol-control" type="range" min="0" max="100" step="1" oninput="SetVolume(this.value)" onchange="SetVolume(this.value)" />
+                        <i class='fa fa-volume-up white-text'></i>
+                    </div>
+                </div>
+
                 <!--Barra de footer menu-->
                 <nav id='nav-footer' class="nav-wrapper black">
                     <div class="">
                         <ul id='nav-mobile' class='right blue-text'>
                             <li>
-                                <a href='#' title='Camera'>
-                                    <span class='blue-text text-darken-3'><i class='material-icons left'>videocam</i> <b class='white-text hide-on-med-and-down'>Camera</b></span>
+                                <a id='toggle-camera' data-active='enabled' class='blue-text text-darken-3' title='Camera'>
+                                    <i class='material-icons left'>videocam</i> <b class='white-text hide-on-med-and-down'>Camera</b>
                                 </a>
                             </li>
                             <li>
-                                <a href='#' title='Volume'>
-                                    <span class='blue-text text-darken-3'><i class='material-icons left'>volume_up</i> <b class='white-text hide-on-med-and-down'>Volume</b></span>
+                                <a id='toggle-mute' data-active='enabled' class='blue-text text-darken-3' title='Microfone'>
+                                    <i class='material-icons left'>mic</i> <b class='white-text hide-on-med-and-down'>Microfone</b>
                                 </a>
                             </li>
                             <li>
-                                <a href="#" title='Mudo'>
-                                    <span class='blue-text text-darken-3'><i class='material-icons left'>mic_off</i> <b class='white-text hide-on-med-and-down'>Mudo</b></span>
+                                <a id='toggle-volume' data-active='enabled' class='blue-text text-darken-3' title='Volume'>
+                                    <i class='material-icons left'>volume_up</i> <b class='white-text hide-on-med-and-down'>Áudio</b>
                                 </a>
                             </li>
                             <li>

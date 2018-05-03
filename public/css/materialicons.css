@@ -45,7 +45,8 @@ nav {
     bottom: 0px;
 }
 
-#div-chat-panel {
+#div-chat-panel,
+#div-volume-panel {
     position: fixed;
     bottom: 49px;
     width: 100%;
