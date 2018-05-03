@@ -79,21 +79,21 @@
                     <div class="row">
                         <div class="col s12">
                             <h5 class="white-text">WebTv</h5>
-                            <p class="grey-text text-lighten-4">
+                            <p class="grey-text text-lighten-1">
                                 Protótipo de aplicação voltado à comunicação via webconference utilizando WebRTC e compatível com os navegadores Google Chrome e Mozilla Firefox. 
                                 <br>
                                 <br>
-                                Versão 0.1.0.1
+                                Versão 0.0.1.1
                                 <br> 
-                                <i class="grey-text text-lighten-4 right fa fa-firefox"></i>
-                                <i class="grey-text text-lighten-4 right fa fa-chrome"></i> 
+                                <i class="grey-text right fa fa-firefox"></i>
+                                <i class="grey-text right fa fa-chrome"></i> 
                             </p>
                         </div>
                     </div>
                 </div>
                 <div class="footer-copyright black">
                     <div class='container'>
-                        © 2018 Intelit Smart Group SA
+                        <i class='fa fa-copyright'></i> 2018 Intelit Smart Group SA
                     </div>
                 </div>
             </footer>

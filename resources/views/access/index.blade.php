@@ -9,11 +9,11 @@
         <div class='card-content'>
             <h2 class='card-title'>
                 <b class='red-text text-darken-3'><i class='fa fa-exclamation-triangle'></i> Acesso restrito.</b><br>
-                Por favor efetue o login para acessar este recurso.
+                Por favor efetue o login para acessar os recursos desta página.
             </h2>
             <div class='divider'></div>
             <div class='row container'>
-                <h3 class='card-title'>Login</h3>
+                <h3 class='card-title'><i class='fa fa-user-circle blue-text'></i> Login</h3>
                 <form class='' action='{{ route('login.access') }}' method='post' enctype="multipart/form-data">
                     {{ csrf_field() }}
                     <div class='row'>
