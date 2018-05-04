@@ -21,7 +21,7 @@
                     <!--Div de loading de conteúdo. Apenas demonstrativa-->
                     <div class="center blue-text text-darken-2" align='center'>
                         <h5>Encontrando salas...</h5>
-                        <a class="btn-floating btn-large cyan pulse"><i class="material-icons">search</i></a>
+                        <a class="btn-floating btn-large blue pulse"><i class="material-icons">search</i></a>
                     </div>
                     
                     <!--Listagem de Salas disponíveis-->
@@ -37,37 +37,34 @@
                         </div>
                         <div class='row'>
                             <!--Formulário de criação de salas-->
-                            <form id='criar-sala' method='post'>
-                                {{ csrf_field() }}
-                                <!--Tema e Assunto da aula (Obrigatório)-->
-                                <div class='input-field col s12'>
-                                    <input type='text' class='validate' id='tema' name='tema' required>
-                                    <label for='tema'><i class='fa fa-book'></i> Tema da sala:</label>
-                                </div>
-                                <div class='input-field col s12'>
-                                    <input type='text' class='validate' id='assunto' name='assunto' required>
-                                    <label for='assunto'><i class='fa fa-tag'></i> Assunto da sala:</label>
-                                </div>
-                                
-                                <div class='input-field col s12'>
-                                    <!--Select de Cursos (Obrigatório)-->
-                                    <select multiple id='cursos-list' required name='cursos-list' title='Selecione ao menos um curso'>
-                                        @if(isset($cursos))
-                                            <option value='' disabled>Selecione ao menos um curso</option>
-                                            @foreach($cursos as $curso)
-                                                <option value="{{ $curso->id }}">{{ $modulos[$curso->modulo_id] }} {{ $curso->name }}</option>
-                                            @endforeach
-                                        @endif
-                                    </select>
-                                    <label for='cursos-list'><i class='fa fa-cubes'></i> Seleção de Cursos</label>
-                                </div>
-                                
-                                <div class='divider'></div>
-                                <div align='right'>
-                                    <!--Submit-->
-                                    <button type='submit' id='btn-join-as-productor' class='btn blue white-text waves-effect waves-light'><i class='fa fa-check'></i> Iniciar</button>
-                                </div>
-                            </form>
+                            <!--Form removido para utilização com firefox-->
+                            <!--Tema e Assunto da aula (Obrigatórios)-->
+                            <div class='input-field col s12'>
+                                <input type='text' class='validate' id='tema' name='tema' required>
+                                <label for='tema'><i class='fa fa-book'></i> Tema da sala:</label>
+                            </div>
+                            <div class='input-field col s12'>
+                                <input type='text' class='validate' id='assunto' name='assunto' required>
+                                <label for='assunto'><i class='fa fa-tag'></i> Assunto da sala:</label>
+                            </div>
+                            <div class='input-field col s12'>
+                                <!--Select de Cursos (Obrigatório)-->
+                                <select multiple id='cursos-list' required name='cursos-list' title='Selecione ao menos um curso'>
+                                    @if(isset($cursos))
+                                        <option value='' disabled>Selecione ao menos um curso</option>
+                                        @foreach($cursos as $curso)
+                                            <option value="{{ $curso->id }}">{{ $modulos[$curso->modulo_id] }} {{ $curso->name }}</option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                                <label for='cursos-list'><i class='fa fa-cubes'></i> Seleção de Cursos</label>
+                            </div>
+                            
+                            <div class='divider'></div>
+                            <div align='right'>
+                                <!--Submit-->
+                                <button type='submit' id='btn-join-as-productor' class='btn blue white-text waves-effect waves-light'><i class='fa fa-play'></i> Iniciar</button>
+                            </div>
                         </div> 
                     </div>
                 </div>
@@ -105,25 +102,27 @@
                     <div class='divider'></div>
                     <div class='row'>
                         <div class='col s12'>
-
-                            <div class='card-title' align='right' id="broadcast-viewers-counter"></div>
-
+                            @if(Auth::user()->type == 0)
+                                <div class='card-title blue-text tooltipped' data-position="right" data-tooltip="Espectador(es)" align='right' id="broadcast-viewers-counter" >
+                                    <i class="fa fa-desktop"></i> <b class="grey-text text-darken-3">0</b>
+                                </div>
+                            @endif
                             <div id='room-urls'>
                                 <!--Definições da Sala criada-->
                             </div>
                             <div id='main-video' align='center' class='inroom mainView'>
                                 <!--Div de loading de conteúdo. Apenas demonstrativa-->
                                 <div id='div-connect'>
-                                    <div align='center'>
+                                    <div align='center' style='margin-top:50px;'>
                                         <h6 class='blue-text'>Conectando...</h6>
                                     </div>
-                                    <div class="progress">
-                                        <div class="indeterminate blue-text"></div>
+                                    <div class="progress grey lighten-3">
+                                        <div class="indeterminate blue"></div>
                                     </div>
                                 </div>
 
                                 <!--VÍDEO PRINCIPAL-->
-                                <video id="video-preview" controls loop></video>
+                                <video id="video-preview" loop></video>
 
                             </div>
                         </div>

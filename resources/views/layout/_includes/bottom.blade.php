@@ -52,27 +52,27 @@
                 <nav id='nav-footer' class="nav-wrapper black">
                     <div class="">
                         <ul id='nav-mobile' class='right blue-text'>
-                            <li>
+                            <li class='hover-footer-btn'>
                                 <a id='toggle-camera' data-active='enabled' class='blue-text text-darken-3' title='Camera'>
                                     <i class='material-icons left'>videocam</i> <b class='white-text hide-on-med-and-down'>Camera</b>
                                 </a>
                             </li>
-                            <li>
+                            <li class='hover-footer-btn'>
                                 <a id='toggle-mute' data-active='enabled' class='blue-text text-darken-3' title='Microfone'>
                                     <i class='material-icons left'>mic</i> <b class='white-text hide-on-med-and-down'>Microfone</b>
                                 </a>
                             </li>
-                            <li>
-                                <a id='toggle-volume' data-active='enabled' class='blue-text text-darken-3' title='Volume'>
+                            <li class='hover-footer-btn'>
+                                <a id='toggle-volume' data-active='enabled' class='blue-text text-darken-3' title='Áudio'>
                                     <i class='material-icons left'>volume_up</i> <b class='white-text hide-on-med-and-down'>Áudio</b>
                                 </a>
                             </li>
-                            <li>
+                            <li class='hover-footer-btn'>
                                 <a id='toggle-chat' title='Chat' class='blue-text text-darken-3'>
                                     <i class='material-icons left'>forum</i> <b class='white-text hide-on-med-and-down'>Chat</b>
                                 </a>
                             </li>
-                            <li>
+                            <li class='hover-footer-btn'>
                                 <a href='#' title='Pedir a vez'>
                                     <span class='blue-text text-darken-3'><i class='material-icons left'>pan_tool</i> <b class='white-text hide-on-med-and-down'>Pedir a vez</b></span>
                                 </a>
@@ -155,6 +155,7 @@
                 $('input#input_text, textarea#textarea2').characterCounter();
                 $('select').formSelect();
                 $('.modal').modal();
+                $('.tooltipped').tooltip();
             });
 
             function goback(){
