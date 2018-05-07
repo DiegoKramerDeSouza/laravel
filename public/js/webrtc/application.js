@@ -59,7 +59,7 @@ $(document).ready(function() {
     var source;
 
     // Conexão com serviço de websocket
-    // Servidor de signaling de teste - gratúito https://rtcmulticonnection.herokuapp.com:443/
+    // Servidor de signaling de teste gratúito:
     connection.socketURL = 'https://rtcmulticonnection.herokuapp.com:443/';
 
     connection.connectSocket(function(socket) {
