@@ -38,6 +38,7 @@ $(document).ready(function() {
      *  var solicita        integer
      *  var cameras         Boolean
      *  var publicRoomsDiv  elem. html
+     *  var inRoom          elem. html
      *  var videoPreview    elem. html
      *  var mute            elem. html
      *  var vol             elem. html
@@ -52,19 +53,13 @@ $(document).ready(function() {
     var solicita = 0;
     var cameras;
     var publicRoomsDiv = document.getElementById('public-conference');
+    var inRoom = document.getElementById('in-room');
     var videoPreview = document.getElementById('video-preview');
     var mute = document.getElementById('toggle-mute');
     var vol = document.getElementById('toggle-volume');
     var cam = document.getElementById('toggle-camera');
     var pedir = document.getElementById('pedir-vez');
     var ctlPedir = document.getElementById('control-pedir-vez');
-
-
-
-    // Controles de Áudio com Gain - EM TESTES
-    var audioCtx = new(window.AudioContext || window.webkitAudioContext)();
-    var gainNode = audioCtx.createGain();
-    var source;
 
     // Conexão com serviço de websocket
     // Servidor de signaling de teste gratúito:
@@ -131,7 +126,7 @@ $(document).ready(function() {
     connection.onstream = function(event) {
         //Apresentação da barra de funções de video
         $('#nav-footer').slideDown(500);
-
+        inRoom.value = event.userid;
         if (connection.isInitiator && event.type !== 'local') {
             return;
         }
@@ -153,6 +148,8 @@ $(document).ready(function() {
                 "<i class='material-icons left'>pan_tool</i> <b class='white-text hide-on-med-and-down'>Pedir a vez</b>" +
                 "</a>" +
                 "</li>";
+            pedir = document.getElementById('pedir-vez');
+
             //Controle de elementos da conexão
             videoPreview.userid = event.userid;
             if (connection.isInitiator == false && event.type === 'remote') {
@@ -222,8 +219,28 @@ $(document).ready(function() {
 
             // Tratamento do botão de pedir a vez
             pedir.onclick = function() {
-                //handleSocketCustomMessages();
-                console.log('Pedindo a vez');
+                connection.adminId = inRoom.value;
+                console.log(connection.adminId);
+                connection.socketCustomEvent = connection.adminId;
+                connection.checkPresence(connection.adminId, function(isAdminOnline, adminId, adminInfo) {
+                    handleSocketCustomMessages();
+                    listBox('Admin is online. You can join him. He seems "available" as well.', {
+                        btnClose: true,
+                        btnAccept: true,
+                        btnAcceptText: 'Join Admin',
+                        onBtnAcceptClicked: function() {
+                            connection.sendCustomMessage({
+                                messageFor: inRoom.value,
+                                newGuest: true,
+                                guestId: connection.userid,
+                                guestInfo: connection.extra
+                            });
+                        },
+                        autoClose: false,
+                        autoCloseInterval: 2 * 1000
+                    });
+                });
+                console.log('Pedindo a vez em ' + inRoom.value);
             }
 
             // Tratamento de áudio: Botão "Áudio" -> Toggle on/off
@@ -451,13 +468,6 @@ $(document).ready(function() {
                     toggleElem('#div-chat-panel');
                     $('#text-message').focus();
                 };
-                // Função de ajuste de volume: DESABILITADA
-                /*
-                document.getElementById('toggle-volume').onclick = function() {
-                    toggleElem('#div-volume-panel');
-                    $('#vol-control').focus();
-                }
-                */
             });
         } else {
             toastContent = '<span class="white-text"><i class="fa fa-exclamation-triangle fa-lg"></i> Por favor informe todos os campos indicados!</span>';
@@ -655,7 +665,7 @@ $(document).ready(function() {
                          *  var divOpen elem. html
                          *  var button  elem. html
                          */
-                        usuario = document.getElementById('myName').value;
+                        usuario = document.getElementById('current-user').value;
                         var divOpen = document.createElement('ul');
                         // Cria objeto de lista com as broadcast disponíveis
                         var card = '<li class="collection-item avatar grey-text text-darken-3">' +
@@ -717,13 +727,6 @@ $(document).ready(function() {
                                     toggleElem('#div-chat-panel');
                                     $('#text-message').focus();
                                 };
-                                // Função de ajuste de volume: DESABILITADA
-                                /*
-                                document.getElementById('toggle-volume').onclick = function() {
-                                    toggleElem('#div-volume-panel');
-                                    $('#vol-control').focus();
-                                };
-                                */
                             });
                             // Modela e apresenta título do video
                             setRoomLabel("<i class='fa fa-television blue-text'></i> <b>" + labelClasse + "</b> (" + labelAssunto + ")" +
@@ -762,6 +765,69 @@ $(document).ready(function() {
             setTimeout(looper, 3000); //3 segundos
         });
     })();
+
+    /**
+     * TESTES - CustonMessage
+     */
+    // Controle para encaminhamento de mensagens personalizadas (Mensagens internas)
+    function handleSocketCustomMessages() {
+        console.log('handleSocketCustomMessages()');
+        if (message.updatedExtraData && message.adminId === connection.adminId) {
+            console.log('message.updatedExtraData');
+            connection.onExtraDataUpdated({
+                userid: connection.adminId,
+                extra: message.extra
+            });
+            return;
+        }
+        if (!connection.socket) connection.connectSocket();
+        connection.socket.on(connection.socketCustomEvent, function(message) {
+            console.log('message.newGuest');
+            if (message.messageFor !== connection.userid) return;
+            if (message.newGuest) {
+                var text = '<li class="collection-item avatar">' +
+                    '<i class="material-icons circle blue">tv</i>' +
+                    '<span class="title">' + message.guestId + '</span>' +
+                    '<p>Pede a vez.</p>' +
+                    '<a class="secondary-content"><i class="material-icons circle blue">arrow_play</i></a>' +
+                    '</li>';
+                listBox(text, {
+                    btnClose: true,
+                    btnAccept: true,
+                    btnAcceptText: 'Allow Guest to Join You',
+                    onBtnAcceptClicked: function() {
+                        connection.sendCustomMessage({
+                            messageFor: message.guestId,
+                            youCanJoinAdmin: true,
+                            adminId: connection.userid,
+                            adminInfo: connection.extra
+                        });
+                    },
+                    autoClose: false,
+                    autoCloseInterval: 2 * 1000
+                });
+                return;
+            }
+            if (message.youCanJoinAdmin) {
+                connection.join(message.adminId);
+                var text = 'Admin accepted your request. Setting WebRTC connection...';
+                listBox(text, {
+                    btnClose: false,
+                    btnAccept: false,
+                    btnAcceptText: '',
+                    onBtnAcceptClicked: function() {},
+                    autoClose: true,
+                    autoCloseInterval: 2 * 1000
+                });
+                return;
+            }
+        });
+    }
+    connection.sendCustomMessage = function(message) {
+        if (!connection.socket) connection.connectSocket();
+        connection.socket.emit(connection.socketCustomEvent, message);
+    };
+
     /**
      *  CHAT---------------------------------------------------------
      */
@@ -882,51 +948,10 @@ function toggleElem(elemId) {
         $(elemId).slideDown(500);
     }
 }
-/**
- * Em testes
- */
-// Controle para encaminhamento de mensagens personalizadas (Mensagens internas)
-function handleSocketCustomMessages(connection) {
-    if (!connection.socket) connection.connectSocket();
-    connection.socket.on(connection.socketCustomEvent, function(message) {
-        if (message.messageFor !== connection.userid) return;
-        if (message.newGuest) {
-            var text = 'A new guest asked you to join him.';
-            text += '<br>Guest User-ID: ' + message.guestId;
-            text += '<br>Guest Info: ' + JSON.stringify(message.guestInfo);
-            listBox(text, {
-                btnClose: true,
-                btnAccept: true,
-                btnAcceptText: 'Allow Guest to Join You',
-                onBtnAcceptClicked: function() {
-                    connection.sendCustomMessage({
-                        messageFor: message.guestId,
-                        youCanJoinAdmin: true,
-                        adminId: connection.userid,
-                        adminInfo: connection.extra
-                    });
-                },
-                autoClose: false,
-                autoCloseInterval: 2 * 1000
-            });
-            return;
-        }
-        if (message.youCanJoinAdmin) {
-            connection.join(message.adminId);
-            var text = 'Admin accepted your request. Setting WebRTC connection...';
-            listBox(text, {
-                btnClose: false,
-                btnAccept: false,
-                btnAcceptText: '',
-                onBtnAcceptClicked: function() {},
-                autoClose: true,
-                autoCloseInterval: 2 * 1000
-            });
-            return;
-        }
-    });
-}
-// Exibição de mensagens personalizadas
-function listBox(text, config) {
 
+// Lista todas as solicitações de "Pedir a vez" e incrementa contador
+function listBox(text, config) {
+    console.log(text);
+    var pedeList = document.getElementById('solicita-list');
+    pedeList += text;
 }

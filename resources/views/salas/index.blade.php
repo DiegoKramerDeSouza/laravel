@@ -71,25 +71,18 @@
                 <input type='hidden' id='target' name='target' disabled />
             @else
                 <input type='hidden' id='btn-join-as-productor' disabled >
-                <input type='hidden' id='target' name='target' readonly value='{{ $turmas->curso_id }}' />
+                <input type='hidden' id='target' name='target' readonly disabled value='{{ $turmas->curso_id }}' />
             @endif
         </div>
     </div>
 
     <!--Campos de controle-->
-    <input type='hidden' id='room-id' name='room-id' readonly />
-    <input type='hidden' id='cursos' name='cursos' readonly />
-    <input type='hidden' id='myName' name='myName' readonly value='{{Auth::user()->name}}' />
+    <input type='hidden' id='room-id' name='room-id' disabled readonly />
+    <input type='hidden' id='in-room' name='in-room' disabled readonly />
+    <input type='hidden' id='current-user' value='{{ Auth::user()->name}}' readonly />
 
     <!--Video Panel - Não exibido a princípio-->
     <div id='video-panel' class='d-none'>
-        <!--Painel de Debug-->
-        <div class='hidden-panel'>
-            <!--Campos de controle-->
-            <input type='hidden' id='connected-class' readonly />
-            <input type='hidden' id='connected-content' readonly />
-            <input type='hidden' id='current-user' value='{{ Auth::user()->name}}' readonly />
-        </div>
         <div class='col s12'>
             <!--Card de vídeo-->
             <div class='card'>

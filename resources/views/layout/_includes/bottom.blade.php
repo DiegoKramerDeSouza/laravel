@@ -49,18 +49,15 @@
                         <div class-'modal-content'>
                             <h5>O(s) seguinte(s) espectador(es) pede(m) a vez:</h5>
                             <div class='divider'></div>
-                            <div class='right'>
+                            <div class=''>
                                 <br>
-                                <ul id='solicita-text'>
+                                <ul id='solicita-list' class='collection'>
                                 </ul>
-                                <span id='solicita-actions'>
-                                    <a class='modal-action modal-close btn-flat waves-effect waves-blue blue-text' href='#'><i class='fa fa-times'></i> Cancelar</a>
-                                </span>
                             </div>
                             <br>
                         </div>
                         <div class='modal-footer'>
-                            <br>
+                            <a class='modal-action modal-close btn-flat waves-effect waves-blue blue-text right' href='#'><i class='fa fa-times'></i> Cancelar</a>
                         </div>
                     </div>
                 @endif
