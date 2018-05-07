@@ -103,7 +103,7 @@
                     <div class='row'>
                         <div class='col s12'>
                             @if(Auth::user()->type == 0)
-                                <div class='card-title blue-text tooltipped' data-position="right" data-tooltip="Espectador(es)" align='right' id="broadcast-viewers-counter" >
+                                <div id='broadcast-viewers-counter' class='card-title blue-text tooltipped' data-position="right" data-tooltip="Espectador(es)" align='right' >
                                     <i class="fa fa-desktop"></i> <b class="grey-text text-darken-3">0</b>
                                 </div>
                             @endif

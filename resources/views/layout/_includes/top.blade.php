@@ -10,6 +10,8 @@
     
         <!--Importa icones do fontawesome e materialicons-->
         <link href="{!! asset('css/materialicons.css') !!}" media="all" rel="stylesheet" type="text/css" />
+        <link href="{!! asset('css/estilo_ids.css') !!}" media="all" rel="stylesheet" type="text/css" />
+        <link href="{!! asset('css/estilo_classes.css') !!}" media="all" rel="stylesheet" type="text/css" />
         <link href="{!! asset('css/font-awesome.min.css') !!}" media="all" rel="stylesheet" type="text/css" />
         <!--Importa materialize.css-->
         <link href="{!! asset('css/materialize.min.css') !!}" media="all" rel="stylesheet" type="text/css" />

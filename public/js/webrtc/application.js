@@ -35,23 +35,31 @@ $(document).ready(function() {
      *  var status          Boolean
      *  var usuario         string
      *  var viewers         integer
+     *  var solicita        integer
      *  var cameras         Boolean
      *  var publicRoomsDiv  elem. html
      *  var videoPreview    elem. html
      *  var mute            elem. html
      *  var vol             elem. html
      *  var cam             elem. html
+     *  var pedir           elem. html
+     *  var ctlPedir        elem. html
      */
     var width;
     var status = false;
     var usuario = '';
     var viewers = 'Calculando...';
+    var solicita = 0;
     var cameras;
     var publicRoomsDiv = document.getElementById('public-conference');
     var videoPreview = document.getElementById('video-preview');
     var mute = document.getElementById('toggle-mute');
     var vol = document.getElementById('toggle-volume');
     var cam = document.getElementById('toggle-camera');
+    var pedir = document.getElementById('pedir-vez');
+    var ctlPedir = document.getElementById('control-pedir-vez');
+
+
 
     // Controles de Áudio com Gain - EM TESTES
     var audioCtx = new(window.AudioContext || window.webkitAudioContext)();
@@ -61,6 +69,10 @@ $(document).ready(function() {
     // Conexão com serviço de websocket
     // Servidor de signaling de teste gratúito:
     connection.socketURL = 'https://rtcmulticonnection.herokuapp.com:443/';
+
+    window.onbeforeunload = function() {
+        document.getElementById('btn-join-as-productor').disabled = false;
+    };
 
     connection.connectSocket(function(socket) {
         // Socket - Join
@@ -116,26 +128,32 @@ $(document).ready(function() {
             console.log('Open: ' + connection.userid);
         });
     });
-    window.onbeforeunload = function() {
-        document.getElementById('btn-join-as-productor').disabled = false;
-    };
     connection.onstream = function(event) {
+        //Apresentação da barra de funções de video
+        $('#nav-footer').slideDown(500);
+
         if (connection.isInitiator && event.type !== 'local') {
             return;
         }
         if (event.type === 'remote') {
             /**
-             *  Ações para conexão REMOTA:
+             *  Ações para conexão REMOTA para controle de funções de áudio e video do webRTC
              */
             connection.isUpperUserLeft = false;
             videoPreview.srcObject = event.stream;
             // Definições de video
             width = parseInt(connection.teacherVideosContainer.clientWidth);
             videoPreview.width = width;
-            $('#div-connect').hide();
             videoPreview.play();
-            //console.log(event);
-
+            // Ajusta elementos de exibição (define o menu de áudio e video para ESPECTADORES)
+            $('#div-connect').hide();
+            $('#broadcast-viewers-counter').hide();
+            ctlPedir.innerHTML = "<li class='hover-footer-btn'>" +
+                "<a id='pedir-vez' data-active='enabled' class='blue-text text-darken-3' title='Pedir a vez'>" +
+                "<i class='material-icons left'>pan_tool</i> <b class='white-text hide-on-med-and-down'>Pedir a vez</b>" +
+                "</a>" +
+                "</li>";
+            //Controle de elementos da conexão
             videoPreview.userid = event.userid;
             if (connection.isInitiator == false && event.type === 'remote') {
                 /**
@@ -190,49 +208,59 @@ $(document).ready(function() {
                  * Desabilita botão de ação para camera
                  */
                 mute.setAttribute('data-active', 'disabled');
-                // Alteração visual - Desabilita
+                cam.setAttribute('data-active', 'disabled');
+                /**
+                 * Alteração de UI
+                 */
                 mute.classList.remove("blue-text");
                 mute.classList.add("grey-text");
                 mute.innerHTML = "<i class='material-icons left'>mic_off</i> <b class='hide-on-med-and-down'>Microfone</b>";
-
-                cam.setAttribute('data-active', 'disabled');
-                // Alteração visual - Desabilita
                 cam.classList.remove("blue-text");
                 cam.classList.add("grey-text");
                 cam.innerHTML = "<i class='material-icons left'>videocam_off</i> <b class='hide-on-med-and-down'>Camera</b>";
             };
 
+            // Tratamento do botão de pedir a vez
+            pedir.onclick = function() {
+                //handleSocketCustomMessages();
+                console.log('Pedindo a vez');
+            }
+
             // Tratamento de áudio: Botão "Áudio" -> Toggle on/off
-            document.getElementById('toggle-volume').onclick = function() {
+            vol.onclick = function() {
                 if (vol.getAttribute('data-active') == 'enabled') {
                     vol.setAttribute('data-active', 'disabled');
-                    // Alteração visual - Desabilita
+                    // Alteração de conexão -> Set audio: false
+                    connection.attachStreams.forEach(function(stream) {
+                        stream.mute('audio');
+                    });
+                    /**
+                     * Alteração de UI
+                     */
                     vol.classList.remove("blue-text");
                     vol.classList.add("red-text");
                     vol.innerHTML = "<i class='material-icons left'>volume_off</i> <b class='white-text hide-on-med-and-down'>Áudio</b>";
                     toastContent = '<span class="white-text"><i class="material-icons left">volume_off</i> Áudio Desabilitado.</span>';
                     M.toast({ html: toastContent, classes: 'red darken-3' });
-                    // Alteração de conexão -> Set audio: false
-                    connection.attachStreams.forEach(function(stream) {
-                        stream.mute('audio');
-                    });
                 } else {
                     vol.setAttribute('data-active', 'enabled');
-                    // Alteração visual - Habilita
+                    // Alteração de conexão -> Set audio: true
+                    connection.attachStreams.forEach(function(stream) {
+                        stream.unmute('audio');
+                    });
+                    /**
+                     * Alteração de UI
+                     */
                     vol.classList.remove("red-text");
                     vol.classList.add("blue-text");
                     vol.innerHTML = "<i class='material-icons left'>volume_up</i> <b class='white-text hide-on-med-and-down'>Áudio</b>";
                     toastContent = '<span class="white-text"><i class="material-icons left">volume_up</i> Áudio Habilitado.</span>';
                     M.toast({ html: toastContent, classes: 'blue darken-3' });
-                    // Alteração de conexão -> Set audio: true
-                    connection.attachStreams.forEach(function(stream) {
-                        stream.unmute('audio');
-                    });
                 }
             };
         } else {
             /**
-             *  Ações para conexão LOCAL:
+             *  Ações para conexão LOCAL para controle de funções de áudio e video do webRTC
              */
             connection.isUpperUserLeft = false;
             videoPreview.srcObject = event.stream;
@@ -244,40 +272,46 @@ $(document).ready(function() {
             videoPreview.play();
 
             $('#div-connect').hide();
-            console.log(event.stream);
+            if (solicita <= 0) {
+                $('#count-pedir-vez').hide();
+            }
 
             // Ação padrão para conexões locais:
             /**
              * Desabilita botão de ação para áudio
              */
             vol.setAttribute('data-active', 'disabled');
-            // Alteração visual - Desabilita
+            pedir.setAttribute('data-active', 'disabled');
+            /**
+             * Alteração de UI
+             */
             vol.classList.remove("blue-text");
             vol.classList.add("grey-text");
             vol.innerHTML = "<i class='material-icons left'>volume_off</i> <b class='hide-on-med-and-down'>Áudio</b>";
+            if (!connection.isInitiator) {
+                pedir.classList.remove("blue-text");
+                pedir.classList.add("grey-text");
+                pedir.innerHTML = "<i class='material-icons left'>pan_tool</i> <b class='hide-on-med-and-down'>Áudio</b>";
+            }
 
             // Tratamento de áudio: Botão "Microfone" -> Toggle on/off
-            document.getElementById('toggle-mute').onclick = function() {
+            mute.onclick = function() {
                 if (mute.getAttribute('data-active') == 'enabled') {
                     mute.setAttribute('data-active', 'disabled');
-                    // Alteração visual - Desabilita
+                    // Alteração de conexão -> Set audio: false
+                    connection.attachStreams.forEach(function(stream) {
+                        stream.mute('audio');
+                    });
+                    /**
+                     * Alteração de UI
+                     */
                     mute.classList.remove("blue-text");
                     mute.classList.add("red-text");
                     mute.innerHTML = "<i class='material-icons left'>mic_off</i> <b class='white-text hide-on-med-and-down'>Microfone</b>";
                     toastContent = '<span class="white-text"><i class="material-icons left">mic_off</i> Microfone Desabilitado.</span>';
                     M.toast({ html: toastContent, classes: 'red darken-3' });
-                    // Alteração de conexão -> Set audio: false
-                    connection.attachStreams.forEach(function(stream) {
-                        stream.mute('audio');
-                    });
                 } else {
                     mute.setAttribute('data-active', 'enabled');
-                    // Alteração visual - Habilita
-                    mute.classList.remove("red-text");
-                    mute.classList.add("blue-text");
-                    mute.innerHTML = "<i class='material-icons left'>mic</i> <b class='white-text hide-on-med-and-down'>Microfone</b>";
-                    toastContent = '<span class="white-text"><i class="material-icons left">mic</i> Microfone Habilitado.</span>';
-                    M.toast({ html: toastContent, classes: 'blue darken-3' });
                     // Alteração de conexão -> Set audio: true
                     connection.attachStreams.forEach(function(stream) {
                         stream.unmute({
@@ -286,53 +320,61 @@ $(document).ready(function() {
                             type: 'remote'
                         });
                     });
+                    /**
+                     * Alteração de UI
+                     */
+                    mute.classList.remove("red-text");
+                    mute.classList.add("blue-text");
+                    mute.innerHTML = "<i class='material-icons left'>mic</i> <b class='white-text hide-on-med-and-down'>Microfone</b>";
+                    toastContent = '<span class="white-text"><i class="material-icons left">mic</i> Microfone Habilitado.</span>';
+                    M.toast({ html: toastContent, classes: 'blue darken-3' });
                 }
             }
 
             // Tratamento de áudio e video: Botão "Camera" -> Toggle on/off
-            document.getElementById('toggle-camera').onclick = function() {
+            cam.onclick = function() {
                 if (cam.getAttribute('data-active') == 'enabled') {
                     cam.setAttribute('data-active', 'disabled');
-                    // Alteração visual - Desabilita
-                    cam.classList.remove("blue-text");
-                    cam.classList.add("red-text");
-                    cam.innerHTML = "<i class='material-icons left'>videocam_off</i> <b class='white-text hide-on-med-and-down'>Camera</b>";
-
                     mute.setAttribute('data-active', 'disabled');
-                    // Alteração visual - Desabilita
-                    mute.classList.remove("blue-text");
-                    mute.classList.add("red-text");
-                    mute.innerHTML = "<i class='material-icons left'>mic_off</i> <b class='white-text hide-on-med-and-down'>Microfone</b>";
-                    toastContent = '<span class="white-text"><i class="material-icons left">videocam_off</i> Camera Desabilitada.</span>';
-                    M.toast({ html: toastContent, classes: 'red darken-3' });
                     // Alteração de conexão -> Set audio: false, video: false
                     connection.attachStreams.forEach(function(stream) {
                         stream.mute('video');
                         stream.mute('audio');
                     });
+                    /**
+                     * Alteração de UI
+                     */
+                    cam.classList.remove("blue-text");
+                    cam.classList.add("red-text");
+                    cam.innerHTML = "<i class='material-icons left'>videocam_off</i> <b class='white-text hide-on-med-and-down'>Camera</b>";
+                    mute.classList.remove("blue-text");
+                    mute.classList.add("red-text");
+                    mute.innerHTML = "<i class='material-icons left'>mic_off</i> <b class='white-text hide-on-med-and-down'>Microfone</b>";
+                    toastContent = '<span class="white-text"><i class="material-icons left">videocam_off</i> Camera Desabilitada.</span>';
+                    M.toast({ html: toastContent, classes: 'red darken-3' });
                 } else {
                     cam.setAttribute('data-active', 'enabled');
-                    // Alteração visual - Habilita
-                    cam.classList.remove("red-text");
-                    cam.classList.add("blue-text");
-                    cam.innerHTML = "<i class='material-icons left'>videocam</i> <b class='white-text hide-on-med-and-down'>Camera</b>";
-
                     mute.setAttribute('data-active', 'enabled');
-                    // Alteração visual - Habilita
-                    mute.classList.remove("red-text");
-                    mute.classList.add("blue-text");
-                    mute.innerHTML = "<i class='material-icons left'>mic</i> <b class='white-text hide-on-med-and-down'>Microfone</b>";
-                    toastContent = '<span class="white-text"><i class="material-icons left">videocam</i> Camera Habilitada.</span>';
-                    M.toast({ html: toastContent, classes: 'blue darken-3' });
                     // Alteração de conexão -> Set audio: true, video: true
                     connection.attachStreams.forEach(function(stream) {
                         stream.unmute('video');
                         stream.unmute('audio');
                     });
+                    /**
+                     * Alteração de UI
+                     */
+                    cam.classList.remove("red-text");
+                    cam.classList.add("blue-text");
+                    cam.innerHTML = "<i class='material-icons left'>videocam</i> <b class='white-text hide-on-med-and-down'>Camera</b>";
+                    mute.classList.remove("red-text");
+                    mute.classList.add("blue-text");
+                    mute.innerHTML = "<i class='material-icons left'>mic</i> <b class='white-text hide-on-med-and-down'>Microfone</b>";
+                    toastContent = '<span class="white-text"><i class="material-icons left">videocam</i> Camera Habilitada.</span>';
+                    M.toast({ html: toastContent, classes: 'blue darken-3' });
                 }
             }
         }
-        // Tratamento das funções mute e unmute (Obrigatórios)
+        // Tratamento das funções MUTE e UNMUTE (Obrigatórios)
         connection.onmute = function(e) {
             e.mediaElement.setAttribute('poster', '/img/bg.jpg');
         };
@@ -839,4 +881,52 @@ function toggleElem(elemId) {
     } else {
         $(elemId).slideDown(500);
     }
+}
+/**
+ * Em testes
+ */
+// Controle para encaminhamento de mensagens personalizadas (Mensagens internas)
+function handleSocketCustomMessages(connection) {
+    if (!connection.socket) connection.connectSocket();
+    connection.socket.on(connection.socketCustomEvent, function(message) {
+        if (message.messageFor !== connection.userid) return;
+        if (message.newGuest) {
+            var text = 'A new guest asked you to join him.';
+            text += '<br>Guest User-ID: ' + message.guestId;
+            text += '<br>Guest Info: ' + JSON.stringify(message.guestInfo);
+            listBox(text, {
+                btnClose: true,
+                btnAccept: true,
+                btnAcceptText: 'Allow Guest to Join You',
+                onBtnAcceptClicked: function() {
+                    connection.sendCustomMessage({
+                        messageFor: message.guestId,
+                        youCanJoinAdmin: true,
+                        adminId: connection.userid,
+                        adminInfo: connection.extra
+                    });
+                },
+                autoClose: false,
+                autoCloseInterval: 2 * 1000
+            });
+            return;
+        }
+        if (message.youCanJoinAdmin) {
+            connection.join(message.adminId);
+            var text = 'Admin accepted your request. Setting WebRTC connection...';
+            listBox(text, {
+                btnClose: false,
+                btnAccept: false,
+                btnAcceptText: '',
+                onBtnAcceptClicked: function() {},
+                autoClose: true,
+                autoCloseInterval: 2 * 1000
+            });
+            return;
+        }
+    });
+}
+// Exibição de mensagens personalizadas
+function listBox(text, config) {
+
 }
