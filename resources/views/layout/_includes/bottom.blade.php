@@ -1,23 +1,26 @@
         
             </div>
         </main>
-        <!--JavaScript at end of body for optimized loading-->
+        <!-- Inicialização do Javascript no fim do corpo da página-->
         <script type="text/javascript" src="{!! asset('js/jquery-3.1.1.min.js') !!}"></script>
         <script type="text/javascript" src="{!! asset('js/materialize.min.js') !!}"></script>
 
-        <!--Inicialização in-page condicional de elementos para a formação de uma sala-->
+        <!-- Inicialização in-page condicional de elementos para a formação de uma sala-->
+        <!-- A variável $streamPage deve ser passada pelo controller para inicialização-->
         @if(isset($streamPage))
-            <!--Adição dos scripts de utilização do WEBRTC-->
+            <!-- Adição dos scripts de utilização do WEBRTC-->
             <script type="text/javascript" src="{!! asset('js/webrtc/socket.io.js') !!}"></script>
             <script type="text/javascript" src="{!! asset('js/webrtc/getHTMLMediaElement.js') !!}"></script>
             <script type="text/javascript" src="{!! asset('js/webrtc/RTCMultiConnection.min.js') !!}"></script>
             <script type="text/javascript" src="{!! asset('js/webrtc/application.js') !!}"></script>
             <script>
+                // Controle da inicialização do MaterializeCSS para textarea
                 $(document).ready(function(){
                     M.textareaAutoResize($('#chat-panel'));
                 });
             </script>
 
+            <!-- Controle de login - O usuário deve estar autenticado-->
             @if(! Auth::guest())
                 <!--Chat apenas para salas de aulas-->
                 <!--Formação de chat-->
@@ -40,16 +43,28 @@
                     </div>
                 </div>
 
-                <!--Formação de controlador de volume-->
-                <div id='div-volume-panel' class='grey darken-4 card d-none' style='width:380px;'>
-                    <div class='card-content'>
-                        <input id="vol-control" type="range" min="0" max="100" step="1" oninput="SetVolume(this.value)" onchange="SetVolume(this.value)" />
-                        <i class='fa fa-volume-up white-text'></i>
+                <!-- Modal de solicitação de vez-->
+                @if(Auth::user()->type == 0)
+                    <div id='msg-solicita' class='modal bottom-sheet'>
+                        <div class='modal-content'>
+                            <h5>
+                                <i class='material-icons blue-text'>pan_tool</i> Solicitações:
+                                <span class='right'>
+                                    <a class='modal-close'>
+                                        <i class='fa fa-times grey-text text-darken-3'></i>
+                                    </a>
+                                </span>
+                            </h5>
+                            <div class='divider'></div>
+                            <ul id='solicita-list' class='collection'>
+                            </ul>
+                            <br>
+                        </div>
                     </div>
-                </div>
+                @endif
 
-                <!--Barra de footer menu-->
-                <nav id='nav-footer' class="nav-wrapper black">
+                <!-- Barra de footer com menu de controle de áudio e video-->
+                <nav id='nav-footer' class="nav-wrapper black d-none">
                     <div class="">
                         <ul id='nav-mobile' class='right blue-text'>
                             <li class='hover-footer-btn'>
@@ -68,20 +83,23 @@
                                 </a>
                             </li>
                             <li class='hover-footer-btn'>
-                                <a id='toggle-chat' title='Chat' class='blue-text text-darken-3'>
+                                <a id='toggle-chat' class='blue-text text-darken-3' title='Chat'>
                                     <i class='material-icons left'>forum</i> <b class='white-text hide-on-med-and-down'>Chat</b>
                                 </a>
                             </li>
-                            <li class='hover-footer-btn'>
-                                <a href='#' title='Pedir a vez'>
-                                    <span class='blue-text text-darken-3'><i class='material-icons left'>pan_tool</i> <b class='white-text hide-on-med-and-down'>Pedir a vez</b></span>
+                            <li id='control-pedir-vez' class='hover-footer-btn'>
+                                <input id='pedir-vez' type='hidden' disabled readonly value='0' />
+                                <a id='lista-pedir-vez' data-active='enabled' class='blue-text text-darken-3 modal-trigger' href='#msg-solicita' title='Pedir a vez'>
+                                    <i class='material-icons left'>pan_tool</i> <b class='white-text hide-on-med-and-down'>Pedir a vez</b> 
                                 </a>
+                                <span id='count-pedir-vez' href='#msg-solicita' class="btn-floating btn-small red darken-4 pulse modal-trigger">0</span>
                             </li>
                         </ul>
-                    </div>		
+                    </div>
                 </nav>
             @endif
         @else
+            <!-- Barra de footer padrão-->
             <footer class="page-footer grey darken-4">
                 <div class="container">
                     <div class="row">
@@ -106,7 +124,8 @@
                 </div>
             </footer>
         @endif
-        <!--Inicialização in-page condicional de elementos para cadastro de perfis de usuários-->
+        <!-- Inicialização in-page condicional de elementos para cadastro de perfis de usuários-->
+        <!-- A variável $grant deve ser passada pelo controller para a inicialização-->
         @if(isset($grant))
             <script>
                 document.querySelector('button').onclick = function(evt) {
@@ -125,7 +144,8 @@
                 }
             </script>
         @endif
-        <!--Inicialização in-page condicional de elementos para cadastro de turmas-->
+        <!-- Inicialização in-page condicional de elementos para cadastro de turmas-->
+        <!-- A variável $classroom deve ser passada pelo controller para a inicialização-->
         @if(isset($classroom))
             <script>
                 document.querySelector('button').onclick = function(evt) {
@@ -145,8 +165,12 @@
             </script>
         @endif
 
-        <!--Inicialização in-page de elementos padrões-->
+        <!-- Inicialização in-page de elementos padrões-->
+        <!-- Inicialização padrão de funções e padrões do MaterializeCSS para todas as páginas-->
         <script>
+
+            // M.*: Padrão de inicialização do MaterializeCSS
+
             $(document).ready(function(){
                 //Inicialização do Materialize
                 $(".dropdown-trigger").dropdown();

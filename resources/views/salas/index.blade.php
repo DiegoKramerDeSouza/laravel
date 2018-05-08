@@ -40,12 +40,12 @@
                             <!--Form removido para utilização com firefox-->
                             <!--Tema e Assunto da aula (Obrigatórios)-->
                             <div class='input-field col s12'>
-                                <input type='text' class='validate' id='tema' name='tema' required>
-                                <label for='tema'><i class='fa fa-book'></i> Tema da sala:</label>
+                                <input type='text' class='validate' id='tema' name='tema' required autofocus>
+                                <label for='tema'><i class='fa fa-book'></i> Tema:</label>
                             </div>
                             <div class='input-field col s12'>
                                 <input type='text' class='validate' id='assunto' name='assunto' required>
-                                <label for='assunto'><i class='fa fa-tag'></i> Assunto da sala:</label>
+                                <label for='assunto'><i class='fa fa-bookmark'></i> Assunto:</label>
                             </div>
                             <div class='input-field col s12'>
                                 <!--Select de Cursos (Obrigatório)-->
@@ -68,28 +68,22 @@
                         </div> 
                     </div>
                 </div>
-                <input type='hidden' id='target' name='target' disabled />
+                <input type='hidden' id='target' name='target' disabled readonly />
             @else
-                <input type='hidden' id='btn-join-as-productor' disabled >
-                <input type='hidden' id='target' name='target' readonly value='{{ $turmas->curso_id }}' />
+                <input type='hidden' id='btn-join-as-productor' readonly disabled />
+                <input type='hidden' id='target' name='target' readonly disabled value='{{ $turmas->curso_id }}' />
             @endif
         </div>
     </div>
 
     <!--Campos de controle-->
-    <input type='hidden' id='room-id' name='room-id' readonly />
-    <input type='hidden' id='cursos' name='cursos' readonly />
-    <input type='hidden' id='myName' name='myName' readonly value='{{Auth::user()->name}}' />
+    <input type='text' id='room-id' name='room-id' disabled readonly />
+    <input type='hidden' id='broadcaster' name='broadcaster' disabled readonly />
+    <input type='hidden' id='in-room' name='in-room' disabled readonly />
+    <input type='hidden' id='current-user' value='{{ Auth::user()->name}}' disabled readonly />
 
     <!--Video Panel - Não exibido a princípio-->
     <div id='video-panel' class='d-none'>
-        <!--Painel de Debug-->
-        <div class='hidden-panel'>
-            <!--Campos de controle-->
-            <input type='hidden' id='connected-class' readonly />
-            <input type='hidden' id='connected-content' readonly />
-            <input type='hidden' id='current-user' value='{{ Auth::user()->name}}' readonly />
-        </div>
         <div class='col s12'>
             <!--Card de vídeo-->
             <div class='card'>
@@ -103,7 +97,7 @@
                     <div class='row'>
                         <div class='col s12'>
                             @if(Auth::user()->type == 0)
-                                <div class='card-title blue-text tooltipped' data-position="right" data-tooltip="Espectador(es)" align='right' id="broadcast-viewers-counter" >
+                                <div id='broadcast-viewers-counter' class='card-title blue-text tooltipped' data-position="right" data-tooltip="Espectador(es)" align='right' >
                                     <i class="fa fa-desktop"></i> <b class="grey-text text-darken-3">0</b>
                                 </div>
                             @endif
@@ -123,6 +117,8 @@
 
                                 <!--VÍDEO PRINCIPAL-->
                                 <video id="video-preview" loop></video>
+                                <!--VÍDEO SECUNDÁRIO-->
+                                <video id="video-guest" loop></video>
 
                             </div>
                         </div>

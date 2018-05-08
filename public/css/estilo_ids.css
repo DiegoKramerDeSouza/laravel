@@ -1,0 +1,44 @@
+/*
+*   Folha de estilos aplicados aos IDs de elementos HTML
+*/
+
+#backgroundLayer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    min-width: 100%;
+    min-height: 100%;
+    opacity: 1;
+    z-index: -1;
+}
+
+#nav-footer {
+    position: fixed;
+    bottom: 0px;
+}
+
+#div-chat-panel,
+#div-volume-panel {
+    position: fixed;
+    bottom: 49px;
+    width: 100%;
+}
+
+#chat-textarea {
+    min-height: 120px;
+    max-height: 120px;
+    overflow-y: auto;
+}
+
+#toast-container {
+    top: auto !important;
+    left: auto !important;
+    bottom: 10%;
+    right: 10%;
+}
+
+#count-pedir-vez {
+    position: fixed;
+    bottom: 45px;
+    right: 0px;
+}

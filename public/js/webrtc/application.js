@@ -7,8 +7,18 @@
  *                          -> Controles do Chat
  *                          -> Controles de envio e recebimento de mensagens;
  *  Validação de campos de formulários;
- *  Utilizado EXCLUSIVAMENTE para rotas salas/*;
+ *  Controle e tratamento das funções dos botões da barra de funções de video;
+ *  Utilizado EXCLUSIVAMENTE para rotas "salas/*";
  */
+
+/**
+ *  Variáveis Globais
+ * 
+ *  var solicita        integer
+ *  var broadcastStatus integer
+ */
+var solicita = 0;
+var broadcastStatus = 0;
 
 $(document).ready(function() {
     //Application - Inicia a chamada e tratamento de multiconexão
@@ -37,10 +47,15 @@ $(document).ready(function() {
      *  var viewers         integer
      *  var cameras         Boolean
      *  var publicRoomsDiv  elem. html
+     *  var inRoom          elem. html
      *  var videoPreview    elem. html
      *  var mute            elem. html
      *  var vol             elem. html
      *  var cam             elem. html
+     *  var pedir           elem. html
+     *  var ctlPedir        elem. html
+     *  var broadcaster        elem. html
+     *  var currentUser     string
      */
     var width;
     var status = false;
@@ -48,25 +63,30 @@ $(document).ready(function() {
     var viewers = 'Calculando...';
     var cameras;
     var publicRoomsDiv = document.getElementById('public-conference');
+    var inRoom = document.getElementById('in-room');
     var videoPreview = document.getElementById('video-preview');
     var mute = document.getElementById('toggle-mute');
     var vol = document.getElementById('toggle-volume');
     var cam = document.getElementById('toggle-camera');
-
-    // Controles de Áudio com Gain - EM TESTES
-    var audioCtx = new(window.AudioContext || window.webkitAudioContext)();
-    var gainNode = audioCtx.createGain();
-    var source;
+    var pedir = document.getElementById('pedir-vez');
+    var ctlPedir = document.getElementById('control-pedir-vez');
+    var broadcaster = document.getElementById('broadcaster');
+    var currentUser = document.getElementById('current-user').value;
 
     // Conexão com serviço de websocket
-    // Servidor de signaling de teste - gratúito https://rtcmulticonnection.herokuapp.com:443/
+    // Servidor de signaling de teste gratúito:
     connection.socketURL = 'https://rtcmulticonnection.herokuapp.com:443/';
+
+    window.onbeforeunload = function() {
+        document.getElementById('btn-join-as-productor').disabled = false;
+    };
 
     connection.connectSocket(function(socket) {
         // Socket - Join
         // Evento emitido quando a transmissão já existe
         socket.on('join-broadcaster', function(hintsToJoinBroadcast) {
             console.log('2**join-broadcaster', hintsToJoinBroadcast);
+            broadcastStatus = 1;
             connection.session = hintsToJoinBroadcast.typeOfStreams;
             console.log(connection.session);
             connection.sdpConstraints.mandatory = {
@@ -82,6 +102,7 @@ $(document).ready(function() {
         // Socket - Rejoin
         socket.on('rejoin-broadcast', function(broadcastId) {
             console.log('**rejoin-broadcast', broadcastId);
+            broadcastStatus = 1;
             connection.attachStreams = [];
             socket.emit('check-broadcast-presence', broadcastId, function(isBroadcastExists) {
                 if (!isBroadcastExists) {
@@ -99,12 +120,14 @@ $(document).ready(function() {
         socket.on('broadcast-stopped', function(broadcastId) {
             // Transmissão interrompida 
             console.error('broadcast-stopped', broadcastId);
+            broadcastStatus = 0;
             toastContent = '<span class="white-text"><i class="fa fa-stop-circle fa-lg"></i> Transmissão finalizada!</span>';
             M.toast({ html: toastContent, classes: 'red darken-3' });
         });
         // Socket - Started -> Quando não há um broadcast inicia-se esse evento
         socket.on('start-broadcasting', function(typeOfStreams) {
             console.log('**start-broadcasting', typeOfStreams);
+            broadcastStatus = 1;
             // O broadcaster sempre utilizará essas configurações
             connection.sdpConstraints.mandatory = {
                 OfferToReceiveVideo: false,
@@ -116,26 +139,34 @@ $(document).ready(function() {
             console.log('Open: ' + connection.userid);
         });
     });
-    window.onbeforeunload = function() {
-        document.getElementById('btn-join-as-productor').disabled = false;
-    };
     connection.onstream = function(event) {
+        //Apresentação da barra de funções de video
+        $('#nav-footer').slideDown(500);
+        inRoom.value = event.userid;
         if (connection.isInitiator && event.type !== 'local') {
             return;
         }
         if (event.type === 'remote') {
             /**
-             *  Ações para conexão REMOTA:
+             *  Ações para conexão REMOTA para controle de funções de áudio e video do webRTC
              */
             connection.isUpperUserLeft = false;
             videoPreview.srcObject = event.stream;
             // Definições de video
             width = parseInt(connection.teacherVideosContainer.clientWidth);
             videoPreview.width = width;
-            $('#div-connect').hide();
             videoPreview.play();
-            //console.log(event);
+            // Ajusta elementos de exibição (define o menu de áudio e video para ESPECTADORES)
+            $('#div-connect').hide();
+            $('#broadcast-viewers-counter').hide();
+            ctlPedir.innerHTML = "<li class='hover-footer-btn'>" +
+                "<a id='pedir-vez' data-active='enabled' class='blue-text text-darken-3' title='Pedir a vez'>" +
+                "<i class='material-icons left'>pan_tool</i> <b class='white-text hide-on-med-and-down'>Pedir a vez</b>" +
+                "</a>" +
+                "</li>";
+            pedir = document.getElementById('pedir-vez');
 
+            //Controle de elementos da conexão
             videoPreview.userid = event.userid;
             if (connection.isInitiator == false && event.type === 'remote') {
                 /**
@@ -190,49 +221,78 @@ $(document).ready(function() {
                  * Desabilita botão de ação para camera
                  */
                 mute.setAttribute('data-active', 'disabled');
-                // Alteração visual - Desabilita
+                cam.setAttribute('data-active', 'disabled');
+                /**
+                 * Alteração de UI
+                 */
                 mute.classList.remove("blue-text");
                 mute.classList.add("grey-text");
                 mute.innerHTML = "<i class='material-icons left'>mic_off</i> <b class='hide-on-med-and-down'>Microfone</b>";
-
-                cam.setAttribute('data-active', 'disabled');
-                // Alteração visual - Desabilita
                 cam.classList.remove("blue-text");
                 cam.classList.add("grey-text");
                 cam.innerHTML = "<i class='material-icons left'>videocam_off</i> <b class='hide-on-med-and-down'>Camera</b>";
             };
-
+            /**
+             * Tratamento dos botões da barra de funções de video----------------------------------
+             */
+            // Tratamento do botão de pedir a vez
+            pedir.onclick = function() {
+                if (broadcastStatus == 1 && solicita === 0) {
+                    var msgrash = btoa('@PedeAVez');
+                    var myIdentity = document.getElementById('room-id').value;
+                    msgrash = msgrash + '|' + currentUser + '|' + connection.userid + '|' + inRoom.value + '|' + myIdentity;
+                    try {
+                        connection.send(msgrash);
+                        solicita++;
+                        toastContent = '<span class="white-text"><i class="fa fa-check"></i> Solicitação enviada!</span>';
+                        M.toast({ html: toastContent, classes: 'blue darken-2' });
+                    } catch (err) {
+                        toastContent = '<span class="white-text"><i class="fa fa-times"></i> Não foi possível solicitar a vez: ' + err + '.</span>';
+                        M.toast({ html: toastContent, classes: 'red darken-3' });
+                    }
+                } else if (solicita > 0) {
+                    toastContent = '<span class="white-text"><i class="fa fa-exclamation-triangle"></i> Você já encaminhou uma solicitação.<br>Aguarde a resposta.</span>';
+                    M.toast({ html: toastContent, classes: 'amber darken-4' });
+                } else {
+                    toastContent = '<span class="white-text"><i class="fa fa-times"></i> Não há conexão com a sala!</span>';
+                    M.toast({ html: toastContent, classes: 'red darken-3' });
+                }
+            };
             // Tratamento de áudio: Botão "Áudio" -> Toggle on/off
-            document.getElementById('toggle-volume').onclick = function() {
+            vol.onclick = function() {
                 if (vol.getAttribute('data-active') == 'enabled') {
                     vol.setAttribute('data-active', 'disabled');
-                    // Alteração visual - Desabilita
+                    // Alteração de conexão -> Set audio: false
+                    connection.attachStreams.forEach(function(stream) {
+                        stream.mute('audio');
+                    });
+                    /**
+                     * Alteração de UI
+                     */
                     vol.classList.remove("blue-text");
                     vol.classList.add("red-text");
                     vol.innerHTML = "<i class='material-icons left'>volume_off</i> <b class='white-text hide-on-med-and-down'>Áudio</b>";
                     toastContent = '<span class="white-text"><i class="material-icons left">volume_off</i> Áudio Desabilitado.</span>';
                     M.toast({ html: toastContent, classes: 'red darken-3' });
-                    // Alteração de conexão -> Set audio: false
-                    connection.attachStreams.forEach(function(stream) {
-                        stream.mute('audio');
-                    });
                 } else {
                     vol.setAttribute('data-active', 'enabled');
-                    // Alteração visual - Habilita
-                    vol.classList.remove("red-text");
-                    vol.classList.add("blue-text");
-                    vol.innerHTML = "<i class='material-icons left'>volume_up</i> <b class='white-text hide-on-med-and-down'>Áudio</b>";
-                    toastContent = '<span class="white-text"><i class="material-icons left">volume_up</i> Áudio Habilitado.</span>';
-                    M.toast({ html: toastContent, classes: 'blue darken-3' });
                     // Alteração de conexão -> Set audio: true
                     connection.attachStreams.forEach(function(stream) {
                         stream.unmute('audio');
                     });
+                    /**
+                     * Alteração de UI
+                     */
+                    vol.classList.remove("red-text");
+                    vol.classList.add("blue-text");
+                    vol.innerHTML = "<i class='material-icons left'>volume_up</i> <b class='white-text hide-on-med-and-down'>Áudio</b>";
+                    toastContent = '<span class="white-text"><i class="material-icons left">volume_up</i> Áudio Habilitado.</span>';
+                    M.toast({ html: toastContent, classes: 'blue darken-2' });
                 }
             };
         } else {
             /**
-             *  Ações para conexão LOCAL:
+             *  Ações para conexão LOCAL para controle de funções de áudio e video do webRTC
              */
             connection.isUpperUserLeft = false;
             videoPreview.srcObject = event.stream;
@@ -244,40 +304,59 @@ $(document).ready(function() {
             videoPreview.play();
 
             $('#div-connect').hide();
-            console.log(event.stream);
+            if (solicita <= 0) {
+                $('#count-pedir-vez').hide();
+            }
 
             // Ação padrão para conexões locais:
             /**
              * Desabilita botão de ação para áudio
              */
             vol.setAttribute('data-active', 'disabled');
-            // Alteração visual - Desabilita
+            pedir.setAttribute('data-active', 'disabled');
+            /**
+             * Alteração de UI
+             */
             vol.classList.remove("blue-text");
             vol.classList.add("grey-text");
             vol.innerHTML = "<i class='material-icons left'>volume_off</i> <b class='hide-on-med-and-down'>Áudio</b>";
+            if (!connection.isInitiator) {
+                pedir.classList.remove("blue-text");
+                pedir.classList.add("grey-text");
+                pedir.innerHTML = "<i class='material-icons left'>pan_tool</i> <b class='hide-on-med-and-down'>Áudio</b>";
+            }
 
+            var response;
+            document.getElementById('control-pedir-vez').onclick = function() {
+                response = document.getElementsByClassName('response_allow');
+                for (var j = 0; j < response.length; j++) {
+                    response[j].onclick = function() {
+                        console.log(this.id);
+                    }
+                }
+            }
+
+            /**
+             * Tratamento dos botões da barra de funções de video----------------------------------
+             */
             // Tratamento de áudio: Botão "Microfone" -> Toggle on/off
-            document.getElementById('toggle-mute').onclick = function() {
+            mute.onclick = function() {
                 if (mute.getAttribute('data-active') == 'enabled') {
                     mute.setAttribute('data-active', 'disabled');
-                    // Alteração visual - Desabilita
+                    // Alteração de conexão -> Set audio: false
+                    connection.attachStreams.forEach(function(stream) {
+                        stream.mute('audio');
+                    });
+                    /**
+                     * Alteração de UI
+                     */
                     mute.classList.remove("blue-text");
                     mute.classList.add("red-text");
                     mute.innerHTML = "<i class='material-icons left'>mic_off</i> <b class='white-text hide-on-med-and-down'>Microfone</b>";
                     toastContent = '<span class="white-text"><i class="material-icons left">mic_off</i> Microfone Desabilitado.</span>';
                     M.toast({ html: toastContent, classes: 'red darken-3' });
-                    // Alteração de conexão -> Set audio: false
-                    connection.attachStreams.forEach(function(stream) {
-                        stream.mute('audio');
-                    });
                 } else {
                     mute.setAttribute('data-active', 'enabled');
-                    // Alteração visual - Habilita
-                    mute.classList.remove("red-text");
-                    mute.classList.add("blue-text");
-                    mute.innerHTML = "<i class='material-icons left'>mic</i> <b class='white-text hide-on-med-and-down'>Microfone</b>";
-                    toastContent = '<span class="white-text"><i class="material-icons left">mic</i> Microfone Habilitado.</span>';
-                    M.toast({ html: toastContent, classes: 'blue darken-3' });
                     // Alteração de conexão -> Set audio: true
                     connection.attachStreams.forEach(function(stream) {
                         stream.unmute({
@@ -286,53 +365,60 @@ $(document).ready(function() {
                             type: 'remote'
                         });
                     });
+                    /**
+                     * Alteração de UI
+                     */
+                    mute.classList.remove("red-text");
+                    mute.classList.add("blue-text");
+                    mute.innerHTML = "<i class='material-icons left'>mic</i> <b class='white-text hide-on-med-and-down'>Microfone</b>";
+                    toastContent = '<span class="white-text"><i class="material-icons left">mic</i> Microfone Habilitado.</span>';
+                    M.toast({ html: toastContent, classes: 'blue darken-2' });
                 }
-            }
-
+            };
             // Tratamento de áudio e video: Botão "Camera" -> Toggle on/off
-            document.getElementById('toggle-camera').onclick = function() {
+            cam.onclick = function() {
                 if (cam.getAttribute('data-active') == 'enabled') {
                     cam.setAttribute('data-active', 'disabled');
-                    // Alteração visual - Desabilita
-                    cam.classList.remove("blue-text");
-                    cam.classList.add("red-text");
-                    cam.innerHTML = "<i class='material-icons left'>videocam_off</i> <b class='white-text hide-on-med-and-down'>Camera</b>";
-
                     mute.setAttribute('data-active', 'disabled');
-                    // Alteração visual - Desabilita
-                    mute.classList.remove("blue-text");
-                    mute.classList.add("red-text");
-                    mute.innerHTML = "<i class='material-icons left'>mic_off</i> <b class='white-text hide-on-med-and-down'>Microfone</b>";
-                    toastContent = '<span class="white-text"><i class="material-icons left">videocam_off</i> Camera Desabilitada.</span>';
-                    M.toast({ html: toastContent, classes: 'red darken-3' });
                     // Alteração de conexão -> Set audio: false, video: false
                     connection.attachStreams.forEach(function(stream) {
                         stream.mute('video');
                         stream.mute('audio');
                     });
+                    /**
+                     * Alteração de UI
+                     */
+                    cam.classList.remove("blue-text");
+                    cam.classList.add("red-text");
+                    cam.innerHTML = "<i class='material-icons left'>videocam_off</i> <b class='white-text hide-on-med-and-down'>Camera</b>";
+                    mute.classList.remove("blue-text");
+                    mute.classList.add("red-text");
+                    mute.innerHTML = "<i class='material-icons left'>mic_off</i> <b class='white-text hide-on-med-and-down'>Microfone</b>";
+                    toastContent = '<span class="white-text"><i class="material-icons left">videocam_off</i> Camera Desabilitada.</span>';
+                    M.toast({ html: toastContent, classes: 'red darken-3' });
                 } else {
                     cam.setAttribute('data-active', 'enabled');
-                    // Alteração visual - Habilita
-                    cam.classList.remove("red-text");
-                    cam.classList.add("blue-text");
-                    cam.innerHTML = "<i class='material-icons left'>videocam</i> <b class='white-text hide-on-med-and-down'>Camera</b>";
-
                     mute.setAttribute('data-active', 'enabled');
-                    // Alteração visual - Habilita
-                    mute.classList.remove("red-text");
-                    mute.classList.add("blue-text");
-                    mute.innerHTML = "<i class='material-icons left'>mic</i> <b class='white-text hide-on-med-and-down'>Microfone</b>";
-                    toastContent = '<span class="white-text"><i class="material-icons left">videocam</i> Camera Habilitada.</span>';
-                    M.toast({ html: toastContent, classes: 'blue darken-3' });
                     // Alteração de conexão -> Set audio: true, video: true
                     connection.attachStreams.forEach(function(stream) {
                         stream.unmute('video');
                         stream.unmute('audio');
                     });
+                    /**
+                     * Alteração de UI
+                     */
+                    cam.classList.remove("red-text");
+                    cam.classList.add("blue-text");
+                    cam.innerHTML = "<i class='material-icons left'>videocam</i> <b class='white-text hide-on-med-and-down'>Camera</b>";
+                    mute.classList.remove("red-text");
+                    mute.classList.add("blue-text");
+                    mute.innerHTML = "<i class='material-icons left'>mic</i> <b class='white-text hide-on-med-and-down'>Microfone</b>";
+                    toastContent = '<span class="white-text"><i class="material-icons left">videocam</i> Camera Habilitada.</span>';
+                    M.toast({ html: toastContent, classes: 'blue darken-2' });
                 }
-            }
+            };
         }
-        // Tratamento das funções mute e unmute (Obrigatórios)
+        // Tratamento das funções MUTE e UNMUTE (Obrigatórios)
         connection.onmute = function(e) {
             e.mediaElement.setAttribute('poster', '/img/bg.jpg');
         };
@@ -356,10 +442,10 @@ $(document).ready(function() {
          *    var broadcastId   string
          */
         var elem = document.getElementById(this.id);
-        var roomId = Math.floor((Math.random() * 999999) + 0);
+        var roomId = document.getElementById('room-id').value;
         var materia = document.querySelector('#tema').value;
         var assunto = document.querySelector('#assunto').value;
-        var roomName = document.getElementById('current-user').value;
+        var roomName = currentUser;
         var values = $('#cursos-list').val();
         var strValues = '';
         for ($i = 0; $i < values.length; $i++) {
@@ -409,13 +495,6 @@ $(document).ready(function() {
                     toggleElem('#div-chat-panel');
                     $('#text-message').focus();
                 };
-                // Função de ajuste de volume: DESABILITADA
-                /*
-                document.getElementById('toggle-volume').onclick = function() {
-                    toggleElem('#div-volume-panel');
-                    $('#vol-control').focus();
-                }
-                */
             });
         } else {
             toastContent = '<span class="white-text"><i class="fa fa-exclamation-triangle fa-lg"></i> Por favor informe todos os campos indicados!</span>';
@@ -579,6 +658,7 @@ $(document).ready(function() {
                      *  var labelAssunto    string
                      *  var labelProfessor  string
                      *  var labelCurso      string
+                     *  var labelWhois      string
                      *  var myClass         string
                      *  var allowed         Boolean
                      *  var countRooms      integer
@@ -593,6 +673,7 @@ $(document).ready(function() {
                     var labelProfessor = labelRoom.split('|')[1];
                     var labelAssunto = labelRoom.split('|')[2];
                     var labelCurso = labelRoom.split('|')[3];
+                    var labelWhois = labelRoom.split('|')[4];
                     var myClass = document.getElementById('target').value;
                     var countRooms = 0;
                     var allowed = false;
@@ -613,17 +694,17 @@ $(document).ready(function() {
                          *  var divOpen elem. html
                          *  var button  elem. html
                          */
-                        usuario = document.getElementById('myName').value;
+                        usuario = currentUser;
                         var divOpen = document.createElement('ul');
                         // Cria objeto de lista com as broadcast disponíveis
-                        var card = '<li class="collection-item avatar grey-text text-darken-3">' +
-                            '<i class="material-icons circle blue">videocam</i>' +
+                        var card = '<li class="collection-item avatar li-hover grey-text text-darken-3">' +
+                            '<i class="material-icons circle blue lighten-1">videocam</i>' +
                             '<span class="title"><b>' + labelClasse + ' (' + labelAssunto + ')' + '</b></span>' +
                             '<p>' +
                             '<b class="blue-text">Professor:</b> ' + labelProfessor +
                             '</p>' +
                             '<p>' +
-                            '<b class="blue-text">Espectadores:</b> ' + viewers +
+                            '<b class="blue-text">Espectadores:</b><b> ' + viewers + '</b>' +
                             '</p>' +
                             '<span id="_' + moderator.userid + '">' +
                             '</span>' +
@@ -635,9 +716,10 @@ $(document).ready(function() {
                         var button = document.createElement('a');
                         button.id = moderator.userid;
                         button.title = 'Entrar';
-                        button.className = 'btn-floating blue waves-effect waves-light secondary-content';
+                        button.className = 'btn-floating blue darken-2 waves-effect waves-light secondary-content';
                         // Atribui função para ingressar na sala disponível
                         button.onclick = function() {
+                            broadcaster.value = labelWhois;
                             // Desabilita e muda aparência do botão de ingresso
                             this.disabled = true;
                             var elem = document.getElementById(this.id);
@@ -675,13 +757,6 @@ $(document).ready(function() {
                                     toggleElem('#div-chat-panel');
                                     $('#text-message').focus();
                                 };
-                                // Função de ajuste de volume: DESABILITADA
-                                /*
-                                document.getElementById('toggle-volume').onclick = function() {
-                                    toggleElem('#div-volume-panel');
-                                    $('#vol-control').focus();
-                                };
-                                */
                             });
                             // Modela e apresenta título do video
                             setRoomLabel("<i class='fa fa-television blue-text'></i> <b>" + labelClasse + "</b> (" + labelAssunto + ")" +
@@ -720,6 +795,7 @@ $(document).ready(function() {
             setTimeout(looper, 3000); //3 segundos
         });
     })();
+
     /**
      *  CHAT---------------------------------------------------------
      */
@@ -730,10 +806,11 @@ $(document).ready(function() {
         // Tratando entrada de texto
         this.value = this.value.replace(/^\s+|\s+$/g, '');
         if (!this.value.length) return;
-        this.value = usuario + ": " + this.value;
-        connection.send(this.value);
+        var texto = usuario + ": " + this.value;
+        texto = btoa(texto);
+        connection.send(texto);
         // Função de append de texto ao elem. textarea
-        appendDIV(this.value);
+        appendDIV(texto);
         this.value = '';
     };
     /**
@@ -745,6 +822,7 @@ $(document).ready(function() {
         texto = texto.replace(/^\s+|\s+$/g, '');
         if (!texto.length) return;
         texto = usuario + ": " + texto;
+        texto = btoa(texto);
         connection.send(texto);
         // Função de append de texto ao elem. textarea
         appendDIV(texto);
@@ -780,21 +858,6 @@ function setRoomLabel(label) {
     var roomtitle = document.getElementById('class-title');
     roomtitle.innerHTML = label;
 }
-//Cria elementos com as definições da sala criada
-/*
- *    var roomHashURL           string
- *    var roomQueryStringURL    string
- *    var html                  string
- *    var roomURLsDiv           elem. html
- */
-function showRoomURL(roomid, className, classTheme) {
-    var roomHashURL = '#' + roomid;
-    var roomQueryStringURL = '?roomid=' + roomid;
-    var html = '<h6 class="card-title"><i class="fa fa-circle light-green-text text-accent-4"></i> Aula iniciada.</h6>';
-    var roomURLsDiv = document.getElementById('room-urls');
-    roomURLsDiv.innerHTML = html;
-    roomURLsDiv.style.display = 'block';
-}
 //Trata e escreve mensagem de chat
 /*
  *    var chatContainer elem. html
@@ -804,26 +867,35 @@ function showRoomURL(roomid, className, classTheme) {
 function appendDIV(event) {
     var chatContainer = document.getElementById('chat-panel');
     var text = event.data || event;
-    var message = text;
+    // Verifica a origem da mensagem
+    if (event.data) {
+        var chkrash = event.data.split('|');
+        if (chkrash[1] && (chkrash[2] && (chkrash[3] && chkrash[4]))) {
+            var msgData = [];
+            //Identifica se é uma solicitação de serviço
+            if (chkrash[0] === btoa('@PedeAVez')) {
+                msgData[0] = chkrash[1];
+                msgData[1] = atob(chkrash[3]);
+                msgData[2] = msgData[1].split('|')[4];
+                msgData[3] = chkrash[4];
+                listBox(msgData[0] + "|" + msgData[2] + "|" + msgData[3]);
+                return;
+            }
+        }
+    }
+    var message = atob(text);
     if (!$('#div-chat-panel').is(":visible")) {
         toastContent = '<span class="white-text"><i class="fa fa-comment-o blue-text"></i> ' + message + '</span>';
         M.toast({ html: toastContent, classes: 'grey darken-4' });
     }
-    //Versão com adaptação para o MaterializeCSS
+    // Versão com adaptação para o MaterializeCSS
+    // Append mensagem no textarea e atualiza o tamanho do campo 
     $('#chat-panel').val(chatContainer.value + message + '\n');
     M.textareaAutoResize($('#chat-panel'));
     M.updateTextFields();
 }
-//Controle de Volume
-window.SetVolume = function(val) {
-        var player = document.getElementById('video-preview');
-        console.log('Before: ' + player.volume);
-        player.volume = val / 100;
-        //player.controls = false;
-        player.play();
-        console.log('After: ' + player.volume);
-    }
-    //Toggle de controle de audio para elem. video
+
+//Toggle de controle de audio para elem. video
 function toggleControls() {
     var player = document.getElementById('video-preview');
     if (player.hasAttribute("controls")) {
@@ -838,5 +910,32 @@ function toggleElem(elemId) {
         $(elemId).slideUp(500);
     } else {
         $(elemId).slideDown(500);
+    }
+}
+// Lista todas as solicitações de "Pedir a vez" e incrementa contador
+function listBox(text) {
+    var msg = text.split('|');
+    var receiver = document.getElementById('room-id').value
+    var pedeList = document.getElementById('solicita-list');
+    var htmlList;
+    if (msg[1] === receiver) {
+        solicita++;
+        /**
+         * Alteração de UI
+         */
+        document.getElementById('count-pedir-vez').innerHTML = solicita;
+        $('#count-pedir-vez').fadeIn(300);
+        toastContent = '<span class="white-text"><i class="material-icons">pan_tool</i> ' + msg[0] + ' solicita a vez!</span>';
+        M.toast({ html: toastContent, classes: 'blue darken-2' });
+
+        htmlList = '<li class="collection-item avatar li-hover">' +
+            '<i class="material-icons blue lighten-1 circle">tv</i>' +
+            '<h6><b>' + msg[0] + '</b> solicita vez.</h6>' +
+            '<span class="secondary-content">' +
+            '<a id="' + msg[2] + '" class="response_allow btn-flat waves-effect waves-teal blue-text text-darken-2 "><i class="fa fa-check"></i> permitir</a>' +
+            '<a id="' + msg[2] + '" class="response_deny btn-flat waves-effect waves-red  red-text text-darken-3 "><i class="fa fa-times"></i> negar</a>' +
+            '</span>' +
+            '</li>';
+        pedeList.innerHTML += htmlList;
     }
 }
