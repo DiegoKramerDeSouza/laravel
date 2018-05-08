@@ -46,18 +46,19 @@
                 <!-- Modal de solicitação de vez-->
                 @if(Auth::user()->type == 0)
                     <div id='msg-solicita' class='modal bottom-sheet'>
-                        <div class-'modal-content'>
-                            <h5>O(s) seguinte(s) espectador(es) pede(m) a vez:</h5>
+                        <div class='modal-content'>
+                            <h5>
+                                <i class='material-icons blue-text'>pan_tool</i> Solicitações:
+                                <span class='right'>
+                                    <a class='modal-close'>
+                                        <i class='fa fa-times grey-text text-darken-3'></i>
+                                    </a>
+                                </span>
+                            </h5>
                             <div class='divider'></div>
-                            <div class=''>
-                                <br>
-                                <ul id='solicita-list' class='collection'>
-                                </ul>
-                            </div>
+                            <ul id='solicita-list' class='collection'>
+                            </ul>
                             <br>
-                        </div>
-                        <div class='modal-footer'>
-                            <a class='modal-action modal-close btn-flat waves-effect waves-blue blue-text right' href='#'><i class='fa fa-times'></i> Cancelar</a>
                         </div>
                     </div>
                 @endif

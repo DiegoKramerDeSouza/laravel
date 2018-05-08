@@ -42,3 +42,12 @@
     border: 1px solid black;
     border-radius: 4px;
 }
+
+.li-hover {
+    -webkit-transition-duration: 0.4s;
+    transition-duration: 0.4s;
+}
+
+.li-hover:hover {
+    background-color: rgb(231, 231, 231) !important;
+}

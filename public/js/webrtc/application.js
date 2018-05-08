@@ -7,8 +7,18 @@
  *                          -> Controles do Chat
  *                          -> Controles de envio e recebimento de mensagens;
  *  Validação de campos de formulários;
- *  Utilizado EXCLUSIVAMENTE para rotas salas/*;
+ *  Controle e tratamento das funções dos botões da barra de funções de video;
+ *  Utilizado EXCLUSIVAMENTE para rotas "salas/*";
  */
+
+/**
+ *  Variáveis Globais
+ * 
+ *  var solicita        integer
+ *  var broadcastStatus integer
+ */
+var solicita = 0;
+var broadcastStatus = 0;
 
 $(document).ready(function() {
     //Application - Inicia a chamada e tratamento de multiconexão
@@ -35,7 +45,6 @@ $(document).ready(function() {
      *  var status          Boolean
      *  var usuario         string
      *  var viewers         integer
-     *  var solicita        integer
      *  var cameras         Boolean
      *  var publicRoomsDiv  elem. html
      *  var inRoom          elem. html
@@ -45,12 +54,13 @@ $(document).ready(function() {
      *  var cam             elem. html
      *  var pedir           elem. html
      *  var ctlPedir        elem. html
+     *  var broadcaster        elem. html
+     *  var currentUser     string
      */
     var width;
     var status = false;
     var usuario = '';
     var viewers = 'Calculando...';
-    var solicita = 0;
     var cameras;
     var publicRoomsDiv = document.getElementById('public-conference');
     var inRoom = document.getElementById('in-room');
@@ -60,6 +70,8 @@ $(document).ready(function() {
     var cam = document.getElementById('toggle-camera');
     var pedir = document.getElementById('pedir-vez');
     var ctlPedir = document.getElementById('control-pedir-vez');
+    var broadcaster = document.getElementById('broadcaster');
+    var currentUser = document.getElementById('current-user').value;
 
     // Conexão com serviço de websocket
     // Servidor de signaling de teste gratúito:
@@ -74,6 +86,7 @@ $(document).ready(function() {
         // Evento emitido quando a transmissão já existe
         socket.on('join-broadcaster', function(hintsToJoinBroadcast) {
             console.log('2**join-broadcaster', hintsToJoinBroadcast);
+            broadcastStatus = 1;
             connection.session = hintsToJoinBroadcast.typeOfStreams;
             console.log(connection.session);
             connection.sdpConstraints.mandatory = {
@@ -89,6 +102,7 @@ $(document).ready(function() {
         // Socket - Rejoin
         socket.on('rejoin-broadcast', function(broadcastId) {
             console.log('**rejoin-broadcast', broadcastId);
+            broadcastStatus = 1;
             connection.attachStreams = [];
             socket.emit('check-broadcast-presence', broadcastId, function(isBroadcastExists) {
                 if (!isBroadcastExists) {
@@ -106,12 +120,14 @@ $(document).ready(function() {
         socket.on('broadcast-stopped', function(broadcastId) {
             // Transmissão interrompida 
             console.error('broadcast-stopped', broadcastId);
+            broadcastStatus = 0;
             toastContent = '<span class="white-text"><i class="fa fa-stop-circle fa-lg"></i> Transmissão finalizada!</span>';
             M.toast({ html: toastContent, classes: 'red darken-3' });
         });
         // Socket - Started -> Quando não há um broadcast inicia-se esse evento
         socket.on('start-broadcasting', function(typeOfStreams) {
             console.log('**start-broadcasting', typeOfStreams);
+            broadcastStatus = 1;
             // O broadcaster sempre utilizará essas configurações
             connection.sdpConstraints.mandatory = {
                 OfferToReceiveVideo: false,
@@ -216,33 +232,32 @@ $(document).ready(function() {
                 cam.classList.add("grey-text");
                 cam.innerHTML = "<i class='material-icons left'>videocam_off</i> <b class='hide-on-med-and-down'>Camera</b>";
             };
-
+            /**
+             * Tratamento dos botões da barra de funções de video----------------------------------
+             */
             // Tratamento do botão de pedir a vez
             pedir.onclick = function() {
-                connection.adminId = inRoom.value;
-                console.log(connection.adminId);
-                connection.socketCustomEvent = connection.adminId;
-                connection.checkPresence(connection.adminId, function(isAdminOnline, adminId, adminInfo) {
-                    handleSocketCustomMessages();
-                    listBox('Admin is online. You can join him. He seems "available" as well.', {
-                        btnClose: true,
-                        btnAccept: true,
-                        btnAcceptText: 'Join Admin',
-                        onBtnAcceptClicked: function() {
-                            connection.sendCustomMessage({
-                                messageFor: inRoom.value,
-                                newGuest: true,
-                                guestId: connection.userid,
-                                guestInfo: connection.extra
-                            });
-                        },
-                        autoClose: false,
-                        autoCloseInterval: 2 * 1000
-                    });
-                });
-                console.log('Pedindo a vez em ' + inRoom.value);
-            }
-
+                if (broadcastStatus == 1 && solicita === 0) {
+                    var msgrash = btoa('@PedeAVez');
+                    var myIdentity = document.getElementById('room-id').value;
+                    msgrash = msgrash + '|' + currentUser + '|' + connection.userid + '|' + inRoom.value + '|' + myIdentity;
+                    try {
+                        connection.send(msgrash);
+                        solicita++;
+                        toastContent = '<span class="white-text"><i class="fa fa-check"></i> Solicitação enviada!</span>';
+                        M.toast({ html: toastContent, classes: 'blue darken-2' });
+                    } catch (err) {
+                        toastContent = '<span class="white-text"><i class="fa fa-times"></i> Não foi possível solicitar a vez: ' + err + '.</span>';
+                        M.toast({ html: toastContent, classes: 'red darken-3' });
+                    }
+                } else if (solicita > 0) {
+                    toastContent = '<span class="white-text"><i class="fa fa-exclamation-triangle"></i> Você já encaminhou uma solicitação.<br>Aguarde a resposta.</span>';
+                    M.toast({ html: toastContent, classes: 'amber darken-4' });
+                } else {
+                    toastContent = '<span class="white-text"><i class="fa fa-times"></i> Não há conexão com a sala!</span>';
+                    M.toast({ html: toastContent, classes: 'red darken-3' });
+                }
+            };
             // Tratamento de áudio: Botão "Áudio" -> Toggle on/off
             vol.onclick = function() {
                 if (vol.getAttribute('data-active') == 'enabled') {
@@ -272,7 +287,7 @@ $(document).ready(function() {
                     vol.classList.add("blue-text");
                     vol.innerHTML = "<i class='material-icons left'>volume_up</i> <b class='white-text hide-on-med-and-down'>Áudio</b>";
                     toastContent = '<span class="white-text"><i class="material-icons left">volume_up</i> Áudio Habilitado.</span>';
-                    M.toast({ html: toastContent, classes: 'blue darken-3' });
+                    M.toast({ html: toastContent, classes: 'blue darken-2' });
                 }
             };
         } else {
@@ -311,6 +326,19 @@ $(document).ready(function() {
                 pedir.innerHTML = "<i class='material-icons left'>pan_tool</i> <b class='hide-on-med-and-down'>Áudio</b>";
             }
 
+            var response;
+            document.getElementById('control-pedir-vez').onclick = function() {
+                response = document.getElementsByClassName('response_allow');
+                for (var j = 0; j < response.length; j++) {
+                    response[j].onclick = function() {
+                        console.log(this.id);
+                    }
+                }
+            }
+
+            /**
+             * Tratamento dos botões da barra de funções de video----------------------------------
+             */
             // Tratamento de áudio: Botão "Microfone" -> Toggle on/off
             mute.onclick = function() {
                 if (mute.getAttribute('data-active') == 'enabled') {
@@ -344,10 +372,9 @@ $(document).ready(function() {
                     mute.classList.add("blue-text");
                     mute.innerHTML = "<i class='material-icons left'>mic</i> <b class='white-text hide-on-med-and-down'>Microfone</b>";
                     toastContent = '<span class="white-text"><i class="material-icons left">mic</i> Microfone Habilitado.</span>';
-                    M.toast({ html: toastContent, classes: 'blue darken-3' });
+                    M.toast({ html: toastContent, classes: 'blue darken-2' });
                 }
-            }
-
+            };
             // Tratamento de áudio e video: Botão "Camera" -> Toggle on/off
             cam.onclick = function() {
                 if (cam.getAttribute('data-active') == 'enabled') {
@@ -387,9 +414,9 @@ $(document).ready(function() {
                     mute.classList.add("blue-text");
                     mute.innerHTML = "<i class='material-icons left'>mic</i> <b class='white-text hide-on-med-and-down'>Microfone</b>";
                     toastContent = '<span class="white-text"><i class="material-icons left">videocam</i> Camera Habilitada.</span>';
-                    M.toast({ html: toastContent, classes: 'blue darken-3' });
+                    M.toast({ html: toastContent, classes: 'blue darken-2' });
                 }
-            }
+            };
         }
         // Tratamento das funções MUTE e UNMUTE (Obrigatórios)
         connection.onmute = function(e) {
@@ -415,10 +442,10 @@ $(document).ready(function() {
          *    var broadcastId   string
          */
         var elem = document.getElementById(this.id);
-        var roomId = Math.floor((Math.random() * 999999) + 0);
+        var roomId = document.getElementById('room-id').value;
         var materia = document.querySelector('#tema').value;
         var assunto = document.querySelector('#assunto').value;
-        var roomName = document.getElementById('current-user').value;
+        var roomName = currentUser;
         var values = $('#cursos-list').val();
         var strValues = '';
         for ($i = 0; $i < values.length; $i++) {
@@ -631,6 +658,7 @@ $(document).ready(function() {
                      *  var labelAssunto    string
                      *  var labelProfessor  string
                      *  var labelCurso      string
+                     *  var labelWhois      string
                      *  var myClass         string
                      *  var allowed         Boolean
                      *  var countRooms      integer
@@ -645,6 +673,7 @@ $(document).ready(function() {
                     var labelProfessor = labelRoom.split('|')[1];
                     var labelAssunto = labelRoom.split('|')[2];
                     var labelCurso = labelRoom.split('|')[3];
+                    var labelWhois = labelRoom.split('|')[4];
                     var myClass = document.getElementById('target').value;
                     var countRooms = 0;
                     var allowed = false;
@@ -665,17 +694,17 @@ $(document).ready(function() {
                          *  var divOpen elem. html
                          *  var button  elem. html
                          */
-                        usuario = document.getElementById('current-user').value;
+                        usuario = currentUser;
                         var divOpen = document.createElement('ul');
                         // Cria objeto de lista com as broadcast disponíveis
-                        var card = '<li class="collection-item avatar grey-text text-darken-3">' +
-                            '<i class="material-icons circle blue">videocam</i>' +
+                        var card = '<li class="collection-item avatar li-hover grey-text text-darken-3">' +
+                            '<i class="material-icons circle blue lighten-1">videocam</i>' +
                             '<span class="title"><b>' + labelClasse + ' (' + labelAssunto + ')' + '</b></span>' +
                             '<p>' +
                             '<b class="blue-text">Professor:</b> ' + labelProfessor +
                             '</p>' +
                             '<p>' +
-                            '<b class="blue-text">Espectadores:</b> ' + viewers +
+                            '<b class="blue-text">Espectadores:</b><b> ' + viewers + '</b>' +
                             '</p>' +
                             '<span id="_' + moderator.userid + '">' +
                             '</span>' +
@@ -687,9 +716,10 @@ $(document).ready(function() {
                         var button = document.createElement('a');
                         button.id = moderator.userid;
                         button.title = 'Entrar';
-                        button.className = 'btn-floating blue waves-effect waves-light secondary-content';
+                        button.className = 'btn-floating blue darken-2 waves-effect waves-light secondary-content';
                         // Atribui função para ingressar na sala disponível
                         button.onclick = function() {
+                            broadcaster.value = labelWhois;
                             // Desabilita e muda aparência do botão de ingresso
                             this.disabled = true;
                             var elem = document.getElementById(this.id);
@@ -767,68 +797,6 @@ $(document).ready(function() {
     })();
 
     /**
-     * TESTES - CustonMessage
-     */
-    // Controle para encaminhamento de mensagens personalizadas (Mensagens internas)
-    function handleSocketCustomMessages() {
-        console.log('handleSocketCustomMessages()');
-        if (message.updatedExtraData && message.adminId === connection.adminId) {
-            console.log('message.updatedExtraData');
-            connection.onExtraDataUpdated({
-                userid: connection.adminId,
-                extra: message.extra
-            });
-            return;
-        }
-        if (!connection.socket) connection.connectSocket();
-        connection.socket.on(connection.socketCustomEvent, function(message) {
-            console.log('message.newGuest');
-            if (message.messageFor !== connection.userid) return;
-            if (message.newGuest) {
-                var text = '<li class="collection-item avatar">' +
-                    '<i class="material-icons circle blue">tv</i>' +
-                    '<span class="title">' + message.guestId + '</span>' +
-                    '<p>Pede a vez.</p>' +
-                    '<a class="secondary-content"><i class="material-icons circle blue">arrow_play</i></a>' +
-                    '</li>';
-                listBox(text, {
-                    btnClose: true,
-                    btnAccept: true,
-                    btnAcceptText: 'Allow Guest to Join You',
-                    onBtnAcceptClicked: function() {
-                        connection.sendCustomMessage({
-                            messageFor: message.guestId,
-                            youCanJoinAdmin: true,
-                            adminId: connection.userid,
-                            adminInfo: connection.extra
-                        });
-                    },
-                    autoClose: false,
-                    autoCloseInterval: 2 * 1000
-                });
-                return;
-            }
-            if (message.youCanJoinAdmin) {
-                connection.join(message.adminId);
-                var text = 'Admin accepted your request. Setting WebRTC connection...';
-                listBox(text, {
-                    btnClose: false,
-                    btnAccept: false,
-                    btnAcceptText: '',
-                    onBtnAcceptClicked: function() {},
-                    autoClose: true,
-                    autoCloseInterval: 2 * 1000
-                });
-                return;
-            }
-        });
-    }
-    connection.sendCustomMessage = function(message) {
-        if (!connection.socket) connection.connectSocket();
-        connection.socket.emit(connection.socketCustomEvent, message);
-    };
-
-    /**
      *  CHAT---------------------------------------------------------
      */
     //Controles de envio e recebimento de mensagens
@@ -838,10 +806,11 @@ $(document).ready(function() {
         // Tratando entrada de texto
         this.value = this.value.replace(/^\s+|\s+$/g, '');
         if (!this.value.length) return;
-        this.value = usuario + ": " + this.value;
-        connection.send(this.value);
+        var texto = usuario + ": " + this.value;
+        texto = btoa(texto);
+        connection.send(texto);
         // Função de append de texto ao elem. textarea
-        appendDIV(this.value);
+        appendDIV(texto);
         this.value = '';
     };
     /**
@@ -853,6 +822,7 @@ $(document).ready(function() {
         texto = texto.replace(/^\s+|\s+$/g, '');
         if (!texto.length) return;
         texto = usuario + ": " + texto;
+        texto = btoa(texto);
         connection.send(texto);
         // Função de append de texto ao elem. textarea
         appendDIV(texto);
@@ -888,21 +858,6 @@ function setRoomLabel(label) {
     var roomtitle = document.getElementById('class-title');
     roomtitle.innerHTML = label;
 }
-//Cria elementos com as definições da sala criada
-/*
- *    var roomHashURL           string
- *    var roomQueryStringURL    string
- *    var html                  string
- *    var roomURLsDiv           elem. html
- */
-function showRoomURL(roomid, className, classTheme) {
-    var roomHashURL = '#' + roomid;
-    var roomQueryStringURL = '?roomid=' + roomid;
-    var html = '<h6 class="card-title"><i class="fa fa-circle light-green-text text-accent-4"></i> Aula iniciada.</h6>';
-    var roomURLsDiv = document.getElementById('room-urls');
-    roomURLsDiv.innerHTML = html;
-    roomURLsDiv.style.display = 'block';
-}
 //Trata e escreve mensagem de chat
 /*
  *    var chatContainer elem. html
@@ -912,26 +867,35 @@ function showRoomURL(roomid, className, classTheme) {
 function appendDIV(event) {
     var chatContainer = document.getElementById('chat-panel');
     var text = event.data || event;
-    var message = text;
+    // Verifica a origem da mensagem
+    if (event.data) {
+        var chkrash = event.data.split('|');
+        if (chkrash[1] && (chkrash[2] && (chkrash[3] && chkrash[4]))) {
+            var msgData = [];
+            //Identifica se é uma solicitação de serviço
+            if (chkrash[0] === btoa('@PedeAVez')) {
+                msgData[0] = chkrash[1];
+                msgData[1] = atob(chkrash[3]);
+                msgData[2] = msgData[1].split('|')[4];
+                msgData[3] = chkrash[4];
+                listBox(msgData[0] + "|" + msgData[2] + "|" + msgData[3]);
+                return;
+            }
+        }
+    }
+    var message = atob(text);
     if (!$('#div-chat-panel').is(":visible")) {
         toastContent = '<span class="white-text"><i class="fa fa-comment-o blue-text"></i> ' + message + '</span>';
         M.toast({ html: toastContent, classes: 'grey darken-4' });
     }
-    //Versão com adaptação para o MaterializeCSS
+    // Versão com adaptação para o MaterializeCSS
+    // Append mensagem no textarea e atualiza o tamanho do campo 
     $('#chat-panel').val(chatContainer.value + message + '\n');
     M.textareaAutoResize($('#chat-panel'));
     M.updateTextFields();
 }
-//Controle de Volume
-window.SetVolume = function(val) {
-        var player = document.getElementById('video-preview');
-        console.log('Before: ' + player.volume);
-        player.volume = val / 100;
-        //player.controls = false;
-        player.play();
-        console.log('After: ' + player.volume);
-    }
-    //Toggle de controle de audio para elem. video
+
+//Toggle de controle de audio para elem. video
 function toggleControls() {
     var player = document.getElementById('video-preview');
     if (player.hasAttribute("controls")) {
@@ -948,10 +912,30 @@ function toggleElem(elemId) {
         $(elemId).slideDown(500);
     }
 }
-
 // Lista todas as solicitações de "Pedir a vez" e incrementa contador
-function listBox(text, config) {
-    console.log(text);
+function listBox(text) {
+    var msg = text.split('|');
+    var receiver = document.getElementById('room-id').value
     var pedeList = document.getElementById('solicita-list');
-    pedeList += text;
+    var htmlList;
+    if (msg[1] === receiver) {
+        solicita++;
+        /**
+         * Alteração de UI
+         */
+        document.getElementById('count-pedir-vez').innerHTML = solicita;
+        $('#count-pedir-vez').fadeIn(300);
+        toastContent = '<span class="white-text"><i class="material-icons">pan_tool</i> ' + msg[0] + ' solicita a vez!</span>';
+        M.toast({ html: toastContent, classes: 'blue darken-2' });
+
+        htmlList = '<li class="collection-item avatar li-hover">' +
+            '<i class="material-icons blue lighten-1 circle">tv</i>' +
+            '<h6><b>' + msg[0] + '</b> solicita vez.</h6>' +
+            '<span class="secondary-content">' +
+            '<a id="' + msg[2] + '" class="response_allow btn-flat waves-effect waves-teal blue-text text-darken-2 "><i class="fa fa-check"></i> permitir</a>' +
+            '<a id="' + msg[2] + '" class="response_deny btn-flat waves-effect waves-red  red-text text-darken-3 "><i class="fa fa-times"></i> negar</a>' +
+            '</span>' +
+            '</li>';
+        pedeList.innerHTML += htmlList;
+    }
 }
