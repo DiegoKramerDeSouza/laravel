@@ -45,7 +45,7 @@
 
                 <!-- Modal de solicitação de vez-->
                 @if(Auth::user()->type == 0)
-                    <div id='msg-solicita' class='modal bottom-sheet'>
+                    <div id='msg-solicita' class='modal'>
                         <div class='modal-content'>
                             <h5>
                                 <i class='material-icons blue-text'>pan_tool</i> Solicitações:
@@ -89,8 +89,8 @@
                             </li>
                             <li id='control-pedir-vez' class='hover-footer-btn'>
                                 <input id='pedir-vez' type='hidden' disabled readonly value='0' />
-                                <a id='lista-pedir-vez' data-active='enabled' class='blue-text text-darken-3 modal-trigger' href='#msg-solicita' title='Pedir a vez'>
-                                    <i class='material-icons left'>pan_tool</i> <b class='white-text hide-on-med-and-down'>Pedir a vez</b> 
+                                <a id='lista-pedir-vez' data-active='enabled' class='blue-text text-darken-3 modal-trigger' href='#msg-solicita' title='Solicitações'>
+                                    <i class='material-icons left'>pan_tool</i> <b class='white-text hide-on-med-and-down'>Solicitações</b> 
                                 </a>
                                 <span id='count-pedir-vez' href='#msg-solicita' class="btn-floating btn-small red darken-4 pulse modal-trigger">0</span>
                             </li>
@@ -119,7 +119,7 @@
                 </div>
                 <div class="footer-copyright black">
                     <div class='container'>
-                        <i class='fa fa-copyright'></i> 2018 Intelit Smart Group SA
+                        <i class='fa fa-copyright'></i> 2018 I Smart Group SA
                     </div>
                 </div>
             </footer>

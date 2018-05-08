@@ -77,7 +77,7 @@
     </div>
 
     <!--Campos de controle-->
-    <input type='text' id='room-id' name='room-id' disabled readonly />
+    <input type='hidden' id='room-id' name='room-id' disabled readonly />
     <input type='hidden' id='broadcaster' name='broadcaster' disabled readonly />
     <input type='hidden' id='in-room' name='in-room' disabled readonly />
     <input type='hidden' id='current-user' value='{{ Auth::user()->name}}' disabled readonly />

@@ -10,22 +10,25 @@
  *  Controle e tratamento das funções dos botões da barra de funções de video;
  *  Utilizado EXCLUSIVAMENTE para rotas "salas/*";
  */
-
+//-------------------------------------------------------------------------------------------------
 /**
  *  Variáveis Globais
  * 
  *  var solicita        integer
  *  var broadcastStatus integer
  */
+// solicita: efetua o controle de solicitações abertas para o broadcaster
+// e limita a 1 a quantidade de solicitações dos demais usuários 
 var solicita = 0;
+// broadcasteStatus: define se o status da conexão está ativa (1) ou inativa (0)
 var broadcastStatus = 0;
 
 $(document).ready(function() {
     //Application - Inicia a chamada e tratamento de multiconexão
     /**
-     *  var connection          RTCMultiConnection
-     *  var enableRecordings    Boolean
-     *  var isPublicModerator   Boolean
+     *  const connection          RTCMultiConnection
+     *  const enableRecordings    Boolean
+     *  const isPublicModerator   Boolean
      */
     var enableRecordings = false;
     var isPublicModerator = true;
@@ -326,16 +329,6 @@ $(document).ready(function() {
                 pedir.innerHTML = "<i class='material-icons left'>pan_tool</i> <b class='hide-on-med-and-down'>Áudio</b>";
             }
 
-            var response;
-            document.getElementById('control-pedir-vez').onclick = function() {
-                response = document.getElementsByClassName('response_allow');
-                for (var j = 0; j < response.length; j++) {
-                    response[j].onclick = function() {
-                        console.log(this.id);
-                    }
-                }
-            }
-
             /**
              * Tratamento dos botões da barra de funções de video----------------------------------
              */
@@ -415,6 +408,31 @@ $(document).ready(function() {
                     mute.innerHTML = "<i class='material-icons left'>mic</i> <b class='white-text hide-on-med-and-down'>Microfone</b>";
                     toastContent = '<span class="white-text"><i class="material-icons left">videocam</i> Camera Habilitada.</span>';
                     M.toast({ html: toastContent, classes: 'blue darken-2' });
+                }
+            };
+            // Tratamento de solicitações: Botão "Solicitações" -> Abra listagem de solicitações e respostas
+            document.getElementById('control-pedir-vez').onclick = function() {
+                var response;
+                // Tratamento de respostas (permitir / negar)
+                response = document.getElementsByClassName('responses');
+                for (var j = 0; j < response.length; j++) {
+                    response[j].onclick = function() {
+                        var admResponse = this.id.split('-');
+                        var msgrash = btoa('@PedeAVez:' + admResponse[0]);
+                        var myIdentity = document.getElementById('room-id').value;
+                        msgrash = msgrash + '|' + currentUser + '|' + admResponse[1] + '|' + inRoom.value + '|' + myIdentity;
+                        try {
+                            solicita--;
+                            console.log(msgrash);
+                            connection.send(msgrash);
+                            constructList(admResponse[1]);
+                            trataSolicitacao(solicita);
+                        } catch (err) {
+                            toastContent = '<span class="white-text"><i class="fa fa-times"></i> Não foi possível responder a esta solicitação:<br>' + err + '.</span>';
+                            M.toast({ html: toastContent, classes: 'red darken-3' });
+                        }
+                        console.log(this.id);
+                    }
                 }
             };
         }
@@ -698,7 +716,7 @@ $(document).ready(function() {
                         var divOpen = document.createElement('ul');
                         // Cria objeto de lista com as broadcast disponíveis
                         var card = '<li class="collection-item avatar li-hover grey-text text-darken-3">' +
-                            '<i class="material-icons circle blue lighten-1">videocam</i>' +
+                            '<i class="material-icons circle blue lighten-2">videocam</i>' +
                             '<span class="title"><b>' + labelClasse + ' (' + labelAssunto + ')' + '</b></span>' +
                             '<p>' +
                             '<b class="blue-text">Professor:</b> ' + labelProfessor +
@@ -870,15 +888,38 @@ function appendDIV(event) {
     // Verifica a origem da mensagem
     if (event.data) {
         var chkrash = event.data.split('|');
-        if (chkrash[1] && (chkrash[2] && (chkrash[3] && chkrash[4]))) {
+        if (chkrash.length == 5) {
             var msgData = [];
-            //Identifica se é uma solicitação de serviço
+            var myRoom = document.getElementById('room-id').value;
+            // Identifica se a mensagem é uma solicitação de serviço
             if (chkrash[0] === btoa('@PedeAVez')) {
                 msgData[0] = chkrash[1];
                 msgData[1] = atob(chkrash[3]);
                 msgData[2] = msgData[1].split('|')[4];
                 msgData[3] = chkrash[4];
                 listBox(msgData[0] + "|" + msgData[2] + "|" + msgData[3]);
+                return;
+            } else if (chkrash[0] === btoa('@PedeAVez:allow')) {
+                // Verifica se o destinatário é o criador da solicitação para entregar a resposta
+                if (chkrash[2] === myRoom) {
+                    // Mensagem de aprovação de solicitação
+                    solicita--;
+                    toastContent = '<span class="white-text"><i class="fa fa-check"></i> ' +
+                        'Sua solicitação foi atendida.<br>' +
+                        'Clique no botão ao lado para participar.' +
+                        '</span>' +
+                        '<span onclick="initiate()" class="btn-floating white toast-action" style="margin-right:2px;"><i class="material-icons blue-text">videocam</i></span>';
+                    M.toast({ html: toastContent, classes: 'blue darken-2', displayLength: 120 * 1000 });
+                }
+                return;
+            } else if (chkrash[0] === btoa('@PedeAVez:deny')) {
+                // Verifica se o destinatário é o criador da solicitação para entregar a resposta
+                if (chkrash[2] === myRoom) {
+                    // Mensagem de solicitação negada
+                    solicita--;
+                    toastContent = '<span class="white-text"><i class="fa fa-times"></i> Sua solicitação foi negada!</span>';
+                    M.toast({ html: toastContent, classes: 'red darken-3' });
+                }
                 return;
             }
         }
@@ -918,24 +959,67 @@ function listBox(text) {
     var receiver = document.getElementById('room-id').value
     var pedeList = document.getElementById('solicita-list');
     var htmlList;
+    // Verifica se o destinatário é o broadcaster para entregar a solicitação
     if (msg[1] === receiver) {
-        solicita++;
         /**
-         * Alteração de UI
+         *  Alteração de UI
          */
-        document.getElementById('count-pedir-vez').innerHTML = solicita;
-        $('#count-pedir-vez').fadeIn(300);
-        toastContent = '<span class="white-text"><i class="material-icons">pan_tool</i> ' + msg[0] + ' solicita a vez!</span>';
-        M.toast({ html: toastContent, classes: 'blue darken-2' });
-
-        htmlList = '<li class="collection-item avatar li-hover">' +
-            '<i class="material-icons blue lighten-1 circle">tv</i>' +
+        solicita++;
+        trataSolicitacao(solicita);
+        // Cria lista em html para preencher a <ul> 'solicita-list'
+        /**
+         *  Classes css:
+         *      sol-response    -> <li> que representa uma solicitação;
+         *      responses.      -> <a> que representa uma resposta a uma solicitação;
+         *  São de uso exclusivo desta função e classificam todas as solicitações enviadas ao broadcaster
+         */
+        // Constroi elemento e concatena
+        htmlList = '<li id="' + msg[2] + '" data-sender="' + msg[0] + '" class="sol-response collection-item avatar li-hover">' +
+            '<i class="material-icons blue lighten-2 circle">tv</i>' +
             '<h6><b>' + msg[0] + '</b> solicita vez.</h6>' +
             '<span class="secondary-content">' +
-            '<a id="' + msg[2] + '" class="response_allow btn-flat waves-effect waves-teal blue-text text-darken-2 "><i class="fa fa-check"></i> permitir</a>' +
-            '<a id="' + msg[2] + '" class="response_deny btn-flat waves-effect waves-red  red-text text-darken-3 "><i class="fa fa-times"></i> negar</a>' +
+            '<a id="allow-' + msg[2] + '" class="responses btn-flat waves-effect waves-teal blue-text text-darken-2 modal-close"><i class="fa fa-check"></i> permitir</a>' +
+            '<a id="deny-' + msg[2] + '" class="responses btn-flat waves-effect waves-red  red-text text-darken-3 modal-close"><i class="fa fa-times"></i> negar</a>' +
             '</span>' +
             '</li>';
         pedeList.innerHTML += htmlList;
+        toastContent = '<span class="white-text"><i class="material-icons">pan_tool</i> ' + msg[0] + ' solicita a vez!</span>';
+        M.toast({ html: toastContent, classes: 'blue darken-2' });
     }
+}
+// Constroi lista <ul> 'solicita-list'
+function constructList(exp) {
+    var pedeList = document.getElementById('solicita-list');
+    var liList = document.getElementsByClassName('sol-response');
+    var htmlList = '';
+    for (var j = 0; j < liList.length; j++) {
+        if (liList[j].id != exp) {
+            var sender = liList[j].getAttribute('data-sender');
+            // Constroi elementos concatenando
+            htmlList += '<li id="' + liList[j].id + '" data-sender="' + sender + '" class="sol-response collection-item avatar li-hover">' +
+                '<i class="material-icons blue lighten-2 circle">tv</i>' +
+                '<h6><b>' + sender + '</b> solicita vez.</h6>' +
+                '<span class="secondary-content">' +
+                '<a id="allow-' + liList[j].id + '" class="responses btn-flat waves-effect waves-teal blue-text text-darken-2 modal-close"><i class="fa fa-check"></i> permitir</a>' +
+                '<a id="deny-' + liList[j].id + '" class="responses btn-flat waves-effect waves-red  red-text text-darken-3 modal-close"><i class="fa fa-times"></i> negar</a>' +
+                '</span>' +
+                '</li>';
+        }
+    }
+    pedeList.innerHTML = htmlList;
+}
+// Trata a quantidade de solicitações ao broadcaster
+function trataSolicitacao(val) {
+    document.getElementById('count-pedir-vez').innerHTML = val;
+    if (val > 0) {
+        $('#count-pedir-vez').fadeIn(300);
+    } else {
+        $('#count-pedir-vez').fadeOut(300);
+    }
+}
+// Ação de iniciar uma participação
+function initiate() {
+
+    // Limpa todos os elementos toast
+    M.Toast.dismissAll();
 }
