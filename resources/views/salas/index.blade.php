@@ -116,9 +116,9 @@
                                 </div>
 
                                 <!--VÍDEO PRINCIPAL-->
-                                <video id="video-preview" loop></video>
+                                <video id="video-preview" loop style='max-width:662px;'></video>
                                 <!--VÍDEO SECUNDÁRIO-->
-                                <video id="video-guest" loop></video>
+                                <video id="video-guest" loop style='max-width:662px;'></video>
 
                             </div>
                         </div>

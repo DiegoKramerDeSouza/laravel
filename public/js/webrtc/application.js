@@ -38,6 +38,7 @@ $(document).ready(function() {
     connection.enableScalableBroadcast = true;
     connection.maxRelayLimitPerUser = 1;
     connection.autoCloseEntireSession = true;
+    //connection.dontCaptureUserMedia = true;
     connection.socketMessageEvent = 'Broadcast';
     // Elemento alvo para iniciar o stream de video
     connection.teacherVideosContainer = document.getElementById('main-video');
@@ -57,7 +58,7 @@ $(document).ready(function() {
      *  var cam             elem. html
      *  var pedir           elem. html
      *  var ctlPedir        elem. html
-     *  var broadcaster        elem. html
+     *  var broadcaster     elem. html
      *  var currentUser     string
      */
     var width;
@@ -88,7 +89,7 @@ $(document).ready(function() {
         // Socket - Join
         // Evento emitido quando a transmissão já existe
         socket.on('join-broadcaster', function(hintsToJoinBroadcast) {
-            console.log('2**join-broadcaster', hintsToJoinBroadcast);
+            console.log('--> join-broadcaster', hintsToJoinBroadcast);
             broadcastStatus = 1;
             connection.session = hintsToJoinBroadcast.typeOfStreams;
             console.log(connection.session);
@@ -98,13 +99,13 @@ $(document).ready(function() {
             };
             connection.broadcastId = hintsToJoinBroadcast.broadcastId;
             connection.join(hintsToJoinBroadcast.userid);
-            console.log('Joined at: ' + hintsToJoinBroadcast.userid);
+            console.log('--> Joined at: ' + hintsToJoinBroadcast.userid);
             toastContent = '<span class="white-text"><i class="fa fa-play-circle fa-lg"></i> Transmissão iniciada!</span>';
             M.toast({ html: toastContent, classes: 'blue' });
         });
         // Socket - Rejoin
         socket.on('rejoin-broadcast', function(broadcastId) {
-            console.log('**rejoin-broadcast', broadcastId);
+            console.log('--> rejoin-broadcast', broadcastId);
             broadcastStatus = 1;
             connection.attachStreams = [];
             socket.emit('check-broadcast-presence', broadcastId, function(isBroadcastExists) {
@@ -122,14 +123,14 @@ $(document).ready(function() {
         // Socket - Stopped
         socket.on('broadcast-stopped', function(broadcastId) {
             // Transmissão interrompida 
-            console.error('broadcast-stopped', broadcastId);
+            console.error('--> broadcast-stopped', broadcastId);
             broadcastStatus = 0;
             toastContent = '<span class="white-text"><i class="fa fa-stop-circle fa-lg"></i> Transmissão finalizada!</span>';
             M.toast({ html: toastContent, classes: 'red darken-3' });
         });
         // Socket - Started -> Quando não há um broadcast inicia-se esse evento
         socket.on('start-broadcasting', function(typeOfStreams) {
-            console.log('**start-broadcasting', typeOfStreams);
+            console.log('--> start-broadcasting', typeOfStreams);
             broadcastStatus = 1;
             // O broadcaster sempre utilizará essas configurações
             connection.sdpConstraints.mandatory = {
@@ -139,7 +140,7 @@ $(document).ready(function() {
             connection.session = typeOfStreams;
             // Início da captura de mídia
             connection.open(connection.userid, true);
-            console.log('Open: ' + connection.userid);
+            console.log('--> Open: ' + connection.userid);
         });
     });
     connection.onstream = function(event) {
@@ -177,8 +178,7 @@ $(document).ready(function() {
                  * e se a conexão é local. Se não:
                  * ->Está apenas fazendo um relaying de media
                  */
-                console.log('3**STREAM Remoto!');
-                connection.dontCaptureUserMedia = true;
+                //connection.dontCaptureUserMedia = true;
                 connection.attachStreams = [event.stream];
                 connection.sdpConstraints.mandatory = {
                     OfferToReceiveAudio: false,
@@ -493,6 +493,7 @@ $(document).ready(function() {
                 audio: true,
                 video: true,
                 data: true,
+                broadcast: true,
                 oneway: true
             };
             // Inicializa Socket
@@ -633,7 +634,8 @@ $(document).ready(function() {
         (function reCheckRoomPresence() {
             connection.checkPresence(broadcastId, function(isRoomExists) {
                 if (isRoomExists) {
-                    document.getElementById('btn-join-as-productor').onclick();
+                    //document.getElementById('btn-join-as-productor').onclick();
+                    document.getElementById(broadcastId).onclick();
                     return;
                 }
                 setTimeout(reCheckRoomPresence, 5000); // 5 segundos
@@ -670,7 +672,7 @@ $(document).ready(function() {
                         return;
                     }
                     // Cria labels para exibição de salas disponíveis
-                    /*
+                    /**
                      *  var labelRoom       string
                      *  var labelClasse     string
                      *  var labelAssunto    string
@@ -752,30 +754,34 @@ $(document).ready(function() {
                             document.getElementById(this.id).disabled = true;
                             // Definições de sessão
                             connection.session = {
-                                audio: true,
-                                video: true,
+                                audio: false,
+                                video: false,
                                 data: true,
                                 oneway: true
                             };
                             // Inicializa socket
                             var socket = connection.getSocket();
+                            /*
                             socket.emit('check-broadcast-presence', broadcastId, function(isBroadcastExists) {
                                 if (!isBroadcastExists) {
                                     // O broadcaster TEM de definir seu user-id
                                     connection.userid = broadcastId;
                                 }
-                                console.log('1**check-broadcast-presence', broadcastId, isBroadcastExists);
-                                socket.emit('join-broadcast', {
-                                    broadcastId: broadcastId,
-                                    userid: connection.userid,
-                                    typeOfStreams: connection.session
-                                });
-                                // Toggle de funções de Chat
-                                document.getElementById('toggle-chat').onclick = function() {
-                                    toggleElem('#div-chat-panel');
-                                    $('#text-message').focus();
-                                };
+                                console.log('--> check-broadcast-presence', broadcastId, isBroadcastExists);
+                                */
+                            socket.emit('join-broadcast', {
+                                broadcastId: broadcastId,
+                                userid: connection.userid,
+                                typeOfStreams: connection.session
                             });
+                            // Toggle de funções de Chat
+                            document.getElementById('toggle-chat').onclick = function() {
+                                toggleElem('#div-chat-panel');
+                                $('#text-message').focus();
+                            };
+                            /*
+                            });
+                            */
                             // Modela e apresenta título do video
                             setRoomLabel("<i class='fa fa-television blue-text'></i> <b>" + labelClasse + "</b> (" + labelAssunto + ")" +
                                 "<span class='right'><a href='' title='Sair' class='red-text text-darken-3'>" +
