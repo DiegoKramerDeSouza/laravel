@@ -8,20 +8,6 @@
         <!-- Inicialização in-page condicional de elementos para a formação de uma sala-->
         <!-- A variável $streamPage deve ser passada pelo controller para inicialização-->
         @if(isset($streamPage))
-            <!-- Adição dos scripts de utilização do WEBRTC-->
-            <script type="text/javascript" src="{!! asset('js/webrtc/control-components.js') !!}"></script>  
-            <script type="text/javascript" src="{!! asset('js/webrtc/socket.io.js') !!}"></script>
-            <script type="text/javascript" src="{!! asset('js/webrtc/getHTMLMediaElement.js') !!}"></script>
-            <script type="text/javascript" src="{!! asset('js/webrtc/adapter.js') !!}"></script>                      
-            <script type="text/javascript" src="{!! asset('js/webrtc/RTCMultiConnection.min.js') !!}"></script>
-            <script type="text/javascript" src="{!! asset('js/webrtc/application.js') !!}"></script>
-            <script>
-                // Controle da inicialização do MaterializeCSS para textarea
-                $(document).ready(function(){
-                    M.textareaAutoResize($('#chat-panel'));
-                });
-            </script>
-
             <!-- Controle de login - O usuário deve estar autenticado-->
             @if(! Auth::guest())
                 <!--Chat apenas para salas de aulas-->
@@ -121,6 +107,20 @@
                         <i class='large material-icons'>videocam</i>
                     </a>
                 </div>
+
+                <!-- Adição dos scripts de utilização do WEBRTC-->
+                <script type="text/javascript" src="{!! asset('js/webrtc/control-components.js') !!}"></script>  
+                <script type="text/javascript" src="{!! asset('js/webrtc/socket.io.js') !!}"></script>
+                <script type="text/javascript" src="{!! asset('js/webrtc/getHTMLMediaElement.js') !!}"></script>
+                <script type="text/javascript" src="{!! asset('js/webrtc/adapter.js') !!}"></script>                      
+                <script type="text/javascript" src="{!! asset('js/webrtc/RTCMultiConnection.min.js') !!}"></script>
+                <script type="text/javascript" src="{!! asset('js/webrtc/application.js') !!}"></script>
+                <script>
+                    // Controle da inicialização do MaterializeCSS para textarea
+                    $(document).ready(function(){
+                        M.textareaAutoResize($('#chat-panel'));
+                    });
+                </script>
             @endif
         @else
             <!-- Barra de footer padrão-->
@@ -192,7 +192,6 @@
         <!-- Inicialização in-page de elementos padrões-->
         <!-- Inicialização padrão de funções e padrões do MaterializeCSS para todas as páginas-->
         <script>
-
             // M.*: Padrão de inicialização do MaterializeCSS
 
             $(document).ready(function(){

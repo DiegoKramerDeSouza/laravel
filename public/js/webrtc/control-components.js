@@ -14,14 +14,24 @@ $(document).ready(function() {
 
 });
 
+// Chama alertas em elementos toast do MaterializeCSS
+/**
+ * content: conteúdo da mensagem
+ * classe: classes aplicadas ao elem. toast
+ */
 function callToast(content, classe) {
+    content = '<span class="white-text">' + content + '</span>';
     M.toast({ html: content, classes: classe });
 }
-
+// Altera o contador de usuários conectados à sala e exibe em 'broadcast-viewers-counter'
+/**
+ * number: número de usuários conectados
+ */
 function changeCounter(number) {
-    document.getElementById('broadcast-viewers-counter').innerHTML = '<a href="#con-list" class="modal-trigger"><i class="fa fa-desktop"></i> <b class="grey-text text-darken-3">' + number + '</b></a>';
+    document.getElementById('broadcast-viewers-counter').innerHTML = '<a href="#con-list" class="modal-trigger tooltipped" data-position="bottom" data-tooltip="Espectador(es)"><i class="fa fa-desktop"></i> <b class="grey-text text-darken-3">' + number + '</b></a>';
+    $('.tooltipped').tooltip();
 }
-
+// Mensagem de 0 salas disponíveis para conexão
 function noRooms() {
     //Mensagem de retorno para 0 salas encontradas
     var publicRoomsDiv = document.getElementById('public-conference');
@@ -32,7 +42,12 @@ function noRooms() {
     divOpen.innerHTML = message;
     publicRoomsDiv.appendChild(divOpen);
 }
-
+// Define o cabeçalho da sala criada
+/**
+ * icon: Ícone da sala
+ * classe: Temática da sala
+ * assunto: Assunto da sala
+ */
 function setRoomLabel(icon, classe, assunto) {
     var roomtitle = document.getElementById('class-title');
     var label = "<i class='fa fa-" + icon + " blue-text'></i> <b>" + classe + "</b> (" + assunto + ")" +
@@ -40,22 +55,10 @@ function setRoomLabel(icon, classe, assunto) {
         "<i class='fa fa-times'></i></a></span>";
     roomtitle.innerHTML = label;
 }
-
-function mountAccessList(classe, assunto, professor, viwer, moderador) {
-    var htmlItem = '<li class="collection-item avatar li-hover grey-text text-darken-3">' +
-        '<i class="material-icons circle blue lighten-2">videocam</i>' +
-        '<span class="title"><b>' + classe + ' (' + assunto + ')' + '</b></span>' +
-        '<p>' +
-        '<b class="blue-text">Professor:</b> ' + professor + '</p>' +
-        '<p>' +
-        '<b class="blue-text">Espectadores:</b><b> ' + viwer + '</b>' +
-        '</p>' +
-        '<span id="_' + moderador + '">' +
-        '</span>' +
-        '</li>';
-    return htmlItem;
-}
-
+// Configurações visuais de status da webcam
+/**
+ * status: 'disabled', 'off', 'on' 
+ */
 function setCam(status) {
     var cam = document.getElementById('toggle-camera');
     if (status === 'dis') {
@@ -78,7 +81,10 @@ function setCam(status) {
     }
 
 }
-
+// Configurações visuais de status do botão Mute
+/**
+ * status: 'disabled', 'off', 'on' 
+ */
 function setMute(status) {
     var mute = document.getElementById('toggle-mute');
     if (status === 'dis') {
@@ -99,9 +105,11 @@ function setMute(status) {
         mute.innerHTML = "<i class='material-icons left'>mic</i> <b class='white-text hide-on-med-and-down'>Microfone</b>";
         callToast('<span class="white-text"><i class="material-icons left">mic</i> Microfone Habilitado.</span>', 'blue darken-2');
     }
-
 }
-
+// Configurações visuais de status do volume
+/**
+ * status: 'disabled', 'off', 'on' 
+ */
 function setVol(status) {
     var vol = document.getElementById('toggle-volume');
     if (status === 'dis') {
@@ -123,7 +131,10 @@ function setVol(status) {
         callToast('<span class="white-text"><i class="material-icons left">volume_up</i> Áudio Habilitado.</span>', 'blue darken-2');
     }
 }
-
+// Configurações visuais de status de uma solicitação
+/**
+ * status: 'disabled', 'allowed', 'denied' 
+ */
 function setPedir(status) {
     var pedir = document.getElementById('pedir-vez');
     if (status === 'dis') {
@@ -144,12 +155,19 @@ function setPedir(status) {
 }
 
 //Verifica a existência de dispositivos de vídeo
+/**
+ * sourceInfos: dispositivos verificados
+ */
 function getCameras(sourceInfos) {
     if (sourceInfos.length > 0) {
         cameras = true;
     }
 }
 //Verificação de classes para elementos html
+/**
+ * element: elemento a ser verificado
+ * cls: classe a ser verificada no elemento
+ */
 function hasClass(element, cls) {
     return (' ' + element.className + ' ').indexOf(' ' + cls + ' ') > -1;
 }
@@ -158,7 +176,6 @@ function callTeacherStream() {
     $('#initial-access').slideUp(300);
     $('#video-panel').slideDown(300);
 }
-
 //Toggle de controle de audio para elem. video
 function toggleControls() {
     var player = document.getElementById('video-preview');
@@ -169,6 +186,9 @@ function toggleControls() {
     }
 }
 //Controle para exibição toggle de elem. html
+/**
+ * elemId: Id do elemento a ser verificado
+ */
 function toggleElem(elemId) {
     if ($(elemId).is(":visible")) {
         $(elemId).slideUp(500);
@@ -176,7 +196,43 @@ function toggleElem(elemId) {
         $(elemId).slideDown(500);
     }
 }
-
+// Constroi um botão de 'Pedir vez' 
+// *Uso pontual
+function constructBtnActionPedir() {
+    var htmlBtn = "<li class='hover-footer-btn'>" +
+        "<a id='pedir-vez' data-active='enabled' class='blue-text text-darken-3' title='Pedir vez'>" +
+        "<i class='material-icons left'>pan_tool</i> <b class='white-text hide-on-med-and-down'>Pedir vez</b>" +
+        "</a>" +
+        "</li>";
+    return htmlBtn;
+}
+// Constroi lista de salas online
+/**
+ * classe: Temática da sala
+ * assunto: Assunto da sala
+ * professor: Apresentador responsável
+ * viwer: Quantidade de espectadores
+ * moderador: Id do criador da sala (moderador)
+ */
+function constructAccessList(classe, assunto, professor, viwer, moderador) {
+    var htmlItem = '<li class="collection-item avatar li-hover grey-text text-darken-3">' +
+        '<i class="material-icons circle blue lighten-2">videocam</i>' +
+        '<span class="title"><b>' + classe + ' (' + assunto + ')' + '</b></span>' +
+        '<p>' +
+        '<b class="blue-text">Professor:</b> ' + professor + '</p>' +
+        '<p>' +
+        '<b class="blue-text">Espectadores:</b><b> ' + viwer + '</b>' +
+        '</p>' +
+        '<span id="_' + moderador + '">' +
+        '</span>' +
+        '</li>';
+    return htmlItem;
+}
+// Constroi lista de usuários conectados
+/**
+ * userid: Id da conexão
+ * username: Nome do usuário
+ */
 function constructConnectionList(userid, username) {
     var htmlList = '<li id="connect_' + userid + '" data-sender="' + userid + '" class="li-disconnect collection-item avatar li-hover">' +
         '<i class="material-icons blue lighten-2 circle">tv</i>' +
@@ -187,7 +243,15 @@ function constructConnectionList(userid, username) {
         '</li>';
     return htmlList;
 }
-
+// Constroi lista inicial de solicitação de usuários - Solicitação feita a partir do botão 'pedir vez'
+/**
+ * userid: Id da conexão
+ * username: Nome do usuário
+ * Classes css:
+ *      sol-response    -> <li> que representa uma solicitação;
+ *      responses.      -> <a> que representa uma resposta a uma solicitação;
+ * São de uso exclusivo desta função e classificam todas as solicitações enviadas ao broadcaster
+ */
 function constructSolicitationList(userid, username) {
     var htmlList = '<li id="' + userid + '" data-sender="' + username + '" class="sol-response collection-item avatar li-hover">' +
         '<i class="material-icons blue lighten-2 circle">tv</i>' +
@@ -199,13 +263,9 @@ function constructSolicitationList(userid, username) {
         '</li>';
     return htmlList;
 }
-
-// Reconstroi lista <ul> 'solicita-list'
+// Reconstroi lista <ul> 'solicita-list' após ação tomada (allow/deny) na lista inicial
 /**
- * var pedeList string
- * var liList   string
- * var htmlList string
- * var sender   string
+ * exp: Id da conexão onde a ação foi tomada
  */
 function constructList(exp) {
     var pedeList = document.getElementById('solicita-list');
@@ -227,7 +287,10 @@ function constructList(exp) {
     }
     pedeList.innerHTML = htmlList;
 }
-// Trata a quantidade de solicitações ao broadcaster
+// Trata indicador de quantidade de solicitações ao broadcaster
+/**
+ * val: quantidade de solicitações
+ */
 function trataSolicitacao(val) {
     document.getElementById('count-pedir-vez').innerHTML = val;
     if (val > 0) {

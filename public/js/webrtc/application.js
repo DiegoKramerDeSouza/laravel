@@ -25,7 +25,7 @@ var broadcastStatus = 0;
 // Array de viewers conectados à sala
 var connections = [];
 // Array de viewers com acesso bloqueado à sala
-var denyConnections;
+var denyConnections = [];
 
 $(document).ready(function() {
 
@@ -114,7 +114,7 @@ $(document).ready(function() {
             connection.broadcastId = hintsToJoinBroadcast.broadcastId;
             connection.join(hintsToJoinBroadcast.userid);
             console.log('--> Joined at: ' + hintsToJoinBroadcast.userid);
-            callToast('<span class="white-text"><i class="fa fa-play-circle fa-lg"></i> Transmissão iniciada!</span>', 'blue');
+            callToast('<i class="fa fa-play-circle fa-lg"></i> Transmissão iniciada!', 'blue');
         });
         // Socket - Rejoin
         socket.on('rejoin-broadcast', function(broadcastId) {
@@ -138,7 +138,7 @@ $(document).ready(function() {
             // Transmissão interrompida 
             console.error('--> broadcast-stopped', broadcastId);
             broadcastStatus = 0;
-            callToast('<span class="white-text"><i class="fa fa-stop-circle fa-lg"></i> Transmissão finalizada!</span>', 'red darken-3');
+            callToast('<i class="fa fa-stop-circle fa-lg"></i> Transmissão finalizada!', 'red darken-3');
         });
         // Socket - Started -> Quando não há um broadcast inicia-se esse evento
         socket.on('start-broadcasting', function(typeOfStreams) {
@@ -164,8 +164,11 @@ $(document).ready(function() {
             return;
         }
 
-        event.mediaElement.removeAttribute('src');
-        event.mediaElement.removeAttribute('srcObject');
+        //Testando...
+        //event.mediaElement.removeAttribute('src');
+        //event.mediaElement.removeAttribute('srcObject');
+
+        console.log(connection.attachStreams);
 
         if (event.type === 'remote') {
             /**
@@ -179,71 +182,16 @@ $(document).ready(function() {
 
             // Ajusta elementos de exibição (define o menu de áudio e video para ESPECTADORES)
             $('#div-connect').hide();
-            $('#broadcast-viewers-counter').hide();
-            ctlPedir.innerHTML = "<li class='hover-footer-btn'>" +
-                "<a id='pedir-vez' data-active='enabled' class='blue-text text-darken-3' title='Pedir a vez'>" +
-                "<i class='material-icons left'>pan_tool</i> <b class='white-text hide-on-med-and-down'>Pedir a vez</b>" +
-                "</a>" +
-                "</li>";
+            //$('#broadcast-viewers-counter').hide();
+            ctlPedir.innerHTML = constructBtnActionPedir();
             pedir = document.getElementById('pedir-vez');
 
             //Controle de elementos da conexão
             //videoPreview.userid = event.userid;
-
             if (connection.isInitiator == false && event.type === 'remote') {
-                /**
-                 * Verifica se a pessoa que está conectando é o produtor do conteúdo (broadcaster)
-                 * e se a conexão é local. Se não:
-                 * ->Está apenas fazendo um relaying de media
-                 */
-                /*
-                //connection.dontCaptureUserMedia = true;
-                connection.attachStreams = [event.stream];
-                connection.sdpConstraints.mandatory = {
-                    OfferToReceiveAudio: false,
-                    OfferToReceiveVideo: false
-                };
-                */
-                /*
-                var socket = connection.getSocket();
-                socket.emit('can-relay-broadcast');
-                if (connection.DetectRTC.browser.name === 'Chrome') {
-                    connection.getAllParticipants().forEach(function(p) {
-                        if (p + '' != event.userid + '') {
-                            var peer = connection.peers[p].peer;
-                            peer.getLocalStreams().forEach(function(localStream) {
-                                peer.removeStream(localStream);
-                            });
-                            event.stream.getTracks().forEach(function(track) {
-                                peer.addTrack(track, event.stream);
-                            });
-                            connection.dontAttachStream = true;
-                            connection.renegotiate(p);
-                            connection.dontAttachStream = false;
-                        }
-                    });
-                }
-                */
-                /*
-                if (connection.DetectRTC.browser.name === 'Firefox') {
-                    /**
-                     *  Método alternativo para o Firefox utilizar 'removeStream'
-                     *  Possibilita rejoin para navegadores Firefox
-                     */
-
-                /*
-                    connection.getAllParticipants().forEach(function(p) {
-                        if (p + '' != event.userid + '') {
-                            connection.replaceTrack(event.stream, p);
-                        }
-                    });
-                }
-                // Habilita recording para navegadores Chrome.
-                if (connection.DetectRTC.browser.name === 'Chrome') {
-                    repeatedlyRecordStream(event.stream);
-                }
-                */
+                //connection.attachStreams = [event.stream];
             };
+            //console.log(connection.attachStreams);
 
             // Constroi e envia MSG de conexão efetuada e se identifica
             /**
@@ -285,29 +233,29 @@ $(document).ready(function() {
                     msgrash[3] = inRoom.value;
                     msgrash[4] = myIdentity;
                     try {
-                        connection.send(msgrash);
+                        connection.send(msgrash, msgrash[3]);
                         solicita++;
-                        callToast('<span class="white-text"><i class="fa fa-check"></i> Solicitação enviada!</span>', 'blue darken-2');
+                        callToast('<i class="fa fa-check"></i> Solicitação enviada!', 'blue darken-2');
                     } catch (err) {
-                        callToast('<span class="white-text"><i class="fa fa-times"></i> Não foi possível solicitar a vez: ' + err + '.</span>', 'red darken-3');
+                        callToast('<i class="fa fa-times"></i> Não foi possível solicitar a vez: ' + err + '.', 'red darken-3');
                     }
                 } else if (solicita > 0) {
-                    callToast('<span class="white-text"><i class="fa fa-exclamation-triangle"></i> Você já encaminhou uma solicitação.<br>Aguarde a resposta.</span>', 'amber darken-4');
+                    callToast('<i class="fa fa-exclamation-triangle"></i> Você já encaminhou uma solicitação.<br>Aguarde a resposta.', 'amber darken-4');
                 } else {
-                    callToast('<span class="white-text"><i class="fa fa-times"></i> Não há conexão com a sala!</span>', 'red darken-3');
+                    callToast('<i class="fa fa-times"></i> Não há conexão com a sala!', 'red darken-3');
                 }
             };
             // Tratamento de áudio: Botão "Áudio" -> Toggle on/off
             vol.onclick = function() {
                 if (vol.getAttribute('data-active') == 'enabled') {
                     // Alteração de conexão -> Set audio: false
-                    connection.attachStreams.forEach(function(stream) {
+                    [event.stream].forEach(function(stream) {
                         stream.mute('audio');
                     });
                     setVol('off');
                 } else {
                     // Alteração de conexão -> Set audio: true
-                    connection.attachStreams.forEach(function(stream) {
+                    [event.stream].forEach(function(stream) {
                         stream.unmute('audio');
                     });
                     setVol('on');
@@ -402,7 +350,7 @@ $(document).ready(function() {
                             constructList(admResponse[1]);
                             trataSolicitacao(solicita);
                         } catch (err) {
-                            callToast('<span class="white-text"><i class="fa fa-times"></i> Não foi possível responder a esta solicitação:<br>' + err + '.</span>', 'red darken-3');
+                            callToast('<i class="fa fa-times"></i> Não foi possível responder a esta solicitação:<br>' + err + '.', 'red darken-3');
                         }
                     }
                 }
@@ -445,6 +393,7 @@ $(document).ready(function() {
             }
         }
         if (strValues != '' && (materia != '' && assunto != '')) {
+            // Definição do Hash da sala criada
             var roomCursos = strValues;
             var roomHash = btoa(materia + "|" + roomName + "|" + assunto + "|" + roomCursos + "|" + roomId);
             usuario = roomName;
@@ -468,7 +417,7 @@ $(document).ready(function() {
             var socket = connection.getSocket();
             socket.emit('check-broadcast-presence', broadcastId, function(isBroadcastExists) {
                 if (!isBroadcastExists) {
-                    // O broadcaster TEM de definir seu user-id
+                    // Definie o user-id do broadcaster
                     connection.userid = broadcastId;
                 }
                 console.log('check-broadcast-presence', broadcastId, isBroadcastExists);
@@ -484,85 +433,21 @@ $(document).ready(function() {
                 };
             });
         } else {
-            callToast('<span class="white-text"><i class="fa fa-exclamation-triangle fa-lg"></i> Por favor informe todos os campos indicados!</span>', 'red darken-3');
+            callToast('<i class="fa fa-exclamation-triangle fa-lg"></i> Por favor informe todos os campos indicados!', 'red darken-3');
         }
     }
 
+    /**
+     *  var mediaElement      elem. mídia html
+     */
     connection.onstreamended = function(event) {
         var mediaElement = document.getElementById(event.streamid);
         if (mediaElement) {
             mediaElement.parentNode.removeChild(mediaElement);
         }
     };
-    /**
-     *  var socket      connection.socket
-     *  var lastBlob    array
-     *  var recorder    connection.currentRecorder
-     */
-    connection.onleave = function(event) {
-        /*
-        if (event.userid !== videoPreview.userid) return;
-        var socket = connection.getSocket();
-        socket.emit('can-not-relay-broadcast');
-        connection.isUpperUserLeft = true;
-        if (allRecordedBlobs.length) {
-            // Play o último blob gravado
-            var lastBlob = allRecordedBlobs[allRecordedBlobs.length - 1];
-            videoPreview.src = URL.createObjectURL(lastBlob);
 
-            // Definições de video
-            width = parseInt(connection.teacherVideosContainer.clientWidth);
-            videoPreview.width = width;
-            videoPreview.play();
-            $('#div-connect').hide();
-            allRecordedBlobs = [];
-
-        } else if (connection.currentRecorder) {
-            var recorder = connection.currentRecorder;
-            connection.currentRecorder = null;
-            recorder.stopRecording(function() {
-                if (!connection.isUpperUserLeft) return;
-                videoPreview.src = URL.createObjectURL(recorder.getBlob());
-                //Definições de video
-                width = parseInt(connection.teacherVideosContainer.clientWidth);
-                videoPreview.width = width;
-                videoPreview.play();
-                $('#div-connect').hide();
-            });
-        }
-        if (connection.currentRecorder) {
-            connection.currentRecorder.stopRecording();
-            connection.currentRecorder = null;
-        }
-        */
-    };
-    /*
-    // Lista blob de gravação 
-    var allRecordedBlobs = [];
-    // Atualiza blob de gravação a cada 30 segundos
-    function repeatedlyRecordStream(stream) {
-        if (!enableRecordings) {
-            return;
-        }
-        connection.currentRecorder = RecordRTC(stream, {
-            type: 'video'
-        });
-        connection.currentRecorder.startRecording();
-        setTimeout(function() {
-            if (connection.isUpperUserLeft || !connection.currentRecorder) {
-                return;
-            }
-            connection.currentRecorder.stopRecording(function() {
-                allRecordedBlobs.push(connection.currentRecorder.getBlob());
-                if (connection.isUpperUserLeft) {
-                    return;
-                }
-                connection.currentRecorder = null;
-                repeatedlyRecordStream(stream);
-            });
-        }, 30 * 1000); // 30 segundos
-    };
-    */
+    connection.onleave = function(event) {};
 
     // Tratamento do Id da sala e dos links para acesso -> Basea-se no URI
     /**
@@ -610,11 +495,11 @@ $(document).ready(function() {
         (function reCheckRoomPresence() {
             connection.checkPresence(broadcastId, function(isRoomExists) {
                 if (isRoomExists) {
-                    //document.getElementById('btn-join-as-productor').onclick();
                     document.getElementById(broadcastId).onclick();
                     return;
                 }
-                setTimeout(reCheckRoomPresence, 5000); // 5 segundos
+                // Verifica a cada 5 segundos
+                setTimeout(reCheckRoomPresence, 5000);
             });
         })();
     }
@@ -622,6 +507,7 @@ $(document).ready(function() {
     connection.onNumberOfBroadcastViewersUpdated = function(event) {
         if (!connection.isInitiator) return;
         viewers = event.numberOfBroadcastViewers;
+        // Atualiza contador de usuários conectados e exibe
         changeCounter(viewers);
     };
     // Verifica listagem de de salas públicas que se enquadrem no perfil do usuário
@@ -640,7 +526,6 @@ $(document).ready(function() {
                     //Coleta o número de espectadores conectados à sala
                     connection.getNumberOfBroadcastViewers(moderator.userid, function(numberOfBroadcastViewers) {
                         viewers = numberOfBroadcastViewers;
-                        //console.log(connection.userid + ": " + numberOfBroadcastViewers);
                     });
 
                     // Verifica se quem conecta é o próprio moderador
@@ -693,11 +578,11 @@ $(document).ready(function() {
                         usuario = currentUser;
                         var divOpen = document.createElement('ul');
                         // Cria objeto de lista com as broadcast disponíveis
-                        var card = mountAccessList(labelClasse, labelAssunto, labelProfessor, viewers, moderator.userid);
+                        var card = constructAccessList(labelClasse, labelAssunto, labelProfessor, viewers, moderator.userid);
 
                         divOpen.innerHTML = card;
                         divOpen.className = "collection";
-                        // Cria objeto botão de ingresso na broadcast selecionada
+                        // Cria objeto botão para ingressar na broadcast selecionada
                         var button = document.createElement('a');
                         button.id = moderator.userid;
                         button.title = 'Entrar';
@@ -712,12 +597,12 @@ $(document).ready(function() {
                                 elem.classList.remove("blue");
                                 elem.classList.add("grey");
                             }
+                            document.getElementById(this.id).disabled = true;
+
                             // Inicializa apresentação
                             callTeacherStream();
 
                             var broadcastId = this.id;
-                            document.getElementById(this.id).disabled = true;
-
                             // Definições de sessão
                             connection.session = {
                                 audio: false,
@@ -725,7 +610,6 @@ $(document).ready(function() {
                                 data: true,
                                 oneway: true
                             };
-
                             // Inicializa socket
                             var socket = connection.getSocket();
                             socket.emit('join-broadcast', {
@@ -752,13 +636,16 @@ $(document).ready(function() {
                         divClose.appendChild(button);
                     }
                     if (countRooms == 0) {
+                        //Exibe mensagem de salas indisponíveis
                         noRooms();
                     }
                 });
             } else {
+                //Exibe mensagem de salas indisponíveis
                 noRooms();
             }
-            setTimeout(looper, 3000); //3 segundos
+            //verifica a cada 3 segundos
+            setTimeout(looper, 3000);
         });
     })();
 
@@ -802,8 +689,13 @@ $(document).ready(function() {
  * FUNCTIONS-------------------------------------------------------------------
  */
 
-//Trata e escreve mensagem de chat
+//Trata e escreve mensagem de chat e trata solicitações
 /*
+ *    event: mensagem recebida.
+ *      -> mensagens em formato de array[4] (length = 5) são tratadas como solicitações;
+ *      -> solicitações tem como padrão no array[0] o indicativo da solicitação;
+ *      -> os indicativos sempre iniciam com @, como @PedeAVez.
+ *   
  *    var chatContainer elem. html
  *    var text          string
  *    var message       string
@@ -818,12 +710,14 @@ function appendDIV(event) {
         var myRoom = document.getElementById('room-id').value;
         // Identifica se a mensagem é uma solicitação de serviço
         if (chkrash[0] === btoa('@PedeAVez')) {
+            // Indica que algum usuário solicita a permissão para falar
             msgData[0] = chkrash[1];
             msgData[1] = (atob(chkrash[3])).split('|')[4];
             msgData[2] = chkrash[4];
             listBox(msgData);
             return;
         } else if (chkrash[0] === btoa('@PedeAVez:allow')) {
+            // Indica que o broadcaster atendeu à solicitação do usuário
             // Verifica se o destinatário é o criador da solicitação para entregar a resposta
             if (chkrash[2] === myRoom) {
                 // Mensagem de aprovação de solicitação
@@ -832,6 +726,7 @@ function appendDIV(event) {
             }
             return;
         } else if (chkrash[0] === btoa('@PedeAVez:deny')) {
+            // Indica que o broadcaster negou a solicitação do usuário
             // Verifica se o destinatário é o criador da solicitação para entregar a resposta
             if (chkrash[2] === myRoom) {
                 // Mensagem de solicitação negada
@@ -840,6 +735,7 @@ function appendDIV(event) {
             }
             return;
         } else if (chkrash[0] === btoa('@acessou')) {
+            // Indica que um usuário acessou a sala
             if (chkrash[2] === myRoom) {
                 console.log(chkrash[4] + ' entrou.');
                 var htmlList = '';
@@ -850,13 +746,18 @@ function appendDIV(event) {
                 connections.push(conarray);
                 htmlList += constructConnectionList(conarray.userid, conarray.username);
                 document.getElementById('connection-list').innerHTML += htmlList;
+                if (chkrash[2] !== myRoom) {
+                    // Atualiza contador de usuários conectados e exibe
+                    changeCounter(connections.length);
+                }
             }
             return;
         }
     } else {
+        // Tratamento de mensagens comuns (fora do padrão de solicitação)
         var message = atob(text);
         if (!$('#div-chat-panel').is(":visible")) {
-            callToast('<span class="white-text"><i class="fa fa-comment-o blue-text"></i> ' + message + '</span>', 'grey darken-4');
+            callToast('<i class="fa fa-comment-o blue-text"></i> ' + message + '.', 'grey darken-4');
         }
         // Versão com adaptação para o MaterializeCSS
         // Append mensagem no textarea e atualiza o tamanho do campo 
@@ -864,31 +765,27 @@ function appendDIV(event) {
         M.textareaAutoResize($('#chat-panel'));
         M.updateTextFields();
     }
+    return;
 }
 
 // Lista todas as solicitações de "Pedir a vez" e incrementa contador
+/**
+ * 
+ * text: Array contando o nome so solicitante, o Id da conexão da sala e o Id da conexão do solicitante
+ */
 function listBox(text) {
     var msg = text;
     var receiver = document.getElementById('room-id').value
-    var pedeList = document.getElementById('solicita-list');
+    var solList = document.getElementById('solicita-list');
     var htmlList;
     // Verifica se o destinatário é o broadcaster para entregar a solicitação
     if (msg[1] === receiver) {
-        /**
-         *  Alteração de UI
-         */
         solicita++;
         trataSolicitacao(solicita);
         // Cria lista em html para preencher a <ul> 'solicita-list'
-        /**
-         *  Classes css:
-         *      sol-response    -> <li> que representa uma solicitação;
-         *      responses.      -> <a> que representa uma resposta a uma solicitação;
-         *  São de uso exclusivo desta função e classificam todas as solicitações enviadas ao broadcaster
-         */
-        // Constroi elemento e concatena
         htmlList = constructSolicitationList(msg[2], msg[0]);
-        pedeList.innerHTML += htmlList;
-        callToast('<span class="white-text"><i class="material-icons">pan_tool</i> ' + msg[0] + ' solicita a vez!</span>', 'blue darken-2');
+        solList.innerHTML += htmlList;
+        callToast('<i class="material-icons">pan_tool</i> ' + msg[0] + ' solicita a vez!', 'blue darken-2');
     }
+    return;
 }
