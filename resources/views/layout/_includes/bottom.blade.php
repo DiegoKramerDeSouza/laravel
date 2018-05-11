@@ -9,8 +9,10 @@
         <!-- A variável $streamPage deve ser passada pelo controller para inicialização-->
         @if(isset($streamPage))
             <!-- Adição dos scripts de utilização do WEBRTC-->
+            <script type="text/javascript" src="{!! asset('js/webrtc/control-components.js') !!}"></script>  
             <script type="text/javascript" src="{!! asset('js/webrtc/socket.io.js') !!}"></script>
             <script type="text/javascript" src="{!! asset('js/webrtc/getHTMLMediaElement.js') !!}"></script>
+            <script type="text/javascript" src="{!! asset('js/webrtc/adapter.js') !!}"></script>                      
             <script type="text/javascript" src="{!! asset('js/webrtc/RTCMultiConnection.min.js') !!}"></script>
             <script type="text/javascript" src="{!! asset('js/webrtc/application.js') !!}"></script>
             <script>
@@ -43,8 +45,8 @@
                     </div>
                 </div>
 
-                <!-- Modal de solicitação de vez-->
                 @if(Auth::user()->type == 0)
+                    <!-- Modal de solicitação de vez-->
                     <div id='msg-solicita' class='modal'>
                         <div class='modal-content'>
                             <h5>
@@ -57,6 +59,23 @@
                             </h5>
                             <div class='divider'></div>
                             <ul id='solicita-list' class='collection'>
+                            </ul>
+                            <br>
+                        </div>
+                    </div>
+                    <!-- Modal de conexões ativas-->
+                    <div id='con-list' class='modal'>
+                        <div class='modal-content'>
+                            <h5>
+                                <i class='material-icons blue-text'>tv</i> Espectadores:
+                                <span class='right'>
+                                    <a class='modal-close'>
+                                        <i class='fa fa-times grey-text text-darken-3'></i>
+                                    </a>
+                                </span>
+                            </h5>
+                            <div class='divider'></div>
+                            <ul id='connection-list' class='collection'>
                             </ul>
                             <br>
                         </div>
@@ -97,6 +116,11 @@
                         </ul>
                     </div>
                 </nav>
+                <div id='div-enter' class='fixed-action-btn d-none' style='margin-bottom: 45px;'>
+                    <a id='enter' class='btn-floating btn-large blue pulse'>
+                        <i class='large material-icons'>videocam</i>
+                    </a>
+                </div>
             @endif
         @else
             <!-- Barra de footer padrão-->

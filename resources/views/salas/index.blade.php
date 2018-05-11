@@ -77,7 +77,7 @@
     </div>
 
     <!--Campos de controle-->
-    <input type='hidden' id='room-id' name='room-id' disabled readonly />
+    <input type='text' id='room-id' name='room-id' disabled readonly />
     <input type='hidden' id='broadcaster' name='broadcaster' disabled readonly />
     <input type='hidden' id='in-room' name='in-room' disabled readonly />
     <input type='hidden' id='current-user' value='{{ Auth::user()->name}}' disabled readonly />
@@ -98,7 +98,7 @@
                         <div class='col s12'>
                             @if(Auth::user()->type == 0)
                                 <div id='broadcast-viewers-counter' class='card-title blue-text tooltipped' data-position="right" data-tooltip="Espectador(es)" align='right' >
-                                    <i class="fa fa-desktop"></i> <b class="grey-text text-darken-3">0</b>
+                                    <br>
                                 </div>
                             @endif
                             <div id='room-urls'>
@@ -115,11 +115,15 @@
                                     </div>
                                 </div>
 
+                                <!--
+                                <div id="video-preview"></div>
+                                -->
                                 <!--VÍDEO PRINCIPAL-->
-                                <video id="video-preview" loop style='max-width:662px;'></video>
-                                <!--VÍDEO SECUNDÁRIO-->
-                                <video id="video-guest" loop style='max-width:662px;'></video>
+                                <video id="video-preview" loop controls style='max-width:662px;'></video>
 
+                                <!--VÍDEO SECUNDÁRIO
+                                <video id="video-guest" loop style='max-width:662px;'></video>
+                                -->
                             </div>
                         </div>
                     </div>
