@@ -114,12 +114,9 @@
                                         <div class="indeterminate blue"></div>
                                     </div>
                                 </div>
-
-                                <!--
-                                <div id="video-preview"></div>
-                                -->
+                                
                                 <!--VÍDEO PRINCIPAL-->
-                                <video id="video-preview" loop controls style='max-width:662px;'></video>
+                                <video id="video-preview" loop style='max-width:668px;'></video>
 
                                 <!--VÍDEO SECUNDÁRIO
                                 <video id="video-guest" loop style='max-width:662px;'></video>

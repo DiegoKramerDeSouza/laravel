@@ -154,6 +154,11 @@ $(document).ready(function() {
             connection.open(connection.userid, isPublicModerator);
             console.log('--> Open: ' + connection.userid);
         });
+        socket.on('leave-the-room', function(targetconnection) {
+            console.log('Leaving...' + targetconnection.remoteUserId + '|' + connection.userid);
+            if (targetconnection.remoteUserId != connection.userid) return;
+            connection.leave();
+        });
     });
     // Inicia a transmissão
     connection.onstream = function(event) {
@@ -167,8 +172,6 @@ $(document).ready(function() {
         //Testando...
         //event.mediaElement.removeAttribute('src');
         //event.mediaElement.removeAttribute('srcObject');
-
-        console.log(connection.attachStreams);
 
         if (event.type === 'remote') {
             /**
@@ -205,8 +208,8 @@ $(document).ready(function() {
             msgrash[2] = broadcaster.value;
             msgrash[3] = inRoom.value;
             msgrash[4] = myIdentity;
+            msgrash[5] = connection.userid;
             connection.send(msgrash);
-
             // Ação padrão para conexões remotas:
             /**
              * Desabilita botão de ação para microfone
@@ -214,7 +217,6 @@ $(document).ready(function() {
              */
             setCam('dis');
             setMute('dis');
-
             /**
              * Tratamento dos botões da barra de funções de video----------------------------------
              */
@@ -356,13 +358,31 @@ $(document).ready(function() {
                 }
             };
         }
-        // Tratamento das funções MUTE e UNMUTE (Obrigatórios)
+        // Tratamento das funções MUTE e UNMUTE -> Obrigatórios para utilizar mute e unmute
         connection.onmute = function(e) {
             e.mediaElement.setAttribute('poster', '/img/bg.jpg');
         };
         connection.onunmute = function(e) {
             e.mediaElement.removeAttribute('poster');
         };
+        // Tratamento da ação de desconectar um usuário arbitrariamente
+        document.getElementById('broadcast-viewers-counter').onclick = function() {
+            var btnDisconnect;
+            btnDisconnect = document.getElementsByClassName('disconnect-btn');
+            for (var j = 0; j < btnDisconnect.length; j++) {
+                btnDisconnect[j].onclick = function() {
+                    var disconnectId = this.getAttribute('data-announced');
+                    connection.disconnectWith(disconnectId);
+                    /*
+                    var socket = connection.getSocket();
+                    socket.emit('leave-the-room', {
+                        remoteUserId: disconnectId
+                    });
+                    */
+                    callToast('<i class="fa fa-times"></i> ' + this.name + ' foi desconectado!', 'red darken-4');
+                }
+            }
+        }
     };
 
     // Ação de criar uma sala de aula ao clicar em 'btn-join-as-productor'
@@ -681,7 +701,7 @@ $(document).ready(function() {
         appendDIV(texto);
         document.getElementById('text-message').value = '';
     };
-    //Envio de mensagem
+    //Envio de mensagens
     connection.onmessage = appendDIV;
 
 });
@@ -704,7 +724,7 @@ function appendDIV(event) {
     var chatContainer = document.getElementById('chat-panel');
     var text = event.data || event;
     // Verifica a origem da mensagem
-    if (event.data && text.length == 5) {
+    if (event.data && text.length >= 5) {
         var chkrash = event.data;
         var msgData = [];
         var myRoom = document.getElementById('room-id').value;
@@ -738,13 +758,15 @@ function appendDIV(event) {
             // Indica que um usuário acessou a sala
             if (chkrash[2] === myRoom) {
                 console.log(chkrash[4] + ' entrou.');
+                console.log(chkrash);
                 var htmlList = '';
                 var conarray = {
                     username: chkrash[1],
-                    userid: chkrash[4]
+                    userid: chkrash[4],
+                    announced: chkrash[5]
                 };
                 connections.push(conarray);
-                htmlList += constructConnectionList(conarray.userid, conarray.username);
+                htmlList += constructConnectionList(conarray.userid, conarray.username, conarray.announced);
                 document.getElementById('connection-list').innerHTML += htmlList;
                 if (chkrash[2] !== myRoom) {
                     // Atualiza contador de usuários conectados e exibe
@@ -788,4 +810,9 @@ function listBox(text) {
         callToast('<i class="material-icons">pan_tool</i> ' + msg[0] + ' solicita a vez!', 'blue darken-2');
     }
     return;
+}
+
+function alertDesconnection(userid) {
+    console.log('--> Desconectando... ' + userid);
+    constructConnectionExpList(userid);
 }

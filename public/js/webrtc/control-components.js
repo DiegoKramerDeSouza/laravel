@@ -28,7 +28,7 @@ function callToast(content, classe) {
  * number: número de usuários conectados
  */
 function changeCounter(number) {
-    document.getElementById('broadcast-viewers-counter').innerHTML = '<a href="#con-list" class="modal-trigger tooltipped" data-position="bottom" data-tooltip="Espectador(es)"><i class="fa fa-desktop"></i> <b class="grey-text text-darken-3">' + number + '</b></a>';
+    document.getElementById('broadcast-viewers-counter').innerHTML = '<a href="#con-list" id="viewers" class="modal-trigger tooltipped" data-position="bottom" data-tooltip="Espectador(es)"><i class="fa fa-desktop"></i> <b class="grey-text text-darken-3">' + number + '</b></a>';
     $('.tooltipped').tooltip();
 }
 // Mensagem de 0 salas disponíveis para conexão
@@ -233,16 +233,43 @@ function constructAccessList(classe, assunto, professor, viwer, moderador) {
  * userid: Id da conexão
  * username: Nome do usuário
  */
-function constructConnectionList(userid, username) {
-    var htmlList = '<li id="connect_' + userid + '" data-sender="' + userid + '" class="li-disconnect collection-item avatar li-hover">' +
+function constructConnectionList(userid, username, announce) {
+    var htmlList = '<li id="li-disconnect-' + userid + '" data-sender="' + username + '" class="li-disconnect collection-item avatar li-hover">' +
         '<i class="material-icons blue lighten-2 circle">tv</i>' +
         '<h6><b>' + username + '</b></h6>' +
         '<span class="secondary-content">' +
-        '<a id="disconnect-' + userid + '" class="disconnect btn-floating small waves-effect waves-teal red darken-4"><i class="material-icons">close</i></a>' +
+        '<a id="disconnect-' + userid + '" name="' + username + '" data-announced="' + announce + '" class="disconnect-btn btn-floating small waves-effect waves-teal red darken-4"><i class="material-icons">close</i></a>' +
         '</span>' +
         '</li>';
     return htmlList;
 }
+// Reconstroi lista <ul> 'connection-list' após ação de remoção
+/**
+ * exp: Id da conexão onde a ação foi tomada
+ */
+function constructConnectionExpList(exp) {
+    var connectionList = document.getElementById('connection-list');
+    var liList = document.getElementsByClassName('disconnect-btn');
+    var htmlList = '';
+    var announce;
+    for (var j = 0; j < liList.length; j++) {
+        announce = liList[j].getAttribute('data-announced');
+        console.log('Alert: ' + announce + '|' + exp);
+        if (announce != exp) {
+            var sender = liList[j].name;
+            // Constroi elementos concatenando
+            htmlList = '<li id="li-' + liList[j].id + '" data-sender="' + sender + '" class="li-disconnect collection-item avatar li-hover">' +
+                '<i class="material-icons blue lighten-2 circle">tv</i>' +
+                '<h6><b>' + sender + '</b></h6>' +
+                '<span class="secondary-content">' +
+                '<a id="' + liList[j].id + '" name="' + sender + '" data-announced="' + announce + '" class="disconnect-btn btn-floating small waves-effect waves-teal red darken-4"><i class="material-icons">close</i></a>' +
+                '</span>' +
+                '</li>';
+        }
+    }
+    connectionList.innerHTML = htmlList;
+}
+
 // Constroi lista inicial de solicitação de usuários - Solicitação feita a partir do botão 'pedir vez'
 /**
  * userid: Id da conexão
