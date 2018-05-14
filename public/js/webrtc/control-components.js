@@ -184,7 +184,6 @@ function fullscreen() {
         //videopreview.style.height = (window.innerHeight) + 'px';
         //videopreview.style.width = (element.width) + 'px';
         //element.style.height = (window.innerWidth - 240) + 'px';
-        //element.style.height = '95%';
         element.setAttribute('data-status', 'enabled');
     } else if (status === 'enabled') {
         $('#div-exit-fullscreen').fadeOut(500);
