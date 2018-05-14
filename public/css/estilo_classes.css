@@ -51,3 +51,11 @@
 .li-hover:hover {
     background-color: rgb(231, 231, 231) !important;
 }
+
+.width-limit {
+    max-width: 662px;
+}
+
+.height-limit {
+    max-height: 441px;
+}

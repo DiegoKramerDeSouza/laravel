@@ -13,7 +13,6 @@ $(document).ready(function() {
     */
 
 });
-
 // Chama alertas em elementos toast do MaterializeCSS
 /**
  * content: conteúdo da mensagem
@@ -36,7 +35,7 @@ function noRooms() {
     //Mensagem de retorno para 0 salas encontradas
     var publicRoomsDiv = document.getElementById('public-conference');
     var divOpen = document.createElement('div');
-    var message = "<div class='red-text' style='margin-top:20px;' align='center'>" +
+    var message = "<div class='red-text' style='padding:50px;' align='center'>" +
         "<i class='fa fa-times fa-lg red-text text-darken-3'></i> <b>Não há salas disponíveis.</b>" +
         "</div>";
     divOpen.innerHTML = message;
@@ -153,7 +152,59 @@ function setPedir(status) {
         callToast('<span class="white-text"><i class="fa fa-times"></i> Sua solicitação foi negada!</span>', 'red darken-3');
     }
 }
+// Controle da saída de tela cheia -> correção de saídas não previstas da função de tela cheia
+function exitHandler() {
+    if (!document.fullscreenElement && !document.webkitIsFullScreen && !document.mozFullScreen && !document.msFullscreenElement) {
+        var element = document.getElementById('span-video-preview');
+        var status = element.getAttribute('data-status');
+        if (status === 'enabled') {
+            fullscreen();
+        } else {
+            return;
+        }
+    }
+}
+// Controle do botão de tela cheia -> toggle on:off
+function fullscreen() {
+    var element = document.getElementById('span-video-preview');
+    var videopreview = document.getElementById('video-preview');
+    var status = element.getAttribute('data-status');
 
+    if (status === 'disabled') {
+        $('#div-exit-fullscreen').fadeIn(500);
+        if (element.mozRequestFullScreen) {
+            element.mozRequestFullScreen();
+        } else if (element.webkitRequestFullScreen) {
+            element.webkitRequestFullScreen();
+        }
+        element.classList.add("black");
+        element.classList.remove("width-limit");
+        var percent = (window.innerWidth / 100);
+        element.style.height = (window.innerHeight) + 'px';
+        //videopreview.style.height = (window.innerHeight) + 'px';
+        //videopreview.style.width = (element.width) + 'px';
+        //element.style.height = (window.innerWidth - 240) + 'px';
+        //element.style.height = '95%';
+        element.setAttribute('data-status', 'enabled');
+    } else if (status === 'enabled') {
+        $('#div-exit-fullscreen').fadeOut(500);
+        if (document.fullscreen) {
+            document.cancelFullScreen();
+        } else if (document.mozFullScreen) {
+            document.mozCancelFullScreen();
+        } else if (document.webkitIsFullScreen) {
+            document.webkitCancelFullScreen();
+        }
+        element.classList.remove("black");
+        element.classList.add("width-limit");
+        //element.style.width = 'inherit';
+        element.style.height = 'inherit';
+        //videopreview.style.width = 'inherit';
+        //videopreview.style.height = 'inherit';
+        element.setAttribute('data-status', 'disabled');
+    }
+    return;
+}
 //Verifica a existência de dispositivos de vídeo
 /**
  * sourceInfos: dispositivos verificados

@@ -19,7 +19,7 @@
                     <div class='row'>
                         <div class='input-field col s12 m6'>
                             <input class='validate' autofocus required type='text' name='login' id='login'>
-                            <label for='login'><i class='fa fa-envelope-o'></i> E-mail</label>
+                            <label for='login'><i class='fa fa-user-o'></i> Usuário</label>
                         </div>
                         <div class='input-field col s12 m6'>
                             <input class='validate' required type='password' name='password' id='password'>

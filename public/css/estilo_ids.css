@@ -42,3 +42,22 @@
     bottom: 45px;
     right: 0px;
 }
+
+video::-webkit-media-controls {
+    display: none !important;
+    z-index: -1 !important;
+}
+
+video::-webkit-media-controls-enclosure {
+    display: none !important;
+}
+
+#div-exit-fullscreen {
+    margin-bottom: 45px;
+    z-index: 2147483648;
+}
+
+#video-preview {
+    width: inherit;
+    height: inherit;
+}

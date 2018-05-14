@@ -28,7 +28,6 @@ var connections = [];
 var denyConnections = [];
 
 $(document).ready(function() {
-
     // Inicializa adapter.js
     window.enableAdapter = true;
 
@@ -51,6 +50,12 @@ $(document).ready(function() {
 
     // Elemento alvo para iniciar o stream de video
     connection.teacherVideosContainer = document.getElementById('main-video');
+    connection.videoContainer = document.getElementById('span-video-preview');
+    // Listeners de tratamento de tamanho de tela do video
+    document.addEventListener('fullscreenchange', exitHandler);
+    document.addEventListener('webkitfullscreenchange', exitHandler);
+    document.addEventListener('mozfullscreenchange', exitHandler);
+    document.addEventListener('MSFullscreenChange', exitHandler);
 
     // Inicialização de variáveis de controle de elementos in-page
     /**
@@ -63,6 +68,8 @@ $(document).ready(function() {
      *  var inRoom          elem. html
      *  var videoPreview    elem. html
      *  var mute            elem. html
+     *  var screen          elem. html
+     *  var exitscreen      elem. html
      *  var vol             elem. html
      *  var cam             elem. html
      *  var pedir           elem. html
@@ -79,6 +86,8 @@ $(document).ready(function() {
     var inRoom = document.getElementById('in-room');
     var videoPreview = document.getElementById('video-preview');
     var mute = document.getElementById('toggle-mute');
+    var screen = document.getElementById('toggle-screen');
+    var exitscreen = document.getElementById('exit-fullscreen');
     var vol = document.getElementById('toggle-volume');
     var cam = document.getElementById('toggle-camera');
     var pedir = document.getElementById('pedir-vez');
@@ -163,11 +172,15 @@ $(document).ready(function() {
     // Inicia a transmissão
     connection.onstream = function(event) {
         //Apresentação da barra de funções de video
+        $('#main-footer').hide();
         $('#nav-footer').slideDown(500);
         inRoom.value = event.userid;
         if (connection.isInitiator && event.type !== 'local') {
             return;
         }
+        // Botão de maximizar o video -> toggle on:off
+        screen.onclick = function() { fullscreen(); };
+        exitscreen.onclick = function() { fullscreen(); };
 
         //Testando...
         //event.mediaElement.removeAttribute('src');
@@ -198,8 +211,8 @@ $(document).ready(function() {
 
             // Constroi e envia MSG de conexão efetuada e se identifica
             /**
-             *  var msgrash     string
-             *  var myIdentity  string
+             *  var msgrash         array
+             *  var myIdentity      string
              */
             var msgrash = [];
             var myIdentity = document.getElementById('room-id').value;
@@ -247,6 +260,7 @@ $(document).ready(function() {
                     callToast('<i class="fa fa-times"></i> Não há conexão com a sala!', 'red darken-3');
                 }
             };
+
             // Tratamento de áudio: Botão "Áudio" -> Toggle on/off
             vol.onclick = function() {
                 if (vol.getAttribute('data-active') == 'enabled') {
@@ -373,12 +387,6 @@ $(document).ready(function() {
                 btnDisconnect[j].onclick = function() {
                     var disconnectId = this.getAttribute('data-announced');
                     connection.disconnectWith(disconnectId);
-                    /*
-                    var socket = connection.getSocket();
-                    socket.emit('leave-the-room', {
-                        remoteUserId: disconnectId
-                    });
-                    */
                     callToast('<i class="fa fa-times"></i> ' + this.name + ' foi desconectado!', 'red darken-4');
                 }
             }
@@ -455,8 +463,7 @@ $(document).ready(function() {
         } else {
             callToast('<i class="fa fa-exclamation-triangle fa-lg"></i> Por favor informe todos os campos indicados!', 'red darken-3');
         }
-    }
-
+    };
     /**
      *  var mediaElement      elem. mídia html
      */
@@ -466,7 +473,6 @@ $(document).ready(function() {
             mediaElement.parentNode.removeChild(mediaElement);
         }
     };
-
     connection.onleave = function(event) {};
 
     // Tratamento do Id da sala e dos links para acesso -> Basea-se no URI
@@ -525,8 +531,9 @@ $(document).ready(function() {
     }
     // Verifica quantas conexões estão ativas nesse broadcast
     connection.onNumberOfBroadcastViewersUpdated = function(event) {
-        if (!connection.isInitiator) return;
+        //if (!connection.isInitiator) return;
         viewers = event.numberOfBroadcastViewers;
+        console.log('Usuários: ' + viewers);
         // Atualiza contador de usuários conectados e exibe
         changeCounter(viewers);
     };
@@ -708,7 +715,6 @@ $(document).ready(function() {
 /**
  * FUNCTIONS-------------------------------------------------------------------
  */
-
 //Trata e escreve mensagem de chat e trata solicitações
 /*
  *    event: mensagem recebida.
@@ -722,9 +728,10 @@ $(document).ready(function() {
  */
 function appendDIV(event) {
     var chatContainer = document.getElementById('chat-panel');
+    // Recebe mensagens externas ou internas
     var text = event.data || event;
-    // Verifica a origem da mensagem
-    if (event.data && text.length >= 5) {
+    // Verifica a origem da mensagem, se a menssagem é um array e se este array possui mais de 4 índices
+    if (event.data && (Array.isArray(text) && text.length > 4)) {
         var chkrash = event.data;
         var msgData = [];
         var myRoom = document.getElementById('room-id').value;
@@ -787,12 +794,9 @@ function appendDIV(event) {
         M.textareaAutoResize($('#chat-panel'));
         M.updateTextFields();
     }
-    return;
 }
-
 // Lista todas as solicitações de "Pedir a vez" e incrementa contador
 /**
- * 
  * text: Array contando o nome so solicitante, o Id da conexão da sala e o Id da conexão do solicitante
  */
 function listBox(text) {
@@ -811,8 +815,14 @@ function listBox(text) {
     }
     return;
 }
-
+// Emite alerta de desconexão.
 function alertDesconnection(userid) {
-    console.log('--> Desconectando... ' + userid);
-    constructConnectionExpList(userid);
+    var broadcaster = document.getElementById('in-room').value;
+    if (userid === broadcaster) {
+        callToast('<i class="fa fa-times"></i> Você foi desconectado!', 'red darken-3');
+        setTimeout(location.reload.bind(location), 3000);
+    } else {
+        console.log('--> Desconectando... ' + userid);
+        constructConnectionExpList(userid);
+    }
 }

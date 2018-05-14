@@ -31,6 +31,24 @@
                     </div>
                 </div>
 
+                <!-- Modal de conexões ativas-->
+                <div id='con-list' class='modal'>
+                    <div class='modal-content'>
+                        <h5>
+                            <i class='material-icons blue-text'>tv</i> Espectadores:
+                            <span class='right'>
+                                <a class='modal-close'>
+                                    <i class='fa fa-times grey-text text-darken-3'></i>
+                                </a>
+                            </span>
+                        </h5>
+                        <div class='divider'></div>
+                        <ul id='connection-list' class='collection'>
+                        </ul>
+                        <br>
+                    </div>
+                </div>
+
                 @if(Auth::user()->type == 0)
                     <!-- Modal de solicitação de vez-->
                     <div id='msg-solicita' class='modal'>
@@ -49,25 +67,10 @@
                             <br>
                         </div>
                     </div>
-                    <!-- Modal de conexões ativas-->
-                    <div id='con-list' class='modal'>
-                        <div class='modal-content'>
-                            <h5>
-                                <i class='material-icons blue-text'>tv</i> Espectadores:
-                                <span class='right'>
-                                    <a class='modal-close'>
-                                        <i class='fa fa-times grey-text text-darken-3'></i>
-                                    </a>
-                                </span>
-                            </h5>
-                            <div class='divider'></div>
-                            <ul id='connection-list' class='collection'>
-                            </ul>
-                            <br>
-                        </div>
-                    </div>
-                @endif
 
+                    <!-- Modal de conexões ativas-->
+                    
+                @endif
                 <!-- Barra de footer com menu de controle de áudio e video-->
                 <nav id='nav-footer' class="nav-wrapper black d-none">
                     <div class="">
@@ -85,6 +88,11 @@
                             <li class='hover-footer-btn'>
                                 <a id='toggle-volume' data-active='enabled' class='blue-text text-darken-3' title='Áudio'>
                                     <i class='material-icons left'>volume_up</i> <b class='white-text hide-on-med-and-down'>Áudio</b>
+                                </a>
+                            </li>
+                            <li class='hover-footer-btn'>
+                                <a id='toggle-screen' data-active='enabled' class='blue-text text-darken-3' title='Expandir'>
+                                    <i class='material-icons left'>fullscreen</i> <b class='white-text hide-on-med-and-down'>Expandir</b>
                                 </a>
                             </li>
                             <li class='hover-footer-btn'>
@@ -122,32 +130,32 @@
                     });
                 </script>
             @endif
-        @else
-            <!-- Barra de footer padrão-->
-            <footer class="page-footer grey darken-4">
-                <div class="container">
-                    <div class="row">
-                        <div class="col s12">
-                            <h5 class="white-text">WebTv</h5>
-                            <p class="grey-text text-lighten-1">
-                                Protótipo de aplicação voltado à comunicação via webconference utilizando WebRTC e compatível com os navegadores Google Chrome e Mozilla Firefox. 
-                                <br>
-                                <br>
-                                Versão 0.0.1.1
-                                <br> 
-                                <i class="grey-text right fa fa-firefox"></i>
-                                <i class="grey-text right fa fa-chrome"></i> 
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="footer-copyright black">
-                    <div class='container'>
-                        <i class='fa fa-copyright'></i> 2018 I Smart Group SA
-                    </div>
-                </div>
-            </footer>
         @endif
+        <!-- Barra de footer padrão-->
+        <footer id="main-footer" class="page-footer grey darken-4">
+            <div class="container">
+                <div class="row">
+                    <div class="col s12">
+                        <h5 class="white-text">WebTv</h5>
+                        <p class="grey-text text-lighten-1">
+                            Protótipo de aplicação voltado à comunicação via webconference utilizando WebRTC e compatível com os navegadores Google Chrome e Mozilla Firefox. 
+                            <br>
+                            <br>
+                            Versão 1.0.1.1
+                            <br> 
+                            <i class="grey-text right fa fa-firefox"></i>
+                            <i class="grey-text right fa fa-chrome"></i> 
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-copyright black">
+                <div class='container'>
+                    <i class='fa fa-copyright'></i> 2018 Smart Group SA
+                </div>
+            </div>
+        </footer>
+        
         <!-- Inicialização in-page condicional de elementos para cadastro de perfis de usuários-->
         <!-- A variável $grant deve ser passada pelo controller para a inicialização-->
         @if(isset($grant))

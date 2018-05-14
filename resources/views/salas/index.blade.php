@@ -77,9 +77,12 @@
     </div>
 
     <!--Campos de controle-->
-    <input type='text' id='room-id' name='room-id' disabled readonly />
+    <input type='hidden' id='room-id' name='room-id' disabled readonly />
+    <!-- ID do broadcaster-->
     <input type='hidden' id='broadcaster' name='broadcaster' disabled readonly />
+    <!-- ID da sala-->
     <input type='hidden' id='in-room' name='in-room' disabled readonly />
+    <!-- Usuário-->
     <input type='hidden' id='current-user' value='{{ Auth::user()->name}}' disabled readonly />
 
     <!--Video Panel - Não exibido a princípio-->
@@ -116,11 +119,17 @@
                                 </div>
                                 
                                 <!--VÍDEO PRINCIPAL-->
-                                <video id="video-preview" loop style='max-width:668px;'></video>
+                                <div id='span-video-preview' data-status='disabled' class='width-limit'>
+                                    <video id="video-preview" loop></video>
+                                    <div id='div-exit-fullscreen' class='fixed-action-btn d-none'>
+                                        <a id='exit-fullscreen' class='btn-floating btn-large blue darken-2'>
+                                            <i class='material-icons large'>fullscreen_exit</i>
+                                        </a>
+                                    </div>
+                                </div> 
 
-                                <!--VÍDEO SECUNDÁRIO
-                                <video id="video-guest" loop style='max-width:662px;'></video>
-                                -->
+                                <!--VÍDEO SECUNDÁRIO-->
+
                             </div>
                         </div>
                     </div>
