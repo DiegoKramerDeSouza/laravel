@@ -595,9 +595,11 @@ $(document).ready(function() {
                     var classes = myClass.split(';');
 
                     // Permissão de visualização do conteúdo em broadcast
-                    for ($i = 0; $i < classes.length; $i++) {
-                        if (labelCurso.indexOf(classes[$i]) > -1) {
-                            allowed = true;
+                    if (labelCurso !== undefined && labelCurso !== '') {
+                        for ($i = 0; $i < classes.length; $i++) {
+                            if (labelCurso.indexOf(classes[$i]) > -1) {
+                                allowed = true;
+                            }
                         }
                     }
                     // Se for permitido

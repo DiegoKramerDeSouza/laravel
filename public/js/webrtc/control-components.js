@@ -1,4 +1,5 @@
 /**
+ * MANIPULAÇÃO DE ELEMENTOS VISUAIS APLICÁVEIS À SALAS.INDEX.BLADE
  * Métodos de criação/alteração de elementos visuais para a plataforma de video conferência
  * 
  */
@@ -17,15 +18,14 @@ function callToast(content, classe) {
  * number: número de usuários conectados
  */
 function changeCounter(number) {
-    document.getElementById('broadcast-viewers-counter').innerHTML = '<a href="#con-list" id="viewers" class="modal-trigger"><h5><i class="fa fa-desktop"></i> Espectadores: <b class="grey-text text-darken-3">' + number + '</b></h5></a>';
-    //$('.tooltipped').tooltip();
+    document.getElementById('broadcast-viewers-counter').innerHTML = '<a href="#con-list" id="viewers" class="modal-trigger"><h6><i class="fa fa-desktop"></i> Espectadores: <b class="grey-text text-darken-2">' + number + '</b></h6></a>';
 }
 // Mensagem de 0 salas disponíveis por conexão
 function noRooms() {
     var publicRoomsDiv = document.getElementById('public-conference');
     var divOpen = document.createElement('div');
-    var message = "<div class='red-text' style='padding:50px;' align='center'>" +
-        "<i class='fa fa-times fa-lg red-text text-darken-3'></i> <b>Não há salas disponíveis.</b>" +
+    var message = "<div class='red-text' style='margin-top:50px; margin-bottom:50px;' align='center'>" +
+        "<h6><i class='fa fa-times-circle fa-lg red-text text-darken-3'></i> <b>Não há salas disponíveis.</b></h6>" +
         "</div>";
     divOpen.innerHTML = message;
     publicRoomsDiv.appendChild(divOpen);
