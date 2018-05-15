@@ -2,7 +2,6 @@
 @extends('layout.site')
 <!--Define yield('titulo') em layout._includes.top-->
 @section('titulo', 'Acesso')
-@section('nome', 'Coordenador')
 <!--Define yield('content') em layout.site-->
 @section('content')
     <div class='card z-depth-5'>
@@ -27,7 +26,7 @@
                         </div>
                     </div>
                     <div class='card-action' align='right'>
-                        <button id='access' type='submit' class='btn green darken-2 waves-effect waves-light'>Entrar <i class='fa fa-sign-in'></i></button>
+                        <button id='access' type='submit' class='load btn green darken-2 waves-effect waves-light'>Entrar <i class='fa fa-sign-in'></i></button>
                     </div>
                 </form>
             </div>

@@ -95,9 +95,6 @@ $(document).ready(function() {
     var broadcaster = document.getElementById('broadcaster');
     var currentUser = document.getElementById('current-user').value;
 
-    //connection.videoPreview = document.getElementById('video-preview');
-
-
     // Conexão com serviço de websocket
     // Servidor de signaling de teste gratúito:
     connection.socketURL = 'https://rtcmulticonnection.herokuapp.com:443/';

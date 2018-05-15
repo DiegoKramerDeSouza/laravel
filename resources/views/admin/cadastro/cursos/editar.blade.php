@@ -19,8 +19,8 @@
 
                     <input type='hidden' name='_method' value='put' />
                     <div class='card-action' align='right'>
-                        <a href='{{ route('admin.cadastro.cursos', ['page' => '1']) }}' class='btn-flat red-text text-darken-3 waves-effect waves-red'><i class='fa fa-times'></i> Cancelar</a>
-                        <button type='submit' class='btn-flat green-text text-darken-2 waves-effect waves-green'><i class='fa fa-check'></i> Atualizar</button>
+                        <a href='{{ route('admin.cadastro.cursos', ['page' => '1']) }}' class='load btn-flat red-text text-darken-3 waves-effect waves-red'><i class='fa fa-times'></i> Cancelar</a>
+                        <button type='submit' class='load btn-flat green-text text-darken-2 waves-effect waves-green'><i class='fa fa-check'></i> Atualizar</button>
                     </div>
                 </form>
             @else

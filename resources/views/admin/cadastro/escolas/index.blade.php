@@ -12,7 +12,7 @@
             </div>
             <div class='row' align='right'>
                 Instituições cadastradas: <b>{{ count($escolas) }}</b>
-                <h6><a class='green-text text-darken-1' href='{{ route('admin.cadastro.escolas.adiciona') }}'><i class='fa fa-plus-circle fa-lg'></i> Nova Instituição</a></h6>
+                <h6><a class='load green-text text-darken-1' href='{{ route('admin.cadastro.escolas.adiciona') }}'><i class='fa fa-plus-circle fa-lg'></i> Nova Instituição</a></h6>
             </div>
             <div class='divider'></div>
             <div class='row'>
@@ -31,8 +31,8 @@
                                     <td><b> {{ $escola->name }}</b></td>
                                     <td> {{ $escola->created_at }}</td>
                                     <td class='right'>
-                                        <a class='btn-flat waves-effect waves-red red-text text-darken-3 modal-trigger' href='#confirm-message-{{$escola->id}}'><i class='fa fa-trash-o'></i> deletar</a>
-                                        <a class='btn-flat waves-effect waves-orange amber-text text-darken-3' href='{{ route('admin.cadastro.escolas.edita', $escola->id) }}'><i class='fa fa-edit'></i> editar</a>
+                                        <a class='load btn-flat waves-effect waves-red red-text text-darken-3 modal-trigger' href='#confirm-message-{{$escola->id}}'><i class='fa fa-trash-o'></i> deletar</a>
+                                        <a class='load btn-flat waves-effect waves-orange amber-text text-darken-3' href='{{ route('admin.cadastro.escolas.edita', $escola->id) }}'><i class='fa fa-edit'></i> editar</a>
                                     </td>
                                 </tr>
                             @endforeach
@@ -53,7 +53,7 @@
             <div class='divider'></div>
             <div align='center'>
                 <br>
-                <a href="{{ route('admin.cadastro') }}" class='btn-flat waves-effect waves-teal blue-text text-darken-2'><i class='fa fa-arrow-left'></i> voltar</a>
+                <a href="{{ route('admin.cadastro') }}" class='load btn-flat waves-effect waves-teal blue-text text-darken-2'><i class='fa fa-arrow-left'></i> voltar</a>
             </div>
             <br>
         </div>
@@ -69,7 +69,7 @@
                 <div class='divider'></div>
                 <div class='right'>
                     <br>
-                    <a class='btn-flat waves-effect waves-red red-text text-darken-3' href='{{ route('admin.cadastro.escolas.deleta', $escola->id) }}'><i class='fa fa-trash-o'></i> Deletar</a>
+                    <a class='load btn-flat waves-effect waves-red red-text text-darken-3' href='{{ route('admin.cadastro.escolas.deleta', $escola->id) }}'><i class='fa fa-trash-o'></i> Deletar</a>
                     <a class='modal-action modal-close btn-flat waves-effect waves-blue blue-text text-darken-2' href='#'><i class='fa fa-times'></i> Cancelar</a>
                 </div>
                 <br>

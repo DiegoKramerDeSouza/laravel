@@ -26,7 +26,7 @@
                 <br>
                 <div class='divider'></div>
                 <br>
-                <a class='btn-flat blue-text text-darken-1 waves-effect waves-teal' onclick='goback()'><i class='fa fa-arrow-left'></i> Voltar</a>
+                <a class='load btn-flat blue-text text-darken-1 waves-effect waves-teal' onclick='goback()'><i class='fa fa-arrow-left'></i> Voltar</a>
             </div>
         </div>
     </div>

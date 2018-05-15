@@ -4,6 +4,7 @@
         <!-- Inicialização do Javascript no fim do corpo da página-->
         <script type="text/javascript" src="{!! asset('js/jquery-3.1.1.min.js') !!}"></script>
         <script type="text/javascript" src="{!! asset('js/materialize.min.js') !!}"></script>
+        <script type="text/javascript" src="{!! asset('js/geral.js') !!}"></script>
 
         <!-- Inicialização in-page condicional de elementos para a formação de uma sala-->
         <!-- A variável $streamPage deve ser passada pelo controller para inicialização-->

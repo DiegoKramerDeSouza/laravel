@@ -1,7 +1,7 @@
 /**
- * Métodos de criação/alteração de elementos visuais
+ * Métodos de criação/alteração de elementos visuais para a plataforma de video conferência
+ * 
  */
-
 
 // Chama alertas em elementos toast do MaterializeCSS
 /**

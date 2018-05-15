@@ -33,20 +33,20 @@
             <nav class="nav-wrapper grey darken-4">
                 <div class="">
                     <a href='#!' class='sidenav-trigger white-text text-darken-3 right' data-target='side-bar' title='Menu'><i class='fa fa-bars fa-2x'></i></a>
-                    <a href='{{ route('home') }}' class='brand-logo'><span class='white-text'>&nbsp;&nbsp;<b><span class='blue-text'>Web</span>Tv</b></span></a>
+                    <a href='{{ route('home') }}' class='brand-logo load'><span class='white-text'>&nbsp;&nbsp;<b><span class='blue-text'>Web</span>Tv</b></span></a>
                     <ul id='nav-mobile' class='right hide-on-med-and-down white-text'>
                         @if(! Auth::guest())
                             @if(Auth::user()->type == 0)
                                 <li class='hover-footer-btn'>
-                                    <a id='homeicon' href='{{ route('home') }}'>
+                                    <a id='homeicon' href='{{ route('home') }}' class='load'>
                                         <span class='white-text'><span class='fa fa-home fa-lg blue-text'></span> <b>Início</b></span>
                                     </a>
                                 </li>
                                 <li class='hover-footer-btn'>
-                                    <a href="{{ route('salas') }}"><span class='white-text'><span class='fa fa-television fa-lg blue-text'></span> <b>Salas</b></span></a>
+                                    <a href="{{ route('salas') }}" class='load'><span class='white-text'><span class='fa fa-television fa-lg blue-text'></span> <b>Salas</b></span></a>
                                 </li>
                                 <li class='hover-footer-btn'>
-                                    <a class='' id='gerDrop' href='{{ route('admin.cadastro') }}'>
+                                    <a id='gerDrop' class='load' href='{{ route('admin.cadastro') }}'>
                                         <b><span class='white-text'><span class='fa fa-user-plus fa-lg blue-text'></span> Cadastro</span></b>
                                     </a>
                                 </li>
@@ -76,20 +76,20 @@
                 <ul>
                     @if(Auth::guest())
                         <li>
-                            <a href="{{ route('login') }}"><span class='grey-text text-darken-3'><span class='fa fa-user-circle fa-lg blue-text'></span> <b>Login</b></span></a>
+                            <a href="{{ route('login') }}" class='load'><span class='grey-text text-darken-3'><span class='fa fa-user-circle fa-lg blue-text'></span> <b>Login</b></span></a>
                         </li>
                     @else
                         @if(Auth::user()->type == 0)
                             <li>
-                                <a id='homeicon' href='{{ route('home') }}'>
+                                <a id='homeicon' href='{{ route('home') }}' class='load'>
                                     <span class='grey-text text-darken-3'><span class='fa fa-home fa-lg blue-text'></span> <b>Início</b></span>
                                 </a>
                             </li>
                             <li>
-                                <a href="{{ route('salas') }}"><span class='grey-text text-darken-3'><span class='fa fa-television fa-lg blue-text'></span> <b>Salas</b></span></a>
+                                <a href="{{ route('salas') }}" class='load'><span class='grey-text text-darken-3'><span class='fa fa-television fa-lg blue-text'></span> <b>Salas</b></span></a>
                             </li>
                             <li>
-                                <a class='' id='gerDrop' href='{{ route('admin.cadastro') }}'>
+                                <a class='load' id='gerDrop' href='{{ route('admin.cadastro') }}'>
                                     <b><span class='grey-text text-darken-3'><span class='fa fa-user-plus fa-lg blue-text'></span> Cadastro</span></b>
                                 </a>
                             </li>
@@ -104,20 +104,25 @@
                     @endif
                 </ul>
                 <ul id='side-dropGer' class='dropdown-content'>
-                    <li class='grey darken-4'><a href='{{ route('login.destroy')}}' class='red-text text-darken-3'><i class='fa fa-sign-out fa-lg'></i> <b>Sair</b></a></li>
+                    <li class='grey darken-4'><a href='{{ route('login.destroy')}}' class='load red-text text-darken-3'><i class='fa fa-sign-out fa-lg'></i> <b>Sair</b></a></li>
                 </ul>
                 <ul id='side-myProfile' class='dropdown-content'>
                     <li><a href='#' class='grey-text text-darken-3'><i class='fa fa-cog blue-text'></i> Configurações</a></li>
                     <li><a href='#' class='grey-text text-darken-3'><i class='fa fa-book blue-text'></i> Aulas</a></li>
-                    <li><a href='{{ route('login.destroy')}}' class='red-text text-darken-3'><i class='fa fa-sign-out fa-lg red-text'></i>Sair</a></li>
+                    <li><a href='{{ route('login.destroy')}}' class='load red-text text-darken-3'><i class='fa fa-sign-out fa-lg red-text'></i>Sair</a></li>
                 </ul>
             </div>
 
         </header>
         <main>
+            <div id='fglayer' class='fg-layer grey darken-4 d-none'>
+            </div>
+            <div id='centralized' align='center' class='white-text d-none'>
+            </div>
             <div>
 				<img id="backgroundLayer" src="{!! asset('img/bg.jpg') !!}" />
-			</div>
+            </div>
+            <a href='#' class='load'>Teste</a>
             <div class='container' style='margin-top:40px; padding-bottom:60px;'>
 
     
