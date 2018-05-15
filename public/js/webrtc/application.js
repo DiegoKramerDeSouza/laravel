@@ -107,12 +107,6 @@ $(document).ready(function() {
             broadcastStatus = 1;
             connection.session = hintsToJoinBroadcast.typeOfStreams;
             console.log(connection.session);
-            /*
-            connection.sdpConstraints.mandatory = {
-                OfferToReceiveVideo: !!connection.session.video,
-                OfferToReceiveAudio: !!connection.session.audio
-            };
-            */
             connection.sdpConstraints.mandatory = {
                 OfferToReceiveVideo: true,
                 OfferToReceiveAudio: true
@@ -179,7 +173,6 @@ $(document).ready(function() {
         screen.onclick = function() { fullscreen(); };
         exitscreen.onclick = function() { fullscreen(); };
 
-        //Testando...
         //event.mediaElement.removeAttribute('src');
         //event.mediaElement.removeAttribute('srcObject');
 
@@ -205,7 +198,6 @@ $(document).ready(function() {
                 //connection.attachStreams = [event.stream];
             };
             //console.log(connection.attachStreams);
-
             // Constroi e envia MSG de conexão efetuada e se identifica
             /**
              *  var msgrash         array
@@ -220,6 +212,7 @@ $(document).ready(function() {
             msgrash[4] = myIdentity;
             msgrash[5] = connection.userid;
             connection.send(msgrash);
+
             // Ação padrão para conexões remotas:
             /**
              * Desabilita botão de ação para microfone
@@ -528,11 +521,20 @@ $(document).ready(function() {
     }
     // Verifica quantas conexões estão ativas nesse broadcast
     connection.onNumberOfBroadcastViewersUpdated = function(event) {
-        //if (!connection.isInitiator) return;
+        if (!connection.isInitiator) return;
         viewers = event.numberOfBroadcastViewers;
-        console.log('Usuários: ' + viewers);
-        // Atualiza contador de usuários conectados e exibe
         changeCounter(viewers);
+        setTimeout(function() {
+            console.log('transmitindo');
+            var msgrash = [];
+            var myIdentity = document.getElementById('room-id').value;
+            msgrash[0] = btoa('@espectadores');
+            msgrash[1] = currentUser;
+            msgrash[2] = connections;
+            msgrash[3] = inRoom.value;
+            msgrash[4] = myIdentity;
+            connection.send(msgrash);
+        }, 3000);
     };
     // Verifica listagem de de salas públicas que se enquadrem no perfil do usuário
     // ->A cada 3 segundos
@@ -543,15 +545,10 @@ $(document).ready(function() {
             // Se existir alguma sala pública execute
             if (array.length > 0) {
                 array.forEach(function(moderator) {
-                    // Definições de moderador:
-                    /*  moderator.userid
-                     *  moderator.extra
-                     */
                     //Coleta o número de espectadores conectados à sala
                     connection.getNumberOfBroadcastViewers(moderator.userid, function(numberOfBroadcastViewers) {
                         viewers = numberOfBroadcastViewers;
                     });
-
                     // Verifica se quem conecta é o próprio moderador
                     if (moderator.userid == connection.userid) {
                         return;
@@ -583,7 +580,6 @@ $(document).ready(function() {
                         }
                         return;
                     }
-
                     var labelClasse = labelRoom.split('|')[0];
                     var labelProfessor = labelRoom.split('|')[1];
                     var labelAssunto = labelRoom.split('|')[2];
@@ -602,7 +598,6 @@ $(document).ready(function() {
                             }
                         }
                     }
-                    // Se for permitido
                     if (allowed) {
                         countRooms++;
                         // Cria elemento div para exibição de salas disponíveis em bloco
@@ -774,7 +769,6 @@ function appendDIV(event) {
             // Indica que um usuário acessou a sala
             if (chkrash[2] === myRoom) {
                 console.log(chkrash[4] + ' entrou.');
-                console.log(chkrash);
                 var htmlList = '';
                 var conarray = {
                     username: chkrash[1],
@@ -784,12 +778,21 @@ function appendDIV(event) {
                 connections.push(conarray);
                 htmlList += constructConnectionList(conarray.userid, conarray.username, conarray.announced);
                 document.getElementById('connection-list').innerHTML += htmlList;
-                if (chkrash[2] !== myRoom) {
-                    // Atualiza contador de usuários conectados e exibe
+                if (chkrash[2] === myRoom) {
                     changeCounter(connections.length);
                 }
             }
             return;
+        } else if (chkrash[0] === btoa('@espectadores')) {
+            console.log(chkrash[2]);
+            var htmlList = '';
+            for (var j = 0; j < chkrash[2].length; j++) {
+                //connections.push(conarray);
+                connections[chkrash[2][j].username] = chkrash[2][j];
+                htmlList += constructConnectionList(chkrash[2][j].userid, chkrash[2][j].username, chkrash[2][j].announced);
+            }
+            document.getElementById('connection-list').innerHTML += htmlList;
+            changeCounter(chkrash[2].length);
         }
     } else {
         // Tratamento de mensagens comuns (fora do padrão de solicitação)
@@ -832,6 +835,13 @@ function alertDesconnection(userid) {
         setTimeout(location.reload.bind(location), 3000);
     } else {
         console.log('--> Desconectando... ' + userid);
+        try {
+            console.log(connections);
+            connections.splice(userid);
+            console.log(connections);
+        } catch (e) {
+            return;
+        }
         constructConnectionExpList(userid);
     }
 }

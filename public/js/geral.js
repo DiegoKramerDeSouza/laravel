@@ -19,7 +19,7 @@ function callLoading() {
     var center = document.getElementById('centralized');
     $('#fglayer').show();
     $('#centralized').show();
-    center.innerHTML = '<div class="card-title">' +
+    center.innerHTML = '<h5>' +
         '<b>Aguarde...</b><br><br>' +
         '<div class="preloader-wrapper big active">' +
         '<div class="spinner-layer spinner-blue-only">' +
@@ -32,7 +32,7 @@ function callLoading() {
         '</div>' +
         '</div>' +
         '</div>' +
-        '</div>';
+        '</h5>';
 }
 // Finaliza apresentação tela de loading
 function destroyLoading() {
