@@ -64,7 +64,7 @@
     </div>
     @foreach($turmas as $turma)
         <div id='confirm-message-{{$turma->id}}' class='modal'>
-            <div class-'modal-content'>
+            <div class='modal-content'>
                 <h5>Deseja remover a turma <b>{{$turma->name}}</b>?</h5>
                 <div class='divider'></div>
                 <div class='right'>

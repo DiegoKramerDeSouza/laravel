@@ -62,7 +62,7 @@
     </div>
     @foreach($perfis as $perfil)
         <div id='confirm-message-{{$perfil->id}}' class='modal'>
-            <div class-'modal-content'>
+            <div class='modal-content'>
                 <h5>Deseja remover o perfil <b>{{$perfil->name}}</b>?</h5>
                 <div class='divider'></div>
                 <div class='right'>

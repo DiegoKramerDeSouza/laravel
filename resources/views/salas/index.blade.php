@@ -95,18 +95,16 @@
                         <span id='class-title' class='card-title'>
                             <!--Título da aula - Matéria (Assunto)-->
                         </span>
+                        @if(Auth::user()->type == 0)
+                            <div id='broadcast-viewers-counter' class='blue-text' >
+                                <br>
+                            </div>
+                        @endif
                     </div>
                     <div class='divider'></div>
+                    <br>
                     <div class='row'>
                         <div class='col s12'>
-                            @if(Auth::user()->type == 0)
-                                <div id='broadcast-viewers-counter' class='card-title blue-text' align='right' >
-                                    <br>
-                                </div>
-                            @endif
-                            <div id='room-urls'>
-                                <!--Definições da Sala criada-->
-                            </div>
                             <div id='main-video' align='center' class='inroom mainView'>
                                 <!--Div de loading de conteúdo. Apenas demonstrativa-->
                                 <div id='div-connect'>

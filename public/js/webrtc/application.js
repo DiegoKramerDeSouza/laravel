@@ -575,8 +575,18 @@ $(document).ready(function() {
                      *  var socket          connection.socket
                      *  var message         string
                      */
+
                     var labelRoom = moderator.userid;
-                    labelRoom = atob(labelRoom);
+                    try {
+                        labelRoom = atob(labelRoom);
+                    } catch (exp) {
+                        console.log('Sala fora de padrão: ' + labelRoom + ' -> ' + exp);
+                        if ((array.length - 1) < 1) {
+                            noRooms();
+                        }
+                        return;
+                    }
+
                     var labelClasse = labelRoom.split('|')[0];
                     var labelProfessor = labelRoom.split('|')[1];
                     var labelAssunto = labelRoom.split('|')[2];

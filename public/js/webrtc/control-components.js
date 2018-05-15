@@ -1,18 +1,8 @@
-$(document).ready(function() {
-    /*
-    var publicRoomsDiv = document.getElementById('public-conference');
-    var inRoom = document.getElementById('in-room');
-    var videoPreview = document.getElementById('video-preview');
-    var mute = document.getElementById('toggle-mute');
-    var vol = document.getElementById('toggle-volume');
-    var cam = document.getElementById('toggle-camera');
-    var pedir = document.getElementById('pedir-vez');
-    var ctlPedir = document.getElementById('control-pedir-vez');
-    var broadcaster = document.getElementById('broadcaster');
-    var currentUser = document.getElementById('current-user').value;
-    */
+/**
+ * Métodos de criação/alteração de elementos visuais
+ */
 
-});
+
 // Chama alertas em elementos toast do MaterializeCSS
 /**
  * content: conteúdo da mensagem
@@ -27,12 +17,11 @@ function callToast(content, classe) {
  * number: número de usuários conectados
  */
 function changeCounter(number) {
-    document.getElementById('broadcast-viewers-counter').innerHTML = '<a href="#con-list" id="viewers" class="modal-trigger tooltipped" data-position="bottom" data-tooltip="Espectador(es)"><i class="fa fa-desktop"></i> <b class="grey-text text-darken-3">' + number + '</b></a>';
-    $('.tooltipped').tooltip();
+    document.getElementById('broadcast-viewers-counter').innerHTML = '<a href="#con-list" id="viewers" class="modal-trigger"><h5><i class="fa fa-desktop"></i> Espectadores: <b class="grey-text text-darken-3">' + number + '</b></h5></a>';
+    //$('.tooltipped').tooltip();
 }
-// Mensagem de 0 salas disponíveis para conexão
+// Mensagem de 0 salas disponíveis por conexão
 function noRooms() {
-    //Mensagem de retorno para 0 salas encontradas
     var publicRoomsDiv = document.getElementById('public-conference');
     var divOpen = document.createElement('div');
     var message = "<div class='red-text' style='padding:50px;' align='center'>" +
@@ -300,7 +289,6 @@ function constructConnectionExpList(exp) {
         console.log('Alert: ' + announce + '|' + exp);
         if (announce != exp) {
             var sender = liList[j].name;
-            // Constroi elementos concatenando
             htmlList = '<li id="li-' + liList[j].id + '" data-sender="' + sender + '" class="li-disconnect collection-item avatar li-hover">' +
                 '<i class="material-icons blue lighten-2 circle">tv</i>' +
                 '<h6><b>' + sender + '</b></h6>' +
@@ -344,7 +332,6 @@ function constructList(exp) {
     for (var j = 0; j < liList.length; j++) {
         if (liList[j].id != exp) {
             var sender = liList[j].getAttribute('data-sender');
-            // Constroi elementos concatenando
             htmlList += '<li id="' + liList[j].id + '" data-sender="' + sender + '" class="sol-response collection-item avatar li-hover">' +
                 '<i class="material-icons blue lighten-2 circle">tv</i>' +
                 '<h6><b>' + sender + '</b> solicita vez.</h6>' +

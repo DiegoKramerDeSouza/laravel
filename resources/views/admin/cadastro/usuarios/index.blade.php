@@ -62,7 +62,7 @@
     </div>
     @foreach($users as $user)
         <div id='confirm-message-{{$user->id}}' class='modal'>
-            <div class-'modal-content'>
+            <div class='modal-content'>
                 <h5>Deseja remover o usuário <b>{{$user->name}}</b>?</h5>
                 <div class='divider'></div>
                 <div class='right'>
