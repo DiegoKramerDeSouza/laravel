@@ -179,11 +179,7 @@ function fullscreen() {
         }
         element.classList.add("black");
         element.classList.remove("width-limit");
-        var percent = (window.innerWidth / 100);
         element.style.height = (window.innerHeight) + 'px';
-        //videopreview.style.height = (window.innerHeight) + 'px';
-        //videopreview.style.width = (element.width) + 'px';
-        //element.style.height = (window.innerWidth - 240) + 'px';
         element.setAttribute('data-status', 'enabled');
     } else if (status === 'enabled') {
         $('#div-exit-fullscreen').fadeOut(500);
@@ -196,10 +192,7 @@ function fullscreen() {
         }
         element.classList.remove("black");
         element.classList.add("width-limit");
-        //element.style.width = 'inherit';
         element.style.height = 'inherit';
-        //videopreview.style.width = 'inherit';
-        //videopreview.style.height = 'inherit';
         element.setAttribute('data-status', 'disabled');
     }
     return;

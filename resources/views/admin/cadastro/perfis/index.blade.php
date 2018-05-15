@@ -8,7 +8,7 @@
     <div class='card z-depth-5'>
         <div class='card-content'>
             <div class='card-title'>
-                Cadastro de Perfis:
+                <b class='grey-text text-darken-2'><i class='fa fa-vcard'></i> Cadastro de Perfis</b>
             </div>
             <div class='row' align='right'>
                 Perfis cadastrados: <b>{{ count($perfis) }}</b>
@@ -53,18 +53,22 @@
                 @endif
             </div>
             <div class='divider'></div>
+            <div align='center'>
+                <br>
+                <a href="{{ route('admin.cadastro') }}" class='btn-flat waves-effect waves-teal blue-text text-darken-2'><i class='fa fa-arrow-left'></i> voltar</a>
+            </div>
             <br>
         </div>
     </div>
     @foreach($perfis as $perfil)
-        <div id='confirm-message-{{$perfil->id}}' class='modal bottom-sheet'>
+        <div id='confirm-message-{{$perfil->id}}' class='modal'>
             <div class-'modal-content'>
-                <h5>Deseja remover o perfil {{$perfil->name}}?</h5>
+                <h5>Deseja remover o perfil <b>{{$perfil->name}}</b>?</h5>
                 <div class='divider'></div>
                 <div class='right'>
                     <br>
                     <a class='btn-flat waves-effect waves-red red-text darken-3' href='{{ route('admin.cadastro.perfis.deleta', $perfil->id) }}'><i class='fa fa-trash-o'></i> Deletar</a>
-                    <a class='modal-action modal-close btn-flat waves-effect waves-blue blue-text' href='#'><i class='fa fa-times'></i> Cancelar</a>
+                    <a class='modal-action modal-close btn-flat waves-effect waves-blue blue-text text-darken-2' href='#'><i class='fa fa-times'></i> Cancelar</a>
                 </div>
                 <br>
             </div>

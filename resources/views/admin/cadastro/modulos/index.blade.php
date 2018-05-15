@@ -8,7 +8,7 @@
     <div class='card z-depth-5'>
         <div class='card-content'>
             <div class='card-title'>
-                Cadastro de Módulos:
+                <b class='grey-text text-darken-2'><i class='fa fa-database'></i> Cadastro de Módulos</b>
             </div>
             <div class='row' align='right'>
                 Módulos cadastrados: <b>{{ count($modulos) }}</b>
@@ -51,18 +51,22 @@
                 @endif
             </div>
             <div class='divider'></div>
+            <div align='center'>
+                <br>
+                <a href="{{ route('admin.cadastro') }}" class='btn-flat waves-effect waves-teal blue-text text-darken-2'><i class='fa fa-arrow-left'></i> voltar</a>
+            </div>
             <br>
         </div>
     </div>
     @foreach($modulos as $modulo)
-        <div id='confirm-message-{{$modulo->id}}' class='modal bottom-sheet'>
-            <div class-'modal-content'>
-                <h5>Deseja remover o módulo {{$modulo->name}}?</h5>
+        <div id='confirm-message-{{$modulo->id}}' class='modal'>
+            <div class='modal-content'>
+                <h5>Deseja remover o módulo <b>{{$modulo->name}}</b>?</h5>
                 <div class='divider'></div>
                 <div class='right'>
                     <br>
                     <a class='btn-flat waves-effect waves-red red-text darken-3' href='{{ route('admin.cadastro.modulos.deleta', $modulo->id) }}'><i class='fa fa-trash-o'></i> Deletar</a>
-                    <a class='modal-action modal-close btn-flat waves-effect waves-blue blue-text' href='#'><i class='fa fa-times'></i> Cancelar</a>
+                    <a class='modal-action modal-close btn-flat waves-effect waves-blue blue-text text-darken-2' href='#'><i class='fa fa-times'></i> Cancelar</a>
                 </div>
                 <br>
             </div>

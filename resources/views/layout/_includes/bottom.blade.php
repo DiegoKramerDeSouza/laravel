@@ -38,7 +38,7 @@
                             <i class='material-icons blue-text'>tv</i> Espectadores:
                             <span class='right'>
                                 <a class='modal-close'>
-                                    <i class='fa fa-times grey-text text-darken-3'></i>
+                                    <i class='fa fa-times red-text text-darken-3'></i>
                                 </a>
                             </span>
                         </h5>
@@ -57,7 +57,7 @@
                                 <i class='material-icons blue-text'>pan_tool</i> Solicitações:
                                 <span class='right'>
                                     <a class='modal-close'>
-                                        <i class='fa fa-times grey-text text-darken-3'></i>
+                                        <i class='fa fa-times red-text text-darken-3'></i>
                                     </a>
                                 </span>
                             </h5>

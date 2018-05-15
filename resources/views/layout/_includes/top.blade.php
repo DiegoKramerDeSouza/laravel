@@ -37,21 +37,21 @@
                     <ul id='nav-mobile' class='right hide-on-med-and-down white-text'>
                         @if(! Auth::guest())
                             @if(Auth::user()->type == 0)
-                                <li>
+                                <li class='hover-footer-btn'>
                                     <a id='homeicon' href='{{ route('home') }}'>
                                         <span class='white-text'><span class='fa fa-home fa-lg blue-text'></span> <b>Início</b></span>
                                     </a>
                                 </li>
-                                <li>
+                                <li class='hover-footer-btn'>
                                     <a href="{{ route('salas') }}"><span class='white-text'><span class='fa fa-television fa-lg blue-text'></span> <b>Salas</b></span></a>
                                 </li>
-                                <li>
+                                <li class='hover-footer-btn'>
                                     <a class='' id='gerDrop' href='{{ route('admin.cadastro') }}'>
                                         <b><span class='white-text'><span class='fa fa-user-plus fa-lg blue-text'></span> Cadastro</span></b>
                                     </a>
                                 </li>
                             @endif
-                            <li>
+                            <li class='hover-footer-btn'>
                                 <a class='dropdown-trigger' id='userDropDown' href='#!' data-target='myProfile'>
                                     <!--Chip com as informações de usuário-->
                                     <div id='userChip' class='chip white darken-1 blue-text'>
