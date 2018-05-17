@@ -62,6 +62,7 @@ $(document).ready(function() {
      *  var width           integer
      *  var status          Boolean
      *  var usuario         string
+     *  var broadcastId     string
      *  var viewers         integer
      *  var cameras         Boolean
      *  var publicRoomsDiv  elem. html
@@ -106,10 +107,13 @@ $(document).ready(function() {
             console.log('--> join-broadcaster', hintsToJoinBroadcast);
             broadcastStatus = 1;
             connection.session = hintsToJoinBroadcast.typeOfStreams;
-            console.log(connection.session);
             connection.sdpConstraints.mandatory = {
                 OfferToReceiveVideo: true,
                 OfferToReceiveAudio: true
+            };
+            console.log(connection.peers);
+            connection.extra = {
+                label: document.getElementById('room-id').value
             };
             connection.broadcastId = hintsToJoinBroadcast.broadcastId;
             connection.join(hintsToJoinBroadcast.userid);
@@ -211,7 +215,7 @@ $(document).ready(function() {
             msgrash[3] = inRoom.value;
             msgrash[4] = myIdentity;
             msgrash[5] = connection.userid;
-            connection.send(msgrash);
+            connection.send(msgrash, inRoom.value);
 
             // Ação padrão para conexões remotas:
             /**
@@ -238,7 +242,7 @@ $(document).ready(function() {
                     msgrash[3] = inRoom.value;
                     msgrash[4] = myIdentity;
                     try {
-                        connection.send(msgrash, msgrash[3]);
+                        connection.send(msgrash, inRoom.value);
                         solicita++;
                         callToast('<i class="fa fa-check"></i> Solicitação enviada!', 'blue darken-2');
                     } catch (err) {
@@ -267,6 +271,18 @@ $(document).ready(function() {
                     setVol('on');
                 }
             };
+            connection.getAllParticipants().forEach(function(participantId) {
+                var user = connection.peers[participantId];
+                var hisUID = user.userid;
+                var fullname = user.extra;
+                console.log(hisUID + ' connected with you.');
+                //console.log(connection.peers[participantId].connectionDescription);
+                console.log(user);
+            });
+
+            var numberOfUsers = connection.getAllParticipants().length;
+            changeCounter(numberOfUsers);
+
         } else {
             /**
              *  Ações para conexão LOCAL para controle de funções de áudio e video do webRTC
@@ -372,10 +388,16 @@ $(document).ready(function() {
         // Tratamento da ação de desconectar um usuário arbitrariamente
         document.getElementById('broadcast-viewers-counter').onclick = function() {
             var btnDisconnect;
+            var disconnectId;
             btnDisconnect = document.getElementsByClassName('disconnect-btn');
             for (var j = 0; j < btnDisconnect.length; j++) {
                 btnDisconnect[j].onclick = function() {
-                    var disconnectId = this.getAttribute('data-announced');
+                    if (event.type === 'remote') {
+                        disconnectId = inRoom.value;
+                    } else {
+                        disconnectId = this.getAttribute('data-announced');
+                        console.log(disconnectId);
+                    }
                     connection.disconnectWith(disconnectId);
                     callToast('<i class="fa fa-times"></i> ' + this.name + ' foi desconectado!', 'red darken-4');
                 }
@@ -437,6 +459,7 @@ $(document).ready(function() {
                 if (!isBroadcastExists) {
                     // Definie o user-id do broadcaster
                     connection.userid = broadcastId;
+                    console.log('Definindo userid broadcaster: ' + connection.userid);
                 }
                 console.log('check-broadcast-presence', broadcastId, isBroadcastExists);
                 socket.emit('join-broadcast', {
@@ -472,6 +495,7 @@ $(document).ready(function() {
      *  var broadcastId string
      *  var hashString  string
      */
+
     (function() {
         var params = {},
             r = /([^&=]+)=?([^&]*)/g;
@@ -491,7 +515,7 @@ $(document).ready(function() {
     } else {
         broadcastId = connection.token();
     }
-    document.getElementById('room-id').value = broadcastId;
+    //document.getElementById('room-id').value = broadcastId;
     document.getElementById('room-id').onkeyup = function() {
         localStorage.setItem(connection.socketMessageEvent, this.value);
     };
@@ -503,6 +527,7 @@ $(document).ready(function() {
     if (!broadcastId && hashString.length) {
         broadcastId = hashString;
     }
+
     if (broadcastId && broadcastId.length) {
         document.getElementById('room-id').value = broadcastId;
         localStorage.setItem(connection.socketMessageEvent, broadcastId);
@@ -524,17 +549,6 @@ $(document).ready(function() {
         if (!connection.isInitiator) return;
         viewers = event.numberOfBroadcastViewers;
         changeCounter(viewers);
-        setTimeout(function() {
-            console.log('transmitindo');
-            var msgrash = [];
-            var myIdentity = document.getElementById('room-id').value;
-            msgrash[0] = btoa('@espectadores');
-            msgrash[1] = currentUser;
-            msgrash[2] = connections;
-            msgrash[3] = inRoom.value;
-            msgrash[4] = myIdentity;
-            connection.send(msgrash);
-        }, 3000);
     };
     // Verifica listagem de de salas públicas que se enquadrem no perfil do usuário
     // ->A cada 3 segundos
@@ -637,9 +651,7 @@ $(document).ready(function() {
                             // Definições de sessão
                             connection.session = {
                                 audio: false,
-                                video: false,
-                                data: true,
-                                oneway: true
+                                video: false
                             };
                             // Inicializa socket
                             var socket = connection.getSocket();
@@ -751,7 +763,6 @@ function appendDIV(event) {
             // Indica que o broadcaster atendeu à solicitação do usuário
             // Verifica se o destinatário é o criador da solicitação para entregar a resposta
             if (chkrash[2] === myRoom) {
-                // Mensagem de aprovação de solicitação
                 solicita--;
                 setPedir('allow');
             }
@@ -760,7 +771,6 @@ function appendDIV(event) {
             // Indica que o broadcaster negou a solicitação do usuário
             // Verifica se o destinatário é o criador da solicitação para entregar a resposta
             if (chkrash[2] === myRoom) {
-                // Mensagem de solicitação negada
                 solicita--;
                 setPedir('deny');
             }
@@ -769,30 +779,42 @@ function appendDIV(event) {
             // Indica que um usuário acessou a sala
             if (chkrash[2] === myRoom) {
                 console.log(chkrash[4] + ' entrou.');
+                //console.log(atob(chkrash[4]) + ' entrou.');
                 var htmlList = '';
                 var conarray = {
                     username: chkrash[1],
                     userid: chkrash[4],
                     announced: chkrash[5]
                 };
-                connections.push(conarray);
+                //connections.push(conarray);
+                connections.push(conarray.userid + '|' + conarray.username + '|' + conarray.announced);
+                console.log('Users: ' + connections.length, connections);
                 htmlList += constructConnectionList(conarray.userid, conarray.username, conarray.announced);
                 document.getElementById('connection-list').innerHTML += htmlList;
+                /*
                 if (chkrash[2] === myRoom) {
                     changeCounter(connections.length);
                 }
+                */
             }
             return;
         } else if (chkrash[0] === btoa('@espectadores')) {
-            console.log(chkrash[2]);
+            console.log(myRoom);
+            console.log(chkrash);
+            /*
+            msgrash[1] = userid;
+            msgrash[2] = connections;
+            msgrash[3] = inRoom.value;
+            msgrash[4] = myIdentity;
+            */
             var htmlList = '';
             for (var j = 0; j < chkrash[2].length; j++) {
-                //connections.push(conarray);
-                connections[chkrash[2][j].username] = chkrash[2][j];
+                //connections.push(chkrash[2][j]);
+                connections.push(chkrash[2][j].userid + '|' + chkrash[2][j].username + '|' + chkrash[2][j].announced);
                 htmlList += constructConnectionList(chkrash[2][j].userid, chkrash[2][j].username, chkrash[2][j].announced);
             }
-            document.getElementById('connection-list').innerHTML += htmlList;
-            changeCounter(chkrash[2].length);
+            document.getElementById('connection-list').innerHTML = htmlList;
+            changeCounter(Object.keys(connections).length);
         }
     } else {
         // Tratamento de mensagens comuns (fora do padrão de solicitação)
@@ -827,21 +849,28 @@ function listBox(text) {
     }
     return;
 }
+
 // Emite alerta de desconexão.
-function alertDesconnection(userid) {
+function alertDisconnection(userid) {
     var broadcaster = document.getElementById('in-room').value;
     if (userid === broadcaster) {
         callToast('<i class="fa fa-times"></i> Você foi desconectado!', 'red darken-3');
         setTimeout(location.reload.bind(location), 3000);
     } else {
-        console.log('--> Desconectando... ' + userid);
+        console.log('Conexões: ' + Object.keys(connections).length);
+        console.log(connections);
         try {
-            console.log(connections);
-            connections.splice(userid);
-            console.log(connections);
+            for (var j = 0; j < Object.keys(connections).length; j++) {
+                if (connections[j].split('|')[2] == userid) {
+                    connections.splice(j, 1);
+                }
+            }
         } catch (e) {
             return;
         }
+        console.log('Restam: ' + Object.keys(connections).length);
+        console.log(connections);
         constructConnectionExpList(userid);
+        changeCounter(Object.keys(connections).length);
     }
 }

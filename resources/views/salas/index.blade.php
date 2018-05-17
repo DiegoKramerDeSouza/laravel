@@ -77,7 +77,7 @@
     </div>
 
     <!--Campos de controle-->
-    <input type='hidden' id='room-id' name='room-id' disabled readonly />
+<input type='hidden' id='room-id' name='room-id' value='{{ Auth::user()->login}}-{{ Auth::user()->name}}-{!! rand(0,999) !!}' disabled readonly />
     <!-- ID do broadcaster-->
     <input type='hidden' id='broadcaster' name='broadcaster' disabled readonly />
     <!-- ID da sala-->
