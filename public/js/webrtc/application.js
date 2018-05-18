@@ -26,6 +26,7 @@ var broadcastStatus = 0;
 var connections = [];
 // Array de viewers com acesso bloqueado à sala
 var denyConnections = [];
+var isModerator = true;
 
 $(document).ready(function() {
     // Inicializa adapter.js
@@ -111,10 +112,8 @@ $(document).ready(function() {
                 OfferToReceiveVideo: true,
                 OfferToReceiveAudio: true
             };
-            console.log(connection.peers);
-            connection.extra = {
-                label: document.getElementById('room-id').value
-            };
+            connection.extra.modifiedValue = document.getElementById('room-id').value;
+            connection.updateExtraData();
             connection.broadcastId = hintsToJoinBroadcast.broadcastId;
             connection.join(hintsToJoinBroadcast.userid);
             console.log('--> Joined at: ' + hintsToJoinBroadcast.userid);
@@ -125,6 +124,8 @@ $(document).ready(function() {
             console.log('--> rejoin-broadcast', broadcastId);
             broadcastStatus = 1;
             connection.attachStreams = [];
+            connection.extra.modifiedValue = document.getElementById('room-id').value;
+            connection.updateExtraData();
             socket.emit('check-broadcast-presence', broadcastId, function(isBroadcastExists) {
                 if (!isBroadcastExists) {
                     // O broadcaster TEM de definir seu user-id
@@ -273,13 +274,8 @@ $(document).ready(function() {
             };
             connection.getAllParticipants().forEach(function(participantId) {
                 var user = connection.peers[participantId];
-                var hisUID = user.userid;
-                var fullname = user.extra;
-                console.log(hisUID + ' connected with you.');
-                //console.log(connection.peers[participantId].connectionDescription);
-                console.log(user);
+                var userextra = user.extra;
             });
-
             var numberOfUsers = connection.getAllParticipants().length;
             changeCounter(numberOfUsers);
 
@@ -387,21 +383,7 @@ $(document).ready(function() {
         };
         // Tratamento da ação de desconectar um usuário arbitrariamente
         document.getElementById('broadcast-viewers-counter').onclick = function() {
-            var btnDisconnect;
-            var disconnectId;
-            btnDisconnect = document.getElementsByClassName('disconnect-btn');
-            for (var j = 0; j < btnDisconnect.length; j++) {
-                btnDisconnect[j].onclick = function() {
-                    if (event.type === 'remote') {
-                        disconnectId = inRoom.value;
-                    } else {
-                        disconnectId = this.getAttribute('data-announced');
-                        console.log(disconnectId);
-                    }
-                    connection.disconnectWith(disconnectId);
-                    callToast('<i class="fa fa-times"></i> ' + this.name + ' foi desconectado!', 'red darken-4');
-                }
-            }
+
         }
     };
 
@@ -564,9 +546,7 @@ $(document).ready(function() {
                         viewers = numberOfBroadcastViewers;
                     });
                     // Verifica se quem conecta é o próprio moderador
-                    if (moderator.userid == connection.userid) {
-                        return;
-                    }
+                    if (moderator.userid == connection.userid) return;
                     // Cria labels para exibição de salas disponíveis
                     /**
                      *  var labelRoom       string
@@ -634,6 +614,7 @@ $(document).ready(function() {
                         button.className = 'btn-floating blue darken-2 waves-effect waves-light secondary-content';
                         // Atribui função para ingressar na sala disponível
                         button.onclick = function() {
+                            isModerator = false;
                             broadcaster.value = labelWhois;
                             // Desabilita e muda aparência do botão de ingresso
                             this.disabled = true;
@@ -687,9 +668,50 @@ $(document).ready(function() {
                 //Exibe mensagem de salas indisponíveis
                 noRooms();
             }
+
+            var htmlList = '';
+            var numberOfUsers = connection.getAllParticipants().length;
+            connections = [];
+            connection.getAllParticipants().forEach(function(participantId) {
+                var myId = document.getElementById('room-id').value;
+                var user = connection.peers[participantId];
+                var userextra = user.extra;
+                if (userextra.modifiedValue) {
+                    var username = userextra.modifiedValue.split('-')[1];
+                    connections.push(userextra.modifiedValue + '|' + username + '|' + user.userid);
+                    htmlList += constructConnectionList(userextra.modifiedValue, username, user.userid);
+                } else {
+                    connections.push(myId + '|' + currentUser + ' (você)|' + connection.userid);
+                    htmlList += constructConnectionList(myId, currentUser + ' (você)', connection.userid);
+                }
+            });
+
+            if (numberOfUsers > 0) {
+                document.getElementById('connection-list').innerHTML = htmlList;
+                changeCounter(numberOfUsers);
+                var disconnectId;
+                var btnDisconnect = document.getElementsByClassName('disconnect-btn');
+                for (var j = 0; j < btnDisconnect.length; j++) {
+                    btnDisconnect[j].onclick = function() {
+                        if (!isModerator) {
+                            disconnectId = inRoom.value;
+                            console.log(isModerator);
+                        } else {
+                            disconnectId = this.getAttribute('data-announced');
+                            console.log(disconnectId);
+                        }
+                        connection.disconnectWith(disconnectId);
+                        callToast('<i class="fa fa-times"></i> ' + this.name + ' foi desconectado!', 'red darken-4');
+                    }
+                }
+            }
+
+
             //verifica a cada 3 segundos
             setTimeout(looper, 3000);
         });
+
+
     })();
 
     /**
@@ -791,30 +813,8 @@ function appendDIV(event) {
                 console.log('Users: ' + connections.length, connections);
                 htmlList += constructConnectionList(conarray.userid, conarray.username, conarray.announced);
                 document.getElementById('connection-list').innerHTML += htmlList;
-                /*
-                if (chkrash[2] === myRoom) {
-                    changeCounter(connections.length);
-                }
-                */
             }
             return;
-        } else if (chkrash[0] === btoa('@espectadores')) {
-            console.log(myRoom);
-            console.log(chkrash);
-            /*
-            msgrash[1] = userid;
-            msgrash[2] = connections;
-            msgrash[3] = inRoom.value;
-            msgrash[4] = myIdentity;
-            */
-            var htmlList = '';
-            for (var j = 0; j < chkrash[2].length; j++) {
-                //connections.push(chkrash[2][j]);
-                connections.push(chkrash[2][j].userid + '|' + chkrash[2][j].username + '|' + chkrash[2][j].announced);
-                htmlList += constructConnectionList(chkrash[2][j].userid, chkrash[2][j].username, chkrash[2][j].announced);
-            }
-            document.getElementById('connection-list').innerHTML = htmlList;
-            changeCounter(Object.keys(connections).length);
         }
     } else {
         // Tratamento de mensagens comuns (fora do padrão de solicitação)
@@ -848,6 +848,22 @@ function listBox(text) {
         callToast('<i class="material-icons">pan_tool</i> ' + msg[0] + ' solicita a vez!', 'blue darken-2');
     }
     return;
+}
+
+// Emite alerta de desconexão.
+function alertConnection(userid) {
+    setTimeout(function() {
+        console.log('Sala ' + userid + ' se conectou a você.');
+        var htmlList = '';
+        var broadcaster = document.getElementById('in-room').value;
+        for (var j = 0; j < Object.keys(connections).length; j++) {
+            var roomaccount = connections[j].split('|')[0];
+            var roomname = connections[j].split('|')[1];
+            var roomanounce = connections[j].split('|')[2];
+            htmlList += constructConnectionList(roomaccount, roomname, roomanounce);
+        }
+        document.getElementById('connection-list').innerHTML = htmlList;
+    }, 1000);
 }
 
 // Emite alerta de desconexão.
