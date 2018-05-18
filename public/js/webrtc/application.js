@@ -545,7 +545,7 @@ $(document).ready(function() {
                 // Se existir alguma sala pública execute
                 if (array.length > 0) {
                     array.forEach(function(moderator) {
-                        console.log('Verify each Moderator!');
+                        console.log('Atualizando salas...');
                         //Coleta o número de espectadores conectados à sala
                         connection.getNumberOfBroadcastViewers(moderator.userid, function(numberOfBroadcastViewers) {
                             viewers = numberOfBroadcastViewers;
@@ -681,18 +681,15 @@ $(document).ready(function() {
             var htmlList = '';
             var allParticipants = connection.getAllParticipants();
             var numberOfUsers = allParticipants.length;
-            //connections = [];
             allParticipants.forEach(function(participantId) {
                 var myId = document.getElementById('room-id').value;
                 var user = connection.peers[participantId];
                 var userextra = user.extra;
                 if (userextra.modifiedValue) {
                     var username = userextra.modifiedValue.split('-')[1];
-                    //connections.push(userextra.modifiedValue + '|' + username + '|' + user.userid);
                     htmlList += constructConnectionList(userextra.modifiedValue, username, user.userid, true);
                 } else {
                     if (!isModerator) {
-                        //connections.push(myId + '|' + currentUser + ' (você)|' + connection.userid);
                         htmlList += constructConnectionList(myId, currentUser + ' (você)', connection.userid, false);
                     }
                 }
