@@ -27,6 +27,7 @@ var connections = [];
 // Array de viewers com acesso bloqueado à sala
 var denyConnections = [];
 var isModerator = true;
+var onlobby = true;
 
 $(document).ready(function() {
     // Inicializa adapter.js
@@ -216,7 +217,7 @@ $(document).ready(function() {
             msgrash[3] = inRoom.value;
             msgrash[4] = myIdentity;
             msgrash[5] = connection.userid;
-            connection.send(msgrash, inRoom.value);
+            //connection.send(msgrash, inRoom.value);
 
             // Ação padrão para conexões remotas:
             /**
@@ -354,7 +355,7 @@ $(document).ready(function() {
                 response = document.getElementsByClassName('responses');
                 for (var j = 0; j < response.length; j++) {
                     response[j].onclick = function() {
-                        var admResponse = this.id.split('-');
+                        var admResponse = this.id.split('_');
                         var msgrash = [];
                         var myIdentity = document.getElementById('room-id').value;
                         msgrash[0] = btoa('@PedeAVez:' + admResponse[0]);
@@ -420,6 +421,7 @@ $(document).ready(function() {
             var roomHash = btoa(materia + "|" + roomName + "|" + assunto + "|" + roomCursos + "|" + roomId);
             usuario = roomName;
             var broadcastId = roomHash;
+            onlobby = false;
 
             // Inicializa a tela de apresentação (video)
             callTeacherStream();
@@ -535,157 +537,166 @@ $(document).ready(function() {
     // Verifica listagem de de salas públicas que se enquadrem no perfil do usuário
     // ->A cada 3 segundos
     (function looper() {
-        //Verifica a existência de uma sala pública
-        connection.getPublicModerators(function(array) {
-            publicRoomsDiv.innerHTML = '';
-            // Se existir alguma sala pública execute
-            if (array.length > 0) {
-                array.forEach(function(moderator) {
-                    //Coleta o número de espectadores conectados à sala
-                    connection.getNumberOfBroadcastViewers(moderator.userid, function(numberOfBroadcastViewers) {
-                        viewers = numberOfBroadcastViewers;
-                    });
-                    // Verifica se quem conecta é o próprio moderador
-                    if (moderator.userid == connection.userid) return;
-                    // Cria labels para exibição de salas disponíveis
-                    /**
-                     *  var labelRoom       string
-                     *  var labelClasse     string
-                     *  var labelAssunto    string
-                     *  var labelProfessor  string
-                     *  var labelCurso      string
-                     *  var labelWhois      string
-                     *  var myClass         string
-                     *  var allowed         Boolean
-                     *  var countRooms      integer
-                     *  var classes         array
-                     *  var broadcastId     string
-                     *  var socket          connection.socket
-                     *  var message         string
-                     */
+        // Se ainda estiver no lobby das salas
+        if (onlobby) {
+            //Verifica a existência de uma sala pública
+            connection.getPublicModerators(function(array) {
+                publicRoomsDiv.innerHTML = '';
+                // Se existir alguma sala pública execute
+                if (array.length > 0) {
+                    array.forEach(function(moderator) {
+                        console.log('Verify each Moderator!');
+                        //Coleta o número de espectadores conectados à sala
+                        connection.getNumberOfBroadcastViewers(moderator.userid, function(numberOfBroadcastViewers) {
+                            viewers = numberOfBroadcastViewers;
+                        });
+                        // Verifica se quem conecta é o próprio moderador
+                        if (moderator.userid == connection.userid) return;
+                        // Cria labels para exibição de salas disponíveis
+                        /**
+                         *  var labelRoom       string
+                         *  var labelClasse     string
+                         *  var labelAssunto    string
+                         *  var labelProfessor  string
+                         *  var labelCurso      string
+                         *  var labelWhois      string
+                         *  var myClass         string
+                         *  var allowed         Boolean
+                         *  var countRooms      integer
+                         *  var classes         array
+                         *  var broadcastId     string
+                         *  var socket          connection.socket
+                         *  var message         string
+                         */
 
-                    var labelRoom = moderator.userid;
-                    try {
-                        labelRoom = atob(labelRoom);
-                    } catch (exp) {
-                        console.log('Sala fora de padrão: ' + labelRoom + ' -> ' + exp);
-                        if ((array.length - 1) < 1) {
+                        var labelRoom = moderator.userid;
+                        try {
+                            labelRoom = atob(labelRoom);
+                        } catch (exp) {
+                            console.log('Sala fora de padrão: ' + labelRoom + ' -> ' + exp);
+                            if ((array.length - 1) < 1) {
+                                noRooms();
+                            }
+                            return;
+                        }
+                        var labelClasse = labelRoom.split('|')[0];
+                        var labelProfessor = labelRoom.split('|')[1];
+                        var labelAssunto = labelRoom.split('|')[2];
+                        var labelCurso = labelRoom.split('|')[3];
+                        var labelWhois = labelRoom.split('|')[4];
+                        var myClass = document.getElementById('target').value;
+                        var countRooms = 0;
+                        var allowed = false;
+                        var classes = myClass.split(';');
+
+                        // Permissão de visualização do conteúdo em broadcast
+                        if (labelCurso !== undefined && labelCurso !== '') {
+                            for ($i = 0; $i < classes.length; $i++) {
+                                if (labelCurso.indexOf(classes[$i]) > -1) {
+                                    allowed = true;
+                                }
+                            }
+                        }
+                        if (allowed) {
+                            countRooms++;
+                            // Cria elemento div para exibição de salas disponíveis em bloco
+                            /*
+                             *	var card    elem. html
+                             *  var divOpen elem. html
+                             *  var button  elem. html
+                             */
+                            usuario = currentUser;
+                            var divOpen = document.createElement('ul');
+                            // Cria objeto de lista com as broadcast disponíveis
+                            var card = constructAccessList(labelClasse, labelAssunto, labelProfessor, viewers, moderator.userid);
+
+                            divOpen.innerHTML = card;
+                            divOpen.className = "collection";
+                            // Cria objeto botão para ingressar na broadcast selecionada
+                            var button = document.createElement('a');
+                            button.id = moderator.userid;
+                            button.title = 'Entrar';
+                            button.className = 'btn-floating blue darken-2 waves-effect waves-light secondary-content';
+                            // Atribui função para ingressar na sala disponível
+                            button.onclick = function() {
+                                onlobby = false;
+                                isModerator = false;
+                                broadcaster.value = labelWhois;
+                                // Desabilita e muda aparência do botão de ingresso
+                                this.disabled = true;
+                                var elem = document.getElementById(this.id);
+                                if (hasClass(elem, "blue")) {
+                                    elem.classList.remove("blue");
+                                    elem.classList.add("grey");
+                                }
+                                document.getElementById(this.id).disabled = true;
+
+                                // Inicializa apresentação
+                                callTeacherStream();
+
+                                var broadcastId = this.id;
+                                // Definições de sessão
+                                connection.session = {
+                                    audio: false,
+                                    video: false
+                                };
+                                // Inicializa socket
+                                var socket = connection.getSocket();
+                                socket.emit('join-broadcast', {
+                                    broadcastId: broadcastId,
+                                    userid: connection.userid,
+                                    typeOfStreams: connection.session
+                                });
+                                // Toggle de funções de Chat
+                                document.getElementById('toggle-chat').onclick = function() {
+                                    toggleElem('#div-chat-panel');
+                                    $('#text-message').focus();
+                                };
+                                // Modela e apresenta título do video
+                                setRoomLabel('television', labelClasse, labelAssunto);
+                            };
+                            button.innerHTML = '<i class="material-icons white-text">play_arrow</i>';
+                            if (moderator.userid == connection.sessionid) {
+                                // Se já estiver conectado na sala desabilite o botão de integração
+                                button.disabled = true;
+                            }
+                            //Append de elementos html
+                            publicRoomsDiv.appendChild(divOpen);
+                            var divClose = document.getElementById("_" + moderator.userid);
+                            divClose.appendChild(button);
+                        }
+                        if (countRooms == 0) {
+                            //Exibe mensagem de salas indisponíveis
                             noRooms();
                         }
-                        return;
-                    }
-                    var labelClasse = labelRoom.split('|')[0];
-                    var labelProfessor = labelRoom.split('|')[1];
-                    var labelAssunto = labelRoom.split('|')[2];
-                    var labelCurso = labelRoom.split('|')[3];
-                    var labelWhois = labelRoom.split('|')[4];
-                    var myClass = document.getElementById('target').value;
-                    var countRooms = 0;
-                    var allowed = false;
-                    var classes = myClass.split(';');
+                    });
+                } else {
+                    //Exibe mensagem de salas indisponíveis
+                    noRooms();
+                }
 
-                    // Permissão de visualização do conteúdo em broadcast
-                    if (labelCurso !== undefined && labelCurso !== '') {
-                        for ($i = 0; $i < classes.length; $i++) {
-                            if (labelCurso.indexOf(classes[$i]) > -1) {
-                                allowed = true;
-                            }
-                        }
-                    }
-                    if (allowed) {
-                        countRooms++;
-                        // Cria elemento div para exibição de salas disponíveis em bloco
-                        /*
-                         *	var card    elem. html
-                         *  var divOpen elem. html
-                         *  var button  elem. html
-                         */
-                        usuario = currentUser;
-                        var divOpen = document.createElement('ul');
-                        // Cria objeto de lista com as broadcast disponíveis
-                        var card = constructAccessList(labelClasse, labelAssunto, labelProfessor, viewers, moderator.userid);
-
-                        divOpen.innerHTML = card;
-                        divOpen.className = "collection";
-                        // Cria objeto botão para ingressar na broadcast selecionada
-                        var button = document.createElement('a');
-                        button.id = moderator.userid;
-                        button.title = 'Entrar';
-                        button.className = 'btn-floating blue darken-2 waves-effect waves-light secondary-content';
-                        // Atribui função para ingressar na sala disponível
-                        button.onclick = function() {
-                            isModerator = false;
-                            broadcaster.value = labelWhois;
-                            // Desabilita e muda aparência do botão de ingresso
-                            this.disabled = true;
-                            var elem = document.getElementById(this.id);
-                            if (hasClass(elem, "blue")) {
-                                elem.classList.remove("blue");
-                                elem.classList.add("grey");
-                            }
-                            document.getElementById(this.id).disabled = true;
-
-                            // Inicializa apresentação
-                            callTeacherStream();
-
-                            var broadcastId = this.id;
-                            // Definições de sessão
-                            connection.session = {
-                                audio: false,
-                                video: false
-                            };
-                            // Inicializa socket
-                            var socket = connection.getSocket();
-                            socket.emit('join-broadcast', {
-                                broadcastId: broadcastId,
-                                userid: connection.userid,
-                                typeOfStreams: connection.session
-                            });
-                            // Toggle de funções de Chat
-                            document.getElementById('toggle-chat').onclick = function() {
-                                toggleElem('#div-chat-panel');
-                                $('#text-message').focus();
-                            };
-                            // Modela e apresenta título do video
-                            setRoomLabel('television', labelClasse, labelAssunto);
-                        };
-                        button.innerHTML = '<i class="material-icons white-text">play_arrow</i>';
-                        if (moderator.userid == connection.sessionid) {
-                            // Se já estiver conectado na sala desabilite o botão de integração
-                            button.disabled = true;
-                        }
-                        //Append de elementos html
-                        publicRoomsDiv.appendChild(divOpen);
-                        var divClose = document.getElementById("_" + moderator.userid);
-                        divClose.appendChild(button);
-                    }
-                    if (countRooms == 0) {
-                        //Exibe mensagem de salas indisponíveis
-                        noRooms();
-                    }
-                });
-            } else {
-                //Exibe mensagem de salas indisponíveis
-                noRooms();
-            }
-
+            });
+        } else {
+            // Tratamento de conexões de espectadores
             var htmlList = '';
-            var numberOfUsers = connection.getAllParticipants().length;
-            connections = [];
-            connection.getAllParticipants().forEach(function(participantId) {
+            var allParticipants = connection.getAllParticipants();
+            var numberOfUsers = allParticipants.length;
+            //connections = [];
+            allParticipants.forEach(function(participantId) {
                 var myId = document.getElementById('room-id').value;
                 var user = connection.peers[participantId];
                 var userextra = user.extra;
                 if (userextra.modifiedValue) {
                     var username = userextra.modifiedValue.split('-')[1];
-                    connections.push(userextra.modifiedValue + '|' + username + '|' + user.userid);
-                    htmlList += constructConnectionList(userextra.modifiedValue, username, user.userid);
+                    //connections.push(userextra.modifiedValue + '|' + username + '|' + user.userid);
+                    htmlList += constructConnectionList(userextra.modifiedValue, username, user.userid, true);
                 } else {
-                    connections.push(myId + '|' + currentUser + ' (você)|' + connection.userid);
-                    htmlList += constructConnectionList(myId, currentUser + ' (você)', connection.userid);
+                    if (!isModerator) {
+                        //connections.push(myId + '|' + currentUser + ' (você)|' + connection.userid);
+                        htmlList += constructConnectionList(myId, currentUser + ' (você)', connection.userid, false);
+                    }
                 }
             });
-
             if (numberOfUsers > 0) {
                 document.getElementById('connection-list').innerHTML = htmlList;
                 changeCounter(numberOfUsers);
@@ -693,25 +704,22 @@ $(document).ready(function() {
                 var btnDisconnect = document.getElementsByClassName('disconnect-btn');
                 for (var j = 0; j < btnDisconnect.length; j++) {
                     btnDisconnect[j].onclick = function() {
-                        if (!isModerator) {
-                            disconnectId = inRoom.value;
-                            console.log(isModerator);
+                        disconnectId = this.getAttribute('data-announced');
+                        if (isModerator) {
+                            connection.disconnectWith(disconnectId);
                         } else {
-                            disconnectId = this.getAttribute('data-announced');
-                            console.log(disconnectId);
+                            connection.send({
+                                userRemoved: true,
+                                removedUserId: disconnectId
+                            });
                         }
-                        connection.disconnectWith(disconnectId);
                         callToast('<i class="fa fa-times"></i> ' + this.name + ' foi desconectado!', 'red darken-4');
                     }
                 }
             }
-
-
-            //verifica a cada 3 segundos
-            setTimeout(looper, 3000);
-        });
-
-
+        }
+        //verifica a cada 3 segundos
+        setTimeout(looper, 3000);
     })();
 
     /**
@@ -746,8 +754,17 @@ $(document).ready(function() {
         appendDIV(texto);
         document.getElementById('text-message').value = '';
     };
-    //Envio de mensagens
-    connection.onmessage = appendDIV;
+    // Recebimento de mensagens
+    connection.onmessage = function(event) {
+        if (event.data.userRemoved === true) {
+            if (event.data.removedUserId == connection.userid) {
+                connection.close();
+            }
+            return;
+        } else {
+            appendDIV(event);
+        }
+    };
 
 });
 /**
@@ -792,12 +809,14 @@ function appendDIV(event) {
         } else if (chkrash[0] === btoa('@PedeAVez:deny')) {
             // Indica que o broadcaster negou a solicitação do usuário
             // Verifica se o destinatário é o criador da solicitação para entregar a resposta
+            console.log(chkrash[2] + '|' + myRoom);
             if (chkrash[2] === myRoom) {
                 solicita--;
                 setPedir('deny');
             }
             return;
         } else if (chkrash[0] === btoa('@acessou')) {
+            /*
             // Indica que um usuário acessou a sala
             if (chkrash[2] === myRoom) {
                 console.log(chkrash[4] + ' entrou.');
@@ -814,6 +833,7 @@ function appendDIV(event) {
                 htmlList += constructConnectionList(conarray.userid, conarray.username, conarray.announced);
                 document.getElementById('connection-list').innerHTML += htmlList;
             }
+            */
             return;
         }
     } else {
@@ -860,7 +880,7 @@ function alertConnection(userid) {
             var roomaccount = connections[j].split('|')[0];
             var roomname = connections[j].split('|')[1];
             var roomanounce = connections[j].split('|')[2];
-            htmlList += constructConnectionList(roomaccount, roomname, roomanounce);
+            htmlList += constructConnectionList(roomaccount, roomname, roomanounce, true);
         }
         document.getElementById('connection-list').innerHTML = htmlList;
     }, 1000);

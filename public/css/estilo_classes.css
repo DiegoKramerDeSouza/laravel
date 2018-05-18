@@ -59,3 +59,7 @@
 .height-limit {
     max-height: 441px;
 }
+
+.disconnect-btn:hover {
+    cursor: pointer;
+}

@@ -265,12 +265,18 @@ function constructAccessList(classe, assunto, professor, viwer, moderador) {
  * userid: Id da conexão
  * username: Nome do usuário
  */
-function constructConnectionList(userid, username, announce) {
+function constructConnectionList(userid, username, announce, deletable) {
+    var deleteButton;
+    if (deletable) {
+        deleteButton = '<a id="disconnect-' + userid + '" name="' + username + '" data-announced="' + announce + '" class="disconnect-btn"><i class="material-icons red-text text-darken-4">close</i></a>';
+    } else {
+        deleteButton = '<a id="disabled-' + userid + '" name="' + username + '" data-announced="' + announce + '" ><i class="material-icons grey-text text-lighten-1">close</i></a>';
+    }
     var htmlList = '<li id="li-disconnect-' + userid + '" data-sender="' + username + '" class="li-disconnect collection-item avatar li-hover">' +
         '<i class="material-icons blue lighten-2 circle">tv</i>' +
         '<h6><b>' + username + '</b></h6>' +
         '<span class="secondary-content">' +
-        '<a id="disconnect-' + userid + '" name="' + username + '" data-announced="' + announce + '" class="disconnect-btn btn-floating small waves-effect waves-teal red darken-4"><i class="material-icons">close</i></a>' +
+        deleteButton +
         '</span>' +
         '</li>';
     return htmlList;
@@ -315,8 +321,8 @@ function constructSolicitationList(userid, username) {
         '<i class="material-icons blue lighten-2 circle">tv</i>' +
         '<h6><b>' + username + '</b> solicita vez.</h6>' +
         '<span class="secondary-content">' +
-        '<a id="allow-' + userid + '" class="responses btn-flat waves-effect waves-teal blue-text text-darken-2 modal-close"><i class="fa fa-check"></i> permitir</a>' +
-        '<a id="deny-' + userid + '" class="responses btn-flat waves-effect waves-red  red-text text-darken-3 modal-close"><i class="fa fa-times"></i> negar</a>' +
+        '<a id="allow_' + userid + '" class="responses btn-flat waves-effect waves-teal blue-text text-darken-2 modal-close"><i class="fa fa-check"></i> permitir</a>' +
+        '<a id="deny_' + userid + '" class="responses btn-flat waves-effect waves-red  red-text text-darken-3 modal-close"><i class="fa fa-times"></i> negar</a>' +
         '</span>' +
         '</li>';
     return htmlList;
@@ -336,8 +342,8 @@ function constructList(exp) {
                 '<i class="material-icons blue lighten-2 circle">tv</i>' +
                 '<h6><b>' + sender + '</b> solicita vez.</h6>' +
                 '<span class="secondary-content">' +
-                '<a id="allow-' + liList[j].id + '" class="responses btn-flat waves-effect waves-teal blue-text text-darken-2 modal-close"><i class="fa fa-check"></i> permitir</a>' +
-                '<a id="deny-' + liList[j].id + '" class="responses btn-flat waves-effect waves-red  red-text text-darken-3 modal-close"><i class="fa fa-times"></i> negar</a>' +
+                '<a id="allow_' + liList[j].id + '" class="responses btn-flat waves-effect waves-teal blue-text text-darken-2 modal-close"><i class="fa fa-check"></i> permitir</a>' +
+                '<a id="deny_' + liList[j].id + '" class="responses btn-flat waves-effect waves-red  red-text text-darken-3 modal-close"><i class="fa fa-times"></i> negar</a>' +
                 '</span>' +
                 '</li>';
         }
