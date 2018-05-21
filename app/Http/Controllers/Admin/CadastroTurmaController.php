@@ -137,7 +137,7 @@ class CadastroTurmaController extends Controller
                         break;
                 }
                 if(!$checked)
-                        $html .= '<option value="' . $objCurso->id . '">' . $modulos[$objCurso->modulo_id] . ' - ' . $objCurso->name . '</option>';
+                    $html .= '<option value="' . $objCurso->id . '">' . $modulos[$objCurso->modulo_id] . ' - ' . $objCurso->name . '</option>';
             }
             //returna tudo para a View
             return view('admin.cadastro.turmas.editar', compact('users', 'turmas', 'escolas', 'cursos', 'modulos', 'html', 'classroom'));
@@ -152,7 +152,6 @@ class CadastroTurmaController extends Controller
                 '_token'=>$req->_token,
                 'name'=>$req->name,
                 'login'=>$req->login,
-                'password'=>bcrypt($req->password),
                 'type'=>1
             ];
             //'password'=>bcrypt($req->password),

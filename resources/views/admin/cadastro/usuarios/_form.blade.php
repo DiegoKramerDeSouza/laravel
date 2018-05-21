@@ -9,19 +9,19 @@
         <label for='login'><i class='fa fa-user-circle'></i> Usuário</label>
     </div>
 </div>
+@if(!isset($user->password))
+    <div class='row'>
+        <div class='input-field col s12 m6'>
+            <input class='validate' required type='password' name='password' id='password'>
+            <label for='password'><i class='fa fa-lock'></i> Senha</label>
+        </div>
 
-<div class='row'>
-    <div class='input-field col s12 m6'>
-        <input class='validate' required type='password' name='password' id='password' value='{{ isset($user->password) ? 'Old Password' : ''}}'>
-        <label for='password'><i class='fa fa-lock'></i> Senha</label>
+        <div class='input-field col s12 m6'>
+            <input class='validate' required type='password' name='confpassword' id='confpassword'>
+            <label for='confpassword'><i class='fa fa-lock'></i> Confirmar Senha</label>
+        </div>
     </div>
-
-    <div class='input-field col s12 m6'>
-        <input class='validate' required type='password' name='confpassword' id='confpassword' value='{{ isset($user->password) ? 'Old Password' : ''}}'>
-        <label for='confpassword'><i class='fa fa-lock'></i> Confirmar Senha</label>
-    </div>
-</div>
-
+@endif
 <div class='row'>
     <div class='input-field col s12 m6'>
         <input class='validate' required type='text' name='email' id='email' value='{{ isset($user->email) ? $user->email : ''}}'>

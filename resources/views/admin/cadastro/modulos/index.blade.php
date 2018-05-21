@@ -31,7 +31,7 @@
                                     <td><b> {{ $modulo->name }}</b></td>
                                     <td> {{ $modulo->created_at }}</td>
                                     <td class='right'>
-                                        <a class='load btn-flat waves-effect waves-red red-text text-darken-3 modal-trigger' href='#confirm-message-{{$modulo->id}}'><i class='fa fa-trash-o'></i> deletar</a>
+                                        <a class='btn-flat waves-effect waves-red red-text text-darken-3 modal-trigger' href='#confirm-message-{{$modulo->id}}'><i class='fa fa-trash-o'></i> deletar</a>
                                         <a class='load btn-flat waves-effect waves-orange amber-text text-darken-3' href='{{ route('admin.cadastro.modulos.edita', $modulo->id) }}'><i class='fa fa-edit'></i> editar</a>
                                     </td>
                                 </tr>
