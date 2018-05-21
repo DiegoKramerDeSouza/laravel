@@ -18,7 +18,10 @@ function callToast(content, classe) {
  * number: número de usuários conectados
  */
 function changeCounter(number) {
-    document.getElementById('broadcast-viewers-counter').innerHTML = '<a href="#con-list" id="viewers" class="modal-trigger"><h6><i class="fa fa-desktop"></i> Espectadores: <b class="grey-text text-darken-2">' + number + '</b></h6></a>';
+    var controller = document.getElementById('broadcast-viewers-counter');
+    if (controller.getAttribute('data-target') == '0') {
+        controller.innerHTML = '<a href="#con-list" id="viewers" class="modal-trigger"><h6><i class="fa fa-desktop"></i> Espectadores: <b class="grey-text text-darken-2">' + number + '</b></h6></a>';
+    }
 }
 // Mensagem de 0 salas disponíveis por conexão
 function noRooms() {

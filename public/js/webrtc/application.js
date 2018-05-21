@@ -382,10 +382,6 @@ $(document).ready(function() {
         connection.onunmute = function(e) {
             e.mediaElement.removeAttribute('poster');
         };
-        // Tratamento da ação de desconectar um usuário arbitrariamente
-        document.getElementById('broadcast-viewers-counter').onclick = function() {
-
-        }
     };
 
     // Ação de criar uma sala de aula ao clicar em 'btn-join-as-productor'

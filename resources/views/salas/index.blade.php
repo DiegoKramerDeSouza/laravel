@@ -95,11 +95,9 @@
                         <span id='class-title' class='card-title'>
                             <!--Título da aula - Matéria (Assunto)-->
                         </span>
-                        @if(Auth::user()->type == 0)
-                            <div id='broadcast-viewers-counter' class='blue-text' >
-                                <br>
-                            </div>
-                        @endif
+                        <div id='broadcast-viewers-counter' data-target='{{ Auth::user()->type  }}' class='blue-text' >
+                            <br>
+                        </div>
                     </div>
                     <div class='divider'></div>
                     <br>
