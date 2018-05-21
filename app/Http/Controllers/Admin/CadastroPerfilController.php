@@ -57,11 +57,16 @@ class CadastroPerfilController extends Controller
     }
     public function save(Request $req){
         if($this->validade('6')){
+            if($req->grantList != null){
+                $grantList = implode(';', $req->grantList);
+            } else {
+                $grantList = '0';
+            }
             //Define os campos enviados que devem ser gravados no banco
             $perfis = [
                 '_token'=>$req->_token,
                 'name'=>$req->name,
-                'grant'=>$req->grant,
+                'grant'=>$grantList,
                 'description'=>$req->description
             ];
             //Insere dados na base Perfils
@@ -107,11 +112,16 @@ class CadastroPerfilController extends Controller
     }
     public function update(Request $req, $id){
         if($this->validade('6')){
+            if($req->grantList != null){
+                $grantList = implode(';', $req->grantList);
+            } else {
+                $grantList = '0';
+            }
             //Define os campos enviados que devem ser atualizados no banco
             $perfis = [
                 '_token'=>$req->_token,
                 'name'=>$req->name,
-                'grant'=>$req->grant,
+                'grant'=>$grantList,
                 'description'=>$req->description
             ];
             //Atualiza base de dados Turma

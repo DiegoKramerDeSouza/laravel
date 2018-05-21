@@ -4,7 +4,7 @@
         <label for='name'><i class='fa fa-vcard-o'></i> Nome</label>
     </div>
     <div class='input-field col s12 m6'>
-        <select id='grantList' multiple name='grantList'>
+        <select id='grantList' multiple name='grantList[]'>
             @if(isset($html))
                 {!! $html !!}
             @else

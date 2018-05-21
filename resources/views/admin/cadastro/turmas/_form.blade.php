@@ -18,7 +18,7 @@
     </div>
 
     <div class='input-field col s12 m6'>
-        <select id='curso_id_list' multiple required name='curso_id_list'>
+        <select id='curso_id_list' multiple required name='curso_id_list[]'>
             @if(isset($html))
                 {!! $html !!}
             @else

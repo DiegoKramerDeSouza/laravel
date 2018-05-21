@@ -88,6 +88,7 @@ class CadastroTurmaController extends Controller
             $school = explode('|', $school, 2);
             $schoolId = $school[0];
             $schoolName = $school[1];
+            $listCurso = implode(';', $req->curso_id_list);
             $turmas = [
                 '_token'=>$req->_token,
                 'name'=>$req->name,
@@ -96,7 +97,7 @@ class CadastroTurmaController extends Controller
                 'login'=>$req->login,
                 'password'=>bcrypt($req->password),
                 'school_id'=>$schoolId,
-                'curso_id'=>$req->curso_id,
+                'curso_id'=>$listCurso,
                 'description'=>$req->description
             ];
             //Insere dados na base Turma
@@ -154,6 +155,8 @@ class CadastroTurmaController extends Controller
                 'password'=>bcrypt($req->password),
                 'type'=>1
             ];
+            //'password'=>bcrypt($req->password),
+
             //Insere dados na base Users
             $created = User::find($id)->update($users);
 
@@ -161,13 +164,15 @@ class CadastroTurmaController extends Controller
             $school = explode('|', $school, 2);
             $schoolId = $school[0];
             $schoolName = $school[1];
+            $listCurso = implode(';', $req->curso_id_list);
+            
             //Define os campos enviados que devem ser atualizados no banco
             $turma = [
                 '_token'=>$req->_token,
                 'name'=>$req->name,
                 'school_name'=>$schoolName,
                 'school_id'=>$schoolId,
-                'curso_id'=>$req->curso_id,
+                'curso_id'=>$listCurso,
                 'description'=>$req->description
             ];
             //Atualiza base de dados Turma
