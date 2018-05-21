@@ -132,6 +132,14 @@ class CadastroEscolaController extends Controller
             ];
             //Atualiza base de dados EnderecoEscola
             EnderecoEscola::where('school_id', $id)->first()->update($enderecoescola);
+
+            $turmas = [
+                'school_name'=>$req->name
+            ];
+            $toupdateTurma = Turma::where('school_id', '=', $id)->get();
+            foreach($toupdateTurma as $updateTurma){
+                $updateTurma->update($turmas);
+            }
             return redirect()->route('admin.cadastro.escolas', ['page' => '1']);
         } else {
             return redirect()->route('denied');
@@ -152,7 +160,6 @@ class CadastroEscolaController extends Controller
             return redirect()->route('denied');
         }
     }
-    
     //Função de teste para coleta de geolocalização 
     //Apenas Debug
     public function collect($data){
