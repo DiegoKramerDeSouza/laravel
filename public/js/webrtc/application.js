@@ -77,6 +77,7 @@ $(document).ready(function() {
      *  var cam             elem. html
      *  var pedir           elem. html
      *  var ctlPedir        elem. html
+     *  var share        elem. html
      *  var broadcaster     elem. html
      *  var currentUser     string
      */
@@ -88,6 +89,7 @@ $(document).ready(function() {
     var publicRoomsDiv = document.getElementById('public-conference');
     var inRoom = document.getElementById('in-room');
     var videoPreview = document.getElementById('video-preview');
+
     var mute = document.getElementById('toggle-mute');
     var screen = document.getElementById('toggle-screen');
     var exitscreen = document.getElementById('exit-fullscreen');
@@ -95,6 +97,7 @@ $(document).ready(function() {
     var cam = document.getElementById('toggle-camera');
     var pedir = document.getElementById('pedir-vez');
     var ctlPedir = document.getElementById('control-pedir-vez');
+    var share = document.getElementById('share-screen');
     var broadcaster = document.getElementById('broadcaster');
     var currentUser = document.getElementById('current-user').value;
 
@@ -104,7 +107,7 @@ $(document).ready(function() {
 
     connection.connectSocket(function(socket) {
         // Socket - Join
-        // Evento emitido quando a transmissão já existe
+        // Evento emitido para acessar uma transmissão
         socket.on('join-broadcaster', function(hintsToJoinBroadcast) {
             console.log('--> join-broadcaster', hintsToJoinBroadcast);
             broadcastStatus = 1;
@@ -166,44 +169,60 @@ $(document).ready(function() {
             connection.leave();
         });
     });
+    // Tratamento de erro para compartilhamento de tela
+    connection.getScreenConstraints = function(callback) {
+        getScreenConstraints(function(error, screen_constraints) {
+            if (!error) {
+                screen_constraints = connection.modifyScreenConstraints(screen_constraints);
+                callback(error, screen_constraints);
+                return;
+            }
+            toastScreenShare();
+            setTimeout(location.reload.bind(location), 10000);
+            throw error;
+        });
+    };
     // Inicia a transmissão
     connection.onstream = function(event) {
         //Apresentação da barra de funções de video
         $('#main-footer').hide();
         $('#nav-footer').slideDown(500);
         inRoom.value = event.userid;
-        if (connection.isInitiator && event.type !== 'local') {
-            return;
-        }
+
+        if (connection.isInitiator && event.type !== 'local') return;
+
         // Botão de maximizar o video -> toggle on:off
         screen.onclick = function() { fullscreen(); };
         exitscreen.onclick = function() { fullscreen(); };
 
-        //event.mediaElement.removeAttribute('src');
-        //event.mediaElement.removeAttribute('srcObject');
+        event.mediaElement.removeAttribute('src');
+        event.mediaElement.removeAttribute('srcObject');
 
-        if (event.type === 'remote') {
+        if (event.type === 'remote' && event.stream.isScreen === true) {
+            var secondVideoPreview = document.getElementById('secondvideo-preview');
+            secondVideoPreview.srcObject = event.stream;
+            //secondVideoPreview.play();
+        }
+        if (event.type === 'remote' && !event.stream.isScreen) {
             /**
              *  Ações para conexão REMOTA para controle de funções de áudio e video do webRTC
              */
             videoPreview.srcObject = event.stream;
             // Definições de video
             width = parseInt(connection.teacherVideosContainer.clientWidth);
-            videoPreview.width = width;
+            //videoPreview.width = width;
             videoPreview.play();
 
             // Ajusta elementos de exibição (define o menu de áudio e video para ESPECTADORES)
             $('#div-connect').hide();
-            //$('#broadcast-viewers-counter').hide();
             ctlPedir.innerHTML = constructBtnActionPedir();
             pedir = document.getElementById('pedir-vez');
 
             //Controle de elementos da conexão
-            //videoPreview.userid = event.userid;
             if (connection.isInitiator == false && event.type === 'remote') {
                 //connection.attachStreams = [event.stream];
             };
-            //console.log(connection.attachStreams);
+
             // Constroi e envia MSG de conexão efetuada e se identifica
             /**
              *  var msgrash         array
@@ -226,6 +245,7 @@ $(document).ready(function() {
              */
             setCam('dis');
             setMute('dis');
+            setShare('dis');
             /**
              * Tratamento dos botões da barra de funções de video----------------------------------
              */
@@ -280,7 +300,7 @@ $(document).ready(function() {
             var numberOfUsers = connection.getAllParticipants().length;
             changeCounter(numberOfUsers);
 
-        } else {
+        } else if (event.type === 'local' && !event.stream.isScreen) {
             /**
              *  Ações para conexão LOCAL para controle de funções de áudio e video do webRTC
              */
@@ -288,7 +308,7 @@ $(document).ready(function() {
             videoPreview.srcObject = event.stream;
             // Definições de video
             width = parseInt(connection.teacherVideosContainer.clientWidth);
-            videoPreview.width = width;
+            //videoPreview.width = width;
             videoPreview.userid = event.userid;
             videoPreview.muted = true;
             videoPreview.play();
@@ -349,7 +369,7 @@ $(document).ready(function() {
                 }
             };
             // Tratamento de solicitações: Botão "Solicitações" -> Abra listagem de solicitações e respostas
-            document.getElementById('control-pedir-vez').onclick = function() {
+            ctlPedir.onclick = function() {
                 var response;
                 // Tratamento de respostas (permitir / negar)
                 response = document.getElementsByClassName('responses');
@@ -374,6 +394,19 @@ $(document).ready(function() {
                     }
                 }
             };
+            // Tratamento de solicitações: Botão "Compartilhar" -> Compartilha a tela do apresentador
+            share.onclick = function() {
+                if (share.getAttribute('data-active') == 'enabled') {
+                    setShare('off');
+                    connection.addStream({
+                        screen: true,
+                        oneway: true
+                    });
+                } else {
+                    setShare('on');
+                }
+            };
+
         }
         // Tratamento das funções MUTE e UNMUTE -> Obrigatórios para utilizar mute e unmute
         connection.onmute = function(e) {
@@ -433,6 +466,11 @@ $(document).ready(function() {
                 data: true,
                 oneway: true
             };
+            // Controle da utilização de banda
+            connection.bandwidth = {
+                audio: 100,
+                video: 250
+            };
             // Inicializa Socket
             var socket = connection.getSocket();
             socket.emit('check-broadcast-presence', broadcastId, function(isBroadcastExists) {
@@ -445,7 +483,8 @@ $(document).ready(function() {
                 socket.emit('join-broadcast', {
                     broadcastId: broadcastId,
                     userid: connection.userid,
-                    typeOfStreams: connection.session
+                    typeOfStreams: connection.session,
+                    bandwidth: connection.bandwidth
                 });
                 // Habilita funções de chat
                 document.getElementById('toggle-chat').onclick = function() {
@@ -466,6 +505,7 @@ $(document).ready(function() {
             mediaElement.parentNode.removeChild(mediaElement);
         }
     };
+
     connection.onleave = function(event) {};
 
     // Tratamento do Id da sala e dos links para acesso -> Basea-se no URI

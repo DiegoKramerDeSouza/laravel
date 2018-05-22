@@ -36,7 +36,7 @@
                 <div id='con-list' class='modal'>
                     <div class='modal-content'>
                         <h5>
-                            <i class='material-icons blue-text'>tv</i> Espectadores:
+                            <i class='material-icons blue-text'>ondemand_video</i> Espectadores:
                             <span class='right'>
                                 <a class='modal-close'>
                                     <i class='fa fa-times red-text text-darken-3'></i>
@@ -72,6 +72,7 @@
                     <!-- Modal de conexões ativas-->
                     
                 @endif
+                <a href="https://chrome.google.com/webstore/detail/screen-capturing/ajhifddimkapgcifgcodmmfdlknahffk" target="_blank">Chrome</a>
                 <!-- Barra de footer com menu de controle de áudio e video-->
                 <nav id='nav-footer' class="nav-wrapper black d-none">
                     <div class="">
@@ -89,6 +90,11 @@
                             <li class='hover-footer-btn'>
                                 <a id='toggle-volume' data-active='enabled' class='blue-text text-darken-3' title='Áudio'>
                                     <i class='material-icons left'>volume_up</i> <b class='white-text hide-on-med-and-down'>Áudio</b>
+                                </a>
+                            </li>
+                            <li class='hover-footer-btn'>
+                                <a id='share-screen' data-active='enabled' class='blue-text text-darken-3' title='Compartilhar Tela'>
+                                    <i class='material-icons left'>screen_share</i> <b class='white-text hide-on-med-and-down'>Compartilhar</b>
                                 </a>
                             </li>
                             <li class='hover-footer-btn'>
@@ -124,6 +130,7 @@
                 <script type="text/javascript" src="{!! asset('js/webrtc/adapter.js') !!}"></script>                      
                 <script type="text/javascript" src="{!! asset('js/webrtc/RTCMultiConnection.min.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/webrtc/application.js') !!}"></script>
+                <script type="text/javascript" src="{!! asset('js/webrtc/getScreen.js') !!}"></script>
                 <script>
                     // Controle da inicialização do MaterializeCSS para textarea
                     $(document).ready(function(){

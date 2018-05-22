@@ -125,6 +125,9 @@
                                 </div> 
 
                                 <!--VÍDEO SECUNDÁRIO-->
+                                <div id='span-secondvideo-preview' data-status='disabled' class='width-limit'>
+                                    <video id="secondvideo-preview" loop class='width-limit'></video>
+                                </div>
 
                             </div>
                         </div>

@@ -13,6 +13,15 @@ function callToast(content, classe) {
     content = '<span class="white-text">' + content + '</span>';
     M.toast({ html: content, classes: classe });
 }
+// Alerta exclusivo para falha do compartilhamento de tela
+function toastScreenShare() {
+    content = 'Seu navegador não está preparado para compartilhar tela.' +
+        '<br>Instale nossa extensão para o chrome clicando ao lado.' +
+        '<a href="https://chrome.google.com/webstore/detail/screen-capturing/ajhifddimkapgcifgcodmmfdlknahffk" target="_blank" class="btn-flat toast-action white-text">' +
+        '<i class="fa fa-chrome"></i>' +
+        '</a>.';
+    M.toast({ html: content, classes: 'red darken-3', displayLength: 10000 });
+}
 // Altera o contador de usuários conectados à sala e exibe em 'broadcast-viewers-counter'
 /**
  * number: número de usuários conectados
@@ -20,7 +29,7 @@ function callToast(content, classe) {
 function changeCounter(number) {
     var controller = document.getElementById('broadcast-viewers-counter');
     if (controller.getAttribute('data-target') == '0') {
-        controller.innerHTML = '<a href="#con-list" id="viewers" class="modal-trigger"><h6><i class="fa fa-desktop"></i> Espectadores: <b class="grey-text text-darken-2">' + number + '</b></h6></a>';
+        controller.innerHTML = '<a href="#con-list" id="viewers" class="modal-trigger"><h6><i class="fa fa-play-circle-o"></i> Espectadores: <b class="grey-text text-darken-2">' + number + '</b></h6></a>';
     }
 }
 // Mensagem de 0 salas disponíveis por conexão
@@ -120,6 +129,31 @@ function setVol(status) {
         vol.classList.add("blue-text");
         vol.innerHTML = "<i class='material-icons left'>volume_up</i> <b class='white-text hide-on-med-and-down'>Áudio</b>";
         callToast('<span class="white-text"><i class="material-icons left">volume_up</i> Áudio Habilitado.</span>', 'blue darken-2');
+    }
+}
+// Configurações visuais de status do compartilhamento de tela
+/**
+ * status: 'disabled', 'off', 'on' 
+ */
+function setShare(status) {
+    var share = document.getElementById('share-screen');
+    if (status === 'dis') {
+        share.setAttribute('data-active', 'disabled');
+        share.classList.remove("blue-text");
+        share.classList.add("grey-text");
+        share.innerHTML = "<i class='material-icons left'>stop_screen_share</i> <b class='hide-on-med-and-down'>Compartilhar</b>";
+    } else if (status === 'off') {
+        share.setAttribute('data-active', 'disabled');
+        share.classList.remove("blue-text");
+        share.classList.add("red-text");
+        share.innerHTML = "<i class='material-icons left'>stop_screen_share</i> <b class='white-text hide-on-med-and-down'>Compartilhar</b>";
+        callToast('<span class="white-text"><i class="material-icons left">screen_share</i> Tela compartilhada.</span>', 'blue darken-2');
+    } else if (status === 'on') {
+        share.setAttribute('data-active', 'enabled');
+        share.classList.remove("red-text");
+        share.classList.add("blue-text");
+        share.innerHTML = "<i class='material-icons left'>screen_share</i> <b class='white-text hide-on-med-and-down'>Compartilhar</b>";
+        callToast('<span class="white-text"><i class="material-icons left">stop_screen_share</i> Compartilhamento finalizado.</span>', 'red darken-3');
     }
 }
 // Configurações visuais de status de uma solicitação
@@ -254,7 +288,7 @@ function constructAccessList(classe, assunto, professor, viwer, moderador) {
         '<i class="material-icons circle blue lighten-2">videocam</i>' +
         '<span class="title"><b>' + classe + ' (' + assunto + ')' + '</b></span>' +
         '<p>' +
-        '<b class="blue-text">Professor:</b> ' + professor + '</p>' +
+        '<b class="blue-text">Apresentado por:</b> ' + professor + '</p>' +
         '<p>' +
         '<b class="blue-text">Espectadores:</b><b> ' + viwer + '</b>' +
         '</p>' +
