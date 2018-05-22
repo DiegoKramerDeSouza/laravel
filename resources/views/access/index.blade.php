@@ -26,7 +26,7 @@
                         </div>
                     </div>
                     <div class='card-action' align='right'>
-                        <button id='access' type='submit' class='load btn green darken-2 waves-effect waves-light'>Entrar <i class='fa fa-sign-in'></i></button>
+                        <button id='access' type='submit' class='load btn-flat green-text text-darken-2 waves-effect waves-green'>Entrar <i class='fa fa-sign-in'></i></button>
                     </div>
                 </form>
             </div>
