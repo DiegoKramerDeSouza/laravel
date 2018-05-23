@@ -13,15 +13,6 @@ function callToast(content, classe) {
     content = '<span class="white-text">' + content + '</span>';
     M.toast({ html: content, classes: classe });
 }
-// Alerta exclusivo para falha do compartilhamento de tela
-function toastScreenShare() {
-    content = 'Seu navegador não está preparado para compartilhar tela.' +
-        '<br>Instale nossa extensão para o chrome clicando ao lado.' +
-        '<a href="https://chrome.google.com/webstore/detail/screen-capturing/ajhifddimkapgcifgcodmmfdlknahffk" target="_blank" class="btn-flat toast-action white-text">' +
-        '<i class="fa fa-chrome"></i>' +
-        '</a>.';
-    M.toast({ html: content, classes: 'red darken-3', displayLength: 10000 });
-}
 // Altera o contador de usuários conectados à sala e exibe em 'broadcast-viewers-counter'
 /**
  * number: número de usuários conectados

@@ -77,7 +77,7 @@
     </div>
 
     <!--Campos de controle-->
-<input type='hidden' id='room-id' name='room-id' value='{{ Auth::user()->login}}-{{ Auth::user()->name}}-{!! rand(0,999) !!}' disabled readonly />
+    <input type='hidden' id='room-id' name='room-id' value='{{ Auth::user()->login}}-{{ Auth::user()->name}}-{!! rand(0,999) !!}' disabled readonly />
     <!-- ID do broadcaster-->
     <input type='hidden' id='broadcaster' name='broadcaster' disabled readonly />
     <!-- ID da sala-->
@@ -125,9 +125,9 @@
                                 </div> 
 
                                 <!--VÍDEO SECUNDÁRIO-->
-                                <div id='span-secondvideo-preview' data-status='disabled' class='width-limit'>
-                                    <video id="secondvideo-preview" loop class='width-limit'></video>
+                                <div id='span-secondvideo-preview' class='width-limit'>
                                 </div>
+                                <video id="secondvideo-preview" loop class='width-limit'></video>
 
                             </div>
                         </div>

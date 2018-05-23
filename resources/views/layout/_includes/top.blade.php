@@ -15,6 +15,12 @@
         <link href="{!! asset('css/font-awesome.min.css') !!}" media="all" rel="stylesheet" type="text/css" />
         <!--Importa materialize.css-->
         <link href="{!! asset('css/materialize.min.css') !!}" media="all" rel="stylesheet" type="text/css" />
+        @if(! Auth::guest())
+            @if(Auth::user()->type == 0)
+                <!--Instalação inline de extensão do chrome para compartilhamento de tela-->
+                <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/screen-capturing/ajhifddimkapgcifgcodmmfdlknahffk">
+            @endif
+        @endif
         <!--Informa ao browser que está pronto para acesso mobile-->
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <!-- Fonts -->
@@ -28,7 +34,7 @@
         </style>
     </head>
 
-    <body>
+    <body class='grey'>
         <header>
             <nav class="nav-wrapper grey darken-4">
                 <div class="">
@@ -119,7 +125,7 @@
             </div>
             <div id='centralized' align='center' class='white-text d-none'>
             </div>
-            <div>
+            <div class=''>
 				<img id="backgroundLayer" src="{!! asset('img/bg.jpg') !!}" />
             </div>
             <div class='container' style='margin-top:40px; padding-bottom:60px;'>

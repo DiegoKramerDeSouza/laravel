@@ -17,22 +17,21 @@
  *  var solicita        integer
  *  var broadcastStatus integer
  */
-// solicita: efetua o controle de solicitações abertas para o broadcaster
-// e limita a 1 a quantidade de solicitações dos demais usuários 
+// Controle de solicitações abertas para o broadcaster
+// ->limita a 1 a quantidade máxima de solicitações de um usuário
 var solicita = 0;
 // broadcasteStatus: define se o status da conexão está ativa (1) ou inativa (0)
 var broadcastStatus = 0;
 // Array de viewers conectados à sala
 var connections = [];
-// Array de viewers com acesso bloqueado à sala
-var denyConnections = [];
+// Controles gerais
 var isModerator = true;
 var onlobby = true;
+var canShare = false;
 
 $(document).ready(function() {
     // Inicializa adapter.js
     window.enableAdapter = true;
-
     //Application - Inicia a chamada e tratamento de multiconexão
     /**
      *  const connection          RTCMultiConnection
@@ -48,11 +47,13 @@ $(document).ready(function() {
     //connection.maxRelayLimitPerUser = 1;
     //connection.autoCloseEntireSession = true;
     //connection.dontCaptureUserMedia = true;
-    connection.socketMessageEvent = 'Broadcast';
+    connection.socketMessageEvent = 'inicia-apresentacao';
 
     // Elemento alvo para iniciar o stream de video
     connection.teacherVideosContainer = document.getElementById('main-video');
     connection.videoContainer = document.getElementById('span-video-preview');
+    connection.videosContainer = document.getElementById('span-secondvideo-preview');
+
     // Listeners de tratamento de tamanho de tela do video
     document.addEventListener('fullscreenchange', exitHandler);
     document.addEventListener('webkitfullscreenchange', exitHandler);
@@ -89,7 +90,6 @@ $(document).ready(function() {
     var publicRoomsDiv = document.getElementById('public-conference');
     var inRoom = document.getElementById('in-room');
     var videoPreview = document.getElementById('video-preview');
-
     var mute = document.getElementById('toggle-mute');
     var screen = document.getElementById('toggle-screen');
     var exitscreen = document.getElementById('exit-fullscreen');
@@ -173,13 +173,17 @@ $(document).ready(function() {
     connection.getScreenConstraints = function(callback) {
         getScreenConstraints(function(error, screen_constraints) {
             if (!error) {
+                canShare = true;
                 screen_constraints = connection.modifyScreenConstraints(screen_constraints);
                 callback(error, screen_constraints);
                 return;
             }
-            toastScreenShare();
-            setTimeout(location.reload.bind(location), 10000);
-            throw error;
+            if (error !== 'permission-denied') {
+                var elem = document.getElementById('msg-share');
+                var instance = M.Modal.getInstance(elem);
+                instance.open();
+            }
+            //throw error;
         });
     };
     // Inicia a transmissão
@@ -191,17 +195,13 @@ $(document).ready(function() {
 
         if (connection.isInitiator && event.type !== 'local') return;
 
-        // Botão de maximizar o video -> toggle on:off
-        screen.onclick = function() { fullscreen(); };
-        exitscreen.onclick = function() { fullscreen(); };
-
-        event.mediaElement.removeAttribute('src');
-        event.mediaElement.removeAttribute('srcObject');
+        //event.mediaElement.removeAttribute('src');
+        //event.mediaElement.removeAttribute('srcObject');
 
         if (event.type === 'remote' && event.stream.isScreen === true) {
             var secondVideoPreview = document.getElementById('secondvideo-preview');
             secondVideoPreview.srcObject = event.stream;
-            //secondVideoPreview.play();
+            secondVideoPreview.play();
         }
         if (event.type === 'remote' && !event.stream.isScreen) {
             /**
@@ -397,7 +397,14 @@ $(document).ready(function() {
             // Tratamento de solicitações: Botão "Compartilhar" -> Compartilha a tela do apresentador
             share.onclick = function() {
                 if (share.getAttribute('data-active') == 'enabled') {
-                    setShare('off');
+                    if (canShare) {
+                        setShare('off');
+                    }
+                    connection.getAllParticipants().forEach(function(p) {
+                        connection.attachStreams.forEach(function(stream) {
+                            //connection.peers[p].peer.removeStream(stream);
+                        });
+                    });
                     connection.addStream({
                         screen: true,
                         oneway: true
@@ -406,8 +413,11 @@ $(document).ready(function() {
                     setShare('on');
                 }
             };
-
         }
+
+        // Botão de maximizar o video -> toggle on:off
+        screen.onclick = function() { fullscreen(); };
+        exitscreen.onclick = function() { fullscreen(); };
         // Tratamento das funções MUTE e UNMUTE -> Obrigatórios para utilizar mute e unmute
         connection.onmute = function(e) {
             e.mediaElement.setAttribute('poster', '/img/bg.jpg');
@@ -415,6 +425,7 @@ $(document).ready(function() {
         connection.onunmute = function(e) {
             e.mediaElement.removeAttribute('poster');
         };
+
     };
 
     // Ação de criar uma sala de aula ao clicar em 'btn-join-as-productor'

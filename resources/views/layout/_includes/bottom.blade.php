@@ -69,10 +69,31 @@
                         </div>
                     </div>
 
-                    <!-- Modal de conexões ativas-->
+                    <!-- Modal de compartilhamento-->
+                    <div id='msg-share' class='modal'>
+                        <div class='modal-content'>
+                            <h5>
+                                <i class='material-icons blue-text'>extension</i> Extensão do Chrome:
+                                <span class='right'>
+                                    <a class='modal-close'>
+                                        <i class='fa fa-times red-text text-darken-3'></i>
+                                    </a>
+                                </span>
+                            </h5>
+                            <div class='divider'></div>
+                            <div class='red-text text-darken-3'>
+                                <p>Para compartilhar sua tela, seu navegador deve possuir a extensão do {{ $logo }}.</p>
+                                <p><b>Deseja instalar a extensão do {{ $logo }} para o navegador Google Chrome?</b></p>
+                            </div>
+                            <br>
+                        </div>
+                        <div class='modal-action'>
+                            <a href='https://chrome.google.com/webstore/detail/screen-capturing/ajhifddimkapgcifgcodmmfdlknahffk' target='_blank' onclick='chrome.webstore.install()' class='right btn-flat blue-text text-darken-2 waves-effect waves-teal'><i class='fa fa-check'></i> sim, instalar</a>
+                            <a class='modal-close right btn-flat red-text text-darken-3 waves-effect waves-red'><i class='fa fa-times'></i> não</a>
+                        </div>
+                    </div>
                     
                 @endif
-                <a href="https://chrome.google.com/webstore/detail/screen-capturing/ajhifddimkapgcifgcodmmfdlknahffk" target="_blank">Chrome</a>
                 <!-- Barra de footer com menu de controle de áudio e video-->
                 <nav id='nav-footer' class="nav-wrapper black d-none">
                     <div class="">
@@ -130,7 +151,7 @@
                 <script type="text/javascript" src="{!! asset('js/webrtc/adapter.js') !!}"></script>                      
                 <script type="text/javascript" src="{!! asset('js/webrtc/RTCMultiConnection.min.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/webrtc/application.js') !!}"></script>
-                <script type="text/javascript" src="{!! asset('js/webrtc/getScreen.js') !!}"></script>
+                <script type="text/javascript" src="{!! asset('js/webrtc/getScreenId.js') !!}"></script>
                 <script>
                     // Controle da inicialização do MaterializeCSS para textarea
                     $(document).ready(function(){
@@ -144,7 +165,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col s12">
-                        <h5 class="white-text">WebTv</h5>
+                    <h5 class="white-text">{{ $logo }}</h5>
                         <p class="grey-text text-lighten-1">
                             Protótipo de aplicação voltado à comunicação via webconference utilizando WebRTC e compatível com os navegadores Google Chrome e Mozilla Firefox. 
                             <br>
