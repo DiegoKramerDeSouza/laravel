@@ -63,3 +63,18 @@
 .disconnect-btn:hover {
     cursor: pointer;
 }
+
+.second-video {
+    position: absolute !important;
+    top: 218px !important;
+    right: 0px !important;
+    max-width: 320px;
+    -webkit-transition-duration: 0.4s !important;
+    transition-duration: 0.4s !important;
+    z-index: 2 !important;
+    padding-bottom: 20px;
+}
+
+.min-video {
+    max-width: 320px;
+}

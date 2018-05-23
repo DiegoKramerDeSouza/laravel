@@ -20,7 +20,7 @@ function callToast(content, classe) {
 function changeCounter(number) {
     var controller = document.getElementById('broadcast-viewers-counter');
     if (controller.getAttribute('data-target') == '0') {
-        controller.innerHTML = '<a href="#con-list" id="viewers" class="modal-trigger"><h6><i class="fa fa-play-circle-o"></i> Espectadores: <b class="grey-text text-darken-2">' + number + '</b></h6></a>';
+        controller.innerHTML = '<a href="#con-list" id="viewers" class="modal-trigger"><i class="fa fa-play-circle-o"></i> Espectadores: <b class="grey-text text-darken-2">' + number + '</b></a>';
     }
 }
 // Mensagem de 0 salas disponíveis por conexão

@@ -78,7 +78,11 @@ $(document).ready(function() {
      *  var cam             elem. html
      *  var pedir           elem. html
      *  var ctlPedir        elem. html
-     *  var share        elem. html
+     *  var share           elem. html
+     *  var videoFirst      elem. html
+     *  var videoSecond     elem. html
+     *  var swapFirst       elem. html
+     *  var swapSecond      elem. html
      *  var broadcaster     elem. html
      *  var currentUser     string
      */
@@ -90,6 +94,7 @@ $(document).ready(function() {
     var publicRoomsDiv = document.getElementById('public-conference');
     var inRoom = document.getElementById('in-room');
     var videoPreview = document.getElementById('video-preview');
+    var secondVideoPreview = document.getElementById('secondvideo-preview');
     var mute = document.getElementById('toggle-mute');
     var screen = document.getElementById('toggle-screen');
     var exitscreen = document.getElementById('exit-fullscreen');
@@ -98,6 +103,9 @@ $(document).ready(function() {
     var pedir = document.getElementById('pedir-vez');
     var ctlPedir = document.getElementById('control-pedir-vez');
     var share = document.getElementById('share-screen');
+    var videoFirst = document.getElementById('span-video-preview');
+    var videoSecond = document.getElementById('span-video-preview-2nd');
+    var swapSecond = document.getElementById('swap-video');
     var broadcaster = document.getElementById('broadcaster');
     var currentUser = document.getElementById('current-user').value;
 
@@ -155,8 +163,8 @@ $(document).ready(function() {
             broadcastStatus = 1;
             // O broadcaster sempre utilizará essas configurações
             connection.sdpConstraints.mandatory = {
-                OfferToReceiveVideo: false,
-                OfferToReceiveAudio: false
+                OfferToReceiveVideo: true,
+                OfferToReceiveAudio: true
             };
             connection.session = typeOfStreams;
             // Início da captura de mídia
@@ -188,29 +196,83 @@ $(document).ready(function() {
     };
     // Inicia a transmissão
     connection.onstream = function(event) {
+        console.log('--> Conectando à stream.');
         //Apresentação da barra de funções de video
         $('#main-footer').hide();
         $('#nav-footer').slideDown(500);
         inRoom.value = event.userid;
-
         if (connection.isInitiator && event.type !== 'local') return;
 
         //event.mediaElement.removeAttribute('src');
         //event.mediaElement.removeAttribute('srcObject');
 
         if (event.type === 'remote' && event.stream.isScreen === true) {
-            var secondVideoPreview = document.getElementById('secondvideo-preview');
+            $('#span-video-preview-2nd').fadeIn(300);
             secondVideoPreview.srcObject = event.stream;
-            secondVideoPreview.play();
+            var playPromise = secondVideoPreview.play();
+            // Verifica disponibilidade de vídeo para transmissão
+            if (playPromise !== undefined) {
+                playPromise.then(_ => {
+                        secondVideoPreview.play();
+                    })
+                    .catch(error => {
+                        console.log('Carregando vídeo...');
+                    });
+            }
+            // Tratamento de telas: Botão "Swap" -> Toggle Main/Second Video
+            videoSecond.onmouseenter = function() {
+                $('#swap-video').show();
+            }
+            videoSecond.onmouseleave = function() {
+                $('#swap-video').hide(200);
+            }
+            swapSecond.onclick = function() {
+                var mvideoSrc;
+                var svideoSrc;
+                var position = videoSecond.getAttribute('data-position');
+                if (position == 'second') {
+                    videoSecond.setAttribute('data-position', 'main');
+                    videoPreview.classList.add('width-limit');
+                    //secondVideoPreview.classList.remove('min-video');
+                } else {
+                    videoSecond.setAttribute('data-position', 'second');
+                    videoPreview.classList.remove('width-limit');
+                }
+                $('#swap-video').hide(200);
+                mvideoSrc = videoPreview.srcObject;
+                svideoSrc = secondVideoPreview.srcObject;
+                // Pausa transmissão
+                videoPreview.pause();
+                secondVideoPreview.pause();
+                // Inverte o caminho de fonte dos vídeo
+                videoPreview.srcObject = svideoSrc;
+                secondVideoPreview.srcObject = mvideoSrc;
+                setTimeout(function() {
+                    var playSecReady = secondVideoPreview.play();
+                    var playReady = videoPreview.play();
+                    // Verifica disponibilidade de vídeo para transmissão
+                    if (playSecReady !== undefined && playReady !== undefined) {
+                        playSecReady.then(_ => {
+                                secondVideoPreview.play();
+                            })
+                            .catch(error => {
+                                console.log('Carregando vídeo...');
+                            });
+                        playReady.then(_ => {
+                                videoPreview.play();
+                            })
+                            .catch(error => {
+                                console.log('Carregando vídeo...');
+                            });
+                    }
+                }, 500);
+            };
         }
         if (event.type === 'remote' && !event.stream.isScreen) {
             /**
              *  Ações para conexão REMOTA para controle de funções de áudio e video do webRTC
              */
             videoPreview.srcObject = event.stream;
-            // Definições de video
-            width = parseInt(connection.teacherVideosContainer.clientWidth);
-            //videoPreview.width = width;
             videoPreview.play();
 
             // Ajusta elementos de exibição (define o menu de áudio e video para ESPECTADORES)
@@ -306,9 +368,6 @@ $(document).ready(function() {
              */
             connection.isUpperUserLeft = false;
             videoPreview.srcObject = event.stream;
-            // Definições de video
-            width = parseInt(connection.teacherVideosContainer.clientWidth);
-            //videoPreview.width = width;
             videoPreview.userid = event.userid;
             videoPreview.muted = true;
             videoPreview.play();
@@ -400,14 +459,21 @@ $(document).ready(function() {
                     if (canShare) {
                         setShare('off');
                     }
-                    connection.getAllParticipants().forEach(function(p) {
-                        connection.attachStreams.forEach(function(stream) {
-                            //connection.peers[p].peer.removeStream(stream);
-                        });
-                    });
                     connection.addStream({
                         screen: true,
-                        oneway: true
+                        oneway: true,
+                        streamCallback: function(stream) {
+                            // Após confirmado o compartilhamento, inicia a renegociação da conexão com cada usuário conectado
+                            setTimeout(function() {
+                                connection.getAllParticipants().forEach(function(p) {
+                                    console.log('Renegociando com: ' + p);
+                                    connection.renegotiate(p, {
+                                        screen: true,
+                                        oneway: true
+                                    });
+                                });
+                            }, 2000);
+                        }
                     });
                 } else {
                     setShare('on');
@@ -478,10 +544,12 @@ $(document).ready(function() {
                 oneway: true
             };
             // Controle da utilização de banda
+            /*
             connection.bandwidth = {
                 audio: 100,
                 video: 250
             };
+            */
             // Inicializa Socket
             var socket = connection.getSocket();
             socket.emit('check-broadcast-presence', broadcastId, function(isBroadcastExists) {
@@ -494,8 +562,8 @@ $(document).ready(function() {
                 socket.emit('join-broadcast', {
                     broadcastId: broadcastId,
                     userid: connection.userid,
-                    typeOfStreams: connection.session,
-                    bandwidth: connection.bandwidth
+                    typeOfStreams: connection.session
+                        //bandwidth: connection.bandwidth
                 });
                 // Habilita funções de chat
                 document.getElementById('toggle-chat').onclick = function() {

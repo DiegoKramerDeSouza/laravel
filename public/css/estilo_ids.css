@@ -80,3 +80,16 @@ video::-webkit-media-controls-enclosure {
     width: inherit;
     height: inherit;
 }
+
+#secondvideo-preview {
+    border: 2px solid rgba(200, 200, 200, 0.5);
+    border-radius: 4px;
+}
+
+#swap-video {
+    display: none;
+}
+
+#viewers {
+    font-size: 18px;
+}

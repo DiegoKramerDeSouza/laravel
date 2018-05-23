@@ -104,7 +104,7 @@
                     <div class='row'>
                         <div class='col s12'>
                             <div id='main-video' align='center' class='inroom mainView'>
-                                <!--Div de loading de conteúdo. Apenas demonstrativa-->
+                                <!--Div de loading de conteúdo (Apenas demonstrativa)-->
                                 <div id='div-connect'>
                                     <div align='center' style='margin-top:50px;'>
                                         <h6 class='blue-text'>Conectando...</h6>
@@ -113,22 +113,17 @@
                                         <div class="indeterminate blue"></div>
                                     </div>
                                 </div>
-                                
-                                <!--VÍDEO PRINCIPAL-->
-                                <div id='span-video-preview' data-status='disabled' class='width-limit'>
-                                    <video id="video-preview" loop></video>
-                                    <div id='div-exit-fullscreen' class='fixed-action-btn d-none'>
-                                        <a id='exit-fullscreen' class='btn-floating btn-large blue darken-2'>
-                                            <i class='material-icons large'>fullscreen_exit</i>
-                                        </a>
-                                    </div>
-                                </div> 
-
-                                <!--VÍDEO SECUNDÁRIO-->
-                                <div id='span-secondvideo-preview' class='width-limit'>
+                                <div id='videos'>
+                                    <!--VÍDEO PRINCIPAL-->
+                                    <div id='span-video-preview' data-status='disabled' data-position='main' class='width-limit first-video'>
+                                        <video id="video-preview" preload="none" loop ></video>
+                                        <div id='div-exit-fullscreen' class='fixed-action-btn d-none'>
+                                            <a id='exit-fullscreen' class='btn-floating btn-large blue darken-2'>
+                                                <i class='material-icons large'>fullscreen_exit</i>
+                                            </a>
+                                        </div>
+                                    </div> 
                                 </div>
-                                <video id="secondvideo-preview" loop class='width-limit'></video>
-
                             </div>
                         </div>
                     </div>
@@ -136,10 +131,17 @@
             </div>
         </div>
         <!--Painel com os vídeos dos espectadores-->
-        <div id='second-video' class='col s12 m4 incoming-videos'>
+        <div id='line-video' class='col s12 m4 incoming-videos'>
             <div id='class-video' class='inroom otherView'>
                 <!--Outros vídeos-->
             </div>
         </div>
+        <!--VÍDEO SECUNDÁRIO-->
+        <div id='span-video-preview-2nd' data-status='disabled' data-position='second' class='d-none second-video'>
+            <video id="secondvideo-preview" preload="none" loop class='min-video'></video>
+            <a id='swap-video' style='bottom:10px;' class='btn-floating halfway-fab blue darken-2 waves-effect waves-light'>
+                <i class='material-icons'>swap_horiz</i>
+            </a>
+        </div> 
     </div> 
 @endsection

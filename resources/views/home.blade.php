@@ -40,9 +40,32 @@
                         <b>Bem vindo(a) <br><span class='blue-text'><i class='fa fa-user-circle'></i> {{ Auth::user()->name }}</span>.</b><br>
                     </h2>
                     <div class='divider'></div>
-                    <div class='row'>
-                        
-                        
+                    <br>
+                    <div class='row grey-text text-darken-3' align='left'>
+                        <div class='col s12 m4'>
+                            <div class='blue-text center'>
+                                <a href="{{ route('salas') }}" title='Transmita'><i class='material-icons large'>wifi_tethering</i></a>
+                            </div>
+                            <h5>Crie uma sala e inicie sua transmissão!</h5>
+                            <p>Com a função de salas você pode iniciar sua transmissão para um ou vários espectadores simultâneos.</p>
+                            <p>Clique <a href="{{ route('salas') }}"><u>aqui</u></a> para começar!</p>
+                        </div>
+                        <div class='col s12 m4'>
+                            <div class='blue-text center'>
+                                <a href="{{ route('salas') }}" title='Compartilhe'><i class='material-icons large'>share</i></a>
+                            </div>
+                            <h5>Amplie a interação com os espectadores!</h5>
+                            <p>Todas as salas contam com transmissão de áudio e vídeo, além de suporte a envio de mensagens de texto e compartilhamento de tela simultaneamente.</p>
+                            <p>Clique <a href="{{ route('salas') }}"><u>aqui</u></a> para começar!</p>
+                        </div>
+                        <div class='col s12 m4'>
+                            <div class='blue-text center'>
+                                <a href="{{ route('admin.cadastro') }}" title='Configure'><i class='material-icons large'>people_outline</i></a>
+                            </div>
+                            <h5>Personalize perfis e usuários!</h5>
+                            <p>Com a função de cadastros você pode configurar e gerenciar cursos, instituições e usuário como desejar.</p>
+                            <p>Clique <a href="{{ route('admin.cadastro') }}">aqui</a> para começar!</p>
+                        </div>
                     </div>
                 </div>
             @endif 

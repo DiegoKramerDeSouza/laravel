@@ -128,6 +128,6 @@
             <div class=''>
 				<img id="backgroundLayer" src="{!! asset('img/bg.jpg') !!}" />
             </div>
-            <div class='container' style='margin-top:40px; padding-bottom:60px;'>
+            <div class='container' style='margin-top: 40px; padding-bottom: 60px;'>
 
     
