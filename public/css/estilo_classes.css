@@ -82,3 +82,8 @@
 .min-video {
     max-width: 320px;
 }
+
+.container-min {
+    margin-left: 70px;
+    margin-right: 70px;
+}

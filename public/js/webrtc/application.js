@@ -487,24 +487,6 @@ $(document).ready(function() {
                             screen: false
                         });
                     });
-
-
-                    /*
-                    connection.removeStream({
-                        screen: true,
-                        streamCallback: function(stream) {
-                            // Após finalizar o compartilhamento, inicia a renegociação da conexão com cada usuário conectado
-                            setTimeout(function() {
-                                connection.getAllParticipants().forEach(function(p) {
-                                    console.log(p);
-                                    connection.renegotiate(p, {
-                                        screen: false
-                                    });
-                                });
-                            }, 1000);
-                        }
-                    });
-                    */
                 }
             };
         }

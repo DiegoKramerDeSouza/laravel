@@ -34,7 +34,7 @@ Route::get('/login/destroy', ['as' => 'login.destroy', 'uses' => 'Site\LoginCont
 //Route::get('/getid', ['as' => 'getid', 'uses' => 'Site\GetId@index']);
 
 Route::get('/getid', function() {
-    return File::get(public_path() . '/html/getScreenIdControl.html');
+    return File::get(public_path() . '/html/getScreenId.html');
 });
 
 
