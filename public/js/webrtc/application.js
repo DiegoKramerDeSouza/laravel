@@ -27,7 +27,6 @@ var connections = [];
 // Controles gerais
 var isModerator = true;
 var onlobby = true;
-var canShare = false;
 
 $(document).ready(function() {
     // Inicializa adapter.js
@@ -109,6 +108,11 @@ $(document).ready(function() {
     var broadcaster = document.getElementById('broadcaster');
     var currentUser = document.getElementById('current-user').value;
 
+    // Extensão para captura de tela do firefox:
+    // https://addons.mozilla.org/en-US/firefox/addon/enable-screen-capturing/
+    // Extensão para captura de tela do google chrome:
+    // https://chrome.google.com/webstore/detail/screen-capturing/ajhifddimkapgcifgcodmmfdlknahffk
+
     // Conexão com serviço de websocket
     // Servidor de signaling de teste gratúito:
     connection.socketURL = 'https://rtcmulticonnection.herokuapp.com:443/';
@@ -181,9 +185,9 @@ $(document).ready(function() {
     connection.getScreenConstraints = function(callback) {
         getScreenConstraints(function(error, screen_constraints) {
             if (!error) {
-                canShare = true;
                 screen_constraints = connection.modifyScreenConstraints(screen_constraints);
                 callback(error, screen_constraints);
+                setShare('off');
                 return;
             }
             if (error !== 'permission-denied') {
@@ -191,6 +195,7 @@ $(document).ready(function() {
                 var instance = M.Modal.getInstance(elem);
                 instance.open();
             }
+            //console.log(error);
             //throw error;
         });
     };
@@ -233,7 +238,6 @@ $(document).ready(function() {
                 if (position == 'second') {
                     videoSecond.setAttribute('data-position', 'main');
                     videoPreview.classList.add('width-limit');
-                    //secondVideoPreview.classList.remove('min-video');
                 } else {
                     videoSecond.setAttribute('data-position', 'second');
                     videoPreview.classList.remove('width-limit');
@@ -277,6 +281,7 @@ $(document).ready(function() {
 
             // Ajusta elementos de exibição (define o menu de áudio e video para ESPECTADORES)
             $('#div-connect').hide();
+            $('#span-video-preview-2nd').fadeOut(300);
             ctlPedir.innerHTML = constructBtnActionPedir();
             pedir = document.getElementById('pedir-vez');
 
@@ -456,9 +461,6 @@ $(document).ready(function() {
             // Tratamento de solicitações: Botão "Compartilhar" -> Compartilha a tela do apresentador
             share.onclick = function() {
                 if (share.getAttribute('data-active') == 'enabled') {
-                    if (canShare) {
-                        setShare('off');
-                    }
                     connection.addStream({
                         screen: true,
                         oneway: true,
@@ -477,6 +479,32 @@ $(document).ready(function() {
                     });
                 } else {
                     setShare('on');
+                    console.log('Finalizando sharing...');
+                    connection.getAllParticipants().forEach(function(p) {
+                        console.log(p);
+                        connection.removeStream(p);
+                        connection.renegotiate(p, {
+                            screen: false
+                        });
+                    });
+
+
+                    /*
+                    connection.removeStream({
+                        screen: true,
+                        streamCallback: function(stream) {
+                            // Após finalizar o compartilhamento, inicia a renegociação da conexão com cada usuário conectado
+                            setTimeout(function() {
+                                connection.getAllParticipants().forEach(function(p) {
+                                    console.log(p);
+                                    connection.renegotiate(p, {
+                                        screen: false
+                                    });
+                                });
+                            }, 1000);
+                        }
+                    });
+                    */
                 }
             };
         }

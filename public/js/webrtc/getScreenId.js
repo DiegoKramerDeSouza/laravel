@@ -26,7 +26,7 @@ getScreenId(function (error, sourceId, screen_constraints) {
 
 (function() {
     window.getScreenId = function(callback, system_audio) {
-        if(navigator.userAgent.indexOf('Edge') !== -1 && (!!navigator.msSaveOrOpenBlob || !!navigator.msSaveBlob)) {
+        if (navigator.userAgent.indexOf('Edge') !== -1 && (!!navigator.msSaveOrOpenBlob || !!navigator.msSaveBlob)) {
             // microsoft edge => navigator.getDisplayMedia(screen_constraints).then(onSuccess, onFailure);
             callback({
                 video: true
@@ -71,10 +71,9 @@ getScreenId(function (error, sourceId, screen_constraints) {
             }
         }
 
-        if(!system_audio) {
+        if (!system_audio) {
             setTimeout(postGetSourceIdMessage, 100);
-        }
-        else {
+        } else {
             setTimeout(function() {
                 postGetSourceIdMessage('system_audio');
             }, 100);
@@ -94,7 +93,7 @@ getScreenId(function (error, sourceId, screen_constraints) {
             }
         };
 
-        if(!!canRequestAudioTrack) {
+        if (!!canRequestAudioTrack) {
             screen_constraints.audio = {
                 mandatory: {
                     chromeMediaSource: error ? 'screen' : 'desktop',
@@ -107,7 +106,7 @@ getScreenId(function (error, sourceId, screen_constraints) {
         if (sourceId) {
             screen_constraints.video.mandatory.chromeMediaSourceId = sourceId;
 
-            if(screen_constraints.audio && screen_constraints.audio.mandatory) {
+            if (screen_constraints.audio && screen_constraints.audio.mandatory) {
                 screen_constraints.audio.mandatory.chromeMediaSourceId = sourceId;
             }
         }
@@ -130,12 +129,11 @@ getScreenId(function (error, sourceId, screen_constraints) {
             return;
         }
 
-        if(!system_audio) {
+        if (!system_audio) {
             iframe.contentWindow.postMessage({
                 captureSourceId: true
             }, '*');
-        }
-        else {
+        } else {
             iframe.contentWindow.postMessage({
                 captureSourceIdWithAudio: true
             }, '*');
@@ -148,7 +146,7 @@ getScreenId(function (error, sourceId, screen_constraints) {
     window.getScreenConstraints = function(callback) {
         loadIFrame(function() {
             getScreenId(function(error, sourceId, screen_constraints) {
-                if(!screen_constraints) {
+                if (!screen_constraints) {
                     screen_constraints = {
                         video: true
                     };
@@ -171,7 +169,8 @@ getScreenId(function (error, sourceId, screen_constraints) {
 
             loadCallback();
         };
-        iframe.src = 'https://www.webrtc-experiment.com/getSourceId/'; // https://wwww.yourdomain.com/getScreenId.html
+        iframe.src = 'https://www.webrtc-experiment.com/getSourceId/';
+        //iframe.src = 'https://pinechart.com/getid';
         iframe.style.display = 'none';
         (document.body || document.documentElement).appendChild(iframe);
     }

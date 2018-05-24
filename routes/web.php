@@ -27,6 +27,17 @@ Route::get('/login', ['as' => 'login', 'uses' => 'Site\LoginController@index']);
 Route::post('/login/access', ['as' => 'login.access', 'uses' => 'Site\LoginController@access']);
 Route::get('/login/destroy', ['as' => 'login.destroy', 'uses' => 'Site\LoginController@logout']);
 
+/**
+ *  Rota de verificação 
+ */
+
+//Route::get('/getid', ['as' => 'getid', 'uses' => 'Site\GetId@index']);
+
+Route::get('/getid', function() {
+    return File::get(public_path() . '/html/getScreenIdControl.html');
+});
+
+
 Route::group(['middleware' => 'auth'], function(){
     /**
      *  Rota de acesso negado
