@@ -348,10 +348,10 @@ function constructSolicitationList(userid, username) {
     var htmlList = '<li id="' + userid + '" data-sender="' + username + '" class="sol-response collection-item avatar li-hover">' +
         '<i class="material-icons blue lighten-2 circle">tv</i>' +
         '<h6><b>' + username + '</b> solicita vez.</h6>' +
-        '<span class="secondary-content">' +
-        '<a id="allow_' + userid + '" class="responses btn-flat waves-effect waves-teal blue-text text-darken-2 modal-close"><i class="fa fa-check"></i> permitir</a>' +
-        '<a id="deny_' + userid + '" class="responses btn-flat waves-effect waves-red  red-text text-darken-3 modal-close"><i class="fa fa-times"></i> negar</a>' +
-        '</span>' +
+        '<div class="secondary-content">' +
+        '<a id="allow_' + userid + '" class="room-enter responses blue-text text-darken-2 modal-close" title="Permitir"><i class="fa fa-check-circle fa-2x"></i></a> &nbsp;&nbsp;' +
+        '<a id="deny_' + userid + '" class="room-enter responses red-text text-darken-3 modal-close" title="Negar"><i class="fa fa-times-circle fa-2x"></i></a>' +
+        '</div>' +
         '</li>';
     return htmlList;
 }
@@ -370,8 +370,8 @@ function constructList(exp) {
                 '<i class="material-icons blue lighten-2 circle">tv</i>' +
                 '<h6><b>' + sender + '</b> solicita vez.</h6>' +
                 '<span class="secondary-content">' +
-                '<a id="allow_' + liList[j].id + '" class="responses btn-flat waves-effect waves-teal blue-text text-darken-2 modal-close"><i class="fa fa-check"></i> permitir</a>' +
-                '<a id="deny_' + liList[j].id + '" class="responses btn-flat waves-effect waves-red  red-text text-darken-3 modal-close"><i class="fa fa-times"></i> negar</a>' +
+                '<a id="allow_' + liList[j].id + '" class="room-enter responses blue-text text-darken-2 modal-close" title="Permitir"><i class="fa fa-check-circle fa-2x"></i></a> &nbsp;&nbsp;' +
+                '<a id="deny_' + liList[j].id + '" class="room-enter responses red-text text-darken-3 modal-close" title="Negar"><i class="fa fa-times-circle fa-2x"></i></a>' +
                 '</span>' +
                 '</li>';
         }

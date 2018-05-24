@@ -683,13 +683,14 @@ $(document).ready(function() {
                          *  var socket          connection.socket
                          *  var message         string
                          */
-
+                        // Verifica se a sala criada atende às especificações do sistema
+                        // -> Usado enquanto o connection.socketURL 
                         var labelRoom = moderator.userid;
                         try {
                             labelRoom = atob(labelRoom);
                         } catch (exp) {
-                            console.log('Sala fora de padrão: ' + labelRoom + ' -> ' + exp);
-                            if ((array.length - 1) < 1) {
+                            //console.log('Sala fora de padrão: ' + labelRoom + ' -> ' + exp);
+                            if (array.length < 2) {
                                 noRooms();
                             }
                             return;
@@ -731,7 +732,8 @@ $(document).ready(function() {
                             var button = document.createElement('a');
                             button.id = moderator.userid;
                             button.title = 'Entrar';
-                            button.className = 'btn-floating blue darken-2 waves-effect waves-light secondary-content';
+                            //button.className = 'btn-floating btn-large blue darken-1 waves-effect waves-teal secondary-content';
+                            button.className = 'room-enter blue-text text-darken-1 secondary-content';
                             // Atribui função para ingressar na sala disponível
                             button.onclick = function() {
                                 onlobby = false;
@@ -770,7 +772,7 @@ $(document).ready(function() {
                                 // Modela e apresenta título do video
                                 setRoomLabel('television', labelClasse, labelAssunto);
                             };
-                            button.innerHTML = '<i class="material-icons white-text">play_arrow</i>';
+                            button.innerHTML = '<i class="material-icons medium">play_circle_outline</i>';
                             if (moderator.userid == connection.sessionid) {
                                 // Se já estiver conectado na sala desabilite o botão de integração
                                 button.disabled = true;

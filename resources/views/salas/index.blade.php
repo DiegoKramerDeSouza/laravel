@@ -10,12 +10,18 @@
             <!--Diferenciação por tipo de usuário (Espectador/Agente)-->
             @if(Auth::user()->type == 0)
                 <div id='opend-rooms' class='col s12 m6'>
+                    <h5 class='row'>
+                        <span><b><i class='fa fa-television'></i> Salas disponíveis</b></span>
+                    </h5>
             @else
                 <div id='opend-rooms' class='col s12'>
+                    <h4 class='row'>
+                        <span><i class='fa fa-television'></i> <b>Bem vindo(a) <span class='blue-text'>{{ Auth::user()->name }}</span></b></span>
+                    </h4>
+                    <h5 class='row'>
+                        <span><b>Estas são as salas disponíveis para você:</b></span>
+                    </h5>
             @endif
-                <h5 class='row'>
-                    <span><b><i class='fa fa-television'></i> Salas disponíveis</b></span>
-                </h5>
                 <div class='divider'></div>
                 <div id='public-conference'>
                     <!--Div de loading de conteúdo. Apenas demonstrativa-->

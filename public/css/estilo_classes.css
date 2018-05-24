@@ -64,6 +64,10 @@
     cursor: pointer;
 }
 
+.room-enter:hover {
+    cursor: pointer;
+}
+
 .second-video {
     position: absolute !important;
     top: 218px !important;

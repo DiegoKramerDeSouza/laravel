@@ -31,8 +31,8 @@
                                     <td><b> {{ $escola->name }}</b></td>
                                     <td> {{ $escola->created_at }}</td>
                                     <td class='right'>
-                                        <a class='btn-flat waves-effect waves-red red-text text-darken-3 modal-trigger' href='#confirm-message-{{$escola->id}}'><i class='fa fa-trash-o'></i> deletar</a>
-                                        <a class='load btn-flat waves-effect waves-orange amber-text text-darken-3' href='{{ route('admin.cadastro.escolas.edita', $escola->id) }}'><i class='fa fa-edit'></i> editar</a>
+                                        <a class='btn-flat waves-effect waves-red red-text text-darken-3 modal-trigger' href='#confirm-message-{{$escola->id}}' title='Deletar'><i class='fa fa-trash-o'></i></a>
+                                        <a class='load btn-flat waves-effect waves-orange amber-text text-darken-3' href='{{ route('admin.cadastro.escolas.edita', $escola->id) }}' title='Editar'><i class='fa fa-edit'></i></a>
                                     </td>
                                 </tr>
                             @endforeach
