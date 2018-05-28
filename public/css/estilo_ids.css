@@ -46,14 +46,18 @@
 
 #chat-textarea {
     min-height: 120px;
-    max-height: 120px;
     overflow-y: auto;
+}
+
+#slide-out {
+    overflow: hidden;
 }
 
 #toast-container {
     top: auto !important;
     left: auto !important;
-    bottom: 10%;
+    bottom: 10% !important;
+    right: 0% !important;
 }
 
 #count-pedir-vez {
@@ -93,10 +97,6 @@ video::-webkit-media-controls-enclosure {
 
 #secondvideo-preview:hover {
     border: 2px solid rgba(100, 100, 100, 1);
-}
-
-#swap-video {
-    display: none;
 }
 
 #viewers {

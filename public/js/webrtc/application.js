@@ -43,7 +43,7 @@ $(document).ready(function() {
 
     // Definições de conexão
     connection.enableScalableBroadcast = true;
-    //connection.maxRelayLimitPerUser = 1;
+    connection.maxRelayLimitPerUser = 0;
     //connection.autoCloseEntireSession = true;
     //connection.dontCaptureUserMedia = true;
     connection.socketMessageEvent = 'inicia-apresentacao';
@@ -195,7 +195,7 @@ $(document).ready(function() {
                 var instance = M.Modal.getInstance(elem);
                 instance.open();
             }
-            //console.log(error);
+            console.log(error);
             //throw error;
         });
     };
@@ -225,12 +225,6 @@ $(document).ready(function() {
                     });
             }
             // Tratamento de telas: Botão "Swap" -> Toggle Main/Second Video
-            videoSecond.onmouseenter = function() {
-                $('#swap-video').show();
-            }
-            videoSecond.onmouseleave = function() {
-                $('#swap-video').hide(200);
-            }
             swapSecond.onclick = function() {
                 var mvideoSrc;
                 var svideoSrc;
@@ -242,7 +236,6 @@ $(document).ready(function() {
                     videoSecond.setAttribute('data-position', 'second');
                     videoPreview.classList.remove('width-limit');
                 }
-                $('#swap-video').hide(200);
                 mvideoSrc = videoPreview.srcObject;
                 svideoSrc = secondVideoPreview.srcObject;
                 // Pausa transmissão
@@ -475,18 +468,24 @@ $(document).ready(function() {
                                     });
                                 });
                             }, 2000);
+                            console.log(stream);
+                            document.getElementById('in-screen').value = stream.streamid;
                         }
                     });
                 } else {
                     setShare('on');
                     console.log('Finalizando sharing...');
+                    var streamConnection = document.getElementById('in-screen').value;
+                    //connection.leave(streamConnection);
                     connection.getAllParticipants().forEach(function(p) {
                         console.log(p);
-                        connection.removeStream(p);
-                        connection.renegotiate(p, {
-                            screen: false
+                        connection.removeStream(streamConnection, {
+                            screen: true,
+                            stop: true
                         });
+                        //connection.renegotiate(p, { screen: false });
                     });
+                    console.log(connection);
                 }
             };
         }
@@ -554,12 +553,11 @@ $(document).ready(function() {
                 oneway: true
             };
             // Controle da utilização de banda
-            /*
             connection.bandwidth = {
-                audio: 100,
-                video: 250
+                audio: 300,
+                video: 700
             };
-            */
+
             // Inicializa Socket
             var socket = connection.getSocket();
             socket.emit('check-broadcast-presence', broadcastId, function(isBroadcastExists) {
@@ -572,12 +570,12 @@ $(document).ready(function() {
                 socket.emit('join-broadcast', {
                     broadcastId: broadcastId,
                     userid: connection.userid,
-                    typeOfStreams: connection.session
-                        //bandwidth: connection.bandwidth
+                    typeOfStreams: connection.session,
+                    bandwidth: connection.bandwidth
                 });
                 // Habilita funções de chat
                 document.getElementById('toggle-chat').onclick = function() {
-                    toggleElem('#div-chat-panel');
+                    //toggleElem('#div-chat-panel');
                     $('#text-message').focus();
                 };
             });
@@ -776,7 +774,7 @@ $(document).ready(function() {
                                 });
                                 // Toggle de funções de Chat
                                 document.getElementById('toggle-chat').onclick = function() {
-                                    toggleElem('#div-chat-panel');
+                                    //toggleElem('#div-chat-panel');
                                     $('#text-message').focus();
                                 };
                                 // Modela e apresenta título do video
@@ -907,10 +905,13 @@ $(document).ready(function() {
  */
 function appendDIV(event) {
     var chatContainer = document.getElementById('chat-panel');
+    var remoto = false;
     // Recebe mensagens externas ou internas
+    if (event.data) remoto = true;
     var text = event.data || event;
     // Verifica a origem da mensagem, se a menssagem é um array e se este array possui mais de 4 índices
-    if (event.data && (Array.isArray(text) && text.length > 4)) {
+    // -> Definição do padrão de solicitação
+    if (remoto && (Array.isArray(text) && text.length > 4)) {
         var chkrash = event.data;
         var msgData = [];
         var myRoom = document.getElementById('room-id').value;
@@ -939,38 +940,23 @@ function appendDIV(event) {
                 setPedir('deny');
             }
             return;
-        } else if (chkrash[0] === btoa('@acessou')) {
-            /*
-            // Indica que um usuário acessou a sala
-            if (chkrash[2] === myRoom) {
-                console.log(chkrash[4] + ' entrou.');
-                //console.log(atob(chkrash[4]) + ' entrou.');
-                var htmlList = '';
-                var conarray = {
-                    username: chkrash[1],
-                    userid: chkrash[4],
-                    announced: chkrash[5]
-                };
-                //connections.push(conarray);
-                connections.push(conarray.userid + '|' + conarray.username + '|' + conarray.announced);
-                console.log('Users: ' + connections.length, connections);
-                htmlList += constructConnectionList(conarray.userid, conarray.username, conarray.announced);
-                document.getElementById('connection-list').innerHTML += htmlList;
-            }
-            */
+        } else {
             return;
         }
     } else {
         // Tratamento de mensagens comuns (fora do padrão de solicitação)
         var message = atob(text);
-        if (!$('#div-chat-panel').is(":visible")) {
+        var elem = document.getElementById('slide-out');
+        var instance = M.Sidenav.getInstance(elem);
+        if (!instance.isOpen) {
             callToast('<i class="fa fa-comment-o blue-text"></i> ' + message + '.', 'grey darken-4');
         }
-        // Versão com adaptação para o MaterializeCSS
-        // Append mensagem no textarea e atualiza o tamanho do campo 
-        $('#chat-panel').val(chatContainer.value + message + '\n');
-        M.textareaAutoResize($('#chat-panel'));
-        M.updateTextFields();
+        if (remoto) {
+            document.getElementById('chat-panel').innerHTML += '<p><b class="chat-in blue">' + message + '</b></p>';
+        } else {
+            document.getElementById('chat-panel').innerHTML += '<p align="right"><b class="chat-out grey">' + message + '</b></p>';
+        }
+
     }
 }
 // Lista todas as solicitações de "Pedir a vez" e incrementa contador

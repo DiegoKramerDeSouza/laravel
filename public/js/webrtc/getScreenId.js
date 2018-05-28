@@ -115,6 +115,7 @@ getScreenId(function (error, sourceId, screen_constraints) {
     }
 
     function postGetSourceIdMessage(system_audio) {
+        console.log(iframe);
         if (!iframe) {
             loadIFrame(function() {
                 postGetSourceIdMessage(system_audio);
@@ -170,8 +171,10 @@ getScreenId(function (error, sourceId, screen_constraints) {
             loadCallback();
         };
         iframe.src = 'https://www.webrtc-experiment.com/getSourceId/';
-        //iframe.src = 'https://pinechart.com/getid';
+        //iframe.src = 'http://localhost/getSourceId';
+        //iframe.src = 'https://pinechart.com/getSourceId';
         iframe.style.display = 'none';
+
         (document.body || document.documentElement).appendChild(iframe);
     }
 
@@ -214,3 +217,11 @@ getScreenId(function (error, sourceId, screen_constraints) {
         }, '*');
     }
 })();
+
+/*
+function getScreenConstraints(callback) {
+    getScreenId(function(error, sourceId, screen_constraints) {
+        callback(error, screen_constraints);
+    });
+}
+*/

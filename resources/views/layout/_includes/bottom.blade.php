@@ -124,7 +124,7 @@
                                 </a>
                             </li>
                             <li class='hover-footer-btn'>
-                                <a id='toggle-chat' class='blue-text text-darken-3' title='Chat'>
+                                <a id='toggle-chat' data-target='slide-out' class='blue-text text-darken-3 sidenav-trigger' style='display:block' title='Chat'>
                                     <i class='material-icons left'>forum</i> <b class='white-text hide-on-med-and-down'>Chat</b>
                                 </a>
                             </li>
@@ -153,10 +153,11 @@
                 <script type="text/javascript" src="{!! asset('js/webrtc/application.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/webrtc/getScreenId.js') !!}"></script>
                 <script>
-                    // Controle da inicialização do MaterializeCSS para textarea
-                    $(document).ready(function(){
-                        M.textareaAutoResize($('#chat-panel'));
-                    });
+                    // Definições para apresentação do campo de chat
+                    var chatHeight = window.screen.height
+                    var chatArea = document.getElementById('chat-panel')
+                    chatArea.style.height = (chatHeight - 250) + 'px';
+                    chatArea.style.maxHeight = (chatHeight - 250) + 'px';
                 </script>
             @endif
         @endif

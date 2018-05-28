@@ -86,8 +86,9 @@
     <input type='hidden' id='room-id' name='room-id' value='{{ Auth::user()->login}}-{{ Auth::user()->name}}-{!! rand(0,999) !!}' disabled readonly />
     <!-- ID do broadcaster-->
     <input type='hidden' id='broadcaster' name='broadcaster' disabled readonly />
-    <!-- ID da sala-->
+    <!-- ID da sala e tela-->
     <input type='hidden' id='in-room' name='in-room' disabled readonly />
+    <input type='hidden' id='in-screen' name='in-screen' disabled readonly />
     <!-- Usuário-->
     <input type='hidden' id='current-user' value='{{ Auth::user()->name}}' disabled readonly />
 
@@ -149,5 +150,25 @@
                 <i class='material-icons'>swap_horiz</i>
             </a>
         </div> 
-    </div> 
+    </div>
+    <ul id="slide-out" class="sidenav grey lighten-4">
+        <div class='row'>
+            <div id='chat-textarea' class='input-field white' >
+                <div id='chat-panel' class='white-text'>
+                    <!--Output de mensagem-->
+                </div>
+            </div>
+            <div class='divider'></div>
+            <div class='file-field input-field' style='padding:5px;'>
+                <a id='send-message-btn' class='btn-floating waves-effect waves-light blue right'>
+                    <i class='material-icons'>send</i>
+                </a>
+                <div class='file-path-wrapper'>
+                    <!--Input de mensagem-->
+                    <i class='fa fa-comments-o fa-1x prefix'></i>
+                    <input type='text' class='white' id='text-message' placeholder='Chat'>
+                </div>
+            </div>
+        </div>
+    </ul>
 @endsection

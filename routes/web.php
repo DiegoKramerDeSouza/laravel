@@ -28,12 +28,10 @@ Route::post('/login/access', ['as' => 'login.access', 'uses' => 'Site\LoginContr
 Route::get('/login/destroy', ['as' => 'login.destroy', 'uses' => 'Site\LoginController@logout']);
 
 /**
- *  Rota de verificação 
+ *  Rota de verificação do plugin de compartilhamento de tela
  */
 
-//Route::get('/getid', ['as' => 'getid', 'uses' => 'Site\GetId@index']);
-
-Route::get('/getid', function() {
+Route::get('/getSourceId', function() {
     return File::get(public_path() . '/html/getScreenId.html');
 });
 
