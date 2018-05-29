@@ -697,7 +697,6 @@ $(document).ready(function() {
                         try {
                             labelRoom = atob(labelRoom);
                         } catch (exp) {
-                            //console.log('Sala fora de padrão: ' + labelRoom + ' -> ' + exp);
                             if (array.length < 2) {
                                 noRooms();
                             }
@@ -798,7 +797,6 @@ $(document).ready(function() {
                     //Exibe mensagem de salas indisponíveis
                     noRooms();
                 }
-
             });
         } else {
             // Tratamento de conexões de espectadores
@@ -853,7 +851,7 @@ $(document).ready(function() {
         // Tratando entrada de texto
         this.value = this.value.replace(/^\s+|\s+$/g, '');
         if (!this.value.length) return;
-        var texto = "<b>" + usuario + "</b><br>" + this.value;
+        var texto = "<b class='small'>" + usuario + "</b>:<br>" + this.value;
         texto = btoa(texto);
         connection.send(texto);
         // Função de append de texto ao elem. textarea
@@ -868,7 +866,7 @@ $(document).ready(function() {
         var texto = document.getElementById('text-message').value
         texto = texto.replace(/^\s+|\s+$/g, '');
         if (!texto.length) return;
-        texto = "<b>" + usuario + "</b><br>" + texto;
+        texto = "<b class='small'>" + usuario + "</b>:<br>" + texto;
         texto = btoa(texto);
         connection.send(texto);
         // Função de append de texto ao elem. textarea
@@ -944,18 +942,8 @@ function appendDIV(event) {
         }
     } else {
         // Tratamento de mensagens comuns (fora do padrão de solicitação)
-        var message = atob(text);
-        var elem = document.getElementById('slide-out');
-        var instance = M.Sidenav.getInstance(elem);
-        if (!instance.isOpen) {
-            callToast('<i class="fa fa-comment-o blue-text"></i> ' + message + '.', 'grey darken-4');
-        }
-        if (remoto) {
-            document.getElementById('chat-panel').innerHTML += '<p class="truncate chat-in blue">' + message + '</p>';
-        } else {
-            document.getElementById('chat-panel').innerHTML += '<p class="truncate chat-out grey lighten-1" align="right">' + message + '</p>';
-        }
-
+        // Identifica e exibe mensagem
+        writeMessage(text, remoto);
     }
 }
 // Lista todas as solicitações de "Pedir a vez" e incrementa contador

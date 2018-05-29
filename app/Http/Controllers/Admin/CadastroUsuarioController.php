@@ -16,8 +16,8 @@ class CadastroUsuarioController extends Controller
 
     public function index($page){
         if($this->validade('5')){
-            $users = User::where('type', 0)->paginate(10);
-            $escolas = Escola::all();
+            $users = User::where('type', 0)->orderBy('name', 'asc')->paginate(10);
+            //$escolas = Escola::all();
 
             //Construção da paginação personalizada
             $prev = $page-1;

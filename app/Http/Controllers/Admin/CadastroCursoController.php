@@ -15,7 +15,7 @@ class CadastroCursoController extends Controller
     public function index($page){
         if($this->validade('3')){
             //Paginação dos valores coletados na entidade Cursos
-            $cursos = Curso::paginate(10);
+            $cursos = Curso::orderBy('name', 'asc')->paginate(10);
             $allmodulos = Modulo::all()->toArray();
             $modulos = array();
             foreach($allmodulos as $modulo){

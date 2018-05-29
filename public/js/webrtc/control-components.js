@@ -3,17 +3,12 @@
  * Métodos de criação/alteração de elementos visuais para a plataforma de video conferência
  * 
  */
-$(document).ready(function() {
-    /*
-    $('#nav-footer').mouseenter(function() {
-        console.log('Mouse entered...');
-        $('#div-mobile').fadeIn(500);
-    });
-    $('#nav-footer').mouseleave(function() {
-        $('#div-mobile').fadeOut(500);
-    });
-    */
-});
+
+// Variaveis globais
+/**
+ * var countMessages   integer
+ */
+var countMessages = 0;
 
 // Chama alertas em elementos toast do MaterializeCSS
 /**
@@ -22,7 +17,7 @@ $(document).ready(function() {
  */
 function callToast(content, classe) {
     content = '<span class="white-text">' + content + '</span>';
-    M.toast({ html: content, classes: classe, displayLength: 1000 });
+    M.toast({ html: content, classes: classe, displayLength: 4000 });
 }
 // Altera o contador de usuários conectados à sala e exibe em 'broadcast-viewers-counter'
 /**
@@ -216,6 +211,29 @@ function fullscreen() {
         element.setAttribute('data-status', 'disabled');
     }
     return;
+}
+// Tratamento de mensagens de chat
+/**
+ * msg: Mensagem enviada ou recebida
+ * rmt: Identificador da origem da mensagem (interna ou externa) 
+ */
+function writeMessage(msg, rmt) {
+    var message = atob(msg);
+    var element = document.getElementById('chat-panel');
+    var elem = document.getElementById('slide-out');
+    var scrollsize;
+    var instance = M.Sidenav.getInstance(elem);
+    if (!instance.isOpen) {
+        callToast('<i class="fa fa-comment-o blue-text"></i> ' + message + '.', 'grey darken-4');
+    }
+    if (rmt) {
+        element.innerHTML += '<p class="chat-in blue">' + message + '</p>';
+    } else {
+        element.innerHTML += '<p class="chat-out grey" align="right">' + message + '</p>';
+    }
+    countMessages++;
+    scrollsize = (countMessages * 150);
+    $('#chat-textarea').animate({ scrollTop: scrollsize }, 'slow');
 }
 //Verifica a existência de dispositivos de vídeo
 /**

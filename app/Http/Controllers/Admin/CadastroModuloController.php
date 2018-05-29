@@ -14,7 +14,7 @@ class CadastroModuloController extends Controller
     public function index($page){
         if($this->validade('2')){
             //Paginação dos valores coletados na entidade Modulos
-            $modulos = Modulo::paginate(10);
+            $modulos = Modulo::orderBy('name', 'asc')->paginate(10);
 
             //Construção da paginação personalizada
             $prev = $page-1;

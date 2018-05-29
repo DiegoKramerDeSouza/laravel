@@ -154,7 +154,7 @@
     <!-- Sidebar de painel de chat -->
     <ul id="slide-out" class="sidenav grey lighten-4 z-depth-5">
         <div class='row'>
-            <div id='chat-textarea' class='input-field'>
+            <div id='chat-textarea' class=''>
                 <div id='chat-panel' class='white-text'>
                     <!--Output de mensagem-->
                 </div>

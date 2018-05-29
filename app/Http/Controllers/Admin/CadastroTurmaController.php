@@ -18,7 +18,7 @@ class CadastroTurmaController extends Controller
     public function index($page){
         if($this->validade('1')){
             //Paginação dos valores coletados na entidade Turmas
-            $turmas = Turma::paginate(10);
+            $turmas = Turma::orderBy('name', 'asc')->paginate(10);
             $escolas = Escola::all();
             $accounts = User::where('type', 1)->get()->toArray();
             $users = array();

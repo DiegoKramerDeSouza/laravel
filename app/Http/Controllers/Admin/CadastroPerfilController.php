@@ -15,7 +15,7 @@ class CadastroPerfilController extends Controller
     public function index($page){
         if($this->validade('6')){
             //Paginação dos valores coletados na entidade Perfils
-            $perfis = Perfil::paginate(10);
+            $perfis = Perfil::orderBy('name', 'asc')->paginate(10);
             //Construção da paginação personalizada
             $prev = $page-1;
             $next = $page+1;

@@ -97,7 +97,6 @@ video::-webkit-media-controls-enclosure {
     width: inherit;
     height: inherit;
     border-radius: 4px;
-    z-index: 2247483648;
     -webkit-transition-duration: 0.4s !important;
     transition-duration: 0.4s !important;
 }

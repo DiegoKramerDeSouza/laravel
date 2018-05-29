@@ -21,7 +21,7 @@ class CadastroEscolaController extends Controller
         
         if($this->validade('4')){
             //Paginação dos valores coletados na entidade Escolas
-            $escolas = Escola::paginate(10);
+            $escolas = Escola::orderBy('name', 'asc')->paginate(10);
             //Construção da paginação personalizada
             $prev = $page-1;
             $next = $page+1;
