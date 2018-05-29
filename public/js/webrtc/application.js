@@ -276,6 +276,7 @@ $(document).ready(function() {
             $('#div-connect').hide();
             $('#span-video-preview-2nd').fadeOut(300);
             ctlPedir.innerHTML = constructBtnActionPedir();
+            $('#pedir-vez').tooltip();
             pedir = document.getElementById('pedir-vez');
 
             //Controle de elementos da conexão
@@ -461,7 +462,7 @@ $(document).ready(function() {
                             // Após confirmado o compartilhamento, inicia a renegociação da conexão com cada usuário conectado
                             setTimeout(function() {
                                 connection.getAllParticipants().forEach(function(p) {
-                                    console.log('Renegociando com: ' + p);
+                                    //console.log('Renegociando com: ' + p);
                                     connection.renegotiate(p, {
                                         screen: true,
                                         oneway: true
@@ -575,7 +576,6 @@ $(document).ready(function() {
                 });
                 // Habilita funções de chat
                 document.getElementById('toggle-chat').onclick = function() {
-                    //toggleElem('#div-chat-panel');
                     $('#text-message').focus();
                 };
             });
@@ -774,7 +774,6 @@ $(document).ready(function() {
                                 });
                                 // Toggle de funções de Chat
                                 document.getElementById('toggle-chat').onclick = function() {
-                                    //toggleElem('#div-chat-panel');
                                     $('#text-message').focus();
                                 };
                                 // Modela e apresenta título do video
@@ -854,7 +853,7 @@ $(document).ready(function() {
         // Tratando entrada de texto
         this.value = this.value.replace(/^\s+|\s+$/g, '');
         if (!this.value.length) return;
-        var texto = usuario + ": " + this.value;
+        var texto = "<b>" + usuario + "</b><br>" + this.value;
         texto = btoa(texto);
         connection.send(texto);
         // Função de append de texto ao elem. textarea
@@ -869,7 +868,7 @@ $(document).ready(function() {
         var texto = document.getElementById('text-message').value
         texto = texto.replace(/^\s+|\s+$/g, '');
         if (!texto.length) return;
-        texto = usuario + ": " + texto;
+        texto = "<b>" + usuario + "</b><br>" + texto;
         texto = btoa(texto);
         connection.send(texto);
         // Função de append de texto ao elem. textarea
@@ -952,9 +951,9 @@ function appendDIV(event) {
             callToast('<i class="fa fa-comment-o blue-text"></i> ' + message + '.', 'grey darken-4');
         }
         if (remoto) {
-            document.getElementById('chat-panel').innerHTML += '<p><b class="chat-in blue">' + message + '</b></p>';
+            document.getElementById('chat-panel').innerHTML += '<p class="truncate chat-in blue">' + message + '</p>';
         } else {
-            document.getElementById('chat-panel').innerHTML += '<p align="right"><b class="chat-out grey">' + message + '</b></p>';
+            document.getElementById('chat-panel').innerHTML += '<p class="truncate chat-out grey lighten-1" align="right">' + message + '</p>';
         }
 
     }

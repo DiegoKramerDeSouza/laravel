@@ -151,9 +151,10 @@
             </a>
         </div> 
     </div>
-    <ul id="slide-out" class="sidenav grey lighten-4">
+    <!-- Sidebar de painel de chat -->
+    <ul id="slide-out" class="sidenav grey lighten-4 z-depth-5">
         <div class='row'>
-            <div id='chat-textarea' class='input-field white' >
+            <div id='chat-textarea' class='input-field'>
                 <div id='chat-panel' class='white-text'>
                     <!--Output de mensagem-->
                 </div>
@@ -165,10 +166,79 @@
                 </a>
                 <div class='file-path-wrapper'>
                     <!--Input de mensagem-->
-                    <i class='fa fa-comments-o fa-1x prefix'></i>
-                    <input type='text' class='white' id='text-message' placeholder='Chat'>
+                    <i class='fa fa-commenting-o fa-1x prefix'></i>
+                    <input type='text' class='' id='text-message' placeholder='Chat'>
                 </div>
             </div>
         </div>
     </ul>
+    @if(isset($streamPage))
+        <!-- Modal de conexões ativas-->
+        <div id='con-list' class='modal'>
+            <div class='modal-content'>
+                <h5>
+                    <i class='material-icons blue-text'>ondemand_video</i> Espectadores:
+                    <span class='right'>
+                        <a class='modal-close'>
+                            <i class='fa fa-times red-text text-darken-3'></i>
+                        </a>
+                    </span>
+                </h5>
+                <div class='divider'></div>
+                <ul id='connection-list' class='collection'>
+                </ul>
+                <br>
+            </div>
+        </div>
+
+        @if(Auth::user()->type == 0)
+            <!-- Modal de solicitação de vez-->
+            <div id='msg-solicita' class='modal'>
+                <div class='modal-content'>
+                    <h5>
+                        <i class='material-icons blue-text'>pan_tool</i> Solicitações:
+                        <span class='right'>
+                            <a class='modal-close'>
+                                <i class='fa fa-times red-text text-darken-3'></i>
+                            </a>
+                        </span>
+                    </h5>
+                    <div class='divider'></div>
+                    <ul id='solicita-list' class='collection'>
+                    </ul>
+                    <br>
+                </div>
+            </div>
+
+            <!-- Modal de compartilhamento-->
+            <div id='msg-share' class='modal'>
+                <div class='modal-content'>
+                    <h5>
+                        <i class='material-icons blue-text'>extension</i> Extensão do Chrome:
+                        <span class='right'>
+                            <a class='modal-close'>
+                                <i class='fa fa-times red-text text-darken-3'></i>
+                            </a>
+                        </span>
+                    </h5>
+                    <div class='divider'></div>
+                    <div class='red-text text-darken-3'>
+                        <p>Para compartilhar sua tela, seu navegador deve possuir a extensão do {{ $logo }}.</p>
+                        <p><b>Deseja instalar a extensão do {{ $logo }} para o navegador Google Chrome?</b></p>
+                    </div>
+                    <br>
+                </div>
+                <div class='modal-action'>
+                    <a href='https://chrome.google.com/webstore/detail/screen-capturing/ajhifddimkapgcifgcodmmfdlknahffk' target='_blank' onclick='chrome.webstore.install()' class='right btn-flat blue-text text-darken-2 waves-effect waves-teal'><i class='fa fa-check'></i> sim, instalar</a>
+                    <a class='modal-close right btn-flat red-text text-darken-3 waves-effect waves-red'><i class='fa fa-times'></i> não</a>
+                </div>
+            </div>
+        @endif
+
+        <div id='div-enter' class='fixed-action-btn d-none' style='margin-bottom: 45px;'>
+            <a id='enter' class='btn-floating btn-large blue pulse'>
+                <i class='large material-icons'>videocam</i>
+            </a>
+        </div>
+    @endif
 @endsection

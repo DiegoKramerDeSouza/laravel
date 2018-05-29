@@ -3,6 +3,17 @@
  * Métodos de criação/alteração de elementos visuais para a plataforma de video conferência
  * 
  */
+$(document).ready(function() {
+    /*
+    $('#nav-footer').mouseenter(function() {
+        console.log('Mouse entered...');
+        $('#div-mobile').fadeIn(500);
+    });
+    $('#nav-footer').mouseleave(function() {
+        $('#div-mobile').fadeOut(500);
+    });
+    */
+});
 
 // Chama alertas em elementos toast do MaterializeCSS
 /**
@@ -11,7 +22,7 @@
  */
 function callToast(content, classe) {
     content = '<span class="white-text">' + content + '</span>';
-    M.toast({ html: content, classes: classe });
+    M.toast({ html: content, classes: classe, displayLength: 1000 });
 }
 // Altera o contador de usuários conectados à sala e exibe em 'broadcast-viewers-counter'
 /**
@@ -54,20 +65,18 @@ function setCam(status) {
     var cam = document.getElementById('toggle-camera');
     if (status === 'dis') {
         cam.setAttribute('data-active', 'disabled');
-        cam.classList.remove("blue-text");
         cam.classList.add("grey-text");
-        cam.innerHTML = "<i class='material-icons left'>videocam_off</i> <b class='hide-on-med-and-down'>Camera</b>";
+        cam.innerHTML = "<i class='material-icons'>videocam_off</i>";
+        $('#toggle-camera').hide();
     } else if (status === 'off') {
         cam.setAttribute('data-active', 'disabled');
-        cam.classList.remove("blue-text");
         cam.classList.add("red-text");
-        cam.innerHTML = "<i class='material-icons left'>videocam_off</i> <b class='white-text hide-on-med-and-down'>Camera</b>";
+        cam.innerHTML = "<i class='material-icons'>videocam_off</i>";
         callToast('<span class="white-text"><i class="material-icons left">videocam_off</i> Camera Desabilitada.</span>', 'red darken-3');
     } else if (status === 'on') {
         cam.setAttribute('data-active', 'enabled');
         cam.classList.remove("red-text");
-        cam.classList.add("blue-text");
-        cam.innerHTML = "<i class='material-icons left'>videocam</i> <b class='white-text hide-on-med-and-down'>Camera</b>";
+        cam.innerHTML = "<i class='material-icons'>videocam</i>";
         callToast('<span class="white-text"><i class="material-icons left">videocam</i> Camera Habilitada.</span>', 'blue darken-2');
     }
 
@@ -80,20 +89,18 @@ function setMute(status) {
     var mute = document.getElementById('toggle-mute');
     if (status === 'dis') {
         mute.setAttribute('data-active', 'disabled');
-        mute.classList.remove("blue-text");
         mute.classList.add("grey-text");
-        mute.innerHTML = "<i class='material-icons left'>mic_off</i> <b class='hide-on-med-and-down'>Microfone</b>";
+        mute.innerHTML = "<i class='material-icons'>mic_off</i>";
+        $('#toggle-mute').hide();
     } else if (status === 'off') {
         mute.setAttribute('data-active', 'disabled');
-        mute.classList.remove("blue-text");
         mute.classList.add("red-text");
-        mute.innerHTML = "<i class='material-icons left'>mic_off</i> <b class='white-text hide-on-med-and-down'>Microfone</b>";
+        mute.innerHTML = "<i class='material-icons'>mic_off</i>";
         callToast('<span class="white-text"><i class="material-icons left">mic_off</i> Microfone Desabilitado.</span>', 'red darken-3');
     } else if (status === 'on') {
         mute.setAttribute('data-active', 'enabled');
         mute.classList.remove("red-text");
-        mute.classList.add("blue-text");
-        mute.innerHTML = "<i class='material-icons left'>mic</i> <b class='white-text hide-on-med-and-down'>Microfone</b>";
+        mute.innerHTML = "<i class='material-icons'>mic</i>";
         callToast('<span class="white-text"><i class="material-icons left">mic</i> Microfone Habilitado.</span>', 'blue darken-2');
     }
 }
@@ -105,20 +112,18 @@ function setVol(status) {
     var vol = document.getElementById('toggle-volume');
     if (status === 'dis') {
         vol.setAttribute('data-active', 'disabled');
-        vol.classList.remove("blue-text");
         vol.classList.add("grey-text");
-        vol.innerHTML = "<i class='material-icons left'>volume_off</i> <b class='hide-on-med-and-down'>Áudio</b>";
+        vol.innerHTML = "<i class='material-icons'>volume_off</i>";
+        $('#toggle-volume').hide();
     } else if (status === 'off') {
         vol.setAttribute('data-active', 'disabled');
-        vol.classList.remove("blue-text");
         vol.classList.add("red-text");
-        vol.innerHTML = "<i class='material-icons left'>volume_off</i> <b class='white-text hide-on-med-and-down'>Áudio</b>";
+        vol.innerHTML = "<i class='material-icons'>volume_off</i>";
         callToast('<span class="white-text"><i class="material-icons left">volume_off</i> Áudio Desabilitado.</span>', 'red darken-3');
     } else if (status === 'on') {
         vol.setAttribute('data-active', 'enabled');
         vol.classList.remove("red-text");
-        vol.classList.add("blue-text");
-        vol.innerHTML = "<i class='material-icons left'>volume_up</i> <b class='white-text hide-on-med-and-down'>Áudio</b>";
+        vol.innerHTML = "<i class='material-icons'>volume_up</i>";
         callToast('<span class="white-text"><i class="material-icons left">volume_up</i> Áudio Habilitado.</span>', 'blue darken-2');
     }
 }
@@ -130,20 +135,18 @@ function setShare(status) {
     var share = document.getElementById('share-screen');
     if (status === 'dis') {
         share.setAttribute('data-active', 'disabled');
-        share.classList.remove("blue-text");
         share.classList.add("grey-text");
-        share.innerHTML = "<i class='material-icons left'>stop_screen_share</i> <b class='hide-on-med-and-down'>Compartilhar</b>";
+        share.innerHTML = "<i class='material-icons'>stop_screen_share</i>";
+        $('#share-screen').hide();
     } else if (status === 'off') {
         share.setAttribute('data-active', 'disabled');
-        share.classList.remove("blue-text");
         share.classList.add("red-text");
-        share.innerHTML = "<i class='material-icons left'>stop_screen_share</i> <b class='white-text hide-on-med-and-down'>Compartilhar</b>";
+        share.innerHTML = "<i class='material-icons'>stop_screen_share</i>";
         callToast('<span class="white-text"><i class="material-icons left">screen_share</i> Tela compartilhada.</span>', 'blue darken-2');
     } else if (status === 'on') {
         share.setAttribute('data-active', 'enabled');
         share.classList.remove("red-text");
-        share.classList.add("blue-text");
-        share.innerHTML = "<i class='material-icons left'>screen_share</i> <b class='white-text hide-on-med-and-down'>Compartilhar</b>";
+        share.innerHTML = "<i class='material-icons'>screen_share</i>";
         callToast('<span class="white-text"><i class="material-icons left">stop_screen_share</i> Compartilhamento finalizado.</span>', 'red darken-3');
     }
 }
@@ -155,9 +158,9 @@ function setPedir(status) {
     var pedir = document.getElementById('pedir-vez');
     if (status === 'dis') {
         pedir.setAttribute('data-active', 'disabled');
-        pedir.classList.remove("blue-text");
         pedir.classList.add("grey-text");
         pedir.innerHTML = "<i class='material-icons left'>pan_tool</i> <b class='hide-on-med-and-down'>Áudio</b>";
+        $('#pedir-vez').hide();
     } else if (status === 'allow') {
         var toastContent = '<span class="white-text"><i class="fa fa-check"></i> ' +
             'Sua solicitação foi atendida.<br>' +
@@ -259,9 +262,9 @@ function toggleElem(elemId) {
 // Constroi um botão de 'Pedir vez' 
 // *Uso pontual
 function constructBtnActionPedir() {
-    var htmlBtn = "<li class='hover-footer-btn'>" +
-        "<a id='pedir-vez' data-active='enabled' class='blue-text text-darken-3' title='Pedir vez'>" +
-        "<i class='material-icons left'>pan_tool</i> <b class='white-text hide-on-med-and-down'>Pedir vez</b>" +
+    var htmlBtn = "<li class=''>" +
+        "<a id='pedir-vez' data-active='enabled' class='media-control tooltipped' data-position='top' data-tooltip='Solicitar vez'>" +
+        "<i class='material-icons center'>pan_tool</i>" +
         "</a>" +
         "</li>";
     return htmlBtn;
