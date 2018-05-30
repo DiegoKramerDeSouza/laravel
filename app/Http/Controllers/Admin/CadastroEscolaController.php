@@ -17,34 +17,12 @@ class CadastroEscolaController extends Controller
     use EspecialMethods;
 
     //->View escolas cadastradas
-    public function index($page){
+    public function index(){
         
         if($this->validade('4')){
             //Paginação dos valores coletados na entidade Escolas
-            $escolas = Escola::orderBy('name', 'asc')->paginate(10);
-            //Construção da paginação personalizada
-            $prev = $page-1;
-            $next = $page+1;
-            $last = $escolas->lastPage();
-            $paginate = '';
-            if($page == 1){
-                $paginate .= '<li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a></li>';
-            } else {
-                $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/escolas/p' . $prev . '?page=' . $prev . '"><i class="material-icons">chevron_left</i></a></li>';
-            }
-            for($i = 1; $i<=$last; $i++){
-                if($i == $page){
-                    $paginate .= '<li class="active blue white-text"><a>' . $i . '</a></li>';
-                } else {
-                    $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/escolas/p' . $i . '?page=' . $i . '">' . $i . '</a></li>';
-                }
-            }
-            if($page == $last){
-                $paginate .= '<li class="disabled"><a href="#!"><i class="material-icons">chevron_right</i></a></li>';
-            } else {
-                $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/escolas/p' . $next . '?page=' . $next . '"><i class="material-icons">chevron_right</i></a></li>';
-            }
-            return view('admin.cadastro.escolas.index', compact('escolas', 'paginate'));
+            $escolas = Escola::orderBy('name', 'asc')->paginate(5);
+            return view('admin.cadastro.escolas.index', compact('escolas'));
         } else {
             return redirect()->route('denied');
         }

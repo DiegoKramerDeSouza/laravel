@@ -14,37 +14,10 @@ class CadastroUsuarioController extends Controller
 {
     use EspecialMethods;
 
-    public function index($page){
+    public function index(){
         if($this->validade('5')){
-            $users = User::where('type', 0)->orderBy('name', 'asc')->paginate(10);
-            //$escolas = Escola::all();
-
-            //Construção da paginação personalizada
-            $prev = $page-1;
-            $next = $page+1;
-            $last = $users->lastPage();
-            $paginate = '';
-            if($page == 1){
-                $paginate .= '<li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a></li>';
-            } else {
-                $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/usuarios/p' . $prev . '?page=' . $prev . '"><i class="material-icons">chevron_left</i></a></li>';
-            }
-            for($i = 1; $i<=$last; $i++){
-                if($i == $page){
-                    $paginate .= '<li class="active blue white-text"><a>' . $i . '</a></li>';
-                } else {
-                    $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/usuarios/p' . $i . '?page=' . $i . '">' . $i . '</a></li>';
-                }
-            }
-            if($page == $last){
-                $paginate .= '<li class="disabled"><a href="#!"><i class="material-icons">chevron_right</i></a></li>';
-            } else {
-                $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/usuarios/p' . $next . '?page=' . $next . '"><i class="material-icons">chevron_right</i></a></li>';
-            }
-
-            //Habilita uma view a receber e enviar dados via WEBRTC
-            //$streamPage = true; 
-            return view('admin.cadastro.usuarios.index', compact('users', 'paginate'));
+            $users = User::where('type', 0)->orderBy('name', 'asc')->paginate(5);
+            return view('admin.cadastro.usuarios.index', compact('users'));
         } else {
             return redirect()->route('denied');
         }

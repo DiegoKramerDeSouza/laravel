@@ -41,10 +41,7 @@
                         </tbody>
                     </table>
                     <div class='row center'>
-                        <ul class="pagination">
-                            {!! $paginate !!}
-                        </ul>
-                        <br>
+                        {{ $perfis->links() }}
                     </div>
                 @else
                     <div class='grey-text center' style='margin-top:40px; margin-bottom:40px;'>

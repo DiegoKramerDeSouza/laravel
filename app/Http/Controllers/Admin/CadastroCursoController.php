@@ -12,39 +12,16 @@ class CadastroCursoController extends Controller
 {
     use EspecialMethods;
 
-    public function index($page){
+    public function index(){
         if($this->validade('3')){
             //Paginação dos valores coletados na entidade Cursos
-            $cursos = Curso::orderBy('name', 'asc')->paginate(10);
+            $cursos = Curso::orderBy('name', 'asc')->paginate(5);
             $allmodulos = Modulo::all()->toArray();
             $modulos = array();
             foreach($allmodulos as $modulo){
                 $modulos[$modulo['id']] = $modulo['name'];
             }
-            //Construção da paginação personalizada
-            $prev = $page-1;
-            $next = $page+1;
-            $last = $cursos->lastPage();
-            $paginate = '';
-            if($page == 1){
-                $paginate .= '<li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a></li>';
-            } else {
-                $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/cursos/p' . $prev . '?page=' . $prev . '"><i class="material-icons">chevron_left</i></a></li>';
-            }
-            for($i = 1; $i<=$last; $i++){
-                if($i == $page){
-                    $paginate .= '<li class="active blue white-text"><a>' . $i . '</a></li>';
-                } else {
-                    $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/cursos/p' . $i . '?page=' . $i . '">' . $i . '</a></li>';
-                }
-            }
-            if($page == $last){
-                $paginate .= '<li class="disabled"><a href="#!"><i class="material-icons">chevron_right</i></a></li>';
-            } else {
-                $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/cursos/p' . $next . '?page=' . $next . '"><i class="material-icons">chevron_right</i></a></li>';
-            }
-
-            return view('admin.cadastro.cursos.index', compact('cursos', 'modulos', 'paginate'));
+            return view('admin.cadastro.cursos.index', compact('cursos', 'modulos'));
         } else {
             return redirect()->route('denied');
         }

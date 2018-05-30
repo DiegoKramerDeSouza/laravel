@@ -15,41 +15,17 @@ class CadastroTurmaController extends Controller
 {
     use EspecialMethods;
 
-    public function index($page){
+    public function index(){
         if($this->validade('1')){
             //Paginação dos valores coletados na entidade Turmas
-            $turmas = Turma::orderBy('name', 'asc')->paginate(10);
+            $turmas = Turma::orderBy('name', 'asc')->paginate(5);
             $escolas = Escola::all();
             $accounts = User::where('type', 1)->get()->toArray();
             $users = array();
             foreach($accounts as $account){
                 $users[$account['id']] = $account['login'];
             }
-
-            //Construção da paginação personalizada
-            $prev = $page-1;
-            $next = $page+1;
-            $last = $turmas->lastPage();
-            $paginate = '';
-            if($page == 1){
-                $paginate .= '<li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a></li>';
-            } else {
-                $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/turmas/p' . $prev . '?page=' . $prev . '"><i class="material-icons">chevron_left</i></a></li>';
-            }
-            for($i = 1; $i<=$last; $i++){
-                if($i == $page){
-                    $paginate .= '<li class="active blue white-text"><a>' . $i . '</a></li>';
-                } else {
-                    $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/turmas/p' . $i . '?page=' . $i . '">' . $i . '</a></li>';
-                }
-            }
-            if($page == $last){
-                $paginate .= '<li class="disabled"><a href="#!"><i class="material-icons">chevron_right</i></a></li>';
-            } else {
-                $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/turmas/p' . $next . '?page=' . $next . '"><i class="material-icons">chevron_right</i></a></li>';
-            }
-
-            return view('admin.cadastro.turmas.index', compact('turmas', 'users', 'paginate'));
+            return view('admin.cadastro.turmas.index', compact('turmas', 'users'));
         } else {
             return redirect()->route('denied');
         }

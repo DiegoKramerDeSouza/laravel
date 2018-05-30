@@ -12,34 +12,11 @@ class CadastroPerfilController extends Controller
 {
     use EspecialMethods;
 
-    public function index($page){
+    public function index(){
         if($this->validade('6')){
             //Paginação dos valores coletados na entidade Perfils
-            $perfis = Perfil::orderBy('name', 'asc')->paginate(10);
-            //Construção da paginação personalizada
-            $prev = $page-1;
-            $next = $page+1;
-            $last = $perfis->lastPage();
-            $paginate = '';
-            if($page == 1){
-                $paginate .= '<li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a></li>';
-            } else {
-                $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/perfis/p' . $prev . '?page=' . $prev . '"><i class="material-icons">chevron_left</i></a></li>';
-            }
-            for($i = 1; $i<=$last; $i++){
-                if($i == $page){
-                    $paginate .= '<li class="active blue white-text"><a>' . $i . '</a></li>';
-                } else {
-                    $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/perfis/p' . $i . '?page=' . $i . '">' . $i . '</a></li>';
-                }
-            }
-            if($page == $last){
-                $paginate .= '<li class="disabled"><a href="#!"><i class="material-icons">chevron_right</i></a></li>';
-            } else {
-                $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/perfis/p' . $next . '?page=' . $next . '"><i class="material-icons">chevron_right</i></a></li>';
-            }
-
-            return view('admin.cadastro.perfis.index', compact('perfis', 'paginate'));
+            $perfis = Perfil::orderBy('name', 'asc')->paginate(5);
+            return view('admin.cadastro.perfis.index', compact('perfis'));
         } else {
             return redirect()->route('denied');
         }
