@@ -304,6 +304,7 @@ $(document).ready(function() {
                      *  var myIdentity  string
                      */
                     var msgrash = [];
+                    var myIdentity;
                     msgrash[0] = btoa('@PedeAVez');
                     msgrash[1] = currentUser;
                     msgrash[2] = connection.userid;

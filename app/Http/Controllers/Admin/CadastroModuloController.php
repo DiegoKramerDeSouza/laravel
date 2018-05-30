@@ -15,7 +15,8 @@ class CadastroModuloController extends Controller
         if($this->validade('2')){
             //Paginação dos valores coletados na entidade Modulos
             $modulos = Modulo::orderBy('name', 'asc')->paginate(5);
-            return view('admin.cadastro.modulos.index', compact('modulos'));
+            $modulosToString = true;
+            return view('admin.cadastro.modulos.index', compact('modulos', 'modulosToString'));
         } else {
             return redirect()->route('denied');
         }
@@ -73,5 +74,20 @@ class CadastroModuloController extends Controller
         } else {
             return redirect()->route('denied');
         }
+    }
+    public function autocomplete(){
+        $allModulos = Modulo::all()->toArray();
+        $result = array();
+        for($i = 0; $i < count($allModulos); $i++){
+            $data = str_replace("\0", "", $allModulos[$i]['name']);
+            $result[$allModulos[$i]['name']] = null;       
+        }
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode($result, JSON_UNESCAPED_UNICODE);
+    }
+    public function resultAutocomplete($data){
+        $modulosToString = true;
+        $modulos = Modulo::where('name', '=', $data)->orderBy('name', 'asc')->paginate(5);
+        return view('admin.cadastro.modulos.index', compact('modulos', 'modulosToString'));
     }
 }

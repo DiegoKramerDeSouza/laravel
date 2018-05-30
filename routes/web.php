@@ -78,6 +78,8 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/admin/cadastro/modulos/editar/{id}', ['as' => 'admin.cadastro.modulos.edita', 'uses' => 'Admin\CadastroModuloController@edit']);
     Route::put('/admin/cadastro/modulos/atualizar/{id}', ['as' => 'admin.cadastro.modulos.atualiza', 'uses' => 'Admin\CadastroModuloController@update']);
     Route::get('/admin/cadastro/modulos/deletar/{id}', ['as' => 'admin.cadastro.modulos.deleta', 'uses' => 'Admin\CadastroModuloController@delete']);
+    Route::get('/admin/cadastro/modulos/autocomplete', ['as' => 'admin.cadastro.modulos.autocomplete', 'uses' => 'Admin\CadastroModuloController@autocomplete']);
+    Route::get('/admin/cadastro/modulos/result/{name}', ['as' => 'admin.cadastro.modulos.result', 'uses' => 'Admin\CadastroModuloController@resultAutocomplete']);
 
     //Rotas para o formulário de cadastro de cursos
     Route::get('/admin/cadastro/cursos/', ['as' => 'admin.cadastro.cursos', 'uses' => 'Admin\CadastroCursoController@index']);

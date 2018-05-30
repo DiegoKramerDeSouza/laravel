@@ -10,11 +10,18 @@
             <div class='card-title'>
                 <b class='grey-text text-darken-2'><i class='fa fa-database'></i> Cadastro de Módulos</b>
             </div>
-            <div class='row' align='right'>
-                Módulos cadastrados: <b>{{ $modulos->total() }}</b>
-                <h6><a class='load green-text text-darken-1' href='{{ route('admin.cadastro.modulos.adiciona') }}'><i class='fa fa-plus-circle fa-lg'></i> Novo Módulo</a></h6>
+            <div class='row'>
+                <div class="input-field col s12 m6">
+                    <i class="material-icons prefix">search</i>
+                    <input type="text" id="search-modulos-input" autofocus class="autocomplete">
+                    <label for="search-modulos-input">Procurar</label>
+                </div>
+                <div class="input-field col s12 m6" align='right'>
+                    Módulos cadastrados: <b>{{ $modulos->total() }}</b>
+                    <h6><a class='load green-text text-darken-1' href='{{ route('admin.cadastro.modulos.adiciona') }}'><i class='fa fa-plus-circle fa-lg'></i> Novo Módulo</a></h6>
+                </div>
+                <div class='col s12 divider'></div>
             </div>
-            <div class='divider'></div>
             <div class='row'>
                 @if(count($modulos) > 0)
                     <table class='striped'>

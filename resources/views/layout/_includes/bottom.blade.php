@@ -138,6 +138,10 @@
             </script>
         @endif
 
+        @if(isset($modulosToString))
+            <script type="text/javascript" src="{!! asset('js/formModulos.js') !!}"></script>
+        @endif
+
         <!-- Inicialização in-page de elementos padrões-->
         <!-- Inicialização padrão de funções e padrões do MaterializeCSS para todas as páginas-->
         <script>
