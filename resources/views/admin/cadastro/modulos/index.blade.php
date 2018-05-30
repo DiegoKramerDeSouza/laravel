@@ -11,7 +11,7 @@
                 <b class='grey-text text-darken-2'><i class='fa fa-database'></i> Cadastro de Módulos</b>
             </div>
             <div class='row' align='right'>
-                Módulos cadastrados: <b>{{ count($modulos) }}</b>
+                Módulos cadastrados: <b>{{ $modulos->total() }}</b>
                 <h6><a class='load green-text text-darken-1' href='{{ route('admin.cadastro.modulos.adiciona') }}'><i class='fa fa-plus-circle fa-lg'></i> Novo Módulo</a></h6>
             </div>
             <div class='divider'></div>

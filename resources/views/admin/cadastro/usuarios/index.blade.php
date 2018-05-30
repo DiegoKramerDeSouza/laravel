@@ -11,7 +11,7 @@
                     <b class='grey-text text-darken-2'><i class='fa fa-user'></i> Cadastro de Usuários</b>
             </div>
             <div class='row' align='right'>
-                Usuários cadastrados: <b>{{ count($users) }}</b>
+                Usuários cadastrados: <b>{{ $users->total() }}</b>
                 <h6><a class='load green-text text-darken-1' href='{{ route('admin.cadastro.usuarios.adiciona') }}'><i class='fa fa-plus-circle fa-lg'></i> Novo Usuário</a></h6>
             </div>
             <div class='divider'></div>

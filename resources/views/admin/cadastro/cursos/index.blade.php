@@ -11,7 +11,7 @@
                 <b class='grey-text text-darken-2'><i class='fa fa-cubes'></i> Cadastro de Cursos</b>
             </div>
             <div class='row' align='right'>
-                Cursos cadastrados: <b>{{ count($cursos) }}</b>
+                Cursos cadastrados: <b>{{ $cursos->total() }}</b>
                 <h6><a class='green-text text-darken-1 load' href='{{ route('admin.cadastro.cursos.adiciona') }}'><i class='fa fa-plus-circle fa-lg'></i> Novo Curso</a></h6>
             </div>
             <div class='divider'></div>

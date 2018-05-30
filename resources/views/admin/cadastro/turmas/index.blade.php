@@ -11,7 +11,7 @@
                 <b class='grey-text text-darken-2'><i class='fa fa-graduation-cap'></i> Cadastro de Turmas</b>
             </div>
             <div class='row' align='right'>
-                Turmas cadastradas: <b>{{ count($turmas) }}</b>
+                Turmas cadastradas: <b>{{ $turmas->total() }}</b>
                 <h6><a class='load green-text text-darken-1' href='{{ route('admin.cadastro.turmas.adiciona') }}'><i class='fa fa-plus-circle fa-lg'></i> Nova Turma</a></h6>
             </div>
             <div class='divider'></div>

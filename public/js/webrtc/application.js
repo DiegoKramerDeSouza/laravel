@@ -157,13 +157,13 @@ $(document).ready(function() {
         // Socket - Stopped
         socket.on('broadcast-stopped', function(broadcastId) {
             // Transmissão interrompida 
-            console.error('--> broadcast-stopped', broadcastId);
+            console.error('--> Broadcast finalizada', broadcastId);
             broadcastStatus = 0;
             callToast('<i class="fa fa-stop-circle fa-lg"></i> Transmissão finalizada!', 'red darken-3');
         });
         // Socket - Started -> Quando não há um broadcast inicia-se esse evento
         socket.on('start-broadcasting', function(typeOfStreams) {
-            console.log('--> start-broadcasting', typeOfStreams);
+            console.log('--> Iniciando broadcasting', typeOfStreams);
             broadcastStatus = 1;
             // O broadcaster sempre utilizará essas configurações
             connection.sdpConstraints.mandatory = {
@@ -173,10 +173,10 @@ $(document).ready(function() {
             connection.session = typeOfStreams;
             // Início da captura de mídia
             connection.open(connection.userid, isPublicModerator);
-            console.log('--> Open: ' + connection.userid);
+            console.log('--> Abrindo: ' + connection.userid);
         });
         socket.on('leave-the-room', function(targetconnection) {
-            console.log('Leaving...' + targetconnection.remoteUserId + '|' + connection.userid);
+            console.log('--> Saindo...' + targetconnection.remoteUserId + ' -> ' + connection.userid);
             if (targetconnection.remoteUserId != connection.userid) return;
             connection.leave();
         });
@@ -283,21 +283,6 @@ $(document).ready(function() {
             if (connection.isInitiator == false && event.type === 'remote') {
                 //connection.attachStreams = [event.stream];
             };
-
-            // Constroi e envia MSG de conexão efetuada e se identifica
-            /**
-             *  var msgrash         array
-             *  var myIdentity      string
-             */
-            var msgrash = [];
-            var myIdentity = document.getElementById('room-id').value;
-            msgrash[0] = btoa('@acessou');
-            msgrash[1] = currentUser;
-            msgrash[2] = broadcaster.value;
-            msgrash[3] = inRoom.value;
-            msgrash[4] = myIdentity;
-            msgrash[5] = connection.userid;
-            //connection.send(msgrash, inRoom.value);
 
             // Ação padrão para conexões remotas:
             /**
@@ -555,8 +540,8 @@ $(document).ready(function() {
             };
             // Controle da utilização de banda
             connection.bandwidth = {
-                audio: 300,
-                video: 700
+                audio: 500,
+                video: 1000
             };
 
             // Inicializa Socket

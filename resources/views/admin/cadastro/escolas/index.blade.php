@@ -11,7 +11,7 @@
                 <b class='grey-text text-darken-2'><i class='fa fa-institution'></i> Cadastro de Instituições</b>
             </div>
             <div class='row' align='right'>
-                Instituições cadastradas: <b>{{ count($escolas) }}</b>
+                Instituições cadastradas: <b>{{ $escolas->total() }}</b>
                 <h6><a class='load green-text text-darken-1' href='{{ route('admin.cadastro.escolas.adiciona') }}'><i class='fa fa-plus-circle fa-lg'></i> Nova Instituição</a></h6>
             </div>
             <div class='divider'></div>

@@ -11,7 +11,7 @@
                 <b class='grey-text text-darken-2'><i class='fa fa-vcard'></i> Cadastro de Perfis</b>
             </div>
             <div class='row' align='right'>
-                Perfis cadastrados: <b>{{ count($perfis) }}</b>
+                Perfis cadastrados: <b>{{ $perfis->total() }}</b>
                 <h6><a class='load green-text text-darken-1' href='{{ route('admin.cadastro.perfis.adiciona') }}'><i class='fa fa-plus-circle fa-lg'></i> Novo Perfil</a></h6>
             </div>
             <div class='divider'></div>
