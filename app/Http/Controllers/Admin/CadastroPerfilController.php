@@ -16,7 +16,8 @@ class CadastroPerfilController extends Controller
         if($this->validade('6')){
             //Paginação dos valores coletados na entidade Perfils
             $perfis = Perfil::orderBy('name', 'asc')->paginate(5);
-            return view('admin.cadastro.perfis.index', compact('perfis'));
+            $resultToString = true;
+            return view('admin.cadastro.perfis.index', compact('perfis', 'resultToString'));
         } else {
             return redirect()->route('denied');
         }

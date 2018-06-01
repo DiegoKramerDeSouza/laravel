@@ -22,7 +22,8 @@ class CadastroEscolaController extends Controller
         if($this->validade('4')){
             //Paginação dos valores coletados na entidade Escolas
             $escolas = Escola::orderBy('name', 'asc')->paginate(5);
-            return view('admin.cadastro.escolas.index', compact('escolas'));
+            $resultToString = true;
+            return view('admin.cadastro.escolas.index', compact('escolas', 'resultToString'));
         } else {
             return redirect()->route('denied');
         }

@@ -138,8 +138,8 @@
             </script>
         @endif
 
-        @if(isset($modulosToString))
-            <script type="text/javascript" src="{!! asset('js/formModulos.js') !!}"></script>
+        @if(isset($resultToString))
+            <script type="text/javascript" src="{!! asset('js/formAutocomplete.js') !!}"></script>
         @endif
 
         <!-- Inicialização in-page de elementos padrões-->

@@ -21,7 +21,8 @@ class CadastroCursoController extends Controller
             foreach($allmodulos as $modulo){
                 $modulos[$modulo['id']] = $modulo['name'];
             }
-            return view('admin.cadastro.cursos.index', compact('cursos', 'modulos'));
+            $resultToString = true;
+            return view('admin.cadastro.cursos.index', compact('cursos', 'modulos', 'resultToString'));
         } else {
             return redirect()->route('denied');
         }

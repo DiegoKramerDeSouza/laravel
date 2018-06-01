@@ -10,9 +10,16 @@
             <div class='card-title'>
                 <b class='grey-text text-darken-2'><i class='fa fa-vcard'></i> Cadastro de Perfis</b>
             </div>
-            <div class='row' align='right'>
-                Perfis cadastrados: <b>{{ $perfis->total() }}</b>
-                <h6><a class='load green-text text-darken-1' href='{{ route('admin.cadastro.perfis.adiciona') }}'><i class='fa fa-plus-circle fa-lg'></i> Novo Perfil</a></h6>
+            <div class='row'>
+                <div class="input-field col s12 m6">
+                    <i class="material-icons prefix">search</i>
+                    <input type="text" id="search-input" autofocus class="autocomplete">
+                    <label for="search-input">Procurar</label>
+                </div>
+                <div class="input-field col s12 m6" align='right'>
+                    Perfis encontrados: <b>{{ $perfis->total() }}</b>
+                    <h6><a class='load green-text text-darken-1' href='{{ route('admin.cadastro.perfis.adiciona') }}'><i class='fa fa-plus-circle fa-lg'></i> Novo Perfil</a></h6>
+                </div>
             </div>
             <div class='divider'></div>
             <div class='row'>

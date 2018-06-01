@@ -19,13 +19,14 @@ class CadastroTurmaController extends Controller
         if($this->validade('1')){
             //Paginação dos valores coletados na entidade Turmas
             $turmas = Turma::orderBy('name', 'asc')->paginate(5);
-            $escolas = Escola::all();
+            //$escolas = Escola::all();
             $accounts = User::where('type', 1)->get()->toArray();
             $users = array();
             foreach($accounts as $account){
                 $users[$account['id']] = $account['login'];
             }
-            return view('admin.cadastro.turmas.index', compact('turmas', 'users'));
+            $resultToString = true;
+            return view('admin.cadastro.turmas.index', compact('turmas', 'users', 'resultToString'));
         } else {
             return redirect()->route('denied');
         }

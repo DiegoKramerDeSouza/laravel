@@ -78,8 +78,6 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/admin/cadastro/modulos/editar/{id}', ['as' => 'admin.cadastro.modulos.edita', 'uses' => 'Admin\CadastroModuloController@edit']);
     Route::put('/admin/cadastro/modulos/atualizar/{id}', ['as' => 'admin.cadastro.modulos.atualiza', 'uses' => 'Admin\CadastroModuloController@update']);
     Route::get('/admin/cadastro/modulos/deletar/{id}', ['as' => 'admin.cadastro.modulos.deleta', 'uses' => 'Admin\CadastroModuloController@delete']);
-    Route::get('/admin/cadastro/modulos/autocomplete', ['as' => 'admin.cadastro.modulos.autocomplete', 'uses' => 'Admin\CadastroModuloController@autocomplete']);
-    Route::get('/admin/cadastro/modulos/result/{name}', ['as' => 'admin.cadastro.modulos.result', 'uses' => 'Admin\CadastroModuloController@resultAutocomplete']);
 
     //Rotas para o formulário de cadastro de cursos
     Route::get('/admin/cadastro/cursos/', ['as' => 'admin.cadastro.cursos', 'uses' => 'Admin\CadastroCursoController@index']);
@@ -105,7 +103,9 @@ Route::group(['middleware' => 'auth'], function(){
     Route::put('/admin/cadastro/escolas/atualizar/{id}', ['as' => 'admin.cadastro.escolas.atualiza', 'uses' => 'Admin\CadastroEscolaController@update']);
     Route::get('/admin/cadastro/escolas/deletar/{id}', ['as' => 'admin.cadastro.escolas.deleta', 'uses' => 'Admin\CadastroEscolaController@delete']);
     
-
+    //Rota para resolução do autocomplete
+    Route::get('/admin/cadastro/{module}/autocomplete/', ['as' => 'admin.cadastro.autocomplete', 'uses' => 'Admin\CadastroAutocompleteController@autocomplete']);
+    Route::get('/admin/cadastro/{module}/result/{name}', ['as' => 'admin.cadastro.autocomplete.result', 'uses' => 'Admin\CadastroAutocompleteController@resultAutocomplete']);
 });
 
 

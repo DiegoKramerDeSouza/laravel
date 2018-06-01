@@ -17,7 +17,8 @@ class CadastroUsuarioController extends Controller
     public function index(){
         if($this->validade('5')){
             $users = User::where('type', 0)->orderBy('name', 'asc')->paginate(5);
-            return view('admin.cadastro.usuarios.index', compact('users'));
+            $resultToString = true;
+            return view('admin.cadastro.usuarios.index', compact('users', 'resultToString'));
         } else {
             return redirect()->route('denied');
         }

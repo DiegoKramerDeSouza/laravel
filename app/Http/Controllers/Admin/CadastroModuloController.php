@@ -15,8 +15,8 @@ class CadastroModuloController extends Controller
         if($this->validade('2')){
             //Paginação dos valores coletados na entidade Modulos
             $modulos = Modulo::orderBy('name', 'asc')->paginate(5);
-            $modulosToString = true;
-            return view('admin.cadastro.modulos.index', compact('modulos', 'modulosToString'));
+            $resultToString = true;
+            return view('admin.cadastro.modulos.index', compact('modulos', 'resultToString'));
         } else {
             return redirect()->route('denied');
         }
