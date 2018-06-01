@@ -22,8 +22,14 @@ class AppServiceProvider extends ServiceProvider
         'PE'=>'Pernambuco','PI'=>'Piauí','RJ'=>'Rio de Janeiro','RN'=>'Rio Grande do Norte',
         'RS'=>'Rio Grande do Sul','RO'=>'Rondônia','RR'=>'Roraima','SC'=>'Santa Catarina','SP'=>'São Paulo',
         'SE'=>'Sergipe','TO'=>'Tocantins']);
-
         view()->share('logo', 'WebTv');
+        //view()->share('pagination', 5);
+        view()->share('deleteIcon', "<i class='fa fa-trash-o'></i>");
+        view()->share('editIcon', "<i class='fa fa-pencil'></i>");
+        view()->share('cancelIcon', "<i class='fa fa-times'></i>");
+        view()->share('gobackLink', "<i class='fa fa-arrow-left'></i> voltar");
+        view()->share('pagination', 5);
+
     }
 
     /**
@@ -34,5 +40,6 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         //
+        
     }
 }

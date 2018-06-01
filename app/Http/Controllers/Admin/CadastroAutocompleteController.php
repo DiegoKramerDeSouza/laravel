@@ -31,7 +31,7 @@ class CadastroAutocompleteController extends Controller
                 $allData = Turma::all()->toArray();
                 break;
             case 'usuarios':
-                $allData = User::all()->toArray();
+                $allData = User::where('type', 0)->get()->toArray();
                 break;          
         }
         $result = array();

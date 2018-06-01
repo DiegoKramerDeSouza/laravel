@@ -15,10 +15,9 @@ use App\RecursoApi;
 class CadastroEscolaController extends Controller
 {
     use EspecialMethods;
-
+    
     //->View escolas cadastradas
     public function index(){
-        
         if($this->validade('4')){
             //Paginação dos valores coletados na entidade Escolas
             $escolas = Escola::orderBy('name', 'asc')->paginate(5);
@@ -33,7 +32,7 @@ class CadastroEscolaController extends Controller
         if($this->validade('4')){
             $api = RecursoApi::where('name', 'Google Maps Geolocation')->first();
             $apicep = RecursoApi::where('name', 'ViaCEP Consulta')->first();
-            return view('admin.cadastro.escolas.adicionar', compact('api', 'apicep', 'ufs'));
+            return view('admin.cadastro.escolas.adicionar', compact('api', 'apicep'));
         } else {
             return redirect()->route('denied');
         }
