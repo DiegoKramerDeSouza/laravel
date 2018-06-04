@@ -167,8 +167,8 @@ $(document).ready(function() {
             broadcastStatus = 1;
             // O broadcaster sempre utilizará essas configurações
             connection.sdpConstraints.mandatory = {
-                OfferToReceiveVideo: true,
-                OfferToReceiveAudio: true
+                OfferToReceiveVideo: false,
+                OfferToReceiveAudio: false
             };
             connection.session = typeOfStreams;
             // Início da captura de mídia
@@ -194,6 +194,8 @@ $(document).ready(function() {
                 var elem = document.getElementById('msg-share');
                 var instance = M.Modal.getInstance(elem);
                 instance.open();
+            } else if (error === 'permission-denied') {
+                setShare('on');
             }
             console.log(error);
             //throw error;
@@ -207,9 +209,6 @@ $(document).ready(function() {
         $('#nav-footer').slideDown(500);
         inRoom.value = event.userid;
         if (connection.isInitiator && event.type !== 'local') return;
-
-        //event.mediaElement.removeAttribute('src');
-        //event.mediaElement.removeAttribute('srcObject');
 
         if (event.type === 'remote' && event.stream.isScreen === true) {
             $('#span-video-preview-2nd').fadeIn(300);
@@ -274,7 +273,7 @@ $(document).ready(function() {
 
             // Ajusta elementos de exibição (define o menu de áudio e video para ESPECTADORES)
             $('#div-connect').hide();
-            $('#span-video-preview-2nd').fadeOut(300);
+            $('#span-video-preview-2nd').hide();
             ctlPedir.innerHTML = constructBtnActionPedir();
             $('#pedir-vez').tooltip();
             pedir = document.getElementById('pedir-vez');
@@ -304,7 +303,7 @@ $(document).ready(function() {
                      *  var myIdentity  string
                      */
                     var msgrash = [];
-                    var myIdentity;
+                    var myIdentity = document.getElementById('room-id').value;
                     msgrash[0] = btoa('@PedeAVez');
                     msgrash[1] = currentUser;
                     msgrash[2] = connection.userid;
@@ -377,17 +376,21 @@ $(document).ready(function() {
                 if (mute.getAttribute('data-active') == 'enabled') {
                     // Alteração de conexão -> Set audio: false
                     connection.attachStreams.forEach(function(stream) {
-                        stream.mute('audio');
+                        if (!stream.isScreen) {
+                            stream.mute('audio');
+                        }
                     });
                     setMute('off');
                 } else {
                     // Alteração de conexão -> Set audio: true
                     connection.attachStreams.forEach(function(stream) {
-                        stream.unmute({
-                            audio: true,
-                            video: false,
-                            type: 'remote'
-                        });
+                        if (!stream.isScreen) {
+                            stream.unmute({
+                                audio: true,
+                                video: false,
+                                type: 'remote'
+                            });
+                        }
                     });
                     setMute('on');
                 }
@@ -397,16 +400,20 @@ $(document).ready(function() {
                 if (cam.getAttribute('data-active') == 'enabled') {
                     // Alteração de conexão -> Set audio: false, video: false
                     connection.attachStreams.forEach(function(stream) {
-                        stream.mute('video');
-                        stream.mute('audio');
+                        if (!stream.isScreen) {
+                            stream.mute('video');
+                            stream.mute('audio');
+                        }
                     });
                     setCam('off');
                     setMute('off');
                 } else {
                     // Alteração de conexão -> Set audio: true, video: true
                     connection.attachStreams.forEach(function(stream) {
-                        stream.unmute('video');
-                        stream.unmute('audio');
+                        if (!stream.isScreen) {
+                            stream.unmute('video');
+                            stream.unmute('audio');
+                        }
                     });
                     setCam('on');
                     setMute('on');
@@ -441,14 +448,13 @@ $(document).ready(function() {
             // Tratamento de solicitações: Botão "Compartilhar" -> Compartilha a tela do apresentador
             share.onclick = function() {
                 if (share.getAttribute('data-active') == 'enabled') {
+                    $('#share-screen').hide();
                     connection.addStream({
                         screen: true,
                         oneway: true,
                         streamCallback: function(stream) {
-                            // Após confirmado o compartilhamento, inicia a renegociação da conexão com cada usuário conectado
                             setTimeout(function() {
                                 connection.getAllParticipants().forEach(function(p) {
-                                    //console.log('Renegociando com: ' + p);
                                     connection.renegotiate(p, {
                                         screen: true,
                                         oneway: true
@@ -461,18 +467,33 @@ $(document).ready(function() {
                     });
                 } else {
                     setShare('on');
-                    console.log('Finalizando sharing...');
                     var streamConnection = document.getElementById('in-screen').value;
-                    //connection.leave(streamConnection);
-                    connection.getAllParticipants().forEach(function(p) {
-                        console.log(p);
-                        connection.removeStream(streamConnection, {
-                            screen: true,
-                            stop: true
-                        });
-                        //connection.renegotiate(p, { screen: false });
+                    var streamToRemove = null;
+                    var newArray = [];
+                    connection.attachStreams.forEach(function(stream) {
+                        if (stream.id === streamConnection) {
+                            streamToRemove = stream;
+                            stream.stop();
+                        } else newArray.push(stream);
                     });
-                    console.log(connection);
+                    connection.attachStreams = newArray;
+                    connection.getAllParticipants().forEach(function(p) {
+                        var peer = connection.peers[p].peer;
+                        peer.removeStream(streamToRemove);
+                        connection.renegotiate(p, {
+                            screen: false,
+                            oneway: true
+                        });
+                    });
+                    // Mensagem de finalização de screen sharing
+                    var msgrash = [];
+                    var myIdentity = document.getElementById('room-id').value;
+                    msgrash[0] = btoa('@Finaliza-Share');
+                    msgrash[1] = currentUser;
+                    msgrash[2] = streamConnection;
+                    msgrash[3] = inRoom.value;
+                    msgrash[4] = myIdentity;
+                    connection.send(msgrash);
                 }
             };
         }
@@ -900,6 +921,7 @@ function appendDIV(event) {
         var myRoom = document.getElementById('room-id').value;
         // Identifica se a mensagem é uma solicitação de serviço
         if (chkrash[0] === btoa('@PedeAVez')) {
+            console.log(chkrash);
             // Indica que algum usuário solicita a permissão para falar
             msgData[0] = chkrash[1];
             msgData[1] = (atob(chkrash[3])).split('|')[4];
@@ -917,12 +939,16 @@ function appendDIV(event) {
         } else if (chkrash[0] === btoa('@PedeAVez:deny')) {
             // Indica que o broadcaster negou a solicitação do usuário
             // Verifica se o destinatário é o criador da solicitação para entregar a resposta
+            console.log(chkrash);
             console.log(chkrash[2] + '|' + myRoom);
             if (chkrash[2] === myRoom) {
                 solicita--;
                 setPedir('deny');
             }
             return;
+        } else if (chkrash[0] === btoa('@Finaliza-Share')) {
+            $('#span-video-preview-2nd').hide();
+            callToast('<span class="white-text"><i class="material-icons left">stop_screen_share</i> Compartilhamento de tela finalizado.</span>', 'red darken-3');
         } else {
             return;
         }

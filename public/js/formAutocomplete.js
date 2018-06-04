@@ -35,6 +35,7 @@ function collectDataBase(admM) {
                 limit: 10,
                 minLength: 1,
                 onAutocomplete: function(evt) {
+                    callLoading();
                     emitData(evt);
                 }
             });

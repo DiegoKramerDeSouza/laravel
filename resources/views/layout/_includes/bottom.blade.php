@@ -1,14 +1,13 @@
-        
+            <!-- Fim do corpo de página -->
             </div>
         </main>
-        <!-- Inicialização do Javascript no fim do corpo da página-->
         <script type="text/javascript" src="{!! asset('js/jquery-3.1.1.min.js') !!}"></script>
         <script type="text/javascript" src="{!! asset('js/materialize.min.js') !!}"></script>
         <script type="text/javascript" src="{!! asset('js/geral.js') !!}"></script>
 
-        <!-- Inicialização in-page condicional de elementos para a formação de uma sala-->
-        <!-- A variável $streamPage deve ser passada pelo controller para inicialização-->
         @if(isset($streamPage))
+            <!-- Inicialização in-page condicional de elementos para a formação de uma sala-->
+            <!-- A variável $streamPage deve ser passada pelo controller para inicialização-->
             <!-- Controle de login - O usuário deve estar autenticado-->
             @if(! Auth::guest())
                 <!-- Barra de footer com menu de controle de áudio e video-->
@@ -97,9 +96,9 @@
             </div>
         </footer>
         
-        <!-- Inicialização in-page condicional de elementos para cadastro de perfis de usuários-->
-        <!-- A variável $grant deve ser passada pelo controller para a inicialização-->
         @if(isset($grant))
+            <!-- Inicialização in-page condicional de elementos para cadastro de perfis de usuários-->
+            <!-- A variável $grant deve ser passada pelo controller para a inicialização-->
             <script>
                 document.querySelector('button').onclick = function(evt) {
                     var values = $('#grantList').val();
@@ -117,9 +116,10 @@
                 }
             </script>
         @endif
-        <!-- Inicialização in-page condicional de elementos para cadastro de turmas-->
-        <!-- A variável $classroom deve ser passada pelo controller para a inicialização-->
+
         @if(isset($classroom))
+            <!-- Inicialização in-page condicional de elementos para cadastro de turmas-->
+            <!-- A variável $classroom deve ser passada pelo controller para a inicialização-->
             <script>
                 document.querySelector('button').onclick = function(evt) {
                     var values = $('#curso_id_list').val();
@@ -139,6 +139,8 @@
         @endif
 
         @if(isset($resultToString))
+            <!-- Inicialização in-page condicional de elementos das páginas de cadastros -->
+            <!-- Utilização do JS para autocomplete -->
             <script type="text/javascript" src="{!! asset('js/formAutocomplete.js') !!}"></script>
         @endif
 

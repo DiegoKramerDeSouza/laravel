@@ -12,16 +12,16 @@ var countMessages = 0;
 
 // Chama alertas em elementos toast do MaterializeCSS
 /**
- * content: conteúdo da mensagem
- * classe: classes aplicadas ao elem. toast
+ * Param content: conteúdo da mensagem
+ * Param classe: classes aplicadas ao elem. toast
  */
 function callToast(content, classe) {
     content = '<span class="white-text">' + content + '</span>';
-    M.toast({ html: content, classes: classe, displayLength: 4000 });
+    M.toast({ html: content, classes: classe, displayLength: 2000 });
 }
 // Altera o contador de usuários conectados à sala e exibe em 'broadcast-viewers-counter'
 /**
- * number: número de usuários conectados
+ * Param number: número de usuários conectados
  */
 function changeCounter(number) {
     var controller = document.getElementById('broadcast-viewers-counter');
@@ -41,9 +41,9 @@ function noRooms() {
 }
 // Define o cabeçalho da sala criada
 /**
- * icon: Ícone da sala
- * classe: Temática da sala
- * assunto: Assunto da sala
+ * Param icon: Ícone da sala
+ * Param classe: Temática da sala
+ * Param assunto: Assunto da sala
  */
 function setRoomLabel(icon, classe, assunto) {
     var roomtitle = document.getElementById('class-title');
@@ -54,7 +54,7 @@ function setRoomLabel(icon, classe, assunto) {
 }
 // Configurações visuais de status da webcam
 /**
- * status: 'disabled', 'off', 'on' 
+ * Param status: 'disabled', 'off', 'on' 
  */
 function setCam(status) {
     var cam = document.getElementById('toggle-camera');
@@ -78,7 +78,7 @@ function setCam(status) {
 }
 // Configurações visuais de status do botão Mute
 /**
- * status: 'disabled', 'off', 'on' 
+ * Param status: 'disabled', 'off', 'on' 
  */
 function setMute(status) {
     var mute = document.getElementById('toggle-mute');
@@ -101,7 +101,7 @@ function setMute(status) {
 }
 // Configurações visuais de status do volume
 /**
- * status: 'disabled', 'off', 'on' 
+ * Param status: 'disabled', 'off', 'on' 
  */
 function setVol(status) {
     var vol = document.getElementById('toggle-volume');
@@ -124,30 +124,33 @@ function setVol(status) {
 }
 // Configurações visuais de status do compartilhamento de tela
 /**
- * status: 'disabled', 'off', 'on' 
+ * Param status: 'disabled', 'off', 'on' 
  */
 function setShare(status) {
     var share = document.getElementById('share-screen');
     if (status === 'dis') {
         share.setAttribute('data-active', 'disabled');
+        share.disabled = true;
         share.classList.add("grey-text");
         share.innerHTML = "<i class='material-icons'>stop_screen_share</i>";
         $('#share-screen').hide();
     } else if (status === 'off') {
+        $('#share-screen').show();
         share.setAttribute('data-active', 'disabled');
         share.classList.add("red-text");
         share.innerHTML = "<i class='material-icons'>stop_screen_share</i>";
         callToast('<span class="white-text"><i class="material-icons left">screen_share</i> Tela compartilhada.</span>', 'blue darken-2');
     } else if (status === 'on') {
+        $('#share-screen').show();
         share.setAttribute('data-active', 'enabled');
         share.classList.remove("red-text");
         share.innerHTML = "<i class='material-icons'>screen_share</i>";
-        callToast('<span class="white-text"><i class="material-icons left">stop_screen_share</i> Compartilhamento finalizado.</span>', 'red darken-3');
+        callToast('<span class="white-text"><i class="material-icons left">stop_screen_share</i> Compartilhamento de tela finalizado.</span>', 'red darken-3');
     }
 }
 // Configurações visuais de status de uma solicitação
 /**
- * status: 'disabled', 'allowed', 'denied' 
+ * Param status: 'disabled', 'allowed', 'denied' 
  */
 function setPedir(status) {
     var pedir = document.getElementById('pedir-vez');
@@ -214,8 +217,8 @@ function fullscreen() {
 }
 // Tratamento de mensagens de chat
 /**
- * msg: Mensagem enviada ou recebida
- * rmt: Identificador da origem da mensagem (interna ou externa) 
+ * Param msg: Mensagem enviada ou recebida
+ * Param rmt: Identificador da origem da mensagem (interna ou externa) 
  */
 function writeMessage(msg, rmt) {
     var message = atob(msg);
@@ -237,7 +240,7 @@ function writeMessage(msg, rmt) {
 }
 //Verifica a existência de dispositivos de vídeo
 /**
- * sourceInfos: dispositivos verificados
+ * Param sourceInfos: dispositivos verificados
  */
 function getCameras(sourceInfos) {
     if (sourceInfos.length > 0) {
@@ -246,8 +249,8 @@ function getCameras(sourceInfos) {
 }
 //Verificação de classes para elementos html
 /**
- * element: elemento a ser verificado
- * cls: classe a ser verificada no elemento
+ * Param element: elemento a ser verificado
+ * Param cls: classe a ser verificada no elemento
  */
 function hasClass(element, cls) {
     return (' ' + element.className + ' ').indexOf(' ' + cls + ' ') > -1;
@@ -268,7 +271,7 @@ function toggleControls() {
 }
 //Controle para exibição toggle de elem. html
 /**
- * elemId: Id do elemento a ser verificado
+ * Param elemId: Id do elemento a ser verificado
  */
 function toggleElem(elemId) {
     if ($(elemId).is(":visible")) {
@@ -289,11 +292,11 @@ function constructBtnActionPedir() {
 }
 // Constroi lista de salas online
 /**
- * classe: Temática da sala
- * assunto: Assunto da sala
- * professor: Apresentador responsável
- * viwer: Quantidade de espectadores
- * moderador: Id do criador da sala (moderador)
+ * Param classe: Temática da sala
+ * Param assunto: Assunto da sala
+ * Param professor: Apresentador responsável
+ * Param viwer: Quantidade de espectadores
+ * Param moderador: Id do criador da sala (moderador)
  */
 function constructAccessList(classe, assunto, professor, viwer, moderador) {
     var htmlItem = '<li class="collection-item avatar li-hover grey-text text-darken-3">' +
@@ -311,8 +314,8 @@ function constructAccessList(classe, assunto, professor, viwer, moderador) {
 }
 // Constroi lista de usuários conectados
 /**
- * userid: Id da conexão
- * username: Nome do usuário
+ * Param userid: Id da conexão
+ * Param username: Nome do usuário
  */
 function constructConnectionList(userid, username, announce, deletable) {
     var deleteButton;
@@ -332,7 +335,7 @@ function constructConnectionList(userid, username, announce, deletable) {
 }
 // Reconstroi lista <ul> 'connection-list' após ação de remoção
 /**
- * exp: Id da conexão onde a ação foi tomada
+ * Param exp: Id da conexão onde a ação foi tomada
  */
 function constructConnectionExpList(exp) {
     var connectionList = document.getElementById('connection-list');
@@ -355,11 +358,10 @@ function constructConnectionExpList(exp) {
     }
     connectionList.innerHTML = htmlList;
 }
-
 // Constroi lista inicial de solicitação de usuários - Solicitação feita a partir do botão 'pedir vez'
 /**
- * userid: Id da conexão
- * username: Nome do usuário
+ * Param userid: Id da conexão
+ * Param username: Nome do usuário
  * Classes css:
  *      sol-response    -> <li> que representa uma solicitação;
  *      responses.      -> <a> que representa uma resposta a uma solicitação;
@@ -378,7 +380,7 @@ function constructSolicitationList(userid, username) {
 }
 // Reconstroi lista <ul> 'solicita-list' após ação tomada (allow/deny) na lista inicial
 /**
- * exp: Id da conexão onde a ação foi tomada
+ * Param exp: Id da conexão onde a ação foi tomada
  */
 function constructList(exp) {
     var pedeList = document.getElementById('solicita-list');
@@ -401,7 +403,7 @@ function constructList(exp) {
 }
 // Trata indicador de quantidade de solicitações ao broadcaster
 /**
- * val: quantidade de solicitações
+ * Param val: quantidade de solicitações
  */
 function trataSolicitacao(val) {
     document.getElementById('count-pedir-vez').innerHTML = val;

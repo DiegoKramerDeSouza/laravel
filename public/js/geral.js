@@ -4,8 +4,8 @@
  * 
  */
 
-// Inicialização do tratamento de click em objetos de determinadas classes
 $(document).ready(function() {
+    // Inicialização do tratamento de click em objetos de determinadas classes
     var load = document.getElementsByClassName('load');
     for (var j = 0; j < load.length; j++) {
         load[j].onclick = function() {
