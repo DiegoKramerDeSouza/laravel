@@ -85,10 +85,6 @@
     transition-duration: 0.4s;
 }
 
-.li-hover:hover {
-    background-color: rgb(231, 231, 231) !important;
-}
-
 .media-control {
     -webkit-transition-duration: 0.4s;
     transition-duration: 0.4s;
@@ -121,6 +117,10 @@
     transition-duration: 0.4s !important;
     z-index: 2 !important;
     padding-bottom: 20px;
+}
+
+.valign-wrapper {
+    margin: -10px !important;
 }
 
 .width-limit {

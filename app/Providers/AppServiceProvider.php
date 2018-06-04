@@ -23,7 +23,7 @@ class AppServiceProvider extends ServiceProvider
         'RS'=>'Rio Grande do Sul','RO'=>'Rondônia','RR'=>'Roraima','SC'=>'Santa Catarina','SP'=>'São Paulo',
         'SE'=>'Sergipe','TO'=>'Tocantins']);
         view()->share('logo', 'WebTv');
-        //view()->share('pagination', 5);
+        // Definição de ícones para todas as views
         view()->share('deleteIcon', "<i class='fa fa-trash-o'></i>");
         view()->share('editIcon', "<i class='fa fa-pencil'></i>");
         view()->share('cancelIcon', "<i class='fa fa-times'></i>");

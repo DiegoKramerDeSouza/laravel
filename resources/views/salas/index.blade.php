@@ -123,7 +123,7 @@
                                 <div id='videos'>
                                     <!--VÍDEO PRINCIPAL-->
                                     <div id='span-video-preview' data-status='disabled' data-position='main' class='width-limit first-video'>
-                                        <video id="video-preview" preload="none" loop ></video>
+                                        <video id="video-preview" class="responsive-video" preload="none" loop ></video>
                                         <div id='div-exit-fullscreen' class='fixed-action-btn d-none'>
                                             <a id='exit-fullscreen' class='btn-floating btn-large blue darken-2'>
                                                 <i class='material-icons large'>fullscreen_exit</i>
@@ -145,7 +145,7 @@
         </div>
         <!--VÍDEO SECUNDÁRIO-->
         <div id='span-video-preview-2nd' data-status='disabled' data-position='second' class='d-none second-video'>
-            <video id="secondvideo-preview" preload="none" loop class='min-video'></video>
+            <video id="secondvideo-preview" preload="none" loop class='min-video responsive-video'></video>
             <a id='swap-video' style='bottom:10px;' class='btn-floating halfway-fab blue darken-2 waves-effect waves-light'>
                 <i class='material-icons'>swap_horiz</i>
             </a>

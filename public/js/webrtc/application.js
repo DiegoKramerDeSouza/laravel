@@ -736,18 +736,17 @@ $(document).ready(function() {
                              *  var button  elem. html
                              */
                             usuario = currentUser;
-                            var divOpen = document.createElement('ul');
-                            // Cria objeto de lista com as broadcast disponíveis
+                            var divOpen = document.createElement('div');
+                            // Cria objeto de lista com as transmissões disponíveis
                             var card = constructAccessList(labelClasse, labelAssunto, labelProfessor, viewers, moderator.userid);
 
                             divOpen.innerHTML = card;
-                            divOpen.className = "collection";
-                            // Cria objeto botão para ingressar na broadcast selecionada
+                            divOpen.className = "card-panel";
+                            // Cria objeto botão para ingressar na transmissão selecionada
                             var button = document.createElement('a');
                             button.id = moderator.userid;
                             button.title = 'Entrar';
-                            //button.className = 'btn-floating btn-large blue darken-1 waves-effect waves-teal secondary-content';
-                            button.className = 'room-enter blue-text text-darken-1 secondary-content';
+                            button.className = 'btn-floating btn-large room-enter blue darken-1';
                             // Atribui função para ingressar na sala disponível
                             button.onclick = function() {
                                 onlobby = false;
@@ -785,7 +784,7 @@ $(document).ready(function() {
                                 // Modela e apresenta título do video
                                 setRoomLabel('television', labelClasse, labelAssunto);
                             };
-                            button.innerHTML = '<i class="material-icons medium">play_circle_outline</i>';
+                            button.innerHTML = '<i class="material-icons large">play_arrow</i>';
                             if (moderator.userid == connection.sessionid) {
                                 // Se já estiver conectado na sala desabilite o botão de integração
                                 button.disabled = true;

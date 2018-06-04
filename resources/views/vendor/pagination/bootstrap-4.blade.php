@@ -4,7 +4,7 @@
         @if ($paginator->onFirstPage())
             <li class="disabled"><a><i class="material-icons grey-text">chevron_left</i></a></li>
         @else
-            <li class="waves-effect waves-teal"><a href="{{ $paginator->previousPageUrl() }}" rel="prev"><i class="material-icons grey-text">chevron_left</i></a></li>
+            <li class="waves-effect waves-teal"><a class="load" href="{{ $paginator->previousPageUrl() }}" rel="prev"><i class="material-icons grey-text">chevron_left</i></a></li>
         @endif
 
         {{-- Pagination Elements --}}
@@ -20,7 +20,7 @@
                     @if ($page == $paginator->currentPage())
                         <li class="active blue white-text"><a>{{ $page }}</a></li>
                     @else
-                        <li class="waves-effect waves-teal"><a href="{{ $url }}">{{ $page }}</a></li>
+                        <li class="waves-effect waves-teal"><a class="load" href="{{ $url }}">{{ $page }}</a></li>
                     @endif
                 @endforeach
             @endif
@@ -28,7 +28,7 @@
 
         {{-- Next Page Link --}}
         @if ($paginator->hasMorePages())
-            <li class="waves-effect waves-teal"><a href="{{ $paginator->nextPageUrl() }}"><i class="material-icons grey-text">chevron_right</i></a></li>
+            <li class="waves-effect waves-teal"><a class="load" href="{{ $paginator->nextPageUrl() }}"><i class="material-icons grey-text">chevron_right</i></a></li>
         @else
             <li class="disabled"><a><i class="material-icons grey-text">chevron_right</i></a></li>
         @endif
