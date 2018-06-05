@@ -675,7 +675,6 @@ $(document).ready(function() {
                 // Se existir alguma sala pública execute
                 if (array.length > 0) {
                     array.forEach(function(moderator) {
-                        console.log('Atualizando salas...');
                         //Coleta o número de espectadores conectados à sala
                         connection.getNumberOfBroadcastViewers(moderator.userid, function(numberOfBroadcastViewers) {
                             viewers = numberOfBroadcastViewers;
@@ -684,19 +683,19 @@ $(document).ready(function() {
                         if (moderator.userid == connection.userid) return;
                         // Cria labels para exibição de salas disponíveis
                         /**
-                         *  var labelRoom       string
-                         *  var labelClasse     string
-                         *  var labelAssunto    string
-                         *  var labelProfessor  string
-                         *  var labelCurso      string
-                         *  var labelWhois      string
-                         *  var myClass         string
-                         *  var allowed         Boolean
-                         *  var countRooms      integer
-                         *  var classes         array
-                         *  var broadcastId     string
-                         *  var socket          connection.socket
-                         *  var message         string
+                         *  var labelRoom           string
+                         *  var labelClasse         string
+                         *  var labelAssunto        string
+                         *  var labelApresentador   string
+                         *  var labelCurso          string
+                         *  var labelWhois          string
+                         *  var myClass             string
+                         *  var allowed             Boolean
+                         *  var countRooms          integer
+                         *  var classes             array
+                         *  var broadcastId         string
+                         *  var socket              connection.socket
+                         *  var message             string
                          */
                         // Verifica se a sala criada atende às especificações do sistema
                         // -> Usado enquanto o connection.socketURL 
@@ -710,7 +709,7 @@ $(document).ready(function() {
                             return;
                         }
                         var labelClasse = labelRoom.split('|')[0];
-                        var labelProfessor = labelRoom.split('|')[1];
+                        var labelApresentador = labelRoom.split('|')[1];
                         var labelAssunto = labelRoom.split('|')[2];
                         var labelCurso = labelRoom.split('|')[3];
                         var labelWhois = labelRoom.split('|')[4];
@@ -738,27 +737,22 @@ $(document).ready(function() {
                             usuario = currentUser;
                             var divOpen = document.createElement('div');
                             // Cria objeto de lista com as transmissões disponíveis
-                            var card = constructAccessList(labelClasse, labelAssunto, labelProfessor, viewers, moderator.userid);
+                            var card = constructAccessList(labelClasse, labelAssunto, labelApresentador, viewers, moderator.userid);
 
                             divOpen.innerHTML = card;
-                            divOpen.className = "card-panel";
+                            divOpen.className = "card-panel hoverable";
                             // Cria objeto botão para ingressar na transmissão selecionada
                             var button = document.createElement('a');
                             button.id = moderator.userid;
                             button.title = 'Entrar';
-                            button.className = 'btn-floating btn-large room-enter blue darken-1';
+                            button.className = 'btn-floating room-enter blue darken-1';
                             // Atribui função para ingressar na sala disponível
                             button.onclick = function() {
                                 onlobby = false;
                                 isModerator = false;
                                 broadcaster.value = labelWhois;
-                                // Desabilita e muda aparência do botão de ingresso
+                                // Desabilita botão de ingresso
                                 this.disabled = true;
-                                var elem = document.getElementById(this.id);
-                                if (hasClass(elem, "blue")) {
-                                    elem.classList.remove("blue");
-                                    elem.classList.add("grey");
-                                }
                                 document.getElementById(this.id).disabled = true;
 
                                 // Inicializa apresentação
@@ -795,12 +789,10 @@ $(document).ready(function() {
                             divClose.appendChild(button);
                         }
                         if (countRooms == 0) {
-                            //Exibe mensagem de salas indisponíveis
                             noRooms();
                         }
                     });
                 } else {
-                    //Exibe mensagem de salas indisponíveis
                     noRooms();
                 }
             });
@@ -843,24 +835,24 @@ $(document).ready(function() {
                 }
             }
         }
-        //verifica a cada 3 segundos
         setTimeout(looper, 3000);
     })();
 
     /**
      *  CHAT---------------------------------------------------------
      */
-    //Controles de envio e recebimento de mensagens
+    // Controles de envio e recebimento de mensagens
+    // -> Efetua tratando entrada de texto
+    /**
+     *  var texto string
+     */
     document.getElementById('text-message').onkeyup = function(e) {
-        //Se a tecla apertada não for ENTER -> não faça nada
         if (e.keyCode != 13) return;
-        // Tratando entrada de texto
         this.value = this.value.replace(/^\s+|\s+$/g, '');
         if (!this.value.length) return;
         var texto = "<b class='small'>" + usuario + "</b>:<br>" + this.value;
         texto = btoa(texto);
         connection.send(texto);
-        // Função de append de texto ao elem. textarea
         appendDIV(texto);
         this.value = '';
     };
@@ -868,14 +860,12 @@ $(document).ready(function() {
      *  var texto string
      */
     document.getElementById('send-message-btn').onclick = function() {
-        // Tratando entrada de texto
         var texto = document.getElementById('text-message').value
         texto = texto.replace(/^\s+|\s+$/g, '');
         if (!texto.length) return;
         texto = "<b class='small'>" + usuario + "</b>:<br>" + texto;
         texto = btoa(texto);
         connection.send(texto);
-        // Função de append de texto ao elem. textarea
         appendDIV(texto);
         document.getElementById('text-message').value = '';
     };
@@ -898,7 +888,7 @@ $(document).ready(function() {
 //Trata e escreve mensagem de chat e trata solicitações
 /*
  *    event: mensagem recebida.
- *      -> mensagens em formato de array[4] (length = 5) são tratadas como solicitações;
+ *      -> mensagens em formato de array[4+] (length > 4) são tratadas como solicitações;
  *      -> solicitações tem como padrão no array[0] o indicativo da solicitação;
  *      -> os indicativos sempre iniciam com @, como @PedeAVez.
  *   
@@ -920,7 +910,6 @@ function appendDIV(event) {
         var myRoom = document.getElementById('room-id').value;
         // Identifica se a mensagem é uma solicitação de serviço
         if (chkrash[0] === btoa('@PedeAVez')) {
-            console.log(chkrash);
             // Indica que algum usuário solicita a permissão para falar
             msgData[0] = chkrash[1];
             msgData[1] = (atob(chkrash[3])).split('|')[4];
@@ -938,8 +927,6 @@ function appendDIV(event) {
         } else if (chkrash[0] === btoa('@PedeAVez:deny')) {
             // Indica que o broadcaster negou a solicitação do usuário
             // Verifica se o destinatário é o criador da solicitação para entregar a resposta
-            console.log(chkrash);
-            console.log(chkrash[2] + '|' + myRoom);
             if (chkrash[2] === myRoom) {
                 solicita--;
                 setPedir('deny');

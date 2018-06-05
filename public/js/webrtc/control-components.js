@@ -294,24 +294,28 @@ function constructBtnActionPedir() {
 /**
  * Param classe: Temática da sala
  * Param assunto: Assunto da sala
- * Param professor: Apresentador responsável
+ * Param apresentador: Apresentador responsável
  * Param viwer: Quantidade de espectadores
  * Param moderador: Id do criador da sala (moderador)
  */
-function constructAccessList(classe, assunto, professor, viwer, moderador) {
+function constructAccessList(classe, assunto, apresentador, viwer, moderador) {
     var htmlItem = '<div class="row valign-wrapper li-hover grey-text text-darken-3">' +
-        //'<i class="material-icons large circle teal lighten-2">play_arrow</i>' +
-        '<div id="_' + moderador + '" class="col s4 m3 l2">' +
+        '<div id="_' + moderador + '" class="col s3 m2 l1">' +
+        '<span class="blue-text">Entrar</span><br>' +
         '</div>' +
-        '<div class="col s8 m9 l10">' +
-        '<span class="title"><i class="fa fa-television blue-text"></i> <b>' + classe + ': ' + assunto + '</b></span>' +
+        '<div class="col s9 m10 l11">' +
+        '<span class="card-title">' +
+        '<b>' + classe + ': ' + assunto + '</b>' +
+        '</span>' +
         '<div class="divider"></div>' +
+        '<div class="blockquoted">' +
         '<span>' +
-        '<b class="blue-text"><i class="fa fa-arrow-right"></i> Apresentado por:</b> ' + professor +
+        '<b class="blue-text"> Apresentado por:</b> ' + apresentador +
         '</span><br>' +
         '<span>' +
-        '<b class="blue-text"><i class="fa fa-arrow-right"></i> Espectadores:</b><b> ' + viwer + '</b>' +
+        '<b class="blue-text"> Espectadores:</b><b> ' + viwer + '</b>' +
         '</span>' +
+        '</div>' +
         '</div>' +
         '</div>';
     return htmlItem;
