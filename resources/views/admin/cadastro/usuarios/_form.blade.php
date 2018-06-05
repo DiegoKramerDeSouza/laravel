@@ -1,3 +1,4 @@
+@include('admin.cadastro._includes.alert')
 <div class='row'>
     <div class='input-field col s12 m6'>
         <input class='validate' required type='text' name='name' id='name' value='{{ isset($user->name) ? $user->name : ''}}'>
@@ -17,8 +18,8 @@
         </div>
 
         <div class='input-field col s12 m6'>
-            <input class='validate' required type='password' name='confpassword' id='confpassword'>
-            <label for='confpassword'><i class='fa fa-lock'></i> Confirmar Senha</label>
+            <input class='validate' required type='password' name='password_confirmation' id='password_confirmation'>
+            <label for='password_confirmation'><i class='fa fa-lock'></i> Confirmar Senha</label>
         </div>
     </div>
 @endif

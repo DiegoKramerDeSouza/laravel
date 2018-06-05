@@ -1,3 +1,4 @@
+@include('admin.cadastro._includes.alert')
 <div class='row'>
     <div class='input-field col s12 m6'>
         <input class='validate' required type='text' name='name' id='name' value='{{ isset($cursos->name) ? $cursos->name : ''}}'>

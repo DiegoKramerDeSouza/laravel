@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Validator;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Traits\EspecialMethods;
@@ -35,6 +36,21 @@ class CadastroUsuarioController extends Controller
     }
     public function save(Request $req){
         if($this->validade('5')){
+            // Validação dos campos
+            $validator = Validator::make($req->all(), [
+                'name' => 'bail|required|min:4|max:191',
+                'login' => 'bail|required|unique:users|min:4|max:191',
+                'email' => 'bail|required|unique:users|min:4|max:191',
+                'password' => 'bail|required|min:6|max:20|confirmed',
+                'password_confirmation' => '',
+                'group' => 'required'
+            ]);
+            if ($validator->fails()) {
+                return redirect()->route('admin.cadastro.usuarios.adiciona')
+                            ->withErrors($validator)
+                            ->withInput();
+            }
+            
             if(User::where('email', $req->email)->count() == 0){
                 //Define os campos enviados que devem ser gravados no banco
                 $user = [
@@ -45,22 +61,6 @@ class CadastroUsuarioController extends Controller
                     'password'=>bcrypt($req->password),
                     'type'=>0
                 ];
-                //IMAGENS--------------------------------
-                //Coleta todos os dados recebidos
-                $data = $req->all();
-                //Tratamento de imagem. Se necessário
-                if(isset($data->imagem)){
-                    if($req->hasfile("imagem")){
-                        $img = $req->file('imagem');
-                        $num = rand(1111,9999);
-                        $dir = 'img/users/';
-                        $ext = $img->guessClientExtension();
-                        $imgName = 'IMG' . $num . "." . $ext;
-                        $img->move('$dir', $imgName);
-                        $data["imagem"] = $dir . "/" . $imgName;
-                    }
-                }
-                //---------------------------------------
                 //Insere dados na base User
                 $created = User::create($user);
                 //Define os campos enviados que devem ser criados no banco
@@ -94,6 +94,18 @@ class CadastroUsuarioController extends Controller
     }
     public function update(Request $req, $id){
         if($this->validade('5')){
+            // Validação dos campos
+            $validator = Validator::make($req->all(), [
+                'name' => 'bail|required|min:4|max:191',
+                'login' => 'bail|required|unique:users,login,' . $id . '|min:4|max:191',
+                'email' => 'bail|required|unique:users,email,' . $id . '|min:4|max:191',
+                'group' => 'required'
+            ]);
+            if ($validator->fails()) {
+                return redirect()->route('admin.cadastro.usuarios.edita', $id)
+                            ->withErrors($validator)
+                            ->withInput();
+            }
             //Define os campos enviados que devem ser atualizados no banco
             $user = [
                 '_token'=>$req->_token,
