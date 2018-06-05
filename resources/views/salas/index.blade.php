@@ -129,6 +129,7 @@
                                                 <i class='material-icons large'>fullscreen_exit</i>
                                             </a>
                                         </div>
+                                        
                                     </div> 
                                 </div>
                             </div>
@@ -235,9 +236,14 @@
             </div>
         @endif
 
-        <div id='div-enter' class='fixed-action-btn d-none' style='margin-bottom: 45px;'>
-            <a id='enter' class='btn-floating btn-large blue pulse'>
+        <div id='div-enter' class='fixed-action-btn d-none tooltipped' data-position='left' data-tooltip='Ingressar' style='margin-bottom: 62px;'>
+            <a id='enter' class='btn-floating btn-large waves-effect waves-light cyan pulse'>
                 <i class='large material-icons'>videocam</i>
+            </a>
+        </div>
+        <div id='control-toggle' class='fixed-action-btn d-none'>
+            <a id='enter' class='btn-floating btn-large waves-effect waves-light blue darken-3 tooltipped' data-position='left' data-tooltip='Controles'>
+                <i class='large material-icons'>dvr</i>
             </a>
         </div>
     @endif

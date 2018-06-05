@@ -508,7 +508,11 @@ $(document).ready(function() {
         connection.onunmute = function(e) {
             e.mediaElement.removeAttribute('poster');
         };
-
+        // Apresenta painel com controles de mídia
+        $('#control-toggle').fadeIn(300);
+        document.getElementById('control-toggle').onclick = function() {
+            toggleElem('#nav-footer');
+        }
     };
 
     // Ação de criar uma sala de aula ao clicar em 'btn-join-as-productor'

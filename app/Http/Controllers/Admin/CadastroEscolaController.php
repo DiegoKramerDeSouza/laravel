@@ -44,7 +44,12 @@ class CadastroEscolaController extends Controller
             // Validação dos campos
             $validator = Validator::make($req->all(), [
                 'name' => 'bail|required|min:4|max:191',
-                'register' => 'bail|required|unique:escolas|min:4|max:191'
+                'register' => 'bail|required|unique:escolas|min:4|max:191',
+                'postal' => 'required',
+                'address' => 'required',
+                'city' => 'required',
+                'number' => 'required',
+                'st' => 'required'
             ]);
             if ($validator->fails()) {
                 return redirect()->route('admin.cadastro.escolas.adiciona')
@@ -103,7 +108,12 @@ class CadastroEscolaController extends Controller
             // Validação dos campos
             $validator = Validator::make($req->all(), [
                 'name' => 'bail|required|min:4|max:191',
-                'register' => 'bail|required|unique:escolas,register,' . $id . '|min:4|max:191'
+                'register' => 'bail|required|unique:escolas,register,' . $id . '|min:4|max:191',
+                'postal' => 'required',
+                'address' => 'required',
+                'city' => 'required',
+                'number' => 'required',
+                'st' => 'required'
             ]);
             if ($validator->fails()) {
                 return redirect()->route('admin.cadastro.escolas.edita', $id)

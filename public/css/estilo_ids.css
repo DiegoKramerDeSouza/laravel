@@ -47,6 +47,10 @@
     z-index: 2147483648;
 }
 
+#control-toggle-disabled {
+    z-index: 2147483648;
+}
+
 #fglayer {
     position: fixed;
     opacity: 0.8;
