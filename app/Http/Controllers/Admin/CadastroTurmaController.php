@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Validator;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Traits\EspecialMethods;
@@ -17,7 +18,6 @@ class CadastroTurmaController extends Controller
 
     public function index(){
         if($this->validade('1')){
-            //Paginação dos valores coletados na entidade Turmas
             $turmas = Turma::orderBy('name', 'asc')->paginate(5);
             //$escolas = Escola::all();
             $accounts = User::where('type', 1)->get()->toArray();
@@ -33,7 +33,6 @@ class CadastroTurmaController extends Controller
     }
     public function add(){
         if($this->validade('1')){
-            //Coleta todas as escolas cadastradas
             $classroom = true;
             $escolas = Escola::all();
             $cursos = Curso::all();
@@ -49,6 +48,18 @@ class CadastroTurmaController extends Controller
     }
     public function save(Request $req){
         if($this->validade('1')){
+            // Validação dos campos
+            $validator = Validator::make($req->all(), [
+                'name' => 'bail|required|min:4|max:191',
+                'login' => 'bail|required|unique:users|min:4|max:191',
+                'password' => 'bail|required|min:6|max:20|confirmed',
+                'password_confirmation' => ''
+            ]);
+            if ($validator->fails()) {
+                return redirect()->route('admin.cadastro.turmas.adiciona')
+                            ->withErrors($validator)
+                            ->withInput();
+            }
             //Define os campos enviados que devem ser gravados no banco
             $users = [
                 '_token'=>$req->_token,
@@ -87,13 +98,12 @@ class CadastroTurmaController extends Controller
     }
     public function edit($id){
         if($this->validade('1')){
-            //Direciona para View de edição
             $classroom = true;
             $turmas = Turma::find($id);
             $users = User::find($turmas->user_id);
             $escolas = Escola::all();
             $cursos = Curso::all();
-            
+
             //Efetua relação de cada Modulo e seu respectivo nome e os coloca em um array
             $allmodulos = Modulo::all()->toArray();
             $modulos = array();
@@ -124,6 +134,17 @@ class CadastroTurmaController extends Controller
     }
     public function update(Request $req, $id){
         if($this->validade('1')){
+            $userId = Turma::where('user_id', $id)->first();
+            // Validação dos campos
+            $validator = Validator::make($req->all(), [
+                'name' => 'bail|required|min:4|max:191',
+                'login' => 'bail|required|unique:users,login,' . $id . '|min:4|max:191'
+            ]);
+            if ($validator->fails()) {
+                return redirect()->route('admin.cadastro.turmas.edita', $userId->id)
+                            ->withErrors($validator)
+                            ->withInput();
+            }
             //Define os campos enviados que devem ser atualizados no banco
             $users = [
                 '_token'=>$req->_token,

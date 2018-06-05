@@ -40,7 +40,7 @@ class CadastroUsuarioController extends Controller
             $validator = Validator::make($req->all(), [
                 'name' => 'bail|required|min:4|max:191',
                 'login' => 'bail|required|unique:users|min:4|max:191',
-                'email' => 'bail|required|unique:users|min:4|max:191',
+                'email' => 'bail|required|unique:users|email|max:191',
                 'password' => 'bail|required|min:6|max:20|confirmed',
                 'password_confirmation' => '',
                 'group' => 'required'
@@ -98,7 +98,7 @@ class CadastroUsuarioController extends Controller
             $validator = Validator::make($req->all(), [
                 'name' => 'bail|required|min:4|max:191',
                 'login' => 'bail|required|unique:users,login,' . $id . '|min:4|max:191',
-                'email' => 'bail|required|unique:users,email,' . $id . '|min:4|max:191',
+                'email' => 'bail|required|unique:users,email,' . $id . '|email|max:191',
                 'group' => 'required'
             ]);
             if ($validator->fails()) {

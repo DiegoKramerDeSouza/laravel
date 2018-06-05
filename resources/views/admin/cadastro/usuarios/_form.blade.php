@@ -7,7 +7,7 @@
 
     <div class='input-field col s12 m6'>
         <input class='validate' required type='text' name='login' id='login' value='{{ isset($user->login) ? $user->login : ''}}'>
-        <label for='login'><i class='fa fa-user-circle'></i> Usuário</label>
+        <label for='login'><i class='fa fa-user-circle'></i> Login</label>
     </div>
 </div>
 @if(!isset($user->password))

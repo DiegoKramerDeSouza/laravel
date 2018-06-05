@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Validator;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Traits\EspecialMethods;
@@ -40,6 +41,16 @@ class CadastroEscolaController extends Controller
     //Salvar uma nova escola na base de dados
     public function save(Request $req){
         if($this->validade('4')){
+            // Validação dos campos
+            $validator = Validator::make($req->all(), [
+                'name' => 'bail|required|min:4|max:191',
+                'register' => 'bail|required|unique:escolas|min:4|max:191'
+            ]);
+            if ($validator->fails()) {
+                return redirect()->route('admin.cadastro.escolas.adiciona')
+                            ->withErrors($validator)
+                            ->withInput();
+            }
             if(Escola::where('register', $req->register)->count() == 0){
                 //Define os campos enviados que devem ser criados no banco
                 $escola = [
@@ -89,6 +100,16 @@ class CadastroEscolaController extends Controller
     //Atualizar dados de escola e gravar na base
     public function update(Request $req, $id){
         if($this->validade('4')){
+            // Validação dos campos
+            $validator = Validator::make($req->all(), [
+                'name' => 'bail|required|min:4|max:191',
+                'register' => 'bail|required|unique:escolas,register,' . $id . '|min:4|max:191'
+            ]);
+            if ($validator->fails()) {
+                return redirect()->route('admin.cadastro.escolas.edita', $id)
+                            ->withErrors($validator)
+                            ->withInput();
+            }
             //Define os campos enviados que devem ser atualizados no banco
             $escola = [
                 '_token'=>$req->_token,

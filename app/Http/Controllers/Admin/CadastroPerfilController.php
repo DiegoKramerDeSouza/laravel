@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Validator;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Traits\EspecialMethods;
@@ -35,6 +36,15 @@ class CadastroPerfilController extends Controller
     }
     public function save(Request $req){
         if($this->validade('6')){
+            // Validação dos campos
+            $validator = Validator::make($req->all(), [
+                'name' => 'bail|required|unique:perfils|min:4|max:191'
+            ]);
+            if ($validator->fails()) {
+                return redirect()->route('admin.cadastro.perfis.adiciona')
+                            ->withErrors($validator)
+                            ->withInput();
+            }
             if($req->grantList != null){
                 $grantList = implode(';', $req->grantList);
             } else {
@@ -90,6 +100,15 @@ class CadastroPerfilController extends Controller
     }
     public function update(Request $req, $id){
         if($this->validade('6')){
+            // Validação dos campos
+            $validator = Validator::make($req->all(), [
+                'name' => 'bail|required|unique:perfils,name,' . $id . '|min:4|max:191'
+            ]);
+            if ($validator->fails()) {
+                return redirect()->route('admin.cadastro.perfis.edita', $id)
+                            ->withErrors($validator)
+                            ->withInput();
+            }
             if($req->grantList != null){
                 $grantList = implode(';', $req->grantList);
             } else {

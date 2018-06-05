@@ -14,8 +14,8 @@
             <label for='password'><i class='fa fa-lock'></i> Senha</label>
         </div>
         <div class='input-field col s12 m6'>
-            <input class='validate' required type='password' name='confpassword' id='confpassword'>
-            <label for='confpassword'><i class='fa fa-lock'></i> Confirmar senha</label>
+            <input class='validate' required type='password' name='password_confirmation' id='password_confirmation'>
+            <label for='password_confirmation'><i class='fa fa-lock'></i> Confirmar senha</label>
         </div>
     @endif
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Validator;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Traits\EspecialMethods;
@@ -32,6 +33,15 @@ class CadastroModuloController extends Controller
     }
     public function save(Request $req){
         if($this->validade('2')){
+            // Validação dos campos
+            $validator = Validator::make($req->all(), [
+                'name' => 'bail|required|unique:modulos|min:4|max:191'
+            ]);
+            if ($validator->fails()) {
+                return redirect()->route('admin.cadastro.modulos.adiciona')
+                            ->withErrors($validator)
+                            ->withInput();
+            }
             //Define os campos enviados que devem ser gravados no banco
             $modulos = [
                 '_token'=>$req->_token,
@@ -55,6 +65,15 @@ class CadastroModuloController extends Controller
     }
     public function update(Request $req, $id){
         if($this->validade('2')){
+            // Validação dos campos
+            $validator = Validator::make($req->all(), [
+                'name' => 'bail|required|unique:modulos,name,' . $id . '|min:4|max:191'
+            ]);
+            if ($validator->fails()) {
+                return redirect()->route('admin.cadastro.modulos.edita', $id)
+                            ->withErrors($validator)
+                            ->withInput();
+            }
             //Define os campos enviados que devem ser atualizados no banco
             $modulos = [
                 '_token'=>$req->_token,
