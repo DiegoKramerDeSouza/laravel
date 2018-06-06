@@ -3,10 +3,14 @@
  * Tratamento de elementos visuais de uso geral
  * 
  */
-
 $(document).ready(function() {
-    // Inicialização do tratamento de click em objetos da classe load para apresentar tela de loading
-    // Ignora chamada de loading se houver algum campo required :invalid
+    // Inicializa verificação de eventos de cliques em botões com chamada de loading
+    deployLoading();
+    deployLoadingCancel();
+});
+// Inicialização do tratamento de click em objetos da classe load para apresentar tela de loading
+// -> Ignora chamada de loading se houver algum campo required :invalid
+function deployLoading() {
     var load = document.getElementsByClassName('load');
     for (var j = 0; j < load.length; j++) {
         var isValid = true;
@@ -18,8 +22,16 @@ $(document).ready(function() {
             if (isValid) callLoading();
         }
     }
-});
-
+}
+// Monta e trata apresentações de loading específicos para botões Cancel
+function deployLoadingCancel() {
+    var load = document.getElementsByClassName('load-cancel');
+    for (var j = 0; j < load.length; j++) {
+        load[j].onclick = function() {
+            callLoading();
+        }
+    }
+}
 // Inicia apresentação de tela de loading
 function callLoading() {
     var center = document.getElementById('centralized');
