@@ -8,17 +8,17 @@
     <div class='card z-depth-5'>
         <div class='card-content'>
             <div class='card-title'>
-                <b class='grey-text text-darken-2'><i class='fa fa-graduation-cap'></i> Cadastro de Turmas</b>
+                <b class='grey-text text-darken-2'>{!! $turmasIcon !!} Cadastro de Turmas</b>
             </div>
             <div class='row'>
                 <div class="input-field col s12 m6">
-                    <i class="material-icons prefix">search</i>
+                    {!! $prefixSearchIcon !!}
                     <input type="text" id="search-input" autofocus class="autocomplete">
                     <label for="search-input">Procurar</label>
                 </div>
                 <div class="input-field col s12 m6" align='right'>
                     Turmas encontradas: <b>{{ $turmas->total() }}</b>
-                    <h6><a class='load green-text text-darken-1' href='{{ route('admin.cadastro.turmas.adiciona') }}'><i class='fa fa-plus-circle fa-lg'></i> Nova Turma</a></h6>
+                    <h6><a class='load green-text text-darken-1' href='{{ route('admin.cadastro.turmas.adiciona') }}'>{!! $novoIcon !!} Nova Turma</a></h6>
                 </div>
             </div>
             <div class='divider'></div>
@@ -27,10 +27,10 @@
                     <table class='striped'>
                         <thead>
                             <tr>
-                                <th><i class='fa fa-graduation-cap fa-lg blue-text'></i> Nome</th>
-                                <th><i class='fa fa-user-circle fa-lg blue-text'></i> Login</th>
-                                <th><i class='fa fa-institution fa-lg blue-text'></i> Instituição</th>
-                                <th><i class='fa fa-clock-o fa-lg blue-text'></i> Criação</th>
+                                <th class='blue-text'>{!! $turmasIcon !!} Nome</th>
+                                <th class='blue-text'>{!! $loginIcon !!} Login</th>
+                                <th class='blue-text'>{!! $institutionIcon !!} Instituição</th>
+                                <th class='blue-text'>{!! $timeIcon !!} Criação</th>
                             </tr>
                         </thead>
 
@@ -54,7 +54,7 @@
                     </div>
                 @else
                     <div class='grey-text center' style='margin-top:40px; margin-bottom:40px;'>
-                        <h5><i class='red-text text-darken-3 fa fa-times'></i> Não há registros de turmas!</h5>
+                        <h5>{!! $cancelRedIcon !!} Não há registros de turmas!</h5>
                     </div>
                 @endif
             </div>

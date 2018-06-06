@@ -38,22 +38,22 @@
         <header>
             <nav class="nav-wrapper grey darken-4">
                 <div class="">
-                    <a href='#!' class='sidenav-trigger white-text text-darken-3 right' data-target='side-bar' title='Menu'><i class='fa fa-bars fa-2x'></i></a>
-                    <a href='{{ route('home') }}' class='brand-logo load'><span class='white-text'>&nbsp;&nbsp;<b><span class='blue-text'>Web</span>Tv</b></span></a>
+                    <a href='#!' class='sidenav-trigger white-text text-darken-3 right' data-target='side-bar' title='Menu'>{!! $menuIcon !!}</a>
+                    <a href='{{ route('home') }}' class='brand-logo load-cancel'><span class='white-text'>&nbsp;&nbsp;<b><span class='blue-text'>Web</span>Tv</b></span></a>
                     <ul id='nav-mobile' class='right hide-on-med-and-down white-text'>
                         @if(! Auth::guest())
                             @if(Auth::user()->type == 0)
                                 <li class='hover-footer-btn'>
-                                    <a id='homeicon' href='{{ route('home') }}' class='load'>
-                                        <span class='white-text'><span class='fa fa-home fa-lg blue-text'></span> <b>Início</b></span>
+                                    <a id='homeicon' href='{{ route('home') }}' class='load-cancel'>
+                                        <span class='white-text'>{!! $homeBlueIcon !!} <b>Início</b></span>
                                     </a>
                                 </li>
                                 <li class='hover-footer-btn'>
-                                    <a href="{{ route('salas') }}" class='load'><span class='white-text'><span class='fa fa-television fa-lg blue-text'></span> <b>Salas</b></span></a>
+                                    <a href="{{ route('salas') }}" class='load-cancel'><span class='white-text'>{!! $roomsBlueIcon !!} <b>Salas</b></span></a>
                                 </li>
                                 <li class='hover-footer-btn'>
-                                    <a id='gerDrop' class='load' href='{{ route('admin.cadastro') }}'>
-                                        <b><span class='white-text'><span class='fa fa-user-plus fa-lg blue-text'></span> Cadastro</span></b>
+                                    <a id='gerDrop' class='load-cancel' href='{{ route('admin.cadastro') }}'>
+                                        <b><span class='white-text'>{!! $userPlusBlueIcon !!} Cadastro</span></b>
                                     </a>
                                 </li>
                             @endif
@@ -69,9 +69,9 @@
                     </ul>
                 </div>		
                 <ul id='myProfile' class='dropdown-content'>
-                    <li class='white'><a href='#' class=''><i class='fa fa-cog blue-text'></i> Configurações</a></li>
-                    <li class='white'><a href='#' class=''><i class='fa fa-book blue-text'></i> Aulas</a></li>
-                    <li class='white'><a href='{{ route('login.destroy')}}' class='red-text text-darken-2'><i class='fa fa-sign-out fa-lg'></i>Sair</a></li>
+                    <li class='white'><a href='#' class=''>{!! $configBlueIcon !!} Configurações</a></li>
+                    <li class='white'><a href='#' class=''>{!! $bookBlueIcon !!} Aulas</a></li>
+                    <li class='white'><a href='{{ route('login.destroy')}}' class='load-cancel red-text text-darken-2'>{!! $signOutRedIcon !!} Sair</a></li>
                 </ul>
                 
             </nav>
@@ -82,21 +82,21 @@
                 <ul>
                     @if(Auth::guest())
                         <li>
-                            <a href="{{ route('login') }}" class='load'><span class='grey-text text-darken-3'><span class='fa fa-user-circle fa-lg blue-text'></span> <b>Login</b></span></a>
+                            <a href="{{ route('login') }}" class='load-cancel'><span class='grey-text text-darken-3'>{!! $loginBlueIcon !!} <b>Login</b></span></a>
                         </li>
                     @else
                         @if(Auth::user()->type == 0)
                             <li>
-                                <a id='homeicon' href='{{ route('home') }}' class='load'>
-                                    <span class='grey-text text-darken-3'><span class='fa fa-home fa-lg blue-text'></span> <b>Início</b></span>
+                                <a id='homeicon' href='{{ route('home') }}' class='load-cancel'>
+                                    <span class='grey-text text-darken-3'>{!! $homeBlueIcon !!} <b>Início</b></span>
                                 </a>
                             </li>
                             <li>
-                                <a href="{{ route('salas') }}" class='load'><span class='grey-text text-darken-3'><span class='fa fa-television fa-lg blue-text'></span> <b>Salas</b></span></a>
+                                <a href="{{ route('salas') }}" class='load-cancel'><span class='grey-text text-darken-3'>{!! $roomsBlueIcon !!} <b>Salas</b></span></a>
                             </li>
                             <li>
-                                <a class='load' id='gerDrop' href='{{ route('admin.cadastro') }}'>
-                                    <b><span class='grey-text text-darken-3'><span class='fa fa-user-plus fa-lg blue-text'></span> Cadastro</span></b>
+                                <a class='load-cancel' id='gerDrop' href='{{ route('admin.cadastro') }}'>
+                                    <b><span class='grey-text text-darken-3'>{!! $userPlusBlueIcon !!} Cadastro</span></b>
                                 </a>
                             </li>
                         @endif					
@@ -110,12 +110,12 @@
                     @endif
                 </ul>
                 <ul id='side-dropGer' class='dropdown-content'>
-                    <li class='grey darken-4'><a href='{{ route('login.destroy')}}' class='load red-text text-darken-3'><i class='fa fa-sign-out fa-lg'></i> <b>Sair</b></a></li>
+                    <li class='grey darken-4'><a href='{{ route('login.destroy')}}' class='load-cancel red-text text-darken-3'>{!! $signOutRedIcon !!} <b>Sair</b></a></li>
                 </ul>
                 <ul id='side-myProfile' class='dropdown-content'>
-                    <li><a href='#' class='grey-text text-darken-3'><i class='fa fa-cog blue-text'></i> Configurações</a></li>
-                    <li><a href='#' class='grey-text text-darken-3'><i class='fa fa-book blue-text'></i> Aulas</a></li>
-                    <li><a href='{{ route('login.destroy')}}' class='load red-text text-darken-3'><i class='fa fa-sign-out fa-lg red-text'></i>Sair</a></li>
+                    <li><a href='#' class='grey-text text-darken-3'>{!! $configBlueIcon !!} Configurações</a></li>
+                    <li><a href='#' class='grey-text text-darken-3'>{!! $bookBlueIcon !!} Aulas</a></li>
+                    <li><a href='{{ route('login.destroy')}}' class='load-cancel red-text text-darken-3'>{!! $signOutRedIcon !!} Sair</a></li>
                 </ul>
             </div>
 

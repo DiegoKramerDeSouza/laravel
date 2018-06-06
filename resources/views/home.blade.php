@@ -10,26 +10,26 @@
             @if(Auth::guest())
                 <div class='row center container'>
                     <h2 class='card-title' align='left'>
-                        <b>Bem vindo ao <span class='blue-text'>WebTV</span>.</b><br>
+                        <b>Bem vindo ao <span class='blue-text'>{!! $logo !!}</span>.</b><br>
                         Efetue seu acesso para começar.
                     </h2>
                     <div class='divider'></div>
                     <div class='row'>
-                        <h3 class='card-title' align='left'><i class='fa fa-user-circle blue-text'></i> Login</h3>
+                        <h3 class='card-title' align='left'>{!! $loginBlueIcon !!} Login</h3>
                         <form class='' action='{{ route('login.access') }}' method='post' enctype="multipart/form-data">
                             {{ csrf_field() }}
                             <div class='row'>
                                 <div class='input-field col s12 m6'>
                                     <input class='validate' autofocus required type='text' name='login' id='login'>
-                                    <label for='login'><i class='fa fa-user-o'></i> Usuário</label>
+                                    <label for='login'>{!! $userOIcon !!} Usuário</label>
                                 </div>
                                 <div class='input-field col s12 m6'>
                                     <input class='validate' required type='password' name='password' id='password'>
-                                    <label for='password'><i class='fa fa-lock'></i> Senha</label>
+                                    <label for='password'>{!! $lockIcon !!} Senha</label>
                                 </div>
                             </div>
                             <div class='card-action' align='right'>
-                                <button id='access' type='submit' class='load btn-flat green-text text-darken-2 waves-effect waves-green'>Entrar <i class='fa fa-sign-in'></i></button>
+                                <button id='access' type='submit' class='load btn-flat green-text text-darken-2 waves-effect waves-green'>Entrar {!! $signInIcon !!}</button>
                             </div>
                         </form>
                     </div>
@@ -37,14 +37,14 @@
             @else
                 <div class='row center'>
                     <h2 class='card-title' align='left'>
-                        <b>Bem vindo(a) <br><span class='blue-text'><i class='fa fa-user-circle'></i> {{ Auth::user()->name }}</span>.</b><br>
+                        <b>Bem vindo(a) <br><span class='blue-text'>{!! $loginIcon !!} {{ Auth::user()->name }}</span>.</b><br>
                     </h2>
                     <div class='divider'></div>
                     <br>
                     <div class='row grey-text text-darken-3' align='left'>
                         <div class='col s12 m4'>
                             <div class='blue-text center'>
-                                <a href="{{ route('salas') }}" title='Transmita'><i class='material-icons large'>wifi_tethering</i></a>
+                                <a href="{{ route('salas') }}" title='Transmita'>{!! $transmitLargeIcon !!}</a>
                             </div>
                             <h5>Crie uma sala e inicie sua transmissão</h5>
                             <p>Com a função de salas você pode iniciar sua transmissão para um ou vários espectadores simultâneos.</p>
@@ -52,7 +52,7 @@
                         </div>
                         <div class='col s12 m4'>
                             <div class='blue-text center'>
-                                <a href="{{ route('salas') }}" title='Compartilhe'><i class='material-icons large'>share</i></a>
+                                <a href="{{ route('salas') }}" title='Compartilhe'>{!! $shareLargeIcon !!}</a>
                             </div>
                             <h5>Amplie a interação com os espectadores</h5>
                             <p>Todas as salas contam com transmissão de áudio e vídeo, além de suporte a envio de mensagens de texto e compartilhamento de tela simultaneamente.</p>
@@ -60,7 +60,7 @@
                         </div>
                         <div class='col s12 m4'>
                             <div class='blue-text center'>
-                                <a href="{{ route('admin.cadastro') }}" title='Configure'><i class='material-icons large'>people_outline</i></a>
+                                <a href="{{ route('admin.cadastro') }}" title='Configure'>{!! $peopleLargeIcon !!}</a>
                             </div>
                             <h5>Personalize perfis e usuários</h5>
                             <p>Com a função de cadastros você pode configurar e gerenciar cursos, instituições e usuário como desejar.</p>

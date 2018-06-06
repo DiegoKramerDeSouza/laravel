@@ -10,12 +10,12 @@
             @if(Auth::user()->type == 0)
                 <div id='opend-rooms' class='col s12 m6'>
                     <h5 class='row'>
-                        <span><b><i class='fa fa-television'></i> Salas disponíveis</b></span>
+                        <span><b>{!! $roomsIcon !!} Salas disponíveis</b></span>
                     </h5>
             @else
                 <div id='opend-rooms' class='col s12'>
                     <h4 class='row'>
-                        <span><i class='fa fa-television'></i> <b>Bem vindo(a) <span class='blue-text'>{{ Auth::user()->name }}</span></b></span>
+                        <span>{!! $roomsIcon !!} <b>Bem vindo(a) <span class='blue-text'>{{ Auth::user()->name }}</span></b></span>
                     </h4>
                     <h5 class='row'>
                         <span><b>Estas são as salas disponíveis para você:</b></span>
@@ -26,7 +26,7 @@
                     <!--Div de loading de conteúdo. Apenas demonstrativa-->
                     <div class="center blue-text text-darken-2" align='center'>
                         <h5>Encontrando salas...</h5>
-                        <a class="btn-floating btn-large blue pulse"><i class="material-icons">search</i></a>
+                        <a class="btn-floating btn-large blue pulse">{!! $searchIcon !!}</a>
                         <br>
                         <br>
                         <br>                                                
@@ -39,17 +39,17 @@
                 <div id='teacher-access' class='card z-depth-5 col s12 m6'>
                     <div class='card-content'>
                         <div class='card-title black-text'>
-                            <h5><i class='fa fa-plus-circle blue-text'></i> Iniciar nova sala</h5>
+                            <h5>{!! $tvBlueIcon !!} Iniciar nova sala</h5>
                         </div>
                         <div class='row'>
                             <!--Tema e Assunto da aula-->
                             <div class='input-field col s12'>
                                 <input type='text' class='validate' id='tema' name='tema' required autofocus>
-                                <label for='tema'><i class='fa fa-book'></i> Tema:</label>
+                                <label for='tema'>{!! $bookIcon !!} Tema:</label>
                             </div>
                             <div class='input-field col s12'>
                                 <input type='text' class='validate' id='assunto' name='assunto' required>
-                                <label for='assunto'><i class='fa fa-bookmark'></i> Assunto:</label>
+                                <label for='assunto'>{!! $bookmarkIcon !!} Assunto:</label>
                             </div>
                             <div class='input-field col s12'>
                                 <select multiple id='cursos-list' required name='cursos-list' title='Selecione ao menos um curso'>
@@ -60,11 +60,11 @@
                                         @endforeach
                                     @endif
                                 </select>
-                                <label for='cursos-list'><i class='fa fa-cubes'></i> Seleção de Cursos</label>
+                                <label for='cursos-list'>{!! $cursosIcon !!} Seleção de Cursos</label>
                             </div>
                             <div class='divider'></div>
                             <div align='right'>
-                                <button type='submit' id='btn-join-as-productor' class='btn blue white-text waves-effect waves-light'><i class='fa fa-play-circle'></i> Iniciar</button>
+                                <button type='submit' id='btn-join-as-productor' class='btn blue white-text waves-effect waves-light'>{!! $playButtomIcon !!} Iniciar</button>
                             </div>
                         </div> 
                     </div>
@@ -120,7 +120,7 @@
                                             <div class='card-panel grey lighten-5 z-depth-1'>
                                                 <div class="row valign-wrapper">
                                                     <div class="col s2 m1">
-                                                        <span class='btn-floating red darken-2 pulse'><i class='material-icons'>ondemand_video</i></span>
+                                                        <span class='btn-floating red darken-2 pulse'>{!! $tvIcon !!}</span>
                                                     </div>
                                                     <div class="col s10 m11">
                                                         <span class="grey-text text-darken-2">
@@ -138,7 +138,7 @@
                                         <video id="video-preview" class="responsive-video" preload="none" loop ></video>
                                         <div id='div-exit-fullscreen' class='fixed-action-btn d-none'>
                                             <a id='exit-fullscreen' class='btn-floating btn-large blue darken-2'>
-                                                <i class='material-icons large'>fullscreen_exit</i>
+                                                {!! $fullscreenExitLargeIcon !!}
                                             </a>
                                         </div>
                                         
@@ -160,7 +160,7 @@
         <div id='span-video-preview-2nd' data-status='disabled' data-position='second' class='d-none second-video'>
             <video id="secondvideo-preview" preload="none" loop class='min-video responsive-video'></video>
             <a id='swap-video' style='bottom:10px;' class='btn-floating halfway-fab blue darken-2 waves-effect waves-light'>
-                <i class='material-icons'>swap_horiz</i>
+                {!! $swapIcon !!}
             </a>
         </div> 
     </div>
@@ -175,11 +175,11 @@
             <div class='divider'></div>
             <div class='file-field input-field' style='padding:5px;'>
                 <a id='send-message-btn' class='btn-floating waves-effect waves-light blue right'>
-                    <i class='material-icons'>send</i>
+                    {!! $sendIcon !!}
                 </a>
                 <div class='file-path-wrapper'>
                     <!--Input de mensagem-->
-                    <i class='fa fa-commenting-o fa-1x prefix'></i>
+                    {!! $prefixCommentingIcon !!}
                     <input type='text' class='' id='text-message' placeholder='Chat'>
                 </div>
             </div>
@@ -190,7 +190,7 @@
         <div id='con-list' class='modal'>
             <div class='modal-content'>
                 <h5>
-                    <i class='material-icons blue-text'>ondemand_video</i> Espectadores:
+                    {!! $userVideoBlueIcon !!} Espectadores:
                     <span class='right'>
                         <a class='modal-close'>
                             <i class='fa fa-times red-text text-darken-3'></i>
@@ -209,10 +209,10 @@
             <div id='msg-solicita' class='modal'>
                 <div class='modal-content'>
                     <h5>
-                        <i class='material-icons blue-text'>pan_tool</i> Solicitações:
+                        {!! $panToolBlueIcon !!} Solicitações:
                         <span class='right'>
                             <a class='modal-close'>
-                                <i class='fa fa-times red-text text-darken-3'></i>
+                                {!! $cancelRedIcon !!}
                             </a>
                         </span>
                     </h5>
@@ -230,7 +230,7 @@
                         <i class='material-icons blue-text'>extension</i> Extensão do Chrome:
                         <span class='right'>
                             <a class='modal-close'>
-                                <i class='fa fa-times red-text text-darken-3'></i>
+                                {!! $cancelRedIcon !!}
                             </a>
                         </span>
                     </h5>
@@ -242,20 +242,20 @@
                     <br>
                 </div>
                 <div class='modal-action'>
-                    <a href='https://chrome.google.com/webstore/detail/screen-capturing/ajhifddimkapgcifgcodmmfdlknahffk' target='_blank' onclick='chrome.webstore.install()' class='right btn-flat blue-text text-darken-2 waves-effect waves-teal'><i class='fa fa-check'></i> sim, instalar</a>
-                    <a class='modal-close right btn-flat red-text text-darken-3 waves-effect waves-red'><i class='fa fa-times'></i> não</a>
+                    <a href='https://chrome.google.com/webstore/detail/screen-capturing/ajhifddimkapgcifgcodmmfdlknahffk' target='_blank' onclick='chrome.webstore.install()' class='right btn-flat blue-text text-darken-2 waves-effect waves-teal'>{!! $applyIcon !!} sim, instalar</a>
+                    <a class='modal-close right btn-flat red-text text-darken-3 waves-effect waves-red'>{!! $cancelIcon !!} não</a>
                 </div>
             </div>
         @endif
 
         <div id='div-enter' class='fixed-action-btn d-none tooltipped' data-position='left' data-tooltip='Ingressar' style='margin-bottom: 62px;'>
             <a id='enter' class='btn-floating btn-large waves-effect waves-light cyan pulse'>
-                <i class='large material-icons'>videocam</i>
+                {!! $videocamLargeIcon !!}
             </a>
         </div>
         <div id='control-toggle' class='fixed-action-btn d-none'>
             <a id='enter' class='btn-floating btn-large waves-effect waves-light blue darken-3 tooltipped' data-position='left' data-tooltip='Controles'>
-                <i class='large material-icons'>dvr</i>
+                {!! $controlLargeIcon !!}
             </a>
         </div>
     @endif

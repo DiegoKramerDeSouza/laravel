@@ -8,17 +8,17 @@
     <div class='card z-depth-5'>
         <div class='card-content'>
             <div class='card-title'>
-                <b class='grey-text text-darken-2'><i class='fa fa-cubes'></i> Cadastro de Cursos</b>
+                <b class='grey-text text-darken-2'>{!! $cursosIcon !!} Cadastro de Cursos</b>
             </div>
             <div class='row'>
                 <div class="input-field col s12 m6">
-                    <i class="material-icons prefix">search</i>
+                    {!! $prefixSearchIcon !!}
                     <input type="text" id="search-input" autofocus class="autocomplete">
                     <label for="search-input">Procurar</label>
                 </div>
                 <div class="input-field col s12 m6" align='right'>
                     Cursos encontrados: <b>{{ $cursos->total() }}</b>
-                    <h6><a class='green-text text-darken-1 load' href='{{ route('admin.cadastro.cursos.adiciona') }}'><i class='fa fa-plus-circle fa-lg'></i> Novo Curso</a></h6>
+                    <h6><a class='green-text text-darken-1 load' href='{{ route('admin.cadastro.cursos.adiciona') }}'>{!! $novoIcon !!} Novo Curso</a></h6>
                 </div>
             </div>
             <div class='divider'></div>
@@ -27,9 +27,9 @@
                     <table class='striped'>
                         <thead>
                             <tr>
-                                <th><i class='fa fa-cube fa-lg blue-text'></i> Nome</th>
-                                <th><i class='fa fa-database fa-lg blue-text'></i> Módulo</ht>
-                                <th><i class='fa fa-clock-o fa-lg blue-text'></i> Criação</th>
+                                <th class='blue-text'>{!! $cursosIcon !!} Nome</th>
+                                <th class='blue-text'>{!! $modulosIcon !!} Módulo</ht>
+                                <th class='blue-text'>{!! $timeIcon !!} Criação</th>
                             </tr>
                         </thead>
 
@@ -52,7 +52,7 @@
                     </div>
                 @else
                     <div class='grey-text center' style='margin-top:40px; margin-bottom:40px;'>
-                        <h5><i class='red-text text-darken-3 fa fa-times'></i> Não há registros de cursos!</h5>
+                        <h5>{!! $cancelRedIcon !!} Não há registros de cursos!</h5>
                     </div>
                 @endif
             </div>

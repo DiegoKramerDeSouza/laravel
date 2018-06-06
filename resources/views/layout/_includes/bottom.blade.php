@@ -16,38 +16,38 @@
                         <ul id='nav-mobile' class='blue-text brand-logo center'>
                             <li class=''>
                                 <a id='toggle-camera' data-active='enabled' class='media-control tooltipped' data-position='top' data-tooltip='Camera'>
-                                    <i class='material-icons center'>videocam</i>
+                                    {!! $videocamIcon !!}
                                 </a>
                             </li>
                             <li class=''>
                                 <a id='toggle-mute' data-active='enabled' class='media-control tooltipped' data-position='top' data-tooltip='Microfone'>
-                                    <i class='material-icons center'>mic</i>
+                                    {!! $micIcon !!}
                                 </a>
                             </li>
                             <li class=''>
                                 <a id='toggle-volume' data-active='enabled' class='media-control tooltipped' data-position='top' data-tooltip='Áudio'>
-                                    <i class='material-icons center'>volume_up</i>
+                                    {!! $volumeUpIcon !!}
                                 </a>
                             </li>
                             <li class=''>
                                 <a id='share-screen' data-active='enabled' class='media-control tooltipped' data-position='top' data-tooltip='Compartilhar Tela'>
-                                    <i class='material-icons center'>screen_share</i>
+                                    {!! $screenShareIcon !!}
                                 </a>
                             </li>
                             <li class=''>
                                 <a id='toggle-screen' data-active='enabled' class='media-control tooltipped' data-position='top' data-tooltip='Expandir'>
-                                    <i class='material-icons center'>fullscreen</i>
+                                    {!! $fullscreenIcon !!}
                                 </a>
                             </li>
                             <li class=''>
                                 <a id='toggle-chat' data-target='slide-out' class='media-control tooltipped sidenav-trigger' data-position='top' data-tooltip='Chat' style='display:block;'>
-                                    <i class='material-icons center'>forum</i>
+                                    {!! $forumIcon !!}
                                 </a>
                             </li>
                             <li id='control-pedir-vez' class=''>
                                 <input id='pedir-vez' type='hidden' disabled readonly value='0' />
                                 <a id='lista-pedir-vez' data-active='enabled' class='media-control modal-trigger tooltipped' data-position='top' data-tooltip='Solicitações' href='#msg-solicita'>
-                                    <i class='material-icons center'>pan_tool</i>
+                                    {!! $panToolIcon !!}
                                 </a>
                                 <span id='count-pedir-vez' href='#msg-solicita' class="btn-floating btn-small red darken-4 pulse modal-trigger">0</span>
                             </li>
@@ -81,17 +81,18 @@
                             Protótipo de aplicação voltado à comunicação via webconference utilizando WebRTC e compatível com os navegadores Google Chrome e Mozilla Firefox. 
                             <br>
                             <br>
-                            Versão 1.0.1.1
-                            <br> 
-                            <i class="grey-text right fa fa-firefox"></i>
-                            <i class="grey-text right fa fa-chrome"></i> 
+                            {!! $bookmarkIcon !!} Versão 1.0.1.1
+                            <br>
+                            <span class='grey-text right'>
+                                 {!! $chromeIcon !!} &nbsp; {!! $firefoxIcon !!} 
+                            </span>
                         </p>
                     </div>
                 </div>
             </div>
             <div class="footer-copyright black">
                 <div class='container'>
-                    <i class='fa fa-copyright'></i> 2018 Smart Group SA
+                    {!! $copyRightIcon !!} 2018 Smart Group SA
                 </div>
             </div>
         </footer>
