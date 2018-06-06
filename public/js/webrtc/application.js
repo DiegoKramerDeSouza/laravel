@@ -187,6 +187,7 @@ $(document).ready(function() {
             if (!error) {
                 screen_constraints = connection.modifyScreenConstraints(screen_constraints);
                 callback(error, screen_constraints);
+                $('#screen-share-alert').slideDown(300);
                 setShare('off');
                 return;
             }
@@ -466,6 +467,7 @@ $(document).ready(function() {
                         }
                     });
                 } else {
+                    $('#screen-share-alert').slideUp(300);
                     setShare('on');
                     var streamConnection = document.getElementById('in-screen').value;
                     var streamToRemove = null;
@@ -497,7 +499,6 @@ $(document).ready(function() {
                 }
             };
         }
-
         // Botão de maximizar o video -> toggle on:off
         screen.onclick = function() { fullscreen(); };
         exitscreen.onclick = function() { fullscreen(); };
@@ -549,7 +550,6 @@ $(document).ready(function() {
             usuario = roomName;
             var broadcastId = roomHash;
             onlobby = false;
-
             // Inicializa a tela de apresentação (video)
             callTeacherStream();
             // Modela e apresenta cabeçalho do video
@@ -621,7 +621,6 @@ $(document).ready(function() {
         function d(s) {
             return decodeURIComponent(s.replace(/\+/g, ' '));
         }
-        // Verifica padrão de URI
         var match, search = window.location.search;
         while (match = r.exec(search.substring(1)))
             params[d(match[1])] = d(match[2]);
@@ -657,7 +656,6 @@ $(document).ready(function() {
                     document.getElementById(broadcastId).onclick();
                     return;
                 }
-                // Verifica a cada 5 segundos
                 setTimeout(reCheckRoomPresence, 5000);
             });
         })();
@@ -937,8 +935,16 @@ function appendDIV(event) {
             }
             return;
         } else if (chkrash[0] === btoa('@Finaliza-Share')) {
-            $('#span-video-preview-2nd').hide();
-            callToast('<span class="white-text"><i class="material-icons left">stop_screen_share</i> Compartilhamento de tela finalizado.</span>', 'red darken-3');
+            var videoSecond = document.getElementById('span-video-preview-2nd');
+            var swapSecond = document.getElementById('swap-video');
+            var position = videoSecond.getAttribute('data-position');
+            if (position == 'main') {
+                swapSecond.click();
+            }
+            setTimeout(function() {
+                $('#span-video-preview-2nd').hide();
+                callToast('<span class="white-text"><i class="material-icons left">stop_screen_share</i> Compartilhamento de tela finalizado.</span>', 'red darken-3');
+            }, 1000);
         } else {
             return;
         }
@@ -992,8 +998,6 @@ function alertDisconnection(userid) {
         callToast('<i class="fa fa-times"></i> Você foi desconectado!', 'red darken-3');
         setTimeout(location.reload.bind(location), 3000);
     } else {
-        console.log('Conexões: ' + Object.keys(connections).length);
-        console.log(connections);
         try {
             for (var j = 0; j < Object.keys(connections).length; j++) {
                 if (connections[j].split('|')[2] == userid) {
@@ -1003,8 +1007,6 @@ function alertDisconnection(userid) {
         } catch (e) {
             return;
         }
-        console.log('Restam: ' + Object.keys(connections).length);
-        console.log(connections);
         constructConnectionExpList(userid);
         changeCounter(Object.keys(connections).length);
     }

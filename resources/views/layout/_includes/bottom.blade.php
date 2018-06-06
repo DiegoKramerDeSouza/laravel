@@ -11,7 +11,7 @@
             <!-- Controle de login - O usuário deve estar autenticado-->
             @if(! Auth::guest())
                 <!-- Barra de footer com menu de controle de áudio e video-->
-                <nav id='nav-footer' class='nav-wrapper transparent d-none'>
+                <nav id='nav-footer' class='nav transparent d-none'>
                     <div id='div-mobile'>
                         <ul id='nav-mobile' class='blue-text brand-logo center'>
                             <li class=''>

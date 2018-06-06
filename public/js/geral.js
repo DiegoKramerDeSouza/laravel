@@ -5,11 +5,17 @@
  */
 
 $(document).ready(function() {
-    // Inicialização do tratamento de click em objetos de determinadas classes
+    // Inicialização do tratamento de click em objetos da classe load para apresentar tela de loading
+    // Ignora chamada de loading se houver algum campo required :invalid
     var load = document.getElementsByClassName('load');
     for (var j = 0; j < load.length; j++) {
+        var isValid = true;
         load[j].onclick = function() {
-            callLoading();
+            var required = document.querySelectorAll('[required]');
+            for (var j = 0; j < required.length; j++) {
+                if ($(required[j]).is(':invalid')) isValid = false;
+            }
+            if (isValid) callLoading();
         }
     }
 });

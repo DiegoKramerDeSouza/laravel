@@ -77,6 +77,12 @@
     border: 2px solid rgba(100, 100, 100, 1);
 }
 
+#screen-share-1 {
+    position: absolute;
+    right: 0px;
+    z-index: 10;
+}
+
 #slide-out {
     overflow: hidden;
 }

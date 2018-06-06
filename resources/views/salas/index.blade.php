@@ -7,7 +7,6 @@
 @section('content')
     <div id='initial-access' class='row'>
         <div class='white-text'>
-            <!--Diferenciação por tipo de usuário (Espectador/Agente)-->
             @if(Auth::user()->type == 0)
                 <div id='opend-rooms' class='col s12 m6'>
                     <h5 class='row'>
@@ -28,10 +27,11 @@
                     <div class="center blue-text text-darken-2" align='center'>
                         <h5>Encontrando salas...</h5>
                         <a class="btn-floating btn-large blue pulse"><i class="material-icons">search</i></a>
+                        <br>
+                        <br>
+                        <br>                                                
                     </div>
-                    
                     <!--Listagem de Salas disponíveis-->
-
                 </div>
             </div>
             <!--Acesso para criação de sala: Apenas para usuários do tipo 0 (Agente)-->
@@ -42,9 +42,7 @@
                             <h5><i class='fa fa-plus-circle blue-text'></i> Iniciar nova sala</h5>
                         </div>
                         <div class='row'>
-                            <!--Formulário de criação de salas-->
-                            <!--Form removido para utilização com firefox-->
-                            <!--Tema e Assunto da aula (Obrigatórios)-->
+                            <!--Tema e Assunto da aula-->
                             <div class='input-field col s12'>
                                 <input type='text' class='validate' id='tema' name='tema' required autofocus>
                                 <label for='tema'><i class='fa fa-book'></i> Tema:</label>
@@ -54,7 +52,6 @@
                                 <label for='assunto'><i class='fa fa-bookmark'></i> Assunto:</label>
                             </div>
                             <div class='input-field col s12'>
-                                <!--Select de Cursos (Obrigatório)-->
                                 <select multiple id='cursos-list' required name='cursos-list' title='Selecione ao menos um curso'>
                                     @if(isset($cursos))
                                         <option value='' disabled>Selecione ao menos um curso</option>
@@ -65,11 +62,9 @@
                                 </select>
                                 <label for='cursos-list'><i class='fa fa-cubes'></i> Seleção de Cursos</label>
                             </div>
-                            
                             <div class='divider'></div>
                             <div align='right'>
-                                <!--Submit-->
-                                <button type='submit' id='btn-join-as-productor' class='btn blue white-text waves-effect waves-light'><i class='fa fa-play'></i> Iniciar</button>
+                                <button type='submit' id='btn-join-as-productor' class='btn blue white-text waves-effect waves-light'><i class='fa fa-play-circle'></i> Iniciar</button>
                             </div>
                         </div> 
                     </div>
@@ -91,7 +86,6 @@
     <input type='hidden' id='in-screen' name='in-screen' disabled readonly />
     <!-- Usuário-->
     <input type='hidden' id='current-user' value='{{ Auth::user()->name}}' disabled readonly />
-
     <!--Video Panel - Não exibido a princípio-->
     <div id='video-panel' class='d-none'>
         <div class='col s12'>
@@ -120,6 +114,24 @@
                                         <div class="indeterminate blue"></div>
                                     </div>
                                 </div>
+                                @if(Auth::user()->type == 0)
+                                    <div id='screen-share-alert' align='left' class='row d-none'>
+                                        <div id='screen-share-message' class='col s8 offset-s2 center'>
+                                            <div class='card-panel grey lighten-5 z-depth-1'>
+                                                <div class="row valign-wrapper">
+                                                    <div class="col s2 m1">
+                                                        <span class='btn-floating red darken-2 pulse'><i class='material-icons'>ondemand_video</i></span>
+                                                    </div>
+                                                    <div class="col s10 m11">
+                                                        <span class="grey-text text-darken-2">
+                                                            <b>Você está transmintindo a sua tela.</b>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
                                 <div id='videos'>
                                     <!--VÍDEO PRINCIPAL-->
                                     <div id='span-video-preview' data-status='disabled' data-position='main' class='width-limit first-video'>
