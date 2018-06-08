@@ -4,7 +4,6 @@
         <script type="text/javascript" src="{!! asset('js/jquery-3.1.1.min.js') !!}"></script>
         <script type="text/javascript" src="{!! asset('js/materialize.min.js') !!}"></script>
         <script type="text/javascript" src="{!! asset('js/geral.js') !!}"></script>
-
         @if(isset($streamPage))
             <!-- Inicialização in-page condicional de elementos para a formação de uma sala-->
             <!-- A variável $streamPage deve ser passada pelo controller para inicialização-->
@@ -96,7 +95,6 @@
                 </div>
             </div>
         </footer>
-        
         @if(isset($grant))
             <!-- Inicialização in-page condicional de elementos para cadastro de perfis de usuários-->
             <!-- A variável $grant deve ser passada pelo controller para a inicialização-->
@@ -117,7 +115,6 @@
                 }
             </script>
         @endif
-
         @if(isset($classroom))
             <!-- Inicialização in-page condicional de elementos para cadastro de turmas-->
             <!-- A variável $classroom deve ser passada pelo controller para a inicialização-->
@@ -138,24 +135,36 @@
                 }
             </script>
         @endif
-
         @if(isset($resultToString))
             <!-- Inicialização in-page condicional de elementos das páginas de cadastros -->
             <!-- Utilização do JS para autocomplete -->
             <script type="text/javascript" src="{!! asset('js/formAutocomplete.js') !!}"></script>
         @endif
-
         <!-- Inicialização in-page de elementos padrões-->
         <!-- Inicialização padrão de funções e padrões do MaterializeCSS para todas as páginas-->
         <script>
             // M.*: Padrão de inicialização do MaterializeCSS
             $(document).ready(function(){
-                //Inicialização do Materialize
-                $(".dropdown-trigger").dropdown();
-                $('.sidenav').sidenav();
-                $('select').formSelect();
-                $('.modal').modal();
-                $('.tooltipped').tooltip();
+                //Inicialização do Materialize com JQuery
+                //$(".dropdown-trigger").dropdown();
+                //$('.sidenav').sidenav();
+                //$('select').formSelect();
+                //$('.modal').modal();
+                //$('.tooltipped').tooltip();
+
+                //Inicialização do Materialize sem utilizar JQuery
+                var elems;
+                var instances;
+                elems = document.querySelectorAll('.dropdown-trigger');
+                instances = M.Dropdown.init(elems);
+                elems = document.querySelectorAll('.sidenav');
+                instances = M.Sidenav.init(elems);
+                elems = document.querySelectorAll('select');
+                instances = M.FormSelect.init(elems);
+                elems = document.querySelectorAll('.modal');
+                instances = M.Modal.init(elems);
+                elems = document.querySelectorAll('.tooltipped');
+                instances = M.Tooltip.init(elems);
                 M.updateTextFields();
                 $('input#input_text, textarea#textarea2').characterCounter();
             });

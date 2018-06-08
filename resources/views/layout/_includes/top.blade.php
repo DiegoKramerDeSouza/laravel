@@ -4,7 +4,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
         <title>@yield('titulo')</title>
     
@@ -14,14 +14,10 @@
         <link href="{!! asset('css/font-awesome.min.css') !!}" media="all" rel="stylesheet" type="text/css" />
         <link href="{!! asset('css/raleway.css') !!}" rel="stylesheet" type="text/css">
         <link href="{!! asset('css/materialize.min.css') !!}" media="all" rel="stylesheet" type="text/css" />
-        @if(! Auth::guest())
-            @if(Auth::user()->type == 0)
-                <!--Instalação inline de extensão do chrome para compartilhamento de tela-->
-                <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/screen-capturing/ajhifddimkapgcifgcodmmfdlknahffk">
-            @endif
-        @endif
-        <!--Informa ao browser que está pronto para acesso mobile-->
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        @if(! Auth::guest() && Auth::user()->type == 0)
+            <!--Instalação inline de extensão do chrome para compartilhamento de tela-->
+            <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/screen-capturing/ajhifddimkapgcifgcodmmfdlknahffk">
+        @endif        
     </head>
 
     <body class='grey'>
@@ -49,7 +45,6 @@
                             @endif
                             <li class='hover-footer-btn'>
                                 <a class='dropdown-trigger' id='userDropDown' href='#!' data-target='myProfile'>
-                                    <!--Chip com as informações de usuário-->
                                     <div id='userChip' class='chip white darken-1 blue-text'>
                                         <b>{{Auth::user()->name}}</b>
                                     </div>
@@ -64,8 +59,7 @@
                     <li class='white'><a href='{{ route('login.destroy')}}' class='load-cancel red-text text-darken-2'>{!! $signOutRedIcon !!} Sair</a></li>
                 </ul>
             </nav>
-            
-            <div id='side-bar' class='sidenav'>
+            <div id='side-bar' class='sidenav z-depth-5'>
                 <h4 class='blue-text' style='margin:10px;'><b>Web<span class='grey-text text-darken-3'>Tv</span></b></h4>
                 <div class='divider'></div>
                 <ul>
@@ -108,7 +102,6 @@
                 </ul>
             </div>
         </header>
-
         <main>
             <!-- Tela de loading -->
             <div id='fglayer' class='fg-layer grey darken-4 d-none'>
@@ -119,6 +112,7 @@
             <div class='backgroundImage-Layer'>
 				<img id="backgroundLayer" src="{!! asset($bgImage) !!}" />
             </div>
+            <!-- Conteúdo da página em container -->
             <div class='container' style='margin-top: 40px; padding-bottom: 60px;'>
 
     
