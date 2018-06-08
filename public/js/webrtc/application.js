@@ -566,8 +566,8 @@ $(document).ready(function() {
             };
             // Controle da utilização de banda
             connection.bandwidth = {
-                audio: 500,
-                video: 1000
+                audio: 300,
+                video: 700
             };
 
             // Inicializa Socket
