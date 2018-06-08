@@ -8,12 +8,11 @@
 
         <title>@yield('titulo')</title>
     
-        <!--Importa icones do fontawesome e materialicons-->
         <link href="{!! asset('css/materialicons.css') !!}" media="all" rel="stylesheet" type="text/css" />
         <link href="{!! asset('css/estilo_ids.css') !!}" media="all" rel="stylesheet" type="text/css" />
         <link href="{!! asset('css/estilo_classes.css') !!}" media="all" rel="stylesheet" type="text/css" />
         <link href="{!! asset('css/font-awesome.min.css') !!}" media="all" rel="stylesheet" type="text/css" />
-        <!--Importa materialize.css-->
+        <link href="{!! asset('css/raleway.css') !!}" rel="stylesheet" type="text/css">
         <link href="{!! asset('css/materialize.min.css') !!}" media="all" rel="stylesheet" type="text/css" />
         @if(! Auth::guest())
             @if(Auth::user()->type == 0)
@@ -23,15 +22,6 @@
         @endif
         <!--Informa ao browser que está pronto para acesso mobile-->
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <!-- Fonts -->
-        <link href="{!! asset('css/raleway.css') !!}" rel="stylesheet" type="text/css">
-
-        <!-- Styles -->
-        <style>
-            html, body {
-                font-family: 'Raleway', sans-serif;
-            }
-        </style>
     </head>
 
     <body class='grey'>
@@ -73,7 +63,6 @@
                     <li class='white'><a href='#' class=''>{!! $bookBlueIcon !!} Aulas</a></li>
                     <li class='white'><a href='{{ route('login.destroy')}}' class='load-cancel red-text text-darken-2'>{!! $signOutRedIcon !!} Sair</a></li>
                 </ul>
-                
             </nav>
             
             <div id='side-bar' class='sidenav'>
@@ -118,15 +107,17 @@
                     <li><a href='{{ route('login.destroy')}}' class='load-cancel red-text text-darken-3'>{!! $signOutRedIcon !!} Sair</a></li>
                 </ul>
             </div>
-
         </header>
+
         <main>
+            <!-- Tela de loading -->
             <div id='fglayer' class='fg-layer grey darken-4 d-none'>
             </div>
             <div id='centralized' align='center' class='white-text d-none'>
             </div>
-            <div class=''>
-				<img id="backgroundLayer" src="{!! asset('img/bg.jpg') !!}" />
+            <!-- Imagem de fundo -->
+            <div class='backgroundImage-Layer'>
+				<img id="backgroundLayer" src="{!! asset($bgImage) !!}" />
             </div>
             <div class='container' style='margin-top: 40px; padding-bottom: 60px;'>
 

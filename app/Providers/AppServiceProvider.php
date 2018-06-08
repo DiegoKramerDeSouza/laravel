@@ -30,6 +30,9 @@ class AppServiceProvider extends ServiceProvider
         // Definição do nome da aplicação
         view()->share('logo', 'WebTV');
 
+        // Definição do plano de fundo
+        view()->share('bgImage', 'img/bg.jpg');
+
         // Definição de ícones para todas as views
         // -> Ícones utilizados: FontAwesome e MaterializeCSS
         // MaterializeCSS Icons

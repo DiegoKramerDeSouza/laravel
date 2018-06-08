@@ -153,15 +153,12 @@
                 //Inicialização do Materialize
                 $(".dropdown-trigger").dropdown();
                 $('.sidenav').sidenav();
-                M.updateTextFields();
-                $('input#input_text, textarea#textarea2').characterCounter();
                 $('select').formSelect();
                 $('.modal').modal();
                 $('.tooltipped').tooltip();
+                M.updateTextFields();
+                $('input#input_text, textarea#textarea2').characterCounter();
             });
-            function goback(){
-                window.history.back();
-            }
         </script>
     </body>
 </html>
