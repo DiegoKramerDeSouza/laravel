@@ -300,7 +300,7 @@ function constructBtnActionPedir() {
  */
 function constructAccessList(classe, assunto, apresentador, viwer, moderador) {
     var htmlItem = '<div class="row valign-wrapper li-hover grey-text text-darken-3">' +
-        '<div id="_' + moderador + '" class="col s3 m2 l1">' +
+        '<div id="_' + moderador + '" class="col s3 m2">' +
         '<span class="blue-text">Entrar</span><br>' +
         '</div>' +
         '<div class="col s9 m10 l11">' +

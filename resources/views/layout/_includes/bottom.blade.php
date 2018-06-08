@@ -1,15 +1,46 @@
             <!-- Fim do corpo de página -->
             </div>
         </main>
+        <!-- Barra de footer padrão-->
+        <footer id="main-footer" class="page-footer grey darken-4">
+            <div class="container">
+                <div class="row">
+                    <div class="col s12">
+                    <h5 class="white-text">{{ $logo }}</h5>
+                        <p class="grey-text text-lighten-1">
+                            Protótipo de aplicação voltado à comunicação via webconference utilizando WebRTC e compatível com os navegadores Google Chrome e Mozilla Firefox. 
+                            <br>
+                            <br>
+                            {!! $bookmarkIcon !!} Versão 1.0.1.1
+                            <br>
+                            <span class='grey-text right'>
+                                 {!! $chromeIcon !!} &nbsp; {!! $firefoxIcon !!} 
+                            </span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-copyright black">
+                <div class='container'>
+                    {!! $copyRightIcon !!} 2018 Smart Group SA
+                </div>
+            </div>
+        </footer>
+
         <script type="text/javascript" src="{!! asset('js/jquery-3.1.1.min.js') !!}"></script>
         <script type="text/javascript" src="{!! asset('js/materialize.min.js') !!}"></script>
         <script type="text/javascript" src="{!! asset('js/geral.js') !!}"></script>
+        @if(isset($resultToString))
+            <!-- Inicialização in-page condicional de elementos das páginas de cadastros -->
+            <!-- Utilização do JS para autocomplete -->
+            <script type="text/javascript" src="{!! asset('js/formAutocomplete.js') !!}"></script>
+        @endif
         @if(isset($streamPage))
             <!-- Inicialização in-page condicional de elementos para a formação de uma sala-->
             <!-- A variável $streamPage deve ser passada pelo controller para inicialização-->
             <!-- Controle de login - O usuário deve estar autenticado-->
             @if(! Auth::guest())
-                <!-- Barra de footer com menu de controle de áudio e video-->
+                <!-- Barra com menu de controle de áudio e video-->
                 <nav id='nav-footer' class='nav transparent d-none'>
                     <div id='div-mobile'>
                         <ul id='nav-mobile' class='blue-text brand-logo center'>
@@ -70,31 +101,6 @@
                 </script>
             @endif
         @endif
-        <!-- Barra de footer padrão-->
-        <footer id="main-footer" class="page-footer grey darken-4">
-            <div class="container">
-                <div class="row">
-                    <div class="col s12">
-                    <h5 class="white-text">{{ $logo }}</h5>
-                        <p class="grey-text text-lighten-1">
-                            Protótipo de aplicação voltado à comunicação via webconference utilizando WebRTC e compatível com os navegadores Google Chrome e Mozilla Firefox. 
-                            <br>
-                            <br>
-                            {!! $bookmarkIcon !!} Versão 1.0.1.1
-                            <br>
-                            <span class='grey-text right'>
-                                 {!! $chromeIcon !!} &nbsp; {!! $firefoxIcon !!} 
-                            </span>
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <div class="footer-copyright black">
-                <div class='container'>
-                    {!! $copyRightIcon !!} 2018 Smart Group SA
-                </div>
-            </div>
-        </footer>
         @if(isset($grant))
             <!-- Inicialização in-page condicional de elementos para cadastro de perfis de usuários-->
             <!-- A variável $grant deve ser passada pelo controller para a inicialização-->
@@ -135,23 +141,19 @@
                 }
             </script>
         @endif
-        @if(isset($resultToString))
-            <!-- Inicialização in-page condicional de elementos das páginas de cadastros -->
-            <!-- Utilização do JS para autocomplete -->
-            <script type="text/javascript" src="{!! asset('js/formAutocomplete.js') !!}"></script>
-        @endif
         <!-- Inicialização in-page de elementos padrões-->
         <!-- Inicialização padrão de funções e padrões do MaterializeCSS para todas as páginas-->
         <script>
             // M.*: Padrão de inicialização do MaterializeCSS
             $(document).ready(function(){
                 //Inicialização do Materialize com JQuery
-                //$(".dropdown-trigger").dropdown();
-                //$('.sidenav').sidenav();
-                //$('select').formSelect();
-                //$('.modal').modal();
-                //$('.tooltipped').tooltip();
-
+                /*
+                $(".dropdown-trigger").dropdown();
+                $('.sidenav').sidenav();
+                $('select').formSelect();
+                $('.modal').modal();
+                $('.tooltipped').tooltip();
+                */
                 //Inicialização do Materialize sem utilizar JQuery
                 var elems;
                 var instances;

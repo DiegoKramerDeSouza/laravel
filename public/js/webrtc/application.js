@@ -206,7 +206,6 @@ $(document).ready(function() {
     connection.onstream = function(event) {
         console.log('--> Conectando à stream.');
         //Apresentação da barra de funções de video
-        $('#main-footer').hide();
         $('#nav-footer').slideDown(500);
         inRoom.value = event.userid;
         if (connection.isInitiator && event.type !== 'local') return;

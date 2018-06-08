@@ -5,6 +5,7 @@
  */
 $(document).ready(function() {
     // Inicializa verificação de eventos de cliques em botões com chamada de loading
+    destroyLoading();
     deployLoading();
     deployLoadingCancel();
 });
