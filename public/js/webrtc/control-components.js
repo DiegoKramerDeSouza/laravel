@@ -24,9 +24,11 @@ function callToast(content, classe) {
  * Param number: número de usuários conectados
  */
 function changeCounter(number) {
-    var controller = document.getElementById('broadcast-viewers-counter');
-    if (controller.getAttribute('data-target') == '0') {
-        controller.innerHTML = '<a href="#con-list" id="viewers" class="modal-trigger"><i class="fa fa-play-circle-o"></i> Espectadores: <b class="grey-text text-darken-2">' + number + '</b></a>';
+    var controller = document.getElementById('users-counter');
+    if (controller) {
+        if (controller.getAttribute('data-target') == '0') {
+            controller.innerHTML = number;
+        }
     }
 }
 // Mensagem de 0 salas disponíveis por conexão
@@ -300,7 +302,7 @@ function constructBtnActionPedir() {
  */
 function constructAccessList(classe, assunto, apresentador, viwer, moderador) {
     var htmlItem = '<div class="row valign-wrapper li-hover grey-text text-darken-3">' +
-        '<div id="_' + moderador + '" class="col s3 m2">' +
+        '<div id="_' + moderador + '" align="center" class="col s3 m2">' +
         '<span class="blue-text">Entrar</span><br>' +
         '</div>' +
         '<div class="col s9 m10 l11">' +
@@ -328,17 +330,16 @@ function constructAccessList(classe, assunto, apresentador, viwer, moderador) {
 function constructConnectionList(userid, username, announce, deletable) {
     var deleteButton;
     if (deletable) {
-        deleteButton = '<a id="disconnect-' + userid + '" name="' + username + '" data-announced="' + announce + '" title="Disconectar espectador" class="disconnect-btn modal-close"><i class="material-icons red-text text-darken-4">close</i></a>';
+        deleteButton = '<a id="disconnect-' + userid + '" name="' + username + '" data-announced="' + announce + '" title="Disconectar espectador" class="disconnect-btn"><i class="material-icons red-text text-darken-4">close</i></a>';
     } else {
         deleteButton = '<a id="disabled-' + userid + '" name="' + username + '" data-announced="' + announce + '" ><i class="material-icons grey-text text-lighten-1">close</i></a>';
     }
-    var htmlList = '<li id="li-disconnect-' + userid + '" data-sender="' + username + '" class="li-disconnect collection-item avatar li-hover">' +
-        '<i class="material-icons blue lighten-2 circle">tv</i>' +
-        '<h6><b>' + username + '</b></h6>' +
-        '<span class="secondary-content">' +
+    var htmlList = '<div id="li-disconnect-' + userid + '" data-sender="' + username + '" class="li-disconnect truncate">' +
+        '<i class="fa fa-user-o blue-text lighten-2"></i> <b>' + username + '</b>' +
+        '<span class="right">' +
         deleteButton +
         '</span>' +
-        '</li>';
+        '</div>';
     return htmlList;
 }
 // Reconstroi lista <ul> 'connection-list' após ação de remoção
@@ -346,7 +347,7 @@ function constructConnectionList(userid, username, announce, deletable) {
  * Param exp: Id da conexão onde a ação foi tomada
  */
 function constructConnectionExpList(exp) {
-    var connectionList = document.getElementById('connection-list');
+    var connectionList = document.getElementById('connected-users-list');
     var liList = document.getElementsByClassName('disconnect-btn');
     var htmlList = '';
     var announce;
@@ -355,13 +356,12 @@ function constructConnectionExpList(exp) {
         console.log('Alert: ' + announce + '|' + exp);
         if (announce != exp) {
             var sender = liList[j].name;
-            htmlList = '<li id="li-' + liList[j].id + '" data-sender="' + sender + '" class="li-disconnect collection-item avatar li-hover">' +
-                '<i class="material-icons blue lighten-2 circle">tv</i>' +
-                '<h6><b>' + sender + '</b></h6>' +
-                '<span class="secondary-content">' +
-                '<a id="' + liList[j].id + '" name="' + sender + '" data-announced="' + announce + '" class="disconnect-btn btn-floating small waves-effect waves-teal red darken-4"><i class="material-icons">close</i></a>' +
+            var htmlList = '<div id="li-' + liList[j].id + '" data-sender="' + sender + '" class="li-disconnect truncate">' +
+                '<i class="fa fa-user-o blue-text lighten-2"></i> <b>' + sender + '</b>' +
+                '<span class="right">' +
+                '<a id="' + liList[j].id + '" name="' + sender + '" data-announced="' + announce + '" class="disconnect-btn"><i class="material-icons red-text text-darken-4">close</i></a>' +
                 '</span>' +
-                '</li>';
+                '</div>';
         }
     }
     connectionList.innerHTML = htmlList;

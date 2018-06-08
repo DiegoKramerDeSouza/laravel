@@ -204,6 +204,8 @@ $(document).ready(function() {
     };
     // Inicia a transmissão
     connection.onstream = function(event) {
+        // Teste Firefox
+        //$('#span-video-preview-2nd').fadeIn(300);
         console.log('--> Conectando à stream.');
         //Apresentação da barra de funções de video
         $('#nav-footer').slideDown(500);
@@ -461,7 +463,6 @@ $(document).ready(function() {
                                     });
                                 });
                             }, 2000);
-                            console.log(stream);
                             document.getElementById('in-screen').value = stream.streamid;
                         }
                     });
@@ -816,8 +817,14 @@ $(document).ready(function() {
                 }
             });
             if (numberOfUsers > 0) {
-                document.getElementById('connection-list').innerHTML = htmlList;
-                changeCounter(numberOfUsers);
+                //document.getElementById('connection-list').innerHTML = htmlList;
+                var contaUsuarios = document.getElementById('users-counter');
+                if (contaUsuarios.getAttribute('data-target') == 0) {
+                    document.getElementById('connected-users-list').innerHTML = htmlList;
+                    changeCounter(numberOfUsers);
+                } else {
+                    $('#connected-users').hide();
+                }
                 var disconnectId;
                 var btnDisconnect = document.getElementsByClassName('disconnect-btn');
                 for (var j = 0; j < btnDisconnect.length; j++) {

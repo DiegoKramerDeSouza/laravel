@@ -167,6 +167,8 @@
                 instances = M.Modal.init(elems);
                 elems = document.querySelectorAll('.tooltipped');
                 instances = M.Tooltip.init(elems);
+                elems = document.querySelectorAll('.collapsible');
+                instances = M.Collapsible.init(elems);
                 M.updateTextFields();
                 $('input#input_text, textarea#textarea2').characterCounter();
             });

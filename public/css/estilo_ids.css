@@ -29,6 +29,11 @@
     overflow-x: hidden;
 }
 
+#connected-users-list {
+    overflow-y: auto;
+    max-height: 380px;
+}
+
 #count-pedir-vez {
     position: fixed;
     bottom: 45px;

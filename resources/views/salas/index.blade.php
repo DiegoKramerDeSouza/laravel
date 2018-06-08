@@ -96,9 +96,6 @@
                         <span id='class-title' class='card-title'>
                             <!--Título da aula - Matéria (Assunto)-->
                         </span>
-                        <div id='broadcast-viewers-counter' data-target='{{ Auth::user()->type  }}' class='blue-text' >
-                            <br>
-                        </div>
                     </div>
                     <div class='divider'></div>
                     <br>
@@ -141,10 +138,18 @@
                                                 {!! $fullscreenExitLargeIcon !!}
                                             </a>
                                         </div>
-                                        
                                     </div> 
                                 </div>
                             </div>
+                            <!-- Collapsible com a listagem de todos os espectadores conectados -->
+                            <ul id="connected-users" class='collapsible popout'>
+                                <li>
+                                    <div class="collapsible-header"><b><i class="fa fa-play-circle-o blue-text"></i>Espectadores conectados: <span id="users-counter" data-target='{{ Auth::user()->type  }}' class="blue-text">0</span></b></div>
+                                    <div id="connected-users-list" class="collapsible-body active">
+                                        <!-- Lista de espectadores ativos -->
+                                    </div>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -186,24 +191,6 @@
         </div>
     </ul>
     @if(isset($streamPage))
-        <!-- Modal de conexões ativas-->
-        <div id='con-list' class='modal'>
-            <div class='modal-content'>
-                <h5>
-                    {!! $userVideoBlueIcon !!} Espectadores:
-                    <span class='right'>
-                        <a class='modal-close'>
-                            <i class='fa fa-times red-text text-darken-3'></i>
-                        </a>
-                    </span>
-                </h5>
-                <div class='divider'></div>
-                <ul id='connection-list' class='collection'>
-                </ul>
-                <br>
-            </div>
-        </div>
-
         @if(Auth::user()->type == 0)
             <!-- Modal de solicitação de vez-->
             <div id='msg-solicita' class='modal'>
