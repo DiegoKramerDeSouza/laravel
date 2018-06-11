@@ -172,6 +172,35 @@ function setPedir(status) {
         callToast('<span class="white-text"><i class="fa fa-times"></i> Sua solicitação foi negada!</span>', 'red darken-3');
     }
 }
+// Configurações visuais de status da participação na transmissão
+/**
+ * Param status: 'disabled', 'off', 'on' 
+ */
+function setParticipation(status) {
+    var participation = document.getElementById('enter-session');
+    if (status === 'dis') {
+        participation.setAttribute('data-active', 'disabled');
+        participation.disabled = true;
+        participation.classList.remove("cyan");
+        participation.classList.add("grey");
+        participation.innerHTML = "<i class='material-icons'>videocam_off</i>";
+        $('#div-enter').hide();
+    } else if (status === 'off') {
+        $('#div-enter').show();
+        participation.setAttribute('data-active', 'disabled');
+        participation.classList.remove("cyan");
+        participation.classList.add("red");
+        participation.innerHTML = "<i class='material-icons'>videocam_off</i>";
+        callToast('<span class="white-text"><i class="material-icons left">videocam</i> Transmissão Iniciada.</span>', 'blue darken-2');
+    } else if (status === 'on') {
+        $('#div-enter').show();
+        participation.setAttribute('data-active', 'enabled');
+        participation.classList.remove("red");
+        participation.classList.add("cyan");
+        participation.innerHTML = "<i class='material-icons'>videocam</i>";
+        callToast('<span class="white-text"><i class="material-icons left">videocam_off</i> Transmissão finalizada.</span>', 'red darken-3');
+    }
+}
 // Controle da saída de tela cheia -> correção de saídas não previstas da função de tela cheia
 function exitHandler() {
     if (!document.fullscreenElement && !document.webkitIsFullScreen && !document.mozFullScreen && !document.msFullscreenElement) {

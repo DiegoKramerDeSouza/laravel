@@ -34,7 +34,7 @@ class ViewsBasicBindingProvider extends ServiceProvider
         // Definição de ícones para todas as views
         // -> Ícones utilizados: FontAwesome e MaterializeCSS
         // MaterializeCSS Icons:
-        view()->share('controlLargeIcon',           "<i class='material-icons large'>dvr</i>");
+        view()->share('controlLargeIcon',           "<i class='material-icons large'>more_horiz</i>");
         view()->share('forumIcon',                  "<i class='material-icons'>forum</i>");
         view()->share('fullscreenExitLargeIcon',    "<i class='material-icons large'>fullscreen_exit</i>");
         view()->share('fullscreenIcon',             "<i class='material-icons'>fullscreen</i>");

@@ -27,6 +27,7 @@ var connections = [];
 // Controles gerais
 var isModerator = true;
 var onlobby = true;
+var onParticipation = false;
 
 $(document).ready(function() {
     // Inicializa adapter.js
@@ -44,9 +45,9 @@ $(document).ready(function() {
     // Definições de conexão
     connection.enableScalableBroadcast = true;
     connection.maxRelayLimitPerUser = 0;
+    connection.socketMessageEvent = 'inicia-apresentacao';
     //connection.autoCloseEntireSession = true;
     //connection.dontCaptureUserMedia = true;
-    connection.socketMessageEvent = 'inicia-apresentacao';
 
     // Elemento alvo para iniciar o stream de video
     connection.teacherVideosContainer = document.getElementById('main-video');
@@ -61,29 +62,32 @@ $(document).ready(function() {
 
     // Inicialização de variáveis de controle de elementos in-page
     /**
-     *  var width           integer
-     *  var status          Boolean
-     *  var usuario         string
-     *  var broadcastId     string
-     *  var viewers         integer
-     *  var cameras         Boolean
-     *  var publicRoomsDiv  elem. html
-     *  var inRoom          elem. html
-     *  var videoPreview    elem. html
-     *  var mute            elem. html
-     *  var screen          elem. html
-     *  var exitscreen      elem. html
-     *  var vol             elem. html
-     *  var cam             elem. html
-     *  var pedir           elem. html
-     *  var ctlPedir        elem. html
-     *  var share           elem. html
-     *  var videoFirst      elem. html
-     *  var videoSecond     elem. html
-     *  var swapFirst       elem. html
-     *  var swapSecond      elem. html
-     *  var broadcaster     elem. html
-     *  var currentUser     string
+     *  var width               integer
+     *  var status              Boolean
+     *  var usuario             string
+     *  var broadcastId         string
+     *  var viewers             integer
+     *  var cameras             Boolean
+     *  var publicRoomsDiv      elem. html
+     *  var inRoom              elem. html
+     *  var videoPreview        elem. html
+     *  var mute                elem. html
+     *  var screen              elem. html
+     *  var exitscreen          elem. html
+     *  var vol                 elem. html
+     *  var cam                 elem. html
+     *  var pedir               elem. html
+     *  var ctlPedir            elem. html
+     *  var share               elem. html
+     *  var videoFirst          elem. html
+     *  var videoSecond         elem. html
+     *  var swapFirst           elem. html
+     *  var swapSecond          elem. html
+     *  var broadcaster         elem. html
+     *  var currentUser         string
+     *  var sessionAccess       elem. html
+     *  var thirdVideoPreview   elem. html
+     *  var videoThird          elem. html
      */
     var width;
     var status = false;
@@ -102,11 +106,15 @@ $(document).ready(function() {
     var pedir = document.getElementById('pedir-vez');
     var ctlPedir = document.getElementById('control-pedir-vez');
     var share = document.getElementById('share-screen');
+    var access = document.getElementById('div-enter');
     var videoFirst = document.getElementById('span-video-preview');
     var videoSecond = document.getElementById('span-video-preview-2nd');
     var swapSecond = document.getElementById('swap-video');
     var broadcaster = document.getElementById('broadcaster');
     var currentUser = document.getElementById('current-user').value;
+    var sessionAccess = document.getElementById('enter-session');
+    var thirdVideoPreview = document.getElementById('thirdvideo-preview');
+    var videoThird = document.getElementById('span-video-preview-3rd');
 
     // Extensão para captura de tela do firefox:
     // https://addons.mozilla.org/en-US/firefox/addon/enable-screen-capturing/
@@ -125,8 +133,8 @@ $(document).ready(function() {
             broadcastStatus = 1;
             connection.session = hintsToJoinBroadcast.typeOfStreams;
             connection.sdpConstraints.mandatory = {
-                OfferToReceiveVideo: true,
-                OfferToReceiveAudio: true
+                OfferToReceiveVideo: false,
+                OfferToReceiveAudio: false
             };
             connection.extra.modifiedValue = document.getElementById('room-id').value;
             connection.updateExtraData();
@@ -143,6 +151,7 @@ $(document).ready(function() {
             connection.extra.modifiedValue = document.getElementById('room-id').value;
             connection.updateExtraData();
             socket.emit('check-broadcast-presence', broadcastId, function(isBroadcastExists) {
+                console.log('check-existente');
                 if (!isBroadcastExists) {
                     // O broadcaster TEM de definir seu user-id
                     connection.userid = broadcastId;
@@ -210,9 +219,54 @@ $(document).ready(function() {
         //Apresentação da barra de funções de video
         $('#nav-footer').slideDown(500);
         inRoom.value = event.userid;
-        if (connection.isInitiator && event.type !== 'local') return;
 
-        if (event.type === 'remote' && event.stream.isScreen === true) {
+        sessionAccess.onclick = function() {
+            if (sessionAccess.getAttribute('data-active') == 'enabled' && !onParticipation) {
+                setParticipation('off');
+                connection.peers[inRoom.value].addStream({
+                    audio: true,
+                    video: true
+                });
+            } else if (onParticipation) {
+                /*
+                var streamConnection = document.getElementById('in-screen').value;
+                var streamToRemove = null;
+                var newArray = [];
+                connection.attachStreams.forEach(function(stream) {
+                    if (stream.id === streamConnection) {
+                        streamToRemove = stream;
+                        stream.stop();
+                    } else newArray.push(stream);
+                });
+                connection.attachStreams = newArray;
+                connection.getAllParticipants().forEach(function(p) {
+                    var peer = connection.peers[p].peer;
+                    peer.removeStream(streamToRemove);
+                    connection.renegotiate(p, {
+                        screen: false,
+                        oneway: true
+                    });
+                });
+                */
+                setParticipation('on');
+            }
+        }
+
+        if (connection.isInitiator && event.type !== 'local') {
+            //return;
+            $('#span-video-preview-3rd').fadeIn(300);
+            thirdVideoPreview.srcObject = event.stream;
+            var playPromise = thirdVideoPreview.play();
+            // Verifica disponibilidade de vídeo para transmissão
+            if (playPromise !== undefined) {
+                playPromise.then(_ => {
+                        thirdVideoPreview.play();
+                    })
+                    .catch(error => {
+                        console.log('Carregando vídeo...');
+                    });
+            }
+        } else if (event.type === 'remote' && event.stream.isScreen === true) {
             $('#span-video-preview-2nd').fadeIn(300);
             secondVideoPreview.srcObject = event.stream;
             var playPromise = secondVideoPreview.play();
@@ -265,11 +319,11 @@ $(document).ready(function() {
                     }
                 }, 500);
             };
-        }
-        if (event.type === 'remote' && !event.stream.isScreen) {
+        } else if (event.type === 'remote' && !event.stream.isScreen) {
             /**
              *  Ações para conexão REMOTA para controle de funções de áudio e video do webRTC
              */
+            onParticipation = false;
             videoPreview.srcObject = event.stream;
             videoPreview.play();
 
@@ -352,6 +406,7 @@ $(document).ready(function() {
             /**
              *  Ações para conexão LOCAL para controle de funções de áudio e video do webRTC
              */
+            onParticipation = true;
             connection.isUpperUserLeft = false;
             videoPreview.srcObject = event.stream;
             videoPreview.userid = event.userid;
@@ -514,6 +569,7 @@ $(document).ready(function() {
         document.getElementById('control-toggle').onclick = function() {
             toggleElem('#nav-footer');
         }
+
     };
 
     // Ação de criar uma sala de aula ao clicar em 'btn-join-as-productor'
@@ -562,6 +618,7 @@ $(document).ready(function() {
                 audio: true,
                 video: true,
                 data: true,
+                broadcast: true,
                 oneway: true
             };
             // Controle da utilização de banda
@@ -579,6 +636,7 @@ $(document).ready(function() {
                     console.log('Definindo userid broadcaster: ' + connection.userid);
                 }
                 console.log('check-broadcast-presence', broadcastId, isBroadcastExists);
+                //start-broadcasting
                 socket.emit('join-broadcast', {
                     broadcastId: broadcastId,
                     userid: connection.userid,
@@ -773,6 +831,7 @@ $(document).ready(function() {
                                     userid: connection.userid,
                                     typeOfStreams: connection.session
                                 });
+
                                 // Toggle de funções de Chat
                                 document.getElementById('toggle-chat').onclick = function() {
                                     $('#text-message').focus();

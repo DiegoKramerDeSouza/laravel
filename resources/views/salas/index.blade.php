@@ -78,11 +78,11 @@
     </div>
 
     <!--Campos de controle-->
-    <input type='hidden' id='room-id' name='room-id' value='{{ Auth::user()->login}}-{{ Auth::user()->name}}-{!! rand(0,999) !!}' disabled readonly />
+    <input type='text' id='room-id' name='room-id' value='{{ Auth::user()->login}}-{{ Auth::user()->name}}-{!! rand(0,999) !!}' disabled readonly />
     <!-- ID do broadcaster-->
-    <input type='hidden' id='broadcaster' name='broadcaster' disabled readonly />
+    <input type='text' id='broadcaster' name='broadcaster' disabled readonly />
     <!-- ID da sala e tela-->
-    <input type='hidden' id='in-room' name='in-room' disabled readonly />
+    <input type='text' id='in-room' name='in-room' disabled readonly />
     <input type='hidden' id='in-screen' name='in-screen' disabled readonly />
     <!-- Usuário-->
     <input type='hidden' id='current-user' value='{{ Auth::user()->name}}' disabled readonly />
@@ -167,6 +167,10 @@
             <a id='swap-video' style='bottom:10px;' class='btn-floating halfway-fab blue darken-2 waves-effect waves-light'>
                 {!! $swapIcon !!}
             </a>
+        </div>
+        <!--TERCEIRO VÍDEO-->
+        <div id='span-video-preview-3rd' data-status='disabled' data-position='second' class='d-none second-video'>
+            <video id="thirdvideo-preview" preload="none" loop class='min-video responsive-video'></video>
         </div> 
     </div>
     <!-- Sidebar de painel de chat -->
@@ -234,14 +238,13 @@
                 </div>
             </div>
         @endif
-
-        <div id='div-enter' class='fixed-action-btn d-none tooltipped' data-position='left' data-tooltip='Ingressar' style='margin-bottom: 62px;'>
-            <a id='enter' class='btn-floating btn-large waves-effect waves-light cyan pulse'>
+        <div id='div-enter' class='fixed-action-btn tooltipped' data-position='left' data-tooltip='Ingressar' style='margin-bottom: 62px;'>
+            <a id='enter-session' class='btn-floating btn-large waves-effect waves-light cyan' data-active='disabled'>
                 {!! $videocamLargeIcon !!}
             </a>
         </div>
         <div id='control-toggle' class='fixed-action-btn d-none'>
-            <a id='enter' class='btn-floating btn-large waves-effect waves-light blue darken-3 tooltipped' data-position='left' data-tooltip='Controles'>
+            <a id='media-control' class='btn-floating btn-large waves-effect waves-light blue darken-3 tooltipped' data-position='left' data-tooltip='Controles'>
                 {!! $controlLargeIcon !!}
             </a>
         </div>

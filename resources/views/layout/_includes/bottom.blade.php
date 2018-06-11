@@ -91,7 +91,7 @@
                 <script type="text/javascript" src="{!! asset('js/webrtc/socket.io.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/webrtc/getHTMLMediaElement.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/webrtc/adapter.js') !!}"></script>                      
-                <script type="text/javascript" src="{!! asset('js/webrtc/RTCMultiConnection.min.js') !!}"></script>
+                <script type="text/javascript" src="{!! asset('js/webrtc/RTCMultiConnectionNew.min.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/webrtc/application.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/webrtc/getScreenId.js') !!}"></script>
                 <script>
