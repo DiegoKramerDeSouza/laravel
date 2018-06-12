@@ -78,11 +78,11 @@
     </div>
 
     <!--Campos de controle-->
-    <input type='text' id='room-id' name='room-id' value='{{ Auth::user()->login}}-{{ Auth::user()->name}}-{!! rand(0,999) !!}' disabled readonly />
+    <input type='hidden' id='room-id' name='room-id' value='{{ Auth::user()->login}}-{{ Auth::user()->name}}-{!! rand(0,999) !!}' disabled readonly />
     <!-- ID do broadcaster-->
-    <input type='text' id='broadcaster' name='broadcaster' disabled readonly />
+    <input type='hidden' id='broadcaster' name='broadcaster' disabled readonly />
     <!-- ID da sala e tela-->
-    <input type='text' id='in-room' name='in-room' disabled readonly />
+    <input type='hidden' id='in-room' name='in-room' disabled readonly />
     <input type='hidden' id='in-screen' name='in-screen' disabled readonly />
     <!-- Usuário-->
     <input type='hidden' id='current-user' value='{{ Auth::user()->name}}' disabled readonly />

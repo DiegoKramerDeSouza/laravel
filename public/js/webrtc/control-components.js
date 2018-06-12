@@ -12,7 +12,7 @@ var countMessages = 0;
 
 // Chama alertas em elementos toast do MaterializeCSS
 /**
- * Param content: conteúdo da mensagem
+ * Param content: conteúdo da mensagem em html
  * Param classe: classes aplicadas ao elem. toast
  */
 function callToast(content, classe) {
@@ -179,7 +179,7 @@ function setPedir(status) {
 function setParticipation(status) {
     var participation = document.getElementById('enter-session');
     if (status === 'dis') {
-        participation.setAttribute('data-active', 'disabled');
+        participation.setAttribute('data-active', 'notAllowed');
         participation.disabled = true;
         participation.classList.remove("cyan");
         participation.classList.add("grey");
@@ -187,14 +187,14 @@ function setParticipation(status) {
         $('#div-enter').hide();
     } else if (status === 'off') {
         $('#div-enter').show();
-        participation.setAttribute('data-active', 'disabled');
+        participation.setAttribute('data-active', 'enabled');
         participation.classList.remove("cyan");
         participation.classList.add("red");
         participation.innerHTML = "<i class='material-icons'>videocam_off</i>";
         callToast('<span class="white-text"><i class="material-icons left">videocam</i> Transmissão Iniciada.</span>', 'blue darken-2');
     } else if (status === 'on') {
         $('#div-enter').show();
-        participation.setAttribute('data-active', 'enabled');
+        participation.setAttribute('data-active', 'disabled');
         participation.classList.remove("red");
         participation.classList.add("cyan");
         participation.innerHTML = "<i class='material-icons'>videocam</i>";

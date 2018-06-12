@@ -1,14 +1,12 @@
 /**
  *  Javascript + JQuery + WebRTC
  *  Controle de transmissão de mídia com stream;
- *  Controle de acesso de usuários por perfil;
  *  Configurações do WebRTC -> Sockets e RTCMulticonnection
  *                          -> Transmissão escalável em Broadcast
  *                          -> Controles do Chat
  *                          -> Controles de envio e recebimento de mensagens;
- *  Validação de campos de formulários;
- *  Controle e tratamento das funções dos botões da barra de funções de video;
- *  Utilizado EXCLUSIVAMENTE para rotas "salas/*";
+ *  Controle e tratamento das funções dos botões da barra de controle de mídia;
+ *  Utilizado EXCLUSIVAMENTE para "salas";
  */
 //-------------------------------------------------------------------------------------------------
 /**
@@ -16,6 +14,10 @@
  * 
  *  var solicita        integer
  *  var broadcastStatus integer
+ *  var connections     Array
+ *  var isModerator     Boolean
+ *  var onlobby         Boolean
+ *  var onParticipation Boolean
  */
 // Controle de solicitações abertas para o broadcaster
 // ->limita a 1 a quantidade máxima de solicitações de um usuário
@@ -30,7 +32,7 @@ var onlobby = true;
 var onParticipation = false;
 
 $(document).ready(function() {
-    // Inicializa adapter.js
+
     window.enableAdapter = true;
     //Application - Inicia a chamada e tratamento de multiconexão
     /**
@@ -49,12 +51,16 @@ $(document).ready(function() {
     //connection.autoCloseEntireSession = true;
     //connection.dontCaptureUserMedia = true;
 
+    var mixer;
+    var localCon;
+    var localStn;
+
     // Elemento alvo para iniciar o stream de video
     connection.teacherVideosContainer = document.getElementById('main-video');
     connection.videoContainer = document.getElementById('span-video-preview');
     connection.videosContainer = document.getElementById('span-secondvideo-preview');
 
-    // Listeners de tratamento de tamanho de tela do video
+    // Listeners de tratamento de tamanho de tela do video (Detecta Fullscreen OFF)
     document.addEventListener('fullscreenchange', exitHandler);
     document.addEventListener('webkitfullscreenchange', exitHandler);
     document.addEventListener('mozfullscreenchange', exitHandler);
@@ -125,9 +131,9 @@ $(document).ready(function() {
     // Servidor de signaling de teste gratúito:
     connection.socketURL = 'https://rtcmulticonnection.herokuapp.com:443/';
 
+    // Socket Connections
     connection.connectSocket(function(socket) {
         // Socket - Join
-        // Evento emitido para acessar uma transmissão
         socket.on('join-broadcaster', function(hintsToJoinBroadcast) {
             console.log('--> join-broadcaster', hintsToJoinBroadcast);
             broadcastStatus = 1;
@@ -165,25 +171,23 @@ $(document).ready(function() {
         });
         // Socket - Stopped
         socket.on('broadcast-stopped', function(broadcastId) {
-            // Transmissão interrompida 
             console.error('--> Broadcast finalizada', broadcastId);
             broadcastStatus = 0;
             callToast('<i class="fa fa-stop-circle fa-lg"></i> Transmissão finalizada!', 'red darken-3');
         });
-        // Socket - Started -> Quando não há um broadcast inicia-se esse evento
+        // Socket - Started
         socket.on('start-broadcasting', function(typeOfStreams) {
             console.log('--> Iniciando broadcasting', typeOfStreams);
             broadcastStatus = 1;
-            // O broadcaster sempre utilizará essas configurações
             connection.sdpConstraints.mandatory = {
                 OfferToReceiveVideo: false,
                 OfferToReceiveAudio: false
             };
             connection.session = typeOfStreams;
-            // Início da captura de mídia
             connection.open(connection.userid, isPublicModerator);
             console.log('--> Abrindo: ' + connection.userid);
         });
+        // Socket - Leaving
         socket.on('leave-the-room', function(targetconnection) {
             console.log('--> Saindo...' + targetconnection.remoteUserId + ' -> ' + connection.userid);
             if (targetconnection.remoteUserId != connection.userid) return;
@@ -207,66 +211,48 @@ $(document).ready(function() {
             } else if (error === 'permission-denied') {
                 setShare('on');
             }
-            console.log(error);
-            //throw error;
+            throw error;
         });
     };
     // Inicia a transmissão
     connection.onstream = function(event) {
-        // Teste Firefox
-        //$('#span-video-preview-2nd').fadeIn(300);
-        console.log('--> Conectando à stream.');
-        //Apresentação da barra de funções de video
+        // Apresentação da barra de controle de mídia
         $('#nav-footer').slideDown(500);
-        inRoom.value = event.userid;
-
-        sessionAccess.onclick = function() {
-            if (sessionAccess.getAttribute('data-active') == 'enabled' && !onParticipation) {
-                setParticipation('off');
-                connection.peers[inRoom.value].addStream({
-                    audio: true,
-                    video: true
-                });
-            } else if (onParticipation) {
-                /*
-                var streamConnection = document.getElementById('in-screen').value;
-                var streamToRemove = null;
-                var newArray = [];
-                connection.attachStreams.forEach(function(stream) {
-                    if (stream.id === streamConnection) {
-                        streamToRemove = stream;
-                        stream.stop();
-                    } else newArray.push(stream);
-                });
-                connection.attachStreams = newArray;
-                connection.getAllParticipants().forEach(function(p) {
-                    var peer = connection.peers[p].peer;
-                    peer.removeStream(streamToRemove);
-                    connection.renegotiate(p, {
-                        screen: false,
-                        oneway: true
-                    });
-                });
-                */
-                setParticipation('on');
-            }
+        if (!onParticipation) {
+            inRoom.value = event.userid;
         }
+        // Desabilita botão de ingresso na apresentação
+        //setParticipation('dis');
 
-        if (connection.isInitiator && event.type !== 'local') {
-            //return;
-            $('#span-video-preview-3rd').fadeIn(300);
-            thirdVideoPreview.srcObject = event.stream;
-            var playPromise = thirdVideoPreview.play();
-            // Verifica disponibilidade de vídeo para transmissão
-            if (playPromise !== undefined) {
-                playPromise.then(_ => {
-                        thirdVideoPreview.play();
-                    })
-                    .catch(error => {
-                        console.log('Carregando vídeo...');
-                    });
+        /**
+         * Tratamento de conexões remotas e locais
+         * -> Identificação de compartilhamentos de tela e ingressos em transmissões
+         */
+        if (event.type === 'remote' && connection.isInitiator) {
+            // Conexão remota com um broadcaster
+            if (localCon) {
+                mixer = new MultiStreamsMixer([localStn, event.stream]);
+                mixer.frameInterval = 10;
+                mixer.startDrawingFrames();
+                setTimeout(function() {
+                    videoPreview.srcObject = mixer.getMixedStream();
+                    connection.attachStreams = [mixer.getMixedStream()];
+                    var playPromise = videoPreview.play();
+                    // Verifica disponibilidade de vídeo para transmissão
+                    if (playPromise !== undefined) {
+                        playPromise.then(_ => {
+                                videoPreview.play();
+                            })
+                            .catch(error => {
+                                console.log('Carregando vídeo...');
+                            });
+                        console.log(localCon);
+                    }
+                }, 300);
             }
-        } else if (event.type === 'remote' && event.stream.isScreen === true) {
+
+        } else if (!onParticipation && (event.type === 'remote' && event.stream.isScreen === true)) {
+            // Conexão remota com compartilhamento de tela
             $('#span-video-preview-2nd').fadeIn(300);
             secondVideoPreview.srcObject = event.stream;
             var playPromise = secondVideoPreview.play();
@@ -319,7 +305,8 @@ $(document).ready(function() {
                     }
                 }, 500);
             };
-        } else if (event.type === 'remote' && !event.stream.isScreen) {
+        } else if (!onParticipation && (event.type === 'remote' && !event.stream.isScreen)) {
+            // Conexão remota sem compartilhamento de tela 
             /**
              *  Ações para conexão REMOTA para controle de funções de áudio e video do webRTC
              */
@@ -338,7 +325,6 @@ $(document).ready(function() {
             if (connection.isInitiator == false && event.type === 'remote') {
                 //connection.attachStreams = [event.stream];
             };
-
             // Ação padrão para conexões remotas:
             /**
              * Desabilita botão de ação para microfone
@@ -348,7 +334,7 @@ $(document).ready(function() {
             setMute('dis');
             setShare('dis');
             /**
-             * Tratamento dos botões da barra de funções de video----------------------------------
+             * Tratamento dos botões do controle de mídia
              */
             // Tratamento do botão de pedir a vez
             pedir.onclick = function() {
@@ -402,12 +388,17 @@ $(document).ready(function() {
             var numberOfUsers = connection.getAllParticipants().length;
             changeCounter(numberOfUsers);
 
-        } else if (event.type === 'local' && !event.stream.isScreen) {
+        } else if (!onParticipation && (event.type === 'local' && !event.stream.isScreen)) {
+            // Conexão local sem compartilhamento de tela
             /**
              *  Ações para conexão LOCAL para controle de funções de áudio e video do webRTC
              */
             onParticipation = true;
             connection.isUpperUserLeft = false;
+
+            localCon = event;
+            localStn = event.stream;
+            console.log(localCon);
             videoPreview.srcObject = event.stream;
             videoPreview.userid = event.userid;
             videoPreview.muted = true;
@@ -426,7 +417,7 @@ $(document).ready(function() {
                 setPedir('dis');
             }
             /**
-             * Tratamento dos botões da barra de funções de video----------------------------------
+             * Tratamento dos botões do controle de mídia
              */
             // Tratamento de áudio: Botão "Microfone" -> Toggle on/off
             mute.onclick = function() {
@@ -557,12 +548,50 @@ $(document).ready(function() {
         // Botão de maximizar o video -> toggle on:off
         screen.onclick = function() { fullscreen(); };
         exitscreen.onclick = function() { fullscreen(); };
-        // Tratamento das funções MUTE e UNMUTE -> Obrigatórios para utilizar mute e unmute
+        // Tratamento das funções MUTE e UNMUTE
         connection.onmute = function(e) {
             e.mediaElement.setAttribute('poster', '/img/bg.jpg');
         };
         connection.onunmute = function(e) {
             e.mediaElement.removeAttribute('poster');
+        };
+        // Tratamento da função de chat da barra de controle de mídia
+        document.getElementById('toggle-chat').onclick = function() {
+            $('#text-message').focus();
+        };
+        // Tratamento de ingresso na transmissão: Botão "Ingressar" -> Ingressa e participa da apresentação
+        //  ->Toggle On/Off
+        sessionAccess.onclick = function() {
+            if (sessionAccess.getAttribute('data-active') == 'disabled' && !onParticipation) {
+                setParticipation('off');
+                onParticipation = true;
+                setTimeout(function() {
+                    try {
+                        connection.peers[inRoom.value].addStream({
+                            audio: true,
+                            video: true
+                        });
+                    } catch (e) {
+                        setParticipation('on');
+                        onParticipation = false;
+                    }
+                }, 500);
+            } else if (sessionAccess.getAttribute('data-active') == 'enabled' && onParticipation) {
+                setParticipation('on');
+                onParticipation = false;
+                try {
+                    connection.attachStreams.forEach(function(stream) {
+                        connection.getAllParticipants().forEach(function(p) {
+                            var peer = connection.peers[p].peer;
+                            stream.stop();
+                            peer.removeStream(stream);
+                        });
+                    });
+                } catch (e) {
+                    setParticipation('off');
+                    onParticipation = true;
+                }
+            }
         };
         // Apresenta painel com controles de mídia
         $('#control-toggle').fadeIn(300);
@@ -622,16 +651,17 @@ $(document).ready(function() {
                 oneway: true
             };
             // Controle da utilização de banda
+            /*
             connection.bandwidth = {
                 audio: 300,
                 video: 700
             };
-
+            */
             // Inicializa Socket
             var socket = connection.getSocket();
+            // Verifica existência do broadcast
             socket.emit('check-broadcast-presence', broadcastId, function(isBroadcastExists) {
                 if (!isBroadcastExists) {
-                    // Definie o user-id do broadcaster
                     connection.userid = broadcastId;
                     console.log('Definindo userid broadcaster: ' + connection.userid);
                 }
@@ -640,13 +670,9 @@ $(document).ready(function() {
                 socket.emit('join-broadcast', {
                     broadcastId: broadcastId,
                     userid: connection.userid,
-                    typeOfStreams: connection.session,
-                    bandwidth: connection.bandwidth
+                    typeOfStreams: connection.session
+                        //bandwidth: connection.bandwidth
                 });
-                // Habilita funções de chat
-                document.getElementById('toggle-chat').onclick = function() {
-                    $('#text-message').focus();
-                };
             });
         } else {
             callToast('<i class="fa fa-exclamation-triangle fa-lg"></i> Por favor informe todos os campos indicados!', 'red darken-3');
