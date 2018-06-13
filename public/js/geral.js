@@ -60,3 +60,7 @@ function destroyLoading() {
     $('#centralized').fadeOut(300);
     center.innerHTML = '';
 }
+// Retorna a página
+function goBack() {
+    window.history.back();
+}

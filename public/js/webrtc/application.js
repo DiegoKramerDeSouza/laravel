@@ -31,6 +31,7 @@ var isModerator = true;
 var onlobby = true;
 var onParticipation = false;
 var lockSolicitation = false;
+var streamList = [];
 
 $(document).ready(function() {
 
@@ -220,7 +221,7 @@ $(document).ready(function() {
         if (event.type === 'remote' && connection.isInitiator) {
             // Conexão remota com o broadcaster
             if (localCon) {
-                console.log(event.stream);
+                streamList.push(event.stream);
                 mixer = new MultiStreamsMixer([localStn, event.stream]);
                 mixer.frameInterval = 1;
                 mixer.startDrawingFrames();
@@ -536,10 +537,30 @@ $(document).ready(function() {
             };
             endSessionAccess.onclick = function() {
                 setEndParticipation('dis');
+                //streamList.forEach(function(stream) {
+                connection.attachStreams.forEach(function(stream) {
+                    stream.stop();
+                    connection.getAllParticipants().forEach(function(p) {
+                        var peer = connection.peers[p].peer;
+                        peer.removeStream(stream);
+                    });
+                });
+                videoPreview.srcObject = localCon.stream;
+                videoPreview.muted = true;
+                var playPromise = videoPreview.play();
+                // Verifica disponibilidade de vídeo para transmissão
+                if (playPromise !== undefined) {
+                    playPromise.then(_ => {
+                            videoPreview.play();
+                        })
+                        .catch(error => {});
+                }
+                connection.getAllParticipants().forEach(function(p) {
+                    connection.renegotiate(p);
+                });
                 /**
                  *  Finaliza transmissão!
                  */
-
             }
         }
         // Botão de maximizar o video -> toggle on:off
@@ -575,7 +596,8 @@ $(document).ready(function() {
                     }
                 }, 500);
             } else if (sessionAccess.getAttribute('data-active') == 'enabled' && onParticipation) {
-                setParticipation('on');
+                console.log(streamList);
+                setParticipation('dis');
                 onParticipation = false;
                 try {
                     connection.attachStreams.forEach(function(stream) {
@@ -583,6 +605,7 @@ $(document).ready(function() {
                             var peer = connection.peers[p].peer;
                             stream.stop();
                             peer.removeStream(stream);
+                            console.log(stream);
                         });
                     });
                     callToast('<i class="material-icons left">videocam_off</i> Transmissão finalizada.', 'red darken-3');
