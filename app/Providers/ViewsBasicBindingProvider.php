@@ -17,19 +17,16 @@ class ViewsBasicBindingProvider extends ServiceProvider
          *  Variáveis disponíveis para todas as Views
          *  -> ("nome da variável", "valor")
          */
-        // Definição de UFs em array
-        view()->share('ufs', ['AC'=>'Acre','AL'=>'Alagoas','AP'=>'Amapá','AM'=>'Amazonas','BA'=>'Bahia','CE'=>'Ceará',
-        'DF'=>'Distrito Federal','ES'=>'Espírito Santo','GO'=>'Goiás','MA'=>'Maranhão','MT'=>'Mato Grosso',
-        'MS'=>'Mato Grosso do Sul','MG'=>'Minas Gerais','PA'=>'Pará','PB'=>'Paraíba','PR'=>'Paraná',
-        'PE'=>'Pernambuco','PI'=>'Piauí','RJ'=>'Rio de Janeiro','RN'=>'Rio Grande do Norte',
-        'RS'=>'Rio Grande do Sul','RO'=>'Rondônia','RR'=>'Roraima','SC'=>'Santa Catarina','SP'=>'São Paulo',
-        'SE'=>'Sergipe','TO'=>'Tocantins']);
+
+        // Definição do plano de fundo
+        view()->share('bgImage', 'img/bg.jpg');
 
         // Definição do nome da aplicação
         view()->share('logo', 'WebTV');
 
-        // Definição do plano de fundo
-        view()->share('bgImage', 'img/bg.jpg');
+        // Extensão de navegador para compartilhamento de tela
+        view()->share('chromeExt', 'https://chrome.google.com/webstore/detail/screen-capturing/ajhifddimkapgcifgcodmmfdlknahffk');
+        view()->share('firefoxExt', 'https://addons.mozilla.org/en-US/firefox/addon/enable-screen-capturing/');
 
         // Definição de ícones para todas as views
         // -> Ícones utilizados: FontAwesome e MaterializeCSS
@@ -53,6 +50,7 @@ class ViewsBasicBindingProvider extends ServiceProvider
         view()->share('userVideoBlueIcon',          "<i class='material-icons blue-text'>ondemand_video</i>");
         view()->share('videocamIcon',               "<i class='material-icons'>videocam</i>");
         view()->share('videocamLargeIcon',          "<i class='material-icons large'>videocam</i>");
+        view()->share('videocamoffLargeIcon',       "<i class='material-icons large'>videocam_off</i>");
         view()->share('volumeUpIcon',               "<i class='material-icons'>volume_up</i>");
         // FontAwesome Icons:
         view()->share('acessosIcon',            "<i class='fa fa-shield fa-lg'></i>");
@@ -111,6 +109,14 @@ class ViewsBasicBindingProvider extends ServiceProvider
         view()->share('prefixSearchIcon',       "<i class='material-icons prefix'>search</i>");
         // Ícone + texto para links
         view()->share('gobackLink', "<i class='fa fa-arrow-left'></i> voltar");
+
+        // Definição de UFs em array
+        view()->share('ufs', ['AC'=>'Acre','AL'=>'Alagoas','AP'=>'Amapá','AM'=>'Amazonas','BA'=>'Bahia','CE'=>'Ceará',
+        'DF'=>'Distrito Federal','ES'=>'Espírito Santo','GO'=>'Goiás','MA'=>'Maranhão','MT'=>'Mato Grosso',
+        'MS'=>'Mato Grosso do Sul','MG'=>'Minas Gerais','PA'=>'Pará','PB'=>'Paraíba','PR'=>'Paraná',
+        'PE'=>'Pernambuco','PI'=>'Piauí','RJ'=>'Rio de Janeiro','RN'=>'Rio Grande do Norte',
+        'RS'=>'Rio Grande do Sul','RO'=>'Rondônia','RR'=>'Roraima','SC'=>'Santa Catarina','SP'=>'São Paulo',
+        'SE'=>'Sergipe','TO'=>'Tocantins']);
     }
 
     /**

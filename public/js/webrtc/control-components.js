@@ -168,7 +168,9 @@ function setPedir(status) {
             '</span>';
         callToast(toastContent, 'blue darken-2');
         $('#div-enter').fadeIn(300);
+        setParticipation('on');
     } else if (status === 'deny') {
+        setParticipation('dis');
         callToast('<span class="white-text"><i class="fa fa-times"></i> Sua solicitação foi negada!</span>', 'red darken-3');
     }
 }
@@ -189,16 +191,40 @@ function setParticipation(status) {
         $('#div-enter').show();
         participation.setAttribute('data-active', 'enabled');
         participation.classList.remove("cyan");
+        participation.classList.remove("grey");
         participation.classList.add("red");
         participation.innerHTML = "<i class='material-icons'>videocam_off</i>";
-        callToast('<span class="white-text"><i class="material-icons left">videocam</i> Transmissão Iniciada.</span>', 'blue darken-2');
+        //callToast('<span class="white-text"><i class="material-icons left">videocam</i> Transmissão Iniciada.</span>', 'blue darken-2');
     } else if (status === 'on') {
         $('#div-enter').show();
         participation.setAttribute('data-active', 'disabled');
         participation.classList.remove("red");
+        participation.classList.remove("grey");
         participation.classList.add("cyan");
         participation.innerHTML = "<i class='material-icons'>videocam</i>";
-        callToast('<span class="white-text"><i class="material-icons left">videocam_off</i> Transmissão finalizada.</span>', 'red darken-3');
+        //callToast('<span class="white-text"><i class="material-icons left">videocam_off</i> Transmissão finalizada.</span>', 'red darken-3');
+    }
+}
+// Configurações visuais de status para a remoção de um usuário da transmissão
+/**
+ * Param status: 'disabled', 'off'
+ */
+function setEndParticipation(status) {
+    var participation = document.getElementById('end-session');
+    if (status === 'dis') {
+        participation.setAttribute('data-active', 'notAllowed');
+        participation.disabled = true;
+        participation.classList.remove("cyan");
+        participation.classList.add("grey");
+        participation.innerHTML = "<i class='material-icons'>videocam_off</i>";
+        $('#div-end').hide();
+    } else if (status === 'off') {
+        $('#div-enter').show();
+        participation.setAttribute('data-active', 'enabled');
+        participation.classList.remove("cyan");
+        participation.classList.remove("grey");
+        participation.classList.add("red");
+        participation.innerHTML = "<i class='material-icons'>videocam_off</i>";
     }
 }
 // Controle da saída de tela cheia -> correção de saídas não previstas da função de tela cheia
@@ -423,17 +449,21 @@ function constructList(exp) {
     var pedeList = document.getElementById('solicita-list');
     var liList = document.getElementsByClassName('sol-response');
     var htmlList = '';
-    for (var j = 0; j < liList.length; j++) {
-        if (liList[j].id != exp) {
-            var sender = liList[j].getAttribute('data-sender');
-            htmlList += '<li id="' + liList[j].id + '" data-sender="' + sender + '" class="sol-response collection-item avatar li-hover">' +
-                '<i class="material-icons blue lighten-2 circle">tv</i>' +
-                '<h6><b>' + sender + '</b> solicita vez.</h6>' +
-                '<span class="secondary-content">' +
-                '<a id="allow_' + liList[j].id + '" class="room-enter responses blue-text text-darken-2 modal-close" title="Permitir"><i class="fa fa-check-circle fa-2x"></i></a> &nbsp;&nbsp;' +
-                '<a id="deny_' + liList[j].id + '" class="room-enter responses red-text text-darken-3 modal-close" title="Negar"><i class="fa fa-times-circle fa-2x"></i></a>' +
-                '</span>' +
-                '</li>';
+    if (liList.length <= 1) {
+        htmlList = "<li align='center' class='red-text text-darken-3' style='padding:40px;' ><b><i class='fa fa-times fa-lg'></i> Não há solicitações no momento.</b></li>";
+    } else {
+        for (var j = 0; j < liList.length; j++) {
+            if (liList[j].id != exp) {
+                var sender = liList[j].getAttribute('data-sender');
+                htmlList += '<li id="' + liList[j].id + '" data-sender="' + sender + '" class="sol-response collection-item avatar li-hover">' +
+                    '<i class="material-icons blue lighten-2 circle">tv</i>' +
+                    '<h6><b>' + sender + '</b> solicita vez.</h6>' +
+                    '<span class="secondary-content">' +
+                    '<a id="allow_' + liList[j].id + '" class="room-enter responses blue-text text-darken-2 modal-close" title="Permitir"><i class="fa fa-check-circle fa-2x"></i></a> &nbsp;&nbsp;' +
+                    '<a id="deny_' + liList[j].id + '" class="room-enter responses red-text text-darken-3 modal-close" title="Negar"><i class="fa fa-times-circle fa-2x"></i></a>' +
+                    '</span>' +
+                    '</li>';
+            }
         }
     }
     pedeList.innerHTML = htmlList;

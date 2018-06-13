@@ -30,6 +30,7 @@ var connections = [];
 var isModerator = true;
 var onlobby = true;
 var onParticipation = false;
+var lockSolicitation = false;
 
 $(document).ready(function() {
 
@@ -51,6 +52,7 @@ $(document).ready(function() {
     //connection.autoCloseEntireSession = true;
     //connection.dontCaptureUserMedia = true;
 
+    // Controles de Stream
     var mixer;
     var localCon;
     var localStn;
@@ -92,8 +94,7 @@ $(document).ready(function() {
      *  var broadcaster         elem. html
      *  var currentUser         string
      *  var sessionAccess       elem. html
-     *  var thirdVideoPreview   elem. html
-     *  var videoThird          elem. html
+     *  var endSessionAccess    elem. html
      */
     var width;
     var status = false;
@@ -112,20 +113,13 @@ $(document).ready(function() {
     var pedir = document.getElementById('pedir-vez');
     var ctlPedir = document.getElementById('control-pedir-vez');
     var share = document.getElementById('share-screen');
-    var access = document.getElementById('div-enter');
     var videoFirst = document.getElementById('span-video-preview');
     var videoSecond = document.getElementById('span-video-preview-2nd');
     var swapSecond = document.getElementById('swap-video');
     var broadcaster = document.getElementById('broadcaster');
     var currentUser = document.getElementById('current-user').value;
     var sessionAccess = document.getElementById('enter-session');
-    var thirdVideoPreview = document.getElementById('thirdvideo-preview');
-    var videoThird = document.getElementById('span-video-preview-3rd');
-
-    // Extensão para captura de tela do firefox:
-    // https://addons.mozilla.org/en-US/firefox/addon/enable-screen-capturing/
-    // Extensão para captura de tela do google chrome:
-    // https://chrome.google.com/webstore/detail/screen-capturing/ajhifddimkapgcifgcodmmfdlknahffk
+    var endSessionAccess = document.getElementById('end-session');
 
     // Conexão com serviço de websocket
     // Servidor de signaling de teste gratúito:
@@ -159,7 +153,6 @@ $(document).ready(function() {
             socket.emit('check-broadcast-presence', broadcastId, function(isBroadcastExists) {
                 console.log('check-existente');
                 if (!isBroadcastExists) {
-                    // O broadcaster TEM de definir seu user-id
                     connection.userid = broadcastId;
                 }
                 socket.emit('join-broadcast', {
@@ -216,23 +209,20 @@ $(document).ready(function() {
     };
     // Inicia a transmissão
     connection.onstream = function(event) {
-        // Apresentação da barra de controle de mídia
-        $('#nav-footer').slideDown(500);
+        // Valida caso de participação de um usuário na transmissão
         if (!onParticipation) {
             inRoom.value = event.userid;
         }
-        // Desabilita botão de ingresso na apresentação
-        //setParticipation('dis');
-
         /**
          * Tratamento de conexões remotas e locais
          * -> Identificação de compartilhamentos de tela e ingressos em transmissões
          */
         if (event.type === 'remote' && connection.isInitiator) {
-            // Conexão remota com um broadcaster
+            // Conexão remota com o broadcaster
             if (localCon) {
+                console.log(event.stream);
                 mixer = new MultiStreamsMixer([localStn, event.stream]);
-                mixer.frameInterval = 10;
+                mixer.frameInterval = 1;
                 mixer.startDrawingFrames();
                 setTimeout(function() {
                     videoPreview.srcObject = mixer.getMixedStream();
@@ -246,11 +236,13 @@ $(document).ready(function() {
                             .catch(error => {
                                 console.log('Carregando vídeo...');
                             });
-                        console.log(localCon);
                     }
-                }, 300);
+                    connection.getAllParticipants().forEach(function(p) {
+                        connection.renegotiate(p);
+                    });
+                    $('#div-end').fadeIn(300);
+                }, 500);
             }
-
         } else if (!onParticipation && (event.type === 'remote' && event.stream.isScreen === true)) {
             // Conexão remota com compartilhamento de tela
             $('#span-video-preview-2nd').fadeIn(300);
@@ -321,14 +313,11 @@ $(document).ready(function() {
             $('#pedir-vez').tooltip();
             pedir = document.getElementById('pedir-vez');
 
-            //Controle de elementos da conexão
-            if (connection.isInitiator == false && event.type === 'remote') {
-                //connection.attachStreams = [event.stream];
-            };
             // Ação padrão para conexões remotas:
             /**
              * Desabilita botão de ação para microfone
              * Desabilita botão de ação para camera
+             * Desabilita botão de ação para compartilhar tela
              */
             setCam('dis');
             setMute('dis');
@@ -338,8 +327,8 @@ $(document).ready(function() {
              */
             // Tratamento do botão de pedir a vez
             pedir.onclick = function() {
-                if (broadcastStatus == 1 && solicita === 0) {
-                    // Constroi e envia MSG solicitando a vez
+                if (broadcastStatus == 1 && (solicita === 0 && !lockSolicitation)) {
+                    // Constroi e envia mensagem solicitando a vez
                     /**
                      *  var msgrash     string
                      *  var myIdentity  string
@@ -360,6 +349,8 @@ $(document).ready(function() {
                     }
                 } else if (solicita > 0) {
                     callToast('<i class="fa fa-exclamation-triangle"></i> Você já encaminhou uma solicitação.<br>Aguarde a resposta.', 'amber darken-4');
+                } else if (lockSolicitation) {
+                    callToast('<i class="fa fa-exclamation-triangle"></i> Sua solicitação já foi aceita.<br>Acesse clicando no botão ao lado.', 'amber darken-4');
                 } else {
                     callToast('<i class="fa fa-times"></i> Não há conexão com a sala!', 'red darken-3');
                 }
@@ -368,19 +359,18 @@ $(document).ready(function() {
             // Tratamento de áudio: Botão "Áudio" -> Toggle on/off
             vol.onclick = function() {
                 if (vol.getAttribute('data-active') == 'enabled') {
-                    // Alteração de conexão -> Set audio: false
                     [event.stream].forEach(function(stream) {
                         stream.mute('audio');
                     });
                     setVol('off');
                 } else {
-                    // Alteração de conexão -> Set audio: true
                     [event.stream].forEach(function(stream) {
                         stream.unmute('audio');
                     });
                     setVol('on');
                 }
             };
+            // Contagem de usuários conectados
             connection.getAllParticipants().forEach(function(participantId) {
                 var user = connection.peers[participantId];
                 var userextra = user.extra;
@@ -395,10 +385,9 @@ $(document).ready(function() {
              */
             onParticipation = true;
             connection.isUpperUserLeft = false;
-
             localCon = event;
             localStn = event.stream;
-            console.log(localCon);
+
             videoPreview.srcObject = event.stream;
             videoPreview.userid = event.userid;
             videoPreview.muted = true;
@@ -422,7 +411,6 @@ $(document).ready(function() {
             // Tratamento de áudio: Botão "Microfone" -> Toggle on/off
             mute.onclick = function() {
                 if (mute.getAttribute('data-active') == 'enabled') {
-                    // Alteração de conexão -> Set audio: false
                     connection.attachStreams.forEach(function(stream) {
                         if (!stream.isScreen) {
                             stream.mute('audio');
@@ -430,7 +418,6 @@ $(document).ready(function() {
                     });
                     setMute('off');
                 } else {
-                    // Alteração de conexão -> Set audio: true
                     connection.attachStreams.forEach(function(stream) {
                         if (!stream.isScreen) {
                             stream.unmute({
@@ -446,7 +433,6 @@ $(document).ready(function() {
             // Tratamento de áudio e video: Botão "Camera" -> Toggle on/off
             cam.onclick = function() {
                 if (cam.getAttribute('data-active') == 'enabled') {
-                    // Alteração de conexão -> Set audio: false, video: false
                     connection.attachStreams.forEach(function(stream) {
                         if (!stream.isScreen) {
                             stream.mute('video');
@@ -456,7 +442,6 @@ $(document).ready(function() {
                     setCam('off');
                     setMute('off');
                 } else {
-                    // Alteração de conexão -> Set audio: true, video: true
                     connection.attachStreams.forEach(function(stream) {
                         if (!stream.isScreen) {
                             stream.unmute('video');
@@ -482,18 +467,23 @@ $(document).ready(function() {
                         msgrash[2] = admResponse[1];
                         msgrash[3] = inRoom.value;
                         msgrash[4] = myIdentity;
-                        try {
-                            solicita--;
-                            connection.send(msgrash);
-                            constructList(admResponse[1]);
-                            trataSolicitacao(solicita);
-                        } catch (err) {
-                            callToast('<i class="fa fa-times"></i> Não foi possível responder a esta solicitação:<br>' + err + '.', 'red darken-3');
+                        if (admResponse[0] == 'allow' && lockSolicitation) {
+                            callToast('<i class="fa fa-times"></i> Já existe uma solicitação aceita!<br>Finalize-a para aceitar outra.', 'red darken-3');
+                        } else {
+                            try {
+                                solicita--;
+                                connection.send(msgrash);
+                                constructList(admResponse[1]);
+                                trataSolicitacao(solicita);
+                                if (admResponse[0] == 'allow') { lockSolicitation = true }
+                            } catch (err) {
+                                callToast('<i class="fa fa-times"></i> Não foi possível responder a esta solicitação:<br>' + err + '.', 'red darken-3');
+                            }
                         }
                     }
                 }
             };
-            // Tratamento de solicitações: Botão "Compartilhar" -> Compartilha a tela do apresentador
+            // Tratamento de solicitações: Botão "Compartilhar" -> Compartilha a tela do apresentador: Toggle On/Off
             share.onclick = function() {
                 if (share.getAttribute('data-active') == 'enabled') {
                     $('#share-screen').hide();
@@ -544,16 +534,23 @@ $(document).ready(function() {
                     connection.send(msgrash);
                 }
             };
+            endSessionAccess.onclick = function() {
+                setEndParticipation('dis');
+                /**
+                 *  Finaliza transmissão!
+                 */
+
+            }
         }
         // Botão de maximizar o video -> toggle on:off
         screen.onclick = function() { fullscreen(); };
         exitscreen.onclick = function() { fullscreen(); };
         // Tratamento das funções MUTE e UNMUTE
-        connection.onmute = function(e) {
-            e.mediaElement.setAttribute('poster', '/img/bg.jpg');
+        connection.onmute = function(event) {
+            event.mediaElement.setAttribute('poster', '/img/bg.jpg');
         };
-        connection.onunmute = function(e) {
-            e.mediaElement.removeAttribute('poster');
+        connection.onunmute = function(event) {
+            event.mediaElement.removeAttribute('poster');
         };
         // Tratamento da função de chat da barra de controle de mídia
         document.getElementById('toggle-chat').onclick = function() {
@@ -571,6 +568,7 @@ $(document).ready(function() {
                             audio: true,
                             video: true
                         });
+                        callToast('<i class="material-icons left">videocam</i> Transmissão Iniciada.', 'blue darken-2');
                     } catch (e) {
                         setParticipation('on');
                         onParticipation = false;
@@ -587,21 +585,24 @@ $(document).ready(function() {
                             peer.removeStream(stream);
                         });
                     });
+                    callToast('<i class="material-icons left">videocam_off</i> Transmissão finalizada.', 'red darken-3');
                 } catch (e) {
                     setParticipation('off');
                     onParticipation = true;
                 }
             }
         };
-        // Apresenta painel com controles de mídia
+        // Desabilita botão de ingresso na apresentação
+        //setParticipation('dis');
+        // Apresentação e tratamento da barra de controle de mídia
+        $('#nav-footer').slideDown(500);
         $('#control-toggle').fadeIn(300);
         document.getElementById('control-toggle').onclick = function() {
             toggleElem('#nav-footer');
         }
-
     };
 
-    // Ação de criar uma sala de aula ao clicar em 'btn-join-as-productor'
+    // Ação de criar uma sala ao clicar em 'btn-join-as-productor'
     document.getElementById('btn-join-as-productor').onclick = function() {
         /*
          *    var elem          html elem.
@@ -1007,6 +1008,10 @@ function appendDIV(event) {
             msgData[0] = chkrash[1];
             msgData[1] = (atob(chkrash[3])).split('|')[4];
             msgData[2] = chkrash[4];
+            console.log(solicita);
+            if (solicita === 0) {
+                //document.getElementById('solicita-list').innerHTML = '';
+            }
             listBox(msgData);
             return;
         } else if (chkrash[0] === btoa('@PedeAVez:allow')) {
@@ -1015,6 +1020,7 @@ function appendDIV(event) {
             if (chkrash[2] === myRoom) {
                 solicita--;
                 setPedir('allow');
+                lockSolicitation = true;
             }
             return;
         } else if (chkrash[0] === btoa('@PedeAVez:deny')) {
@@ -1023,6 +1029,7 @@ function appendDIV(event) {
             if (chkrash[2] === myRoom) {
                 solicita--;
                 setPedir('deny');
+                lockSolicitation = false;
             }
             return;
         } else if (chkrash[0] === btoa('@Finaliza-Share')) {
@@ -1058,7 +1065,7 @@ function listBox(text) {
     if (msg[1] === receiver) {
         solicita++;
         trataSolicitacao(solicita);
-        // Cria lista em html para preencher a <ul> 'solicita-list'
+        if (solicita === 1) { solList.innerHTML = '' };
         htmlList = constructSolicitationList(msg[2], msg[0]);
         solList.innerHTML += htmlList;
         callToast('<i class="material-icons">pan_tool</i> ' + msg[0] + ' solicita a vez!', 'blue darken-2');

@@ -209,12 +209,12 @@
                     </h5>
                     <div class='divider'></div>
                     <ul id='solicita-list' class='collection'>
+                        <li align='center' class='red-text text-darken-3' style='padding:40px;' ><b>{!! $cancelRedIcon !!} Não há solicitações no momento.</b></li>
                     </ul>
                     <br>
                 </div>
             </div>
-
-            <!-- Modal de compartilhamento-->
+            <!-- Modal de extensão compartilhamento de tela -->
             <div id='msg-share' class='modal'>
                 <div class='modal-content'>
                     <h5>
@@ -233,16 +233,24 @@
                     <br>
                 </div>
                 <div class='modal-action'>
-                    <a href='https://chrome.google.com/webstore/detail/screen-capturing/ajhifddimkapgcifgcodmmfdlknahffk' target='_blank' onclick='chrome.webstore.install()' class='right btn-flat blue-text text-darken-2 waves-effect waves-teal'>{!! $applyIcon !!} sim, instalar</a>
+                    <a href='{!! $chromeExt !!}' target='_blank' onclick='chrome.webstore.install()' class='right btn-flat blue-text text-darken-2 waves-effect waves-teal'>{!! $applyIcon !!} sim, instalar</a>
                     <a class='modal-close right btn-flat red-text text-darken-3 waves-effect waves-red'>{!! $cancelIcon !!} não</a>
                 </div>
             </div>
+            <!-- Botão de desconexão de usuário em transmissão -->
+            <div id='div-end' class='fixed-action-btn tooltipped d-none' data-position='left' data-tooltip='Finalizar participação' style='margin-bottom: 62px;'>
+                <a id='end-session' class='btn-floating btn-large waves-effect waves-light red' data-active='disabled'>
+                    {!! $videocamoffLargeIcon !!}
+                </a>
+            </div>
         @endif
-        <div id='div-enter' class='fixed-action-btn tooltipped' data-position='left' data-tooltip='Ingressar' style='margin-bottom: 62px;'>
-            <a id='enter-session' class='btn-floating btn-large waves-effect waves-light cyan' data-active='disabled'>
+        <!-- Botão de ingresso de usuário em transmissão -->
+        <div id='div-enter' class='fixed-action-btn tooltipped d-none' data-position='left' data-tooltip='Ingressar' style='margin-bottom: 62px;'>
+            <a id='enter-session' class='btn-floating btn-large waves-effect waves-light cyan pulse' data-active='disabled'>
                 {!! $videocamLargeIcon !!}
             </a>
         </div>
+        <!-- Botão de exibição de controles de mídia -->
         <div id='control-toggle' class='fixed-action-btn d-none'>
             <a id='media-control' class='btn-floating btn-large waves-effect waves-light blue darken-3 tooltipped' data-position='left' data-tooltip='Controles'>
                 {!! $controlLargeIcon !!}
