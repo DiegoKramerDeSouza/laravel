@@ -161,17 +161,20 @@
                 <!--Outros vídeos-->
             </div>
         </div>
-        <!--VÍDEO SECUNDÁRIO-->
-        <div id='span-video-preview-2nd' data-status='disabled' data-position='second' class='d-none second-video'>
-            <video id="secondvideo-preview" preload="none" loop class='min-video responsive-video'></video>
-            <a id='swap-video' style='bottom:10px;' class='btn-floating halfway-fab blue darken-2 waves-effect waves-light'>
-                {!! $swapIcon !!}
-            </a>
+        
+        <div class='second-video row'>
+            <!--TERCEIRO VÍDEO-->
+            <div id='span-video-preview-3rd' data-status='disabled' data-position='second' class='col s12 d-none'>
+                <video id="thirdvideo-preview" preload="none" loop class='min-video responsive-video'></video>
+            </div>
+            <!--SEGUNDO VÍDEO-->
+            <div id='span-video-preview-2nd' data-status='disabled' data-position='second' class='col s12 d-none'>
+                <video id="secondvideo-preview" preload="none" loop class='min-video responsive-video'></video>
+                <a id='swap-video' style='bottom:10px;' class='btn-floating halfway-fab blue darken-2 waves-effect waves-light'>
+                    {!! $swapIcon !!}
+                </a>
+            </div>
         </div>
-        <!--TERCEIRO VÍDEO-->
-        <div id='span-video-preview-3rd' data-status='disabled' data-position='second' class='d-none second-video'>
-            <video id="thirdvideo-preview" preload="none" loop class='min-video responsive-video'></video>
-        </div> 
     </div>
     <!-- Sidebar de painel de chat -->
     <ul id="slide-out" class="sidenav grey lighten-4 z-depth-5">

@@ -121,7 +121,7 @@
 }
 
 .second-video {
-    position: absolute !important;
+    position: fixed !important;
     top: 218px !important;
     right: 0px !important;
     max-width: 320px;

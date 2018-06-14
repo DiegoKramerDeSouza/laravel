@@ -31,6 +31,7 @@ var isModerator = true;
 var onlobby = true;
 var onParticipation = false;
 var lockSolicitation = false;
+var isPrincipal = true;
 var streamList = [];
 
 $(document).ready(function() {
@@ -106,6 +107,7 @@ $(document).ready(function() {
     var inRoom = document.getElementById('in-room');
     var videoPreview = document.getElementById('video-preview');
     var secondVideoPreview = document.getElementById('secondvideo-preview');
+    var thirdVideoPreview = document.getElementById('thirdvideo-preview');
     var mute = document.getElementById('toggle-mute');
     var screen = document.getElementById('toggle-screen');
     var exitscreen = document.getElementById('exit-fullscreen');
@@ -116,6 +118,7 @@ $(document).ready(function() {
     var share = document.getElementById('share-screen');
     var videoFirst = document.getElementById('span-video-preview');
     var videoSecond = document.getElementById('span-video-preview-2nd');
+    var videoThird = document.getElementById('span-video-preview-3rd');
     var swapSecond = document.getElementById('swap-video');
     var broadcaster = document.getElementById('broadcaster');
     var currentUser = document.getElementById('current-user').value;
@@ -211,6 +214,8 @@ $(document).ready(function() {
     // Inicia a transmissão
     connection.onstream = function(event) {
         // Valida caso de participação de um usuário na transmissão
+        console.log(connection);
+
         if (!onParticipation) {
             inRoom.value = event.userid;
         }
@@ -219,45 +224,77 @@ $(document).ready(function() {
          * -> Identificação de compartilhamentos de tela e ingressos em transmissões
          */
         if (event.type === 'remote' && connection.isInitiator) {
+            console.log('PARTICIPAÇÃO REMOTA--------');
             // Conexão remota com o broadcaster
             if (localCon) {
                 streamList.push(event.stream);
-                mixer = new MultiStreamsMixer([localStn, event.stream]);
-                mixer.frameInterval = 1;
-                mixer.startDrawingFrames();
+                $('#span-video-preview-3rd').fadeIn(300);
+                thirdVideoPreview.srcObject = event.stream;
+                thirdVideoPreview.title = event.stream;
+                connection.attachStreams = [event.stream];
+                var playPromise = thirdVideoPreview.play();
+                // Verifica disponibilidade de vídeo para transmissão
+                if (playPromise !== undefined) {
+                    playPromise.then(_ => {
+                            thirdVideoPreview.play();
+                        })
+                        .catch(error => {
+                            console.log('Carregando vídeo 3...');
+                        });
+                }
                 setTimeout(function() {
-                    videoPreview.srcObject = mixer.getMixedStream();
-                    connection.attachStreams = [mixer.getMixedStream()];
-                    var playPromise = videoPreview.play();
-                    // Verifica disponibilidade de vídeo para transmissão
-                    if (playPromise !== undefined) {
-                        playPromise.then(_ => {
-                                videoPreview.play();
-                            })
-                            .catch(error => {
-                                console.log('Carregando vídeo...');
-                            });
-                    }
                     connection.getAllParticipants().forEach(function(p) {
-                        connection.renegotiate(p);
+                        if (p + '' != event.userid + '') {
+                            var peer = connection.peers[p].peer;
+                            event.stream.getTracks().forEach(function(track) {
+                                peer.addTrack(track, event.stream);
+                            });
+                            connection.dontAttachStream = true;
+                            connection.renegotiate(p);
+                            connection.dontAttachStream = false;
+                        }
                     });
-                    $('#div-end').fadeIn(300);
-                }, 500);
+                    isPrincipal = false;
+                }, 1000);
+                $('#div-end').fadeIn(300);
             }
         } else if (!onParticipation && (event.type === 'remote' && event.stream.isScreen === true)) {
             // Conexão remota com compartilhamento de tela
-            $('#span-video-preview-2nd').fadeIn(300);
-            secondVideoPreview.srcObject = event.stream;
-            var playPromise = secondVideoPreview.play();
-            // Verifica disponibilidade de vídeo para transmissão
-            if (playPromise !== undefined) {
-                playPromise.then(_ => {
-                        secondVideoPreview.play();
-                    })
-                    .catch(error => {
-                        console.log('Carregando vídeo...');
-                    });
+            /**
+             * REVISAR!!!!
+             */
+            console.log('REMOTO COM SCREEN----------');
+            if (videoPreview.srcObject && (secondVideoPreview.srcObject && event.stream.isScreen !== true)) {
+                $('#span-video-preview-3rd').fadeIn(300);
+                thirdVideoPreview.srcObject = event.stream;
+                thirdVideoPreview.title = event.stream;
+                var playPromise = thirdVideoPreview.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(_ => {
+                            thirdVideoPreview.play();
+                        })
+                        .catch(error => {
+                            console.log('Carregando vídeo 3...');
+                        });
+                }
+            } else {
+                $('#span-video-preview-2nd').fadeIn(300);
+                secondVideoPreview.srcObject = event.stream;
+                try {
+                    secondVideoPreview.play();
+                } catch (e) {
+                    var playPromise = secondVideoPreview.play();
+                    if (playPromise !== undefined) {
+                        playPromise.then(_ => {
+                                secondVideoPreview.play();
+                            })
+                            .catch(error => {
+                                console.log('Carregando vídeo 2...');
+                            });
+                    }
+                }
             }
+
             // Tratamento de telas: Botão "Swap" -> Toggle Main/Second Video
             swapSecond.onclick = function() {
                 var mvideoSrc;
@@ -287,29 +324,61 @@ $(document).ready(function() {
                                 secondVideoPreview.play();
                             })
                             .catch(error => {
-                                console.log('Carregando vídeo...');
+                                console.log('Carregando vídeo 2...');
                             });
                         playReady.then(_ => {
                                 videoPreview.play();
                             })
                             .catch(error => {
-                                console.log('Carregando vídeo...');
+                                console.log('Carregando vídeo 1...');
                             });
                     }
                 }, 500);
             };
         } else if (!onParticipation && (event.type === 'remote' && !event.stream.isScreen)) {
+            console.log('REMOTO SEM SCREEN----------');
+            console.log(event.stream);
             // Conexão remota sem compartilhamento de tela 
             /**
              *  Ações para conexão REMOTA para controle de funções de áudio e video do webRTC
              */
-            onParticipation = false;
-            videoPreview.srcObject = event.stream;
-            videoPreview.play();
+            if (videoPreview.srcObject) {
+                $('#span-video-preview-3rd').fadeIn(300);
+                thirdVideoPreview.srcObject = event.stream;
+                thirdVideoPreview.title = event.stream;
+                var playPromise = thirdVideoPreview.play();
+                // Verifica disponibilidade de vídeo para transmissão
+                if (playPromise !== undefined) {
+                    playPromise.then(_ => {
+                            thirdVideoPreview.play();
+                        })
+                        .catch(error => {
+                            console.log('Carregando vídeo 3...');
+                        });
+                }
+            } else {
+                onParticipation = false;
+                videoPreview.srcObject = event.stream;
+                videoPreview.title = event.stream;
+                try {
+                    videoPreview.play();
+                } catch (e) {
+                    var playPromise = videoPreview.play();
+                    if (playPromise !== undefined) {
+                        playPromise.then(_ => {
+                                videoPreview.play();
+                            })
+                            .catch(error => {
+                                console.log('Carregando vídeo 3...');
+                            });
+                    }
+                }
+
+            }
 
             // Ajusta elementos de exibição (define o menu de áudio e video para ESPECTADORES)
             $('#div-connect').hide();
-            $('#span-video-preview-2nd').hide();
+            //$('#span-video-preview-2nd').hide();
             ctlPedir.innerHTML = constructBtnActionPedir();
             $('#pedir-vez').tooltip();
             pedir = document.getElementById('pedir-vez');
@@ -384,12 +453,15 @@ $(document).ready(function() {
             /**
              *  Ações para conexão LOCAL para controle de funções de áudio e video do webRTC
              */
+            console.log('TRANSMISSÃO LOCAL------');
             onParticipation = true;
             connection.isUpperUserLeft = false;
             localCon = event;
             localStn = event.stream;
+            var currentStream = [event.stream];
 
             videoPreview.srcObject = event.stream;
+            videoPreview.title = event.stream;
             videoPreview.userid = event.userid;
             videoPreview.muted = true;
             videoPreview.play();
@@ -412,14 +484,14 @@ $(document).ready(function() {
             // Tratamento de áudio: Botão "Microfone" -> Toggle on/off
             mute.onclick = function() {
                 if (mute.getAttribute('data-active') == 'enabled') {
-                    connection.attachStreams.forEach(function(stream) {
+                    currentStream.forEach(function(stream) {
                         if (!stream.isScreen) {
                             stream.mute('audio');
                         }
                     });
                     setMute('off');
                 } else {
-                    connection.attachStreams.forEach(function(stream) {
+                    currentStream.forEach(function(stream) {
                         if (!stream.isScreen) {
                             stream.unmute({
                                 audio: true,
@@ -434,7 +506,7 @@ $(document).ready(function() {
             // Tratamento de áudio e video: Botão "Camera" -> Toggle on/off
             cam.onclick = function() {
                 if (cam.getAttribute('data-active') == 'enabled') {
-                    connection.attachStreams.forEach(function(stream) {
+                    currentStream.forEach(function(stream) {
                         if (!stream.isScreen) {
                             stream.mute('video');
                             stream.mute('audio');
@@ -443,7 +515,7 @@ $(document).ready(function() {
                     setCam('off');
                     setMute('off');
                 } else {
-                    connection.attachStreams.forEach(function(stream) {
+                    currentStream.forEach(function(stream) {
                         if (!stream.isScreen) {
                             stream.unmute('video');
                             stream.unmute('audio');
@@ -518,11 +590,13 @@ $(document).ready(function() {
                     connection.attachStreams = newArray;
                     connection.getAllParticipants().forEach(function(p) {
                         var peer = connection.peers[p].peer;
-                        peer.removeStream(streamToRemove);
-                        connection.renegotiate(p, {
-                            screen: false,
-                            oneway: true
-                        });
+                        try {
+                            peer.removeStream([streamToRemove]);
+                            connection.renegotiate(p, {
+                                screen: false,
+                                oneway: true
+                            });
+                        } catch (e) { console.log([streamToRemove]) }
                     });
                     // Mensagem de finalização de screen sharing
                     var msgrash = [];
@@ -536,15 +610,22 @@ $(document).ready(function() {
                 }
             };
             endSessionAccess.onclick = function() {
+                /**
+                 *  Finaliza transmissão!
+                 */
                 setEndParticipation('dis');
-                //streamList.forEach(function(stream) {
-                connection.attachStreams.forEach(function(stream) {
-                    stream.stop();
+                console.log(connection.attachStreams);
+                //connection.attachStreams.forEach(function(stream) {
+                streamList.forEach(function(stream) {
                     connection.getAllParticipants().forEach(function(p) {
+                        stream.stop();
                         var peer = connection.peers[p].peer;
                         peer.removeStream(stream);
                     });
                 });
+
+
+                /*
                 videoPreview.srcObject = localCon.stream;
                 videoPreview.muted = true;
                 var playPromise = videoPreview.play();
@@ -555,12 +636,13 @@ $(document).ready(function() {
                         })
                         .catch(error => {});
                 }
-                connection.getAllParticipants().forEach(function(p) {
-                    connection.renegotiate(p);
-                });
-                /**
-                 *  Finaliza transmissão!
-                 */
+                */
+                setTimeout(function() {
+                    connection.getAllParticipants().forEach(function(p) {
+                        connection.renegotiate(p);
+                    });
+                    console.log(connection.attachStreams);
+                }, 1000);
             }
         }
         // Botão de maximizar o video -> toggle on:off
@@ -587,7 +669,8 @@ $(document).ready(function() {
                     try {
                         connection.peers[inRoom.value].addStream({
                             audio: true,
-                            video: true
+                            video: true,
+                            oneway: true
                         });
                         callToast('<i class="material-icons left">videocam</i> Transmissão Iniciada.', 'blue darken-2');
                     } catch (e) {
@@ -596,7 +679,6 @@ $(document).ready(function() {
                     }
                 }, 500);
             } else if (sessionAccess.getAttribute('data-active') == 'enabled' && onParticipation) {
-                console.log(streamList);
                 setParticipation('dis');
                 onParticipation = false;
                 try {
@@ -605,7 +687,6 @@ $(document).ready(function() {
                             var peer = connection.peers[p].peer;
                             stream.stop();
                             peer.removeStream(stream);
-                            console.log(stream);
                         });
                     });
                     callToast('<i class="material-icons left">videocam_off</i> Transmissão finalizada.', 'red darken-3');
@@ -706,10 +787,18 @@ $(document).ready(function() {
      *  var mediaElement      elem. mídia html
      */
     connection.onstreamended = function(event) {
+        console.log('FINALIZADO...', event);
+        if (event.stream.isScreen) {
+            $('#span-video-preview-2nd').hide();
+        } else {
+            $('#span-video-preview-3rd').hide();
+        }
+        /*
         var mediaElement = document.getElementById(event.streamid);
         if (mediaElement) {
             mediaElement.parentNode.removeChild(mediaElement);
         }
+        */
     };
 
     connection.onleave = function(event) {};
