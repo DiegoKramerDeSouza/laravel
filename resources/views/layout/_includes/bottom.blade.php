@@ -43,49 +43,7 @@
             <!-- Controle de login - O usuário deve estar autenticado-->
             @if(! Auth::guest())
                 <!-- Barra com menu de controle de áudio e video-->
-                <nav id='nav-footer' class='nav transparent d-none'>
-                    <div id='div-mobile'>
-                        <ul id='nav-mobile' class='blue-text brand-logo center'>
-                            <li class=''>
-                                <a id='toggle-camera' data-active='enabled' class='media-control tooltipped' data-position='top' data-tooltip='Camera'>
-                                    {!! $videocamIcon !!}
-                                </a>
-                            </li>
-                            <li class=''>
-                                <a id='toggle-mute' data-active='enabled' class='media-control tooltipped' data-position='top' data-tooltip='Microfone'>
-                                    {!! $micIcon !!}
-                                </a>
-                            </li>
-                            <li class=''>
-                                <a id='toggle-volume' data-active='enabled' class='media-control tooltipped' data-position='top' data-tooltip='Áudio'>
-                                    {!! $volumeUpIcon !!}
-                                </a>
-                            </li>
-                            <li class=''>
-                                <a id='share-screen' data-active='enabled' class='media-control tooltipped' data-position='top' data-tooltip='Compartilhar Tela'>
-                                    {!! $screenShareIcon !!}
-                                </a>
-                            </li>
-                            <li class=''>
-                                <a id='toggle-screen' data-active='enabled' class='media-control tooltipped' data-position='top' data-tooltip='Expandir'>
-                                    {!! $fullscreenIcon !!}
-                                </a>
-                            </li>
-                            <li class=''>
-                                <a id='toggle-chat' data-target='slide-out' class='media-control tooltipped sidenav-trigger' data-position='top' data-tooltip='Chat' style='display:block;'>
-                                    {!! $forumIcon !!}
-                                </a>
-                            </li>
-                            <li id='control-pedir-vez' class=''>
-                                <input id='pedir-vez' type='hidden' disabled readonly value='0' />
-                                <a id='lista-pedir-vez' data-active='enabled' class='media-control modal-trigger tooltipped' data-position='top' data-tooltip='Solicitações' href='#msg-solicita'>
-                                    {!! $panToolIcon !!}
-                                </a>
-                                <span id='count-pedir-vez' href='#msg-solicita' class="btn-floating btn-small red darken-4 pulse modal-trigger">0</span>
-                            </li>
-                        </ul>
-                    </div>
-                </nav>
+        
                 <!-- Adição dos scripts de utilização do WEBRTC-->
                 <script type="text/javascript" src="{!! asset('js/webrtc/control-components.js') !!}"></script>  
                 <script type="text/javascript" src="{!! asset('js/webrtc/socket.io.js') !!}"></script>

@@ -141,15 +141,62 @@
                                     </div> 
                                 </div>
                             </div>
-                            <!-- Collapsible com a listagem de todos os espectadores conectados -->
-                            <ul id="connected-users" class='collapsible popout'>
-                                <li>
-                                    <div class="collapsible-header"><b><i class="fa fa-play-circle-o blue-text"></i>Espectadores conectados: <span id="users-counter" data-target='{{ Auth::user()->type  }}' class="blue-text">0</span></b></div>
-                                    <div id="connected-users-list" class="collapsible-body active">
-                                        <!-- Lista de espectadores ativos -->
-                                    </div>
-                                </li>
-                            </ul>
+                            <div align='center' class='row'>
+                                <div id='div-controller' class='col s12 m10 offset-m1 l8 offset-l2 center'>
+                                    <nav id='nav-controller' class='grey lighten-3'>
+                                        <ul class='blue-text center'>
+                                            <li id='li-toggle-camera'>
+                                                <a id='toggle-camera' data-active='enabled' class='media-control tooltipped' data-position='top' data-tooltip='Camera'>
+                                                    {!! $videocamIcon !!}
+                                                </a>
+                                            </li>
+                                            <li id='li-toggle-mute'>
+                                                <a id='toggle-mute' data-active='enabled' class='media-control tooltipped' data-position='top' data-tooltip='Microfone'>
+                                                    {!! $micIcon !!}
+                                                </a>
+                                            </li>
+                                            <li id='li-toggle-volume'>
+                                                <a id='toggle-volume' data-active='enabled' class='media-control tooltipped' data-position='top' data-tooltip='Áudio'>
+                                                    {!! $volumeUpIcon !!}
+                                                </a>
+                                            </li>
+                                            <li id='li-share-screen'>
+                                                <a id='share-screen' data-active='enabled' class='media-control tooltipped' data-position='top' data-tooltip='Compartilhar Tela'>
+                                                    {!! $screenShareIcon !!}
+                                                </a>
+                                            </li>
+                                            <li id='li-toggle-screen'>
+                                                <a id='toggle-screen' data-active='enabled' class='media-control tooltipped' data-position='top' data-tooltip='Expandir'>
+                                                    {!! $fullscreenIcon !!}
+                                                </a>
+                                            </li>
+                                            <li id='li-toggle-chat'>
+                                                <a id='toggle-chat' data-target='slide-out' class='media-control tooltipped sidenav-trigger' data-position='top' data-tooltip='Chat' style='display:block;'>
+                                                    {!! $forumIcon !!}
+                                                </a>
+                                            </li>
+                                            <li id='control-pedir-vez' class=''>
+                                                <span id='count-pedir-vez' href='#msg-solicita' class="right btn-floating btn-small red darken-4 pulse modal-trigger">0</span>
+                                                <input id='pedir-vez' type='hidden' disabled readonly value='0' />
+                                                <a id='lista-pedir-vez' data-active='enabled' class='media-control modal-trigger tooltipped' data-position='top' data-tooltip='Solicitações' href='#msg-solicita'>
+                                                    {!! $panToolIcon !!}
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                            <div class='row'>
+                                <!-- Collapsible com a listagem de todos os espectadores conectados -->
+                                <ul id="connected-users" class='collapsible popout'>
+                                    <li>
+                                        <div class="collapsible-header"><b><i class="fa fa-play-circle-o blue-text"></i>Espectadores conectados: <span id="users-counter" data-target='{{ Auth::user()->type  }}' class="blue-text">0</span></b></div>
+                                        <div id="connected-users-list" class="collapsible-body active">
+                                            <!-- Lista de espectadores ativos -->
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -242,7 +289,7 @@
             </div>
             <!-- Botão de desconexão de usuário em transmissão -->
             <div id='div-end' class='fixed-action-btn tooltipped d-none' data-position='left' data-tooltip='Finalizar participação' style='margin-bottom: 62px;'>
-                <a id='end-session' class='btn-floating btn-large waves-effect waves-light red' data-active='disabled'>
+                <a id='end-session' class='btn-floating btn-large waves-effect waves-light red darken-2' data-active='disabled'>
                     {!! $videocamoffLargeIcon !!}
                 </a>
             </div>
@@ -253,11 +300,6 @@
                 {!! $videocamLargeIcon !!}
             </a>
         </div>
-        <!-- Botão de exibição de controles de mídia -->
-        <div id='control-toggle' class='fixed-action-btn d-none'>
-            <a id='media-control' class='btn-floating btn-large waves-effect waves-light blue darken-3 tooltipped' data-position='left' data-tooltip='Controles'>
-                {!! $controlLargeIcon !!}
-            </a>
-        </div>
+        
     @endif
 @endsection

@@ -64,7 +64,7 @@ function setCam(status) {
         cam.setAttribute('data-active', 'disabled');
         cam.classList.add("grey-text");
         cam.innerHTML = "<i class='material-icons'>videocam_off</i>";
-        $('#toggle-camera').hide();
+        $('#li-toggle-camera').hide();
     } else if (status === 'off') {
         cam.setAttribute('data-active', 'disabled');
         cam.classList.add("red-text");
@@ -88,7 +88,7 @@ function setMute(status) {
         mute.setAttribute('data-active', 'disabled');
         mute.classList.add("grey-text");
         mute.innerHTML = "<i class='material-icons'>mic_off</i>";
-        $('#toggle-mute').hide();
+        $('#li-toggle-mute').hide();
     } else if (status === 'off') {
         mute.setAttribute('data-active', 'disabled');
         mute.classList.add("red-text");
@@ -111,7 +111,7 @@ function setVol(status) {
         vol.setAttribute('data-active', 'disabled');
         vol.classList.add("grey-text");
         vol.innerHTML = "<i class='material-icons'>volume_off</i>";
-        $('#toggle-volume').hide();
+        $('#li-toggle-volume').hide();
     } else if (status === 'off') {
         vol.setAttribute('data-active', 'disabled');
         vol.classList.add("red-text");
@@ -135,7 +135,7 @@ function setShare(status) {
         share.disabled = true;
         share.classList.add("grey-text");
         share.innerHTML = "<i class='material-icons'>stop_screen_share</i>";
-        $('#share-screen').hide();
+        $('#li-share-screen').hide();
     } else if (status === 'off') {
         $('#share-screen').show();
         share.setAttribute('data-active', 'disabled');
@@ -203,28 +203,6 @@ function setParticipation(status) {
         participation.classList.add("cyan");
         participation.innerHTML = "<i class='material-icons'>videocam</i>";
         //callToast('<span class="white-text"><i class="material-icons left">videocam_off</i> Transmissão finalizada.</span>', 'red darken-3');
-    }
-}
-// Configurações visuais de status para a remoção de um usuário da transmissão
-/**
- * Param status: 'disabled', 'off'
- */
-function setEndParticipation(status) {
-    var participation = document.getElementById('end-session');
-    if (status === 'dis') {
-        participation.setAttribute('data-active', 'notAllowed');
-        participation.disabled = true;
-        participation.classList.remove("cyan");
-        participation.classList.add("grey");
-        participation.innerHTML = "<i class='material-icons'>videocam_off</i>";
-        $('#div-end').hide();
-    } else if (status === 'off') {
-        $('#div-enter').show();
-        participation.setAttribute('data-active', 'enabled');
-        participation.classList.remove("cyan");
-        participation.classList.remove("grey");
-        participation.classList.add("red");
-        participation.innerHTML = "<i class='material-icons'>videocam_off</i>";
     }
 }
 // Controle da saída de tela cheia -> correção de saídas não previstas da função de tela cheia
@@ -340,11 +318,9 @@ function toggleElem(elemId) {
 // Constroi um botão de 'Pedir vez' 
 // *Uso pontual
 function constructBtnActionPedir() {
-    var htmlBtn = "<li class=''>" +
-        "<a id='pedir-vez' data-active='enabled' class='media-control tooltipped' data-position='top' data-tooltip='Solicitar vez'>" +
+    var htmlBtn = "<a id='pedir-vez' data-active='enabled' class='media-control tooltipped' data-position='top' data-tooltip='Solicitar vez'>" +
         "<i class='material-icons center'>pan_tool</i>" +
-        "</a>" +
-        "</li>";
+        "</a>";
     return htmlBtn;
 }
 // Constroi lista de salas online

@@ -35,9 +35,7 @@
 }
 
 #count-pedir-vez {
-    position: fixed;
-    bottom: 45px;
-    right: 0px;
+    position: absolute;
 }
 
 #div-chat-panel,
@@ -45,6 +43,11 @@
     position: fixed;
     bottom: 49px;
     width: 100%;
+}
+
+#div-controller,
+#nav-controller {
+    border-radius: 3px;
 }
 
 #div-exit-fullscreen {
@@ -64,11 +67,6 @@
     top: 0px;
     left: 0px;
     z-index: 2147483647;
-}
-
-#nav-footer {
-    position: fixed;
-    bottom: 0px;
 }
 
 #secondvideo-preview {
