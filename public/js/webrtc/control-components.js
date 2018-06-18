@@ -10,6 +10,18 @@
  */
 var countMessages = 0;
 
+// Apresenta vídeos secundários
+function showIncomingVideos() {
+    var divMainVideo = document.getElementById('div-main-video');
+    var divIncomingVideo = document.getElementById('div-incoming-videos');
+    divMainVideo.classList.remove("s12");
+    divMainVideo.classList.add("s6", "m8");
+    divIncomingVideo.classList.add("s6", "m4");
+    setTimeout(() => {
+        $('#div-incoming-videos').fadeIn(300);
+    }, 500);
+}
+
 // Chama alertas em elementos toast do MaterializeCSS
 /**
  * Param content: conteúdo da mensagem em html
@@ -184,6 +196,7 @@ function setParticipation(status) {
         participation.setAttribute('data-active', 'notAllowed');
         participation.disabled = true;
         participation.classList.remove("cyan");
+        participation.classList.remove("red");
         participation.classList.add("grey");
         participation.innerHTML = "<i class='material-icons'>videocam_off</i>";
         $('#div-enter').hide();
@@ -194,7 +207,6 @@ function setParticipation(status) {
         participation.classList.remove("grey");
         participation.classList.add("red");
         participation.innerHTML = "<i class='material-icons'>videocam_off</i>";
-        //callToast('<span class="white-text"><i class="material-icons left">videocam</i> Transmissão Iniciada.</span>', 'blue darken-2');
     } else if (status === 'on') {
         $('#div-enter').show();
         participation.setAttribute('data-active', 'disabled');
@@ -202,7 +214,6 @@ function setParticipation(status) {
         participation.classList.remove("grey");
         participation.classList.add("cyan");
         participation.innerHTML = "<i class='material-icons'>videocam</i>";
-        //callToast('<span class="white-text"><i class="material-icons left">videocam_off</i> Transmissão finalizada.</span>', 'red darken-3');
     }
 }
 // Controle da saída de tela cheia -> correção de saídas não previstas da função de tela cheia

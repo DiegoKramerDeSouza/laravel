@@ -100,35 +100,35 @@
                     <div class='divider'></div>
                     <br>
                     <div class='row'>
-                        <div class='col s12'>
-                            <div id='main-video' align='center' class='inroom mainView'>
-                                <!--Div de loading de conteúdo (Apenas demonstrativa)-->
-                                <div id='div-connect'>
-                                    <div align='center' style='margin-top:50px;'>
-                                        <h6 class='blue-text'>Conectando...</h6>
-                                    </div>
-                                    <div class="progress grey lighten-3">
-                                        <div class="indeterminate blue"></div>
-                                    </div>
-                                </div>
-                                @if(Auth::user()->type == 0)
-                                    <div id='screen-share-alert' align='left' class='row d-none'>
-                                        <div id='screen-share-message' class='col s8 offset-s2 center'>
-                                            <div class='card-panel grey lighten-5 z-depth-1'>
-                                                <div class="row valign-wrapper">
-                                                    <div class="col s2 m1">
-                                                        <span class='btn-floating red darken-2 pulse'>{!! $tvIcon !!}</span>
-                                                    </div>
-                                                    <div class="col s10 m11">
-                                                        <span class="grey-text text-darken-2">
-                                                            <b>Você está transmintindo a sua tela.</b>
-                                                        </span>
-                                                    </div>
-                                                </div>
+                        <!--Div de loading de conteúdo (Apenas demonstrativa)-->
+                        <div id='div-connect' class='col s12'>
+                            <div align='center' style='margin-top:50px;'>
+                                <h6 class='blue-text'>Conectando...</h6>
+                            </div>
+                            <div class="progress grey lighten-3">
+                                <div class="indeterminate blue"></div>
+                            </div>
+                        </div>
+                        @if(Auth::user()->type == 0)
+                            <div id='screen-share-alert' align='left' class='col s12 d-none'>
+                                <div id='screen-share-message' class='col s8 offset-s2 center'>
+                                    <div class='card-panel grey lighten-5 z-depth-1'>
+                                        <div class="row valign-wrapper">
+                                            <div class="col s2 m1">
+                                                <span class='btn-floating red darken-2 pulse'>{!! $tvIcon !!}</span>
+                                            </div>
+                                            <div class="col s10 m11">
+                                                <span class="grey-text text-darken-2">
+                                                    <b>Você está transmintindo a sua tela.</b>
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
-                                @endif
+                                </div>
+                            </div>
+                        @endif
+                        <div id='div-main-video' class='col s12'>
+                            <div id='main-video' align='center' class='inroom mainView'>
                                 <div id='videos'>
                                     <!--VÍDEO PRINCIPAL-->
                                     <div id='span-video-preview' data-status='disabled' data-position='main' class='width-limit first-video'>
@@ -141,8 +141,23 @@
                                     </div> 
                                 </div>
                             </div>
+                        </div>
+                        <div id='div-incoming-videos' class='d-none col'>
+                            <!--TERCEIRO VÍDEO-->
+                            <div id='span-video-preview-3rd' data-status='disabled' data-position='second' class='col s12 d-none'>
+                                <video id="thirdvideo-preview" preload="none" loop class='min-video responsive-video'></video>
+                            </div>
+                            <!--SEGUNDO VÍDEO-->
+                            <div id='span-video-preview-2nd' align='right' data-status='disabled' data-position='second' class='col s12 d-none'>
+                                <a id='swap-video' style='position:absolute;' class='btn-floating blue darken-2 waves-effect waves-light'>
+                                    {!! $swapIcon !!}
+                                </a>
+                                <video id="secondvideo-preview" preload="none" loop class='min-video responsive-video'></video>
+                            </div>
+                        </div>
+                        <div class='col s12'>
                             <div align='center' class='row'>
-                                <div id='div-controller' class='d-none col s12 m10 offset-m1 l8 offset-l2 center'>
+                                <div id='div-controller' class='d-none col s12 center'>
                                     <nav id='nav-controller' class='grey lighten-3'>
                                         <ul class='blue-text center'>
                                             <li id='li-toggle-camera'>
@@ -190,7 +205,7 @@
                                 <!-- Collapsible com a listagem de todos os espectadores conectados -->
                                 <ul id="connected-users" class='collapsible popout'>
                                     <li>
-                                        <div class="collapsible-header"><b><i class="fa fa-play-circle-o blue-text"></i>Espectadores conectados: <span id="users-counter" data-target='{{ Auth::user()->type  }}' class="blue-text">0</span></b></div>
+                                        <div class="collapsible-header"><b><i class="fa fa-play-circle-o blue-text"></i>Espectadores online: <span id="users-counter" data-target='{{ Auth::user()->type  }}' class="blue-text">0</span></b></div>
                                         <div id="connected-users-list" class="collapsible-body active">
                                             <!-- Lista de espectadores ativos -->
                                         </div>
@@ -209,19 +224,7 @@
             </div>
         </div>
         
-        <div class='second-video row'>
-            <!--TERCEIRO VÍDEO-->
-            <div id='span-video-preview-3rd' data-status='disabled' data-position='second' class='col s12 d-none'>
-                <video id="thirdvideo-preview" preload="none" loop class='min-video responsive-video'></video>
-            </div>
-            <!--SEGUNDO VÍDEO-->
-            <div id='span-video-preview-2nd' data-status='disabled' data-position='second' class='col s12 d-none'>
-                <video id="secondvideo-preview" preload="none" loop class='min-video responsive-video'></video>
-                <a id='swap-video' style='bottom:10px;' class='btn-floating halfway-fab blue darken-2 waves-effect waves-light'>
-                    {!! $swapIcon !!}
-                </a>
-            </div>
-        </div>
+        
     </div>
     <!-- Sidebar de painel de chat -->
     <ul id="slide-out" class="sidenav grey lighten-4 z-depth-5">
@@ -288,7 +291,7 @@
                 </div>
             </div>
             <!-- Botão de desconexão de usuário em transmissão -->
-            <div id='div-end' class='fixed-action-btn tooltipped d-none' data-position='left' data-tooltip='Finalizar participação'>
+            <div id='div-end' class='fixed-action-btn tooltipped d-none' data-position='left' data-tooltip='Finalizar participação' data-target='0'>
                 <a id='end-session' class='btn-floating btn-large waves-effect waves-light red darken-2' data-active='disabled'>
                     {!! $videocamoffLargeIcon !!}
                 </a>

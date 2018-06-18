@@ -32,6 +32,8 @@ var onlobby = true;
 var onParticipation = false;
 var lockSolicitation = false;
 var arrVideos = [];
+var streamVideos = [];
+var incomingCon;
 
 $(document).ready(function() {
 
@@ -215,13 +217,23 @@ $(document).ready(function() {
          */
         if (event.type === 'remote' && connection.isInitiator) {
             console.log('PARTICIPAÇÃO REMOTA--------');
-            // Conexão remota com o broadcaster
+            // Remove qualquer conexão duplicada
+            if (incomingCon == event.stream.streamid) {
+                connection.getAllParticipants().forEach(function(p) {
+                    if (p + '' == event.userid + '') {
+                        var peer = connection.peers[p].peer;
+                        stream.stop();
+                        peer.removeStream(event.stream);
+                    }
+                });
+                return;
+            }
+            // Conexão remota de transmissão com o broadcaster
             if (arrVideos['main']) {
-                $('#span-video-preview-3rd').fadeIn(300);
+                incomingCon = event.stream.streamid;
                 thirdVideoPreview.srcObject = event.stream;
                 thirdVideoPreview.title = event.userid;
                 arrVideos['user'] = event.stream;
-
                 var playPromise = thirdVideoPreview.play();
                 if (playPromise !== undefined) {
                     playPromise.then(_ => {
@@ -231,6 +243,9 @@ $(document).ready(function() {
                             console.log('Carregando vídeo 3...');
                         });
                 }
+                callToast('<i class="material-icons">videocam</i> Participação iniciada!', 'blue darken-2');
+                showIncomingVideos();
+                $('#span-video-preview-3rd').fadeIn(300);
                 setTimeout(function() {
                     connection.getAllParticipants().forEach(function(p) {
                         if (p + '' != event.userid + '') {
@@ -243,18 +258,21 @@ $(document).ready(function() {
                                 }
                             });
                             connection.dontAttachStream = true;
-                            try {
-                                connection.renegotiate(p);
-                            } catch (e) {
-                                console.log(e);
-                            }
+                            connection.renegotiate(p);
                             connection.dontAttachStream = false;
                         }
                     });
+                    streamVideos.push(event.stream);
                 }, 500);
                 $('#div-end').fadeIn(300);
                 endSessionAccess.onclick = function() {
-                    console.log(event.userid);
+                    streamVideos.forEach(function(stream) {
+                        connection.getAllParticipants().forEach(function(p) {
+                            var peer = connection.peers[p].peer;
+                            stream.stop();
+                            peer.removeStream(stream);
+                        });
+                    });
                     $('#div-end').hide();
                     var msgrash = [];
                     msgrash[0] = btoa('@Finaliza-Participacao');
@@ -265,13 +283,26 @@ $(document).ready(function() {
                     connection.send(msgrash, event.userid);
                     lockSolicitation = false;
                 }
+
             }
         } else if (!onParticipation && (event.type === 'remote' && event.stream.isScreen === true)) {
             console.log('REMOTO COM SCREEN----------');
+            if (incomingCon == event.stream.streamid) {
+                connection.getAllParticipants().forEach(function(p) {
+                    if (p + '' == event.userid + '') {
+                        var peer = connection.peers[p].peer;
+                        stream.stop();
+                        peer.removeStream(event.stream);
+                    }
+                });
+                return;
+            }
             // Conexão remota com compartilhamento de tela
             $('#span-video-preview-2nd').fadeIn(300);
             secondVideoPreview.srcObject = event.stream;
             arrVideos['screen'] = event.stream;
+            incomingCon = event.stream.streamid
+            showIncomingVideos();
 
             var playPromise = secondVideoPreview.play();
             if (playPromise !== undefined) {
@@ -322,6 +353,16 @@ $(document).ready(function() {
             };
         } else if (!onParticipation && (event.type === 'remote' && !event.stream.isScreen)) {
             console.log('REMOTO SEM SCREEN----------');
+            if (incomingCon == event.stream.streamid) {
+                connection.getAllParticipants().forEach(function(p) {
+                    if (p + '' == event.userid + '') {
+                        var peer = connection.peers[p].peer;
+                        stream.stop();
+                        peer.removeStream(event.stream);
+                    }
+                });
+                return;
+            }
             // Conexão remota sem compartilhamento de tela
             if (arrVideos['main']) {
                 $('#span-video-preview-3rd').fadeIn(300);
@@ -337,6 +378,7 @@ $(document).ready(function() {
                             console.log('Carregando vídeo 3...');
                         });
                 }
+                showIncomingVideos();
             } else {
                 onParticipation = false;
                 videoPreview.srcObject = event.stream;
@@ -357,7 +399,6 @@ $(document).ready(function() {
                 }
 
             }
-
             // Ajusta elementos de exibição (define o menu de áudio e video para ESPECTADORES)
             $('#div-connect').hide();
             ctlPedir.innerHTML = constructBtnActionPedir();
@@ -371,9 +412,7 @@ $(document).ready(function() {
             setShare('dis');
             // Habilita barra de controle de mídia
             $('#div-controller').fadeIn(300);
-            /**
-             * Tratamento dos botões do controle de mídia
-             */
+
             // Tratamento do botão de pedir a vez
             pedir.onclick = function() {
                 if (broadcastStatus == 1 && (solicita === 0 && !lockSolicitation)) {
@@ -429,6 +468,16 @@ $(document).ready(function() {
 
         } else if (!onParticipation && (event.type === 'local' && !event.stream.isScreen)) {
             console.log('TRANSMISSÃO LOCAL------');
+            if (incomingCon == event.stream.streamid) {
+                connection.getAllParticipants().forEach(function(p) {
+                    if (p + '' == event.userid + '') {
+                        var peer = connection.peers[p].peer;
+                        stream.stop();
+                        peer.removeStream(event.stream);
+                    }
+                });
+                return;
+            }
             // Conexão local sem compartilhamento de tela
             onParticipation = true;
             connection.isUpperUserLeft = false;
@@ -453,9 +502,7 @@ $(document).ready(function() {
             }
             // Habilita barra de controle de mídia
             $('#div-controller').fadeIn(300);
-            /**
-             * Tratamento dos botões do controle de mídia
-             */
+
             // Tratamento de áudio: Botão "Microfone" -> Toggle on/off
             mute.onclick = function() {
                 if (mute.getAttribute('data-active') == 'enabled') {
@@ -518,17 +565,30 @@ $(document).ready(function() {
                         if (admResponse[0] == 'allow' && lockSolicitation) {
                             callToast('<i class="fa fa-times"></i> Já existe uma solicitação aceita!<br>Finalize-a para aceitar outra.', 'red darken-3');
                         } else {
-                            try {
-                                solicita--;
-                                connection.send(msgrash);
-                                constructList(admResponse[1]);
-                                trataSolicitacao(solicita);
-                                if (admResponse[0] == 'allow') { lockSolicitation = true }
-                            } catch (err) {
-                                callToast('<i class="fa fa-times"></i> Não foi possível responder a esta solicitação:<br>' + err + '.', 'red darken-3');
+                            solicita--;
+                            connection.send(msgrash);
+                            constructList(admResponse[1]);
+                            trataSolicitacao(solicita);
+                            if (admResponse[0] == 'allow') {
+                                lockSolicitation = true
+                                document.getElementById('div-end').setAttribute('data-target', admResponse[1]);
+                                $('#div-end').fadeIn(300);
                             }
+
                         }
                     }
+                }
+                endSessionAccess.onclick = function() {
+                    $('#div-end').hide();
+                    var targetId = document.getElementById('div-end').getAttribute('data-target');
+                    var msgrash = [];
+                    msgrash[0] = btoa('@Finaliza-Participacao');
+                    msgrash[1] = currentUser;
+                    msgrash[2] = connection.userid;
+                    msgrash[3] = inRoom.value;
+                    msgrash[4] = targetId;
+                    connection.send(msgrash, targetId);
+                    lockSolicitation = false;
                 }
             };
             // Tratamento de solicitações: Botão "Compartilhar" -> Compartilha a tela do apresentador: Toggle On/Off
@@ -608,9 +668,7 @@ $(document).ready(function() {
                 setTimeout(function() {
                     try {
                         connection.peers[inRoom.value].addStream({
-                            audio: true,
-                            video: true,
-                            oneway: true
+                            video: true
                         });
                         callToast('<i class="material-icons left">videocam</i> Transmissão Iniciada.', 'blue darken-2');
                     } catch (e) {
@@ -618,6 +676,7 @@ $(document).ready(function() {
                         onParticipation = false;
                     }
                 }, 500);
+                console.log(connection.attachStreams);
             } else if (sessionAccess.getAttribute('data-active') == 'enabled' && onParticipation) {
                 setParticipation('dis');
                 onParticipation = false;
@@ -629,6 +688,15 @@ $(document).ready(function() {
                             peer.removeStream(stream);
                         });
                     });
+                    var msgrash = [];
+                    var myIdentity = document.getElementById('room-id').value;
+                    msgrash[0] = btoa('@Finaliza-Participante');
+                    msgrash[1] = currentUser;
+                    msgrash[2] = connection.userid;
+                    msgrash[3] = inRoom.value;
+                    msgrash[4] = myIdentity;
+                    connection.send(msgrash, inRoom.value);
+                    lockSolicitation = false;
                     callToast('<i class="material-icons left">videocam_off</i> Transmissão finalizada.', 'red darken-3');
                 } catch (e) {
                     setParticipation('off');
@@ -1085,8 +1153,14 @@ function appendDIV(event) {
                 callToast('<span class="white-text"><i class="material-icons left">stop_screen_share</i> Compartilhamento de tela finalizado.</span>', 'red darken-3');
             }, 1000);
         } else if (chkrash[0] === btoa('@Finaliza-Participacao')) {
-            console.log('FINALIZANDO PARTICIPACAO......');
+            if (!onParticipation) {
+                onParticipation = true;
+                document.getElementById('enter-session').setAttribute('data-active', 'enabled');
+                callToast('<i class="fa fa-times"></i> Solicitação cancelada.', 'red darken-3');
+            }
             document.getElementById('enter-session').click();
+        } else if (chkrash[0] === btoa('@Finaliza-Participante')) {
+            $('#div-end').hide();
         } else {
             return;
         }

@@ -52,6 +52,12 @@
     z-index: 2147483648;
 }
 
+#div-incoming-videos,
+#div-main-video {
+    -webkit-transition-duration: 0.4s !important;
+    transition-duration: 0.4s !important;
+}
+
 #fglayer {
     position: fixed;
     opacity: 0.8;
