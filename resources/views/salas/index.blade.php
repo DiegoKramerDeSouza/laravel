@@ -142,7 +142,7 @@
                                 </div>
                             </div>
                             <div align='center' class='row'>
-                                <div id='div-controller' class='col s12 m10 offset-m1 l8 offset-l2 center'>
+                                <div id='div-controller' class='d-none col s12 m10 offset-m1 l8 offset-l2 center'>
                                     <nav id='nav-controller' class='grey lighten-3'>
                                         <ul class='blue-text center'>
                                             <li id='li-toggle-camera'>
@@ -176,7 +176,7 @@
                                                 </a>
                                             </li>
                                             <li id='control-pedir-vez' class=''>
-                                                <span id='count-pedir-vez' href='#msg-solicita' class="right btn-floating btn-small red darken-4 pulse modal-trigger">0</span>
+                                                <span id='count-pedir-vez' href='#msg-solicita' class='right btn-floating btn-small red darken-4 pulse modal-trigger'>0</span>
                                                 <input id='pedir-vez' type='hidden' disabled readonly value='0' />
                                                 <a id='lista-pedir-vez' data-active='enabled' class='media-control modal-trigger tooltipped' data-position='top' data-tooltip='Solicitações' href='#msg-solicita'>
                                                     {!! $panToolIcon !!}
@@ -288,14 +288,14 @@
                 </div>
             </div>
             <!-- Botão de desconexão de usuário em transmissão -->
-            <div id='div-end' class='fixed-action-btn tooltipped d-none' data-position='left' data-tooltip='Finalizar participação' style='margin-bottom: 62px;'>
+            <div id='div-end' class='fixed-action-btn tooltipped d-none' data-position='left' data-tooltip='Finalizar participação'>
                 <a id='end-session' class='btn-floating btn-large waves-effect waves-light red darken-2' data-active='disabled'>
                     {!! $videocamoffLargeIcon !!}
                 </a>
             </div>
         @endif
         <!-- Botão de ingresso de usuário em transmissão -->
-        <div id='div-enter' class='fixed-action-btn tooltipped d-none' data-position='left' data-tooltip='Ingressar' style='margin-bottom: 62px;'>
+        <div id='div-enter' class='fixed-action-btn tooltipped d-none' data-position='left' data-tooltip='Ingressar'>
             <a id='enter-session' class='btn-floating btn-large waves-effect waves-light cyan pulse' data-active='disabled'>
                 {!! $videocamLargeIcon !!}
             </a>

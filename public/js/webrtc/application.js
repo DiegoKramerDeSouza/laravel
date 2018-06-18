@@ -22,7 +22,7 @@
 // Controle de solicitações abertas para o broadcaster
 // ->limita a 1 a quantidade máxima de solicitações de um usuário
 var solicita = 0;
-// broadcasteStatus: define se o status da conexão está ativa (1) ou inativa (0)
+// Define se o status da conexão está ativa (1) ou inativa (0)
 var broadcastStatus = 0;
 // Array de viewers conectados à sala
 var connections = [];
@@ -32,7 +32,6 @@ var onlobby = true;
 var onParticipation = false;
 var lockSolicitation = false;
 var arrVideos = [];
-var streamList = [];
 
 $(document).ready(function() {
 
@@ -53,10 +52,6 @@ $(document).ready(function() {
     connection.socketMessageEvent = 'inicia-apresentacao';
     //connection.autoCloseEntireSession = true;
     //connection.dontCaptureUserMedia = true;
-
-    // Controles de Stream
-    var mixer;
-    var localStn;
 
     // Elemento alvo para iniciar o stream de video
     connection.teacherVideosContainer = document.getElementById('main-video');
@@ -125,7 +120,6 @@ $(document).ready(function() {
     var endSessionAccess = document.getElementById('end-session');
 
     // Conexão com serviço de websocket
-    // Servidor de signaling de teste gratúito:
     connection.socketURL = 'https://rtcmulticonnection.herokuapp.com:443/';
 
     // Socket Connections
@@ -212,25 +206,22 @@ $(document).ready(function() {
     };
     // Inicia a transmissão
     connection.onstream = function(event) {
-        // Valida caso de participação de um usuário na transmissão
-        console.log(connection);
-
         if (!onParticipation) {
             inRoom.value = event.userid;
         }
         /**
-         * Tratamento de conexões remotas e locais
+         * Tratamento de conexões REMOTAS e LOCAIS
          * -> Identificação de compartilhamentos de tela e ingressos em transmissões
          */
         if (event.type === 'remote' && connection.isInitiator) {
             console.log('PARTICIPAÇÃO REMOTA--------');
             // Conexão remota com o broadcaster
             if (arrVideos['main']) {
-                streamList.push(event.stream);
                 $('#span-video-preview-3rd').fadeIn(300);
                 thirdVideoPreview.srcObject = event.stream;
                 thirdVideoPreview.title = event.userid;
                 arrVideos['user'] = event.stream;
+
                 var playPromise = thirdVideoPreview.play();
                 if (playPromise !== undefined) {
                     playPromise.then(_ => {
@@ -244,12 +235,26 @@ $(document).ready(function() {
                     connection.getAllParticipants().forEach(function(p) {
                         if (p + '' != event.userid + '') {
                             var peer = connection.peers[p].peer;
-                            connection.renegotiate(p);
+                            event.stream.getTracks().forEach(function(track) {
+                                try {
+                                    peer.addTrack(track, event.stream);
+                                } catch (e) {
+                                    console.log('Track já existe: ', e);
+                                }
+                            });
+                            connection.dontAttachStream = true;
+                            try {
+                                connection.renegotiate(p);
+                            } catch (e) {
+                                console.log(e);
+                            }
+                            connection.dontAttachStream = false;
                         }
                     });
-                }, 1000);
+                }, 500);
                 $('#div-end').fadeIn(300);
                 endSessionAccess.onclick = function() {
+                    console.log(event.userid);
                     $('#div-end').hide();
                     var msgrash = [];
                     msgrash[0] = btoa('@Finaliza-Participacao');
@@ -262,8 +267,8 @@ $(document).ready(function() {
                 }
             }
         } else if (!onParticipation && (event.type === 'remote' && event.stream.isScreen === true)) {
-            // Conexão remota com compartilhamento de tela
             console.log('REMOTO COM SCREEN----------');
+            // Conexão remota com compartilhamento de tela
             $('#span-video-preview-2nd').fadeIn(300);
             secondVideoPreview.srcObject = event.stream;
             arrVideos['screen'] = event.stream;
@@ -317,11 +322,8 @@ $(document).ready(function() {
             };
         } else if (!onParticipation && (event.type === 'remote' && !event.stream.isScreen)) {
             console.log('REMOTO SEM SCREEN----------');
-            // Conexão remota sem compartilhamento de tela 
-            /**
-             *  Ações para conexão REMOTA para controle de funções de áudio e video do webRTC
-             */
-            if (event.extra.modifiedValue) {
+            // Conexão remota sem compartilhamento de tela
+            if (arrVideos['main']) {
                 $('#span-video-preview-3rd').fadeIn(300);
                 thirdVideoPreview.srcObject = event.stream;
                 arrVideos['user'] = event.stream;
@@ -358,20 +360,17 @@ $(document).ready(function() {
 
             // Ajusta elementos de exibição (define o menu de áudio e video para ESPECTADORES)
             $('#div-connect').hide();
-            //$('#span-video-preview-2nd').hide();
             ctlPedir.innerHTML = constructBtnActionPedir();
             $('#pedir-vez').tooltip();
             pedir = document.getElementById('pedir-vez');
-
-            // Ação padrão para conexões remotas:
-            /**
-             * Desabilita botão de ação para microfone
-             * Desabilita botão de ação para camera
-             * Desabilita botão de ação para compartilhar tela
-             */
+            // Desabilita botão de ação para microfone
             setCam('dis');
+            // Desabilita botão de ação para camera
             setMute('dis');
+            // Desabilita botão de ação para compartilhar tela
             setShare('dis');
+            // Habilita barra de controle de mídia
+            $('#div-controller').fadeIn(300);
             /**
              * Tratamento dos botões do controle de mídia
              */
@@ -429,14 +428,10 @@ $(document).ready(function() {
             changeCounter(numberOfUsers);
 
         } else if (!onParticipation && (event.type === 'local' && !event.stream.isScreen)) {
-            // Conexão local sem compartilhamento de tela
-            /**
-             *  Ações para conexão LOCAL para controle de funções de áudio e video do webRTC
-             */
             console.log('TRANSMISSÃO LOCAL------');
+            // Conexão local sem compartilhamento de tela
             onParticipation = true;
             connection.isUpperUserLeft = false;
-            localStn = event.stream;
             arrVideos['main'] = event.stream;
             var currentStream = [event.stream];
 
@@ -446,18 +441,18 @@ $(document).ready(function() {
             videoPreview.muted = true;
             videoPreview.play();
 
+            // Trata contador de solicitações
             $('#div-connect').hide();
-            if (solicita <= -1) {
+            if (solicita <= 0) {
                 $('#count-pedir-vez').hide();
             }
-            // Ação padrão para conexões locais:
-            /**
-             * Desabilita botão de ação para áudio
-             */
+            // Desabilita botão de ação para áudio
             setVol('dis');
             if (!connection.isInitiator) {
                 setPedir('dis');
             }
+            // Habilita barra de controle de mídia
+            $('#div-controller').fadeIn(300);
             /**
              * Tratamento dos botões do controle de mídia
              */
@@ -605,7 +600,7 @@ $(document).ready(function() {
             $('#text-message').focus();
         };
         // Tratamento de ingresso na transmissão: Botão "Ingressar" -> Ingressa e participa da apresentação
-        //  ->Toggle On/Off
+        // ->Toggle On/Off
         sessionAccess.onclick = function() {
             if (sessionAccess.getAttribute('data-active') == 'disabled' && !onParticipation) {
                 setParticipation('off');
@@ -641,13 +636,10 @@ $(document).ready(function() {
                 }
             }
         };
-
         // Apresentação e tratamento da barra de controle de mídia
         $('#nav-footer').slideDown(500);
     };
-    /**
-     *  Listener para finalização de streams
-     */
+    // Listener para finalização de streams
     connection.onstreamended = function(event) {
         console.log('FINALIZADO...', event);
         if (event.stream.isScreen) {
@@ -657,9 +649,7 @@ $(document).ready(function() {
             lockSolicitation = false;
         }
     };
-    /**
-     *  Listener para fim de conexões
-     */
+    //  Listener para fim de conexões
     connection.onleave = function(event) {
         console.log('DEIXANDO CONEXÃO...', event);
     };

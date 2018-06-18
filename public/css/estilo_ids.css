@@ -34,15 +34,12 @@
     max-height: 380px;
 }
 
-#count-pedir-vez {
-    position: absolute;
+#control-toggle-disabled {
+    z-index: 2147483648;
 }
 
-#div-chat-panel,
-#div-volume-panel {
-    position: fixed;
-    bottom: 49px;
-    width: 100%;
+#count-pedir-vez {
+    position: absolute;
 }
 
 #div-controller,
@@ -52,10 +49,6 @@
 
 #div-exit-fullscreen {
     margin-bottom: 45px;
-    z-index: 2147483648;
-}
-
-#control-toggle-disabled {
     z-index: 2147483648;
 }
 
