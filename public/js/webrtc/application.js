@@ -9,44 +9,47 @@
  *  Utilizado EXCLUSIVAMENTE para "salas";
  */
 //-------------------------------------------------------------------------------------------------
+
+// Variáveis globais - Controle de solicitações, conexões e status
 /**
- *  Variáveis Globais
- * 
- *  var solicita        integer
- *  var broadcastStatus integer
- *  var connections     Array
- *  var isModerator     Boolean
- *  var onlobby         Boolean
- *  var onParticipation Boolean
+ *  var solicita            integer:0       -> Conta a quantidade de solicitações de um usuário (max. 1)
+ *  var broadcastStatus     integer:0       -> Indetifica o status da transmissão em broadcast (0 off, 1 on)
+ *  var isModerator         Boolean:true    -> Identifica se a conexão permite moderador (Broadcaster)
+ *  var onlobby             Boolean:true    -> Identifica se o usuário está no "Lobby" de salas
+ *  var onParticipation     Boolean:false   -> Identifica se o usuário já está participando de uma transmissão
+ *  var lockSolicitation    Boolean:false   -> Bloqueia aceitação de novas solicitações
+ *  var connections         Array           -> Listasa de conexões ativas
+ *  var arrVideos           Array           -> Lista de tipos de vídeo a partir de sua origem ('main', 'user' e 'screen')
+ *  var streamVideos        Array           -> Lista de vídeos exibidos
+ *  var incomingCon         String          -> Registra quem está efetuando a conexão no momento
+ *  var connectedAt         String          -> Registra o ID do Broadcaster
+ *  var urlSocket           String:SSL URL  -> URL para conexão com o serviço de sinalização
  */
-// Controle de solicitações abertas para o broadcaster
-// ->limita a 1 a quantidade máxima de solicitações de um usuário
 var solicita = 0;
-// Define se o status da conexão está ativa (1) ou inativa (0)
 var broadcastStatus = 0;
-// Array de viewers conectados à sala
-var connections = [];
-// Controles gerais
 var isModerator = true;
 var onlobby = true;
 var onParticipation = false;
 var lockSolicitation = false;
+var connections = [];
 var arrVideos = [];
 var streamVideos = [];
 var incomingCon;
+var connectedAt;
+var urlSocket = 'https://rtcmulticonnection.herokuapp.com:443/';
 
 $(document).ready(function() {
 
     window.enableAdapter = true;
     //Application - Inicia a chamada e tratamento de multiconexão
     /**
-     *  const connection          RTCMultiConnection
-     *  const enableRecordings    Boolean
-     *  const isPublicModerator   Boolean
+     *  inst    connection          RTCMultiConnection
+     *  const   enableRecordings    Boolean:false
+     *  const   isPublicModerator   Boolean:true
      */
+    var connection = new RTCMultiConnection();
     var enableRecordings = false;
     var isPublicModerator = true;
-    var connection = new RTCMultiConnection();
 
     // Definições de conexão
     connection.enableScalableBroadcast = true;
@@ -60,6 +63,9 @@ $(document).ready(function() {
     connection.videoContainer = document.getElementById('span-video-preview');
     connection.videosContainer = document.getElementById('span-secondvideo-preview');
 
+    // Conexão com serviço de websocket
+    connection.socketURL = urlSocket;
+
     // Listeners de tratamento de tamanho de tela do video (Detecta Fullscreen OFF)
     document.addEventListener('fullscreenchange', exitHandler);
     document.addEventListener('webkitfullscreenchange', exitHandler);
@@ -70,10 +76,6 @@ $(document).ready(function() {
     /**
      *  var width               integer
      *  var status              Boolean
-     *  var usuario             string
-     *  var broadcastId         string
-     *  var viewers             integer
-     *  var cameras             Boolean
      *  var publicRoomsDiv      elem. html
      *  var inRoom              elem. html
      *  var videoPreview        elem. html
@@ -90,15 +92,17 @@ $(document).ready(function() {
      *  var swapFirst           elem. html
      *  var swapSecond          elem. html
      *  var broadcaster         elem. html
-     *  var currentUser         string
      *  var sessionAccess       elem. html
      *  var endSessionAccess    elem. html
+     *  var currentUser         String
+     *  var viewers             String
+     *  var usuario             String
+     *  var broadcastId         String
+     *  var msgrash             String
+     *  var myIdentity          String
      */
     var width;
     var status = false;
-    var usuario = '';
-    var viewers = 'Calculando...';
-    var cameras;
     var publicRoomsDiv = document.getElementById('public-conference');
     var inRoom = document.getElementById('in-room');
     var videoPreview = document.getElementById('video-preview');
@@ -117,14 +121,13 @@ $(document).ready(function() {
     var videoThird = document.getElementById('span-video-preview-3rd');
     var swapSecond = document.getElementById('swap-video');
     var broadcaster = document.getElementById('broadcaster');
-    var currentUser = document.getElementById('current-user').value;
     var sessionAccess = document.getElementById('enter-session');
     var endSessionAccess = document.getElementById('end-session');
+    var currentUser = document.getElementById('current-user').value;
+    var viewers = 'Calculando...';
+    var usuario = '';
 
-    // Conexão com serviço de websocket
-    connection.socketURL = 'https://rtcmulticonnection.herokuapp.com:443/';
-
-    // Socket Connections
+    // Tratamento de conexões Socket
     connection.connectSocket(function(socket) {
         // Socket - Join
         socket.on('join-broadcaster', function(hintsToJoinBroadcast) {
@@ -161,13 +164,13 @@ $(document).ready(function() {
                 });
             });
         });
-        // Socket - Stopped
+        // Socket - Parado
         socket.on('broadcast-stopped', function(broadcastId) {
             console.error('--> Broadcast finalizada', broadcastId);
             broadcastStatus = 0;
             callToast('<i class="fa fa-stop-circle fa-lg"></i> Transmissão finalizada!', 'red darken-3');
         });
-        // Socket - Started
+        // Socket - Iniciando
         socket.on('start-broadcasting', function(typeOfStreams) {
             console.log('--> Iniciando broadcasting', typeOfStreams);
             broadcastStatus = 1;
@@ -179,7 +182,7 @@ $(document).ready(function() {
             connection.open(connection.userid, isPublicModerator);
             console.log('--> Abrindo: ' + connection.userid);
         });
-        // Socket - Leaving
+        // Socket - Saindo
         socket.on('leave-the-room', function(targetconnection) {
             console.log('--> Saindo...' + targetconnection.remoteUserId + ' -> ' + connection.userid);
             if (targetconnection.remoteUserId != connection.userid) return;
@@ -211,15 +214,17 @@ $(document).ready(function() {
         if (!onParticipation) {
             inRoom.value = event.userid;
         }
-        /**
+        /**==================================================================================================
          * Tratamento de conexões REMOTAS e LOCAIS
          * -> Identificação de compartilhamentos de tela e ingressos em transmissões
          */
+        // Broadcaster recebendo uma conexão remota==========================================================
         if (event.type === 'remote' && connection.isInitiator) {
             console.log('PARTICIPAÇÃO REMOTA--------');
             // Remove qualquer conexão duplicada
             if (incomingCon == event.stream.streamid) {
                 connection.getAllParticipants().forEach(function(p) {
+                    console.log('Transmitindo: ', event.stream.streamid, p, incomingCon);
                     if (p + '' == event.userid + '') {
                         var peer = connection.peers[p].peer;
                         stream.stop();
@@ -244,7 +249,6 @@ $(document).ready(function() {
                         });
                 }
                 callToast('<i class="material-icons">videocam</i> Participação iniciada!', 'blue darken-2');
-                showIncomingVideos();
                 $('#span-video-preview-3rd').fadeIn(300);
                 setTimeout(function() {
                     connection.getAllParticipants().forEach(function(p) {
@@ -263,6 +267,7 @@ $(document).ready(function() {
                         }
                     });
                     streamVideos.push(event.stream);
+                    toggleIncomingVideos('in');
                 }, 500);
                 $('#div-end').fadeIn(300);
                 endSessionAccess.onclick = function() {
@@ -274,6 +279,7 @@ $(document).ready(function() {
                         });
                     });
                     $('#div-end').hide();
+                    toggleIncomingVideos('out');
                     var msgrash = [];
                     msgrash[0] = btoa('@Finaliza-Participacao');
                     msgrash[1] = currentUser;
@@ -285,24 +291,26 @@ $(document).ready(function() {
                 }
 
             }
+            // Usuário recebendo uma conexão remota com compartilhamento de tela=============================
         } else if (!onParticipation && (event.type === 'remote' && event.stream.isScreen === true)) {
-            console.log('REMOTO COM SCREEN----------');
-            if (incomingCon == event.stream.streamid) {
+            console.log('REMOTO COM SCREEN --> ', event.stream.streamid);
+            if (incomingCon == event.stream.streamid && incomingCon != connectedAt) {
                 connection.getAllParticipants().forEach(function(p) {
                     if (p + '' == event.userid + '') {
                         var peer = connection.peers[p].peer;
-                        stream.stop();
-                        peer.removeStream(event.stream);
+                        //event.stream.stop();
+                        //peer.removeStream(event.stream);
                     }
                 });
-                return;
+                //return;
             }
+
             // Conexão remota com compartilhamento de tela
             $('#span-video-preview-2nd').fadeIn(300);
+            toggleIncomingVideos('in');
             secondVideoPreview.srcObject = event.stream;
             arrVideos['screen'] = event.stream;
             incomingCon = event.stream.streamid
-            showIncomingVideos();
 
             var playPromise = secondVideoPreview.play();
             if (playPromise !== undefined) {
@@ -351,14 +359,15 @@ $(document).ready(function() {
                     }
                 }, 500);
             };
+            // Usuário recebendo uma conexão remota sem compartilhamento de tela=============================
         } else if (!onParticipation && (event.type === 'remote' && !event.stream.isScreen)) {
-            console.log('REMOTO SEM SCREEN----------');
+            console.log('REMOTO SEM SCREEN --> ' + event.stream.streamid);
             if (incomingCon == event.stream.streamid) {
                 connection.getAllParticipants().forEach(function(p) {
                     if (p + '' == event.userid + '') {
                         var peer = connection.peers[p].peer;
-                        stream.stop();
-                        peer.removeStream(event.stream);
+                        //event.stream.stop();
+                        //peer.removeStream(event.stream);
                     }
                 });
                 return;
@@ -366,6 +375,7 @@ $(document).ready(function() {
             // Conexão remota sem compartilhamento de tela
             if (arrVideos['main']) {
                 $('#span-video-preview-3rd').fadeIn(300);
+                incomingCon = event.stream.streamid;
                 thirdVideoPreview.srcObject = event.stream;
                 arrVideos['user'] = event.stream;
                 thirdVideoPreview.title = event.userid;
@@ -378,8 +388,9 @@ $(document).ready(function() {
                             console.log('Carregando vídeo 3...');
                         });
                 }
-                showIncomingVideos();
+                toggleIncomingVideos('in');
             } else {
+                incomingCon = event.stream.streamid;
                 onParticipation = false;
                 videoPreview.srcObject = event.stream;
                 arrVideos['main'] = event.stream;
@@ -399,7 +410,7 @@ $(document).ready(function() {
                 }
 
             }
-            // Ajusta elementos de exibição (define o menu de áudio e video para ESPECTADORES)
+            // Ajusta elementos de exibição (define o menu de áudio e video para espectadores)
             $('#div-connect').hide();
             ctlPedir.innerHTML = constructBtnActionPedir();
             $('#pedir-vez').tooltip();
@@ -417,10 +428,6 @@ $(document).ready(function() {
             pedir.onclick = function() {
                 if (broadcastStatus == 1 && (solicita === 0 && !lockSolicitation)) {
                     // Constroi e envia mensagem solicitando a vez
-                    /**
-                     *  var msgrash     string
-                     *  var myIdentity  string
-                     */
                     var msgrash = [];
                     var myIdentity = document.getElementById('room-id').value;
                     msgrash[0] = btoa('@PedeAVez');
@@ -465,7 +472,7 @@ $(document).ready(function() {
             });
             var numberOfUsers = connection.getAllParticipants().length;
             changeCounter(numberOfUsers);
-
+            // Broadcaster executando uma conexão local =====================================================
         } else if (!onParticipation && (event.type === 'local' && !event.stream.isScreen)) {
             console.log('TRANSMISSÃO LOCAL------');
             if (incomingCon == event.stream.streamid) {
@@ -482,6 +489,7 @@ $(document).ready(function() {
             onParticipation = true;
             connection.isUpperUserLeft = false;
             arrVideos['main'] = event.stream;
+            incomingCon = event.stream.streamid;
             var currentStream = [event.stream];
 
             videoPreview.srcObject = event.stream;
@@ -626,12 +634,12 @@ $(document).ready(function() {
                     connection.getAllParticipants().forEach(function(p) {
                         var peer = connection.peers[p].peer;
                         try {
-                            peer.removeStream([streamToRemove]);
+                            peer.removeStream(streamToRemove);
                             connection.renegotiate(p, {
                                 screen: false,
                                 oneway: true
                             });
-                        } catch (e) { console.log([streamToRemove]) }
+                        } catch (e) { console.log(e) }
                     });
                     // Mensagem de finalização de screen sharing
                     var msgrash = [];
@@ -644,7 +652,12 @@ $(document).ready(function() {
                     connection.send(msgrash);
                 }
             };
+            // Apresenta o número de espectadores conectados
+            $('#connected-users').fadeIn(300);
         }
+        /**==================================================================================================
+         * Tratamentos e controles complementares
+         */
         // Botão de maximizar o video -> toggle on:off
         screen.onclick = function() { fullscreen(); };
         exitscreen.onclick = function() { fullscreen(); };
@@ -704,25 +717,34 @@ $(document).ready(function() {
                 }
             }
         };
-        // Apresentação e tratamento da barra de controle de mídia
-        $('#nav-footer').slideDown(500);
+    };
+    //=======================================================================================================
+    // Listener para abertura de conexões
+    connection.onopen = function(event) {
+        console.log(event);
+        if (event.userid != connectedAt) {
+            connection.getAllParticipants().forEach(function(p) {
+                //connection.disconnectWith(event.userid);
+            });
+        }
     };
     // Listener para finalização de streams
     connection.onstreamended = function(event) {
-        console.log('FINALIZADO...', event);
         if (event.stream.isScreen) {
             $('#span-video-preview-2nd').hide();
+            toggleIncomingVideos('out');
         } else {
             $('#span-video-preview-3rd').hide();
             lockSolicitation = false;
+            toggleIncomingVideos('out');
         }
     };
-    //  Listener para fim de conexões
+    // Listener para fim de conexões
     connection.onleave = function(event) {
         console.log('DEIXANDO CONEXÃO...', event);
     };
 
-    // Ação de criar uma sala ao clicar em 'btn-join-as-productor'
+    // Ação de criar uma sala ao clicar em 'btn-join-as-productor' ==========================================
     document.getElementById('btn-join-as-productor').onclick = function() {
         /*
          *    var elem          html elem.
@@ -772,12 +794,10 @@ $(document).ready(function() {
                 oneway: true
             };
             // Controle da utilização de banda
-            /*
             connection.bandwidth = {
                 audio: 300,
                 video: 700
             };
-            */
             // Inicializa Socket
             var socket = connection.getSocket();
             // Verifica existência do broadcast
@@ -791,14 +811,15 @@ $(document).ready(function() {
                 socket.emit('join-broadcast', {
                     broadcastId: broadcastId,
                     userid: connection.userid,
-                    typeOfStreams: connection.session
-                        //bandwidth: connection.bandwidth
+                    typeOfStreams: connection.session,
+                    bandwidth: connection.bandwidth
                 });
             });
         } else {
             callToast('<i class="fa fa-exclamation-triangle fa-lg"></i> Por favor informe todos os campos indicados!', 'red darken-3');
         }
     };
+    //=======================================================================================================
 
     // Tratamento do Id da sala e dos links para acesso -> Basea-se no URI
     /**
@@ -955,6 +976,7 @@ $(document).ready(function() {
                                 callTeacherStream();
 
                                 var broadcastId = this.id;
+                                connectedAt = this.id;
                                 // Definições de sessão
                                 connection.session = {
                                     audio: false,
@@ -1012,13 +1034,11 @@ $(document).ready(function() {
                 }
             });
             if (numberOfUsers > 0) {
-                //document.getElementById('connection-list').innerHTML = htmlList;
                 var contaUsuarios = document.getElementById('users-counter');
                 if (contaUsuarios.getAttribute('data-target') == 0) {
                     document.getElementById('connected-users-list').innerHTML = htmlList;
                     changeCounter(numberOfUsers);
-                } else {
-                    $('#connected-users').hide();
+                    $('#connected-users').fadeIn(300);
                 }
                 var disconnectId;
                 var btnDisconnect = document.getElementsByClassName('disconnect-btn');
@@ -1047,7 +1067,7 @@ $(document).ready(function() {
     // Controles de envio e recebimento de mensagens
     // -> Efetua tratando entrada de texto
     /**
-     *  var texto string
+     *  var texto String
      */
     document.getElementById('text-message').onkeyup = function(e) {
         if (e.keyCode != 13) return;
@@ -1060,7 +1080,7 @@ $(document).ready(function() {
         this.value = '';
     };
     /**
-     *  var texto string
+     *  var texto String
      */
     document.getElementById('send-message-btn').onclick = function() {
         var texto = document.getElementById('text-message').value
@@ -1086,23 +1106,23 @@ $(document).ready(function() {
 
 });
 /**
- * FUNCTIONS-------------------------------------------------------------------
+ * FUNÇÕES-------------------------------------------------------------------
  */
 //Trata e escreve mensagem de chat e trata solicitações
 /*
- *    event: mensagem recebida.
- *      -> mensagens em formato de array[4+] (length > 4) são tratadas como solicitações;
- *      -> solicitações tem como padrão no array[0] o indicativo da solicitação;
- *      -> os indicativos sempre iniciam com @, como @PedeAVez.
+ * Param event: Mensagem recebida via connection.send (event || event.data)
+ *       -> mensagens em formato de array[4+] (length > 4) são tratadas como solicitações;
+ *       -> solicitações tem como padrão no array[0] o indicativo da solicitação;
+ *       -> os indicativos sempre iniciam com @, como @PedeAVez.
  *   
- *    var chatContainer elem. html
- *    var text          string
- *    var message       string
+ * var chatContainer elem. html
+ * var text          string
+ * var message       string
  */
 function appendDIV(event) {
     var chatContainer = document.getElementById('chat-panel');
     var remoto = false;
-    // Recebe mensagens externas ou internas
+    // Recebe mensagens de origem externa ou interna
     if (event.data) remoto = true;
     var text = event.data || event;
     // Verifica a origem da mensagem, se a menssagem é um array e se este array possui mais de 4 índices
@@ -1118,9 +1138,6 @@ function appendDIV(event) {
             msgData[1] = (atob(chkrash[3])).split('|')[4];
             msgData[2] = chkrash[4];
             console.log(solicita);
-            if (solicita === 0) {
-                //document.getElementById('solicita-list').innerHTML = '';
-            }
             listBox(msgData);
             return;
         } else if (chkrash[0] === btoa('@PedeAVez:allow')) {
@@ -1166,13 +1183,12 @@ function appendDIV(event) {
         }
     } else {
         // Tratamento de mensagens comuns (fora do padrão de solicitação)
-        // Identifica e exibe mensagem
         writeMessage(text, remoto);
     }
 }
 // Lista todas as solicitações de "Pedir a vez" e incrementa contador
 /**
- * text: Array contando o nome so solicitante, o Id da conexão da sala e o Id da conexão do solicitante
+ * Param text: Array contando o nome so solicitante, o Id da conexão da sala e o Id da conexão do solicitante
  */
 function listBox(text) {
     var msg = text;
@@ -1191,7 +1207,10 @@ function listBox(text) {
     return;
 }
 
-// Emite alerta de desconexão.
+// Emite alerta de conexão.
+/**
+ * Param userid: String de dados de quem efetuou a conexão
+ */
 function alertConnection(userid) {
     setTimeout(function() {
         console.log('Sala ' + userid + ' se conectou a você.');
@@ -1208,6 +1227,9 @@ function alertConnection(userid) {
 }
 
 // Emite alerta de desconexão.
+/**
+ * Param userid: String de dados de quem foi desconectado
+ */
 function alertDisconnection(userid) {
     var broadcaster = document.getElementById('in-room').value;
     if (userid === broadcaster) {

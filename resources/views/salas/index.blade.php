@@ -156,56 +156,58 @@
                             </div>
                         </div>
                         <div class='col s12'>
-                            <div align='center' class='row'>
+                            <div class='row'>
                                 <div id='div-controller' class='d-none col s12 center'>
-                                    <nav id='nav-controller' class='grey lighten-3'>
-                                        <ul class='blue-text center'>
-                                            <li id='li-toggle-camera'>
-                                                <a id='toggle-camera' data-active='enabled' class='media-control tooltipped' data-position='top' data-tooltip='Camera'>
+                                    <div id='nav-controller' class='container'>
+                                        <div class='controllers-container blue-text center grey lighten-4'>
+                                            <span id='li-toggle-camera'>
+                                                <a id='toggle-camera' data-active='enabled' class='media-control btn-floating btn-large tooltipped' data-position='top' data-tooltip='Camera'>
                                                     {!! $videocamIcon !!}
                                                 </a>
-                                            </li>
-                                            <li id='li-toggle-mute'>
-                                                <a id='toggle-mute' data-active='enabled' class='media-control tooltipped' data-position='top' data-tooltip='Microfone'>
+                                            </span>
+                                            <span id='li-toggle-mute'>
+                                                <a id='toggle-mute' data-active='enabled' class='media-control btn-floating btn-large tooltipped' data-position='top' data-tooltip='Microfone'>
                                                     {!! $micIcon !!}
                                                 </a>
-                                            </li>
-                                            <li id='li-toggle-volume'>
-                                                <a id='toggle-volume' data-active='enabled' class='media-control tooltipped' data-position='top' data-tooltip='Áudio'>
+                                            </span>
+                                            <span id='li-toggle-volume'>
+                                                <a id='toggle-volume' data-active='enabled' class='media-control btn-floating btn-large tooltipped' data-position='top' data-tooltip='Áudio'>
                                                     {!! $volumeUpIcon !!}
                                                 </a>
-                                            </li>
-                                            <li id='li-share-screen'>
-                                                <a id='share-screen' data-active='enabled' class='media-control tooltipped' data-position='top' data-tooltip='Compartilhar Tela'>
+                                            </span>
+                                            <span id='li-share-screen'>
+                                                <a id='share-screen' data-active='enabled' class='media-control btn-floating btn-large tooltipped' data-position='top' data-tooltip='Compartilhar Tela'>
                                                     {!! $screenShareIcon !!}
                                                 </a>
-                                            </li>
-                                            <li id='li-toggle-screen'>
-                                                <a id='toggle-screen' data-active='enabled' class='media-control tooltipped' data-position='top' data-tooltip='Expandir'>
+                                            </span>
+                                            <span id='li-toggle-screen'>
+                                                <a id='toggle-screen' data-active='enabled' class='media-control btn-floating btn-large tooltipped' data-position='top' data-tooltip='Expandir'>
                                                     {!! $fullscreenIcon !!}
                                                 </a>
-                                            </li>
-                                            <li id='li-toggle-chat'>
-                                                <a id='toggle-chat' data-target='slide-out' class='media-control tooltipped sidenav-trigger' data-position='top' data-tooltip='Chat' style='display:block;'>
+                                            </span>
+                                            <span id='li-toggle-chat'>
+                                                <a id='toggle-chat' data-target='slide-out' class='media-control btn-floating btn-large tooltipped sidenav-trigger' data-position='top' data-tooltip='Chat'>
                                                     {!! $forumIcon !!}
                                                 </a>
-                                            </li>
-                                            <li id='control-pedir-vez' class=''>
-                                                <span id='count-pedir-vez' href='#msg-solicita' class='right btn-floating btn-small red darken-4 pulse modal-trigger'>0</span>
-                                                <input id='pedir-vez' type='hidden' disabled readonly value='0' />
-                                                <a id='lista-pedir-vez' data-active='enabled' class='media-control modal-trigger tooltipped' data-position='top' data-tooltip='Solicitações' href='#msg-solicita'>
-                                                    {!! $panToolIcon !!}
+                                            </span>
+                                            <span id='control-pedir-vez' class=''>
+                                                <a id='lista-pedir-vez' data-active='enabled' class='media-control btn-floating btn-large modal-trigger tooltipped' data-position='top' data-tooltip='Solicitações' href='#msg-solicita'>
+                                                    {!! $panToolIcon !!} 
                                                 </a>
-                                            </li>
-                                        </ul>
-                                    </nav>
+                                                <span id='count-pedir-vez' href='#msg-solicita' class='btn-floating btn-small red darken-4 pulse modal-trigger'>0</span>
+                                            </span>
+                                            <input id='pedir-vez' type='hidden' disabled readonly value='0' />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class='row'>
                                 <!-- Collapsible com a listagem de todos os espectadores conectados -->
-                                <ul id="connected-users" class='collapsible popout'>
+                                <ul id="connected-users" class='collapsible popout d-none'>
                                     <li>
-                                        <div class="collapsible-header"><b><i class="fa fa-play-circle-o blue-text"></i>Espectadores online: <span id="users-counter" data-target='{{ Auth::user()->type  }}' class="blue-text">0</span></b></div>
+                                        <div class="collapsible-header"><b><i class="fa fa-play-circle-o blue-text">
+                                            </i>Espectadores online: <span id="users-counter" data-target='{{ Auth::user()->type  }}' class="blue-text">0</span></b>
+                                        </div>
                                         <div id="connected-users-list" class="collapsible-body active">
                                             <!-- Lista de espectadores ativos -->
                                         </div>
@@ -217,14 +219,6 @@
                 </div>
             </div>
         </div>
-        <!--Painel com os vídeos dos espectadores-->
-        <div id='line-video' class='col s12 m4 incoming-videos'>
-            <div id='class-video' class='inroom otherView'>
-                <!--Outros vídeos-->
-            </div>
-        </div>
-        
-        
     </div>
     <!-- Sidebar de painel de chat -->
     <ul id="slide-out" class="sidenav grey lighten-4 z-depth-5">
@@ -234,15 +228,17 @@
                     <!--Output de mensagem-->
                 </div>
             </div>
-            <div class='divider'></div>
-            <div class='file-field input-field' style='padding:5px;'>
-                <a id='send-message-btn' class='btn-floating waves-effect waves-light blue right'>
-                    {!! $sendIcon !!}
-                </a>
-                <div class='file-path-wrapper'>
-                    <!--Input de mensagem-->
-                    {!! $prefixCommentingIcon !!}
-                    <input type='text' class='' id='text-message' placeholder='Chat'>
+            <div id='message-writer-content' class='grey lighten-4'>
+                <div class='divider'></div>
+                <div class='file-field input-field' style=''>
+                    <a id='send-message-btn' class='btn-floating waves-effect waves-light blue right'>
+                        {!! $sendIcon !!}
+                    </a>
+                    <div class='file-path-wrapper'>
+                        <!--Input de mensagem-->
+                        {!! $prefixCommentingIcon !!}
+                        <input type='text' class='' id='text-message' placeholder='Chat'>
+                    </div>
                 </div>
             </div>
         </div>

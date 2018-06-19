@@ -1,27 +1,38 @@
 /**
  * MANIPULAÇÃO DE ELEMENTOS VISUAIS APLICÁVEIS À SALAS.INDEX.BLADE
  * Métodos de criação/alteração de elementos visuais para a plataforma de video conferência
- * 
  */
 
 // Variaveis globais
 /**
- * var countMessages   integer
+ * var countMessages   integer  -> Contador de mensagems recebidas e enviadas
  */
 var countMessages = 0;
 
-// Apresenta vídeos secundários
-function showIncomingVideos() {
+// Toggle de vídeos secundários
+function toggleIncomingVideos(cmd) {
     var divMainVideo = document.getElementById('div-main-video');
     var divIncomingVideo = document.getElementById('div-incoming-videos');
-    divMainVideo.classList.remove("s12");
-    divMainVideo.classList.add("s6", "m8");
-    divIncomingVideo.classList.add("s6", "m4");
-    setTimeout(() => {
-        $('#div-incoming-videos').fadeIn(300);
-    }, 500);
+    var showingVideo = false
+    if ($('#span-video-preview-2nd').is(':visible') || $('#span-video-preview-3rd').is(':visible')) {
+        showingVideo = true;
+    }
+    if (cmd === 'out' && (!showingVideo)) {
+        $('#div-incoming-videos').fadeOut(300);
+        setTimeout(function() {
+            divIncomingVideo.classList.remove("s6", "m4");
+            divMainVideo.classList.add("s12");
+            divMainVideo.classList.remove("s6", "m8");
+        }, 500);
+    } else if (cmd === 'in') {
+        divMainVideo.classList.remove("s12");
+        divMainVideo.classList.add("s6", "m8");
+        divIncomingVideo.classList.add("s6", "m4");
+        setTimeout(function() {
+            $('#div-incoming-videos').fadeIn(300);
+        }, 500);
+    }
 }
-
 // Chama alertas em elementos toast do MaterializeCSS
 /**
  * Param content: conteúdo da mensagem em html
@@ -74,21 +85,20 @@ function setCam(status) {
     var cam = document.getElementById('toggle-camera');
     if (status === 'dis') {
         cam.setAttribute('data-active', 'disabled');
-        cam.classList.add("grey-text");
+        cam.classList.add("grey");
         cam.innerHTML = "<i class='material-icons'>videocam_off</i>";
         $('#li-toggle-camera').hide();
     } else if (status === 'off') {
         cam.setAttribute('data-active', 'disabled');
-        cam.classList.add("red-text");
+        cam.classList.add("red");
         cam.innerHTML = "<i class='material-icons'>videocam_off</i>";
         callToast('<span class="white-text"><i class="material-icons left">videocam_off</i> Camera Desabilitada.</span>', 'red darken-3');
     } else if (status === 'on') {
         cam.setAttribute('data-active', 'enabled');
-        cam.classList.remove("red-text");
+        cam.classList.remove("red");
         cam.innerHTML = "<i class='material-icons'>videocam</i>";
         callToast('<span class="white-text"><i class="material-icons left">videocam</i> Camera Habilitada.</span>', 'blue darken-2');
     }
-
 }
 // Configurações visuais de status do botão Mute
 /**
@@ -98,17 +108,17 @@ function setMute(status) {
     var mute = document.getElementById('toggle-mute');
     if (status === 'dis') {
         mute.setAttribute('data-active', 'disabled');
-        mute.classList.add("grey-text");
+        mute.classList.add("grey");
         mute.innerHTML = "<i class='material-icons'>mic_off</i>";
         $('#li-toggle-mute').hide();
     } else if (status === 'off') {
         mute.setAttribute('data-active', 'disabled');
-        mute.classList.add("red-text");
+        mute.classList.add("red");
         mute.innerHTML = "<i class='material-icons'>mic_off</i>";
         callToast('<span class="white-text"><i class="material-icons left">mic_off</i> Microfone Desabilitado.</span>', 'red darken-3');
     } else if (status === 'on') {
         mute.setAttribute('data-active', 'enabled');
-        mute.classList.remove("red-text");
+        mute.classList.remove("red");
         mute.innerHTML = "<i class='material-icons'>mic</i>";
         callToast('<span class="white-text"><i class="material-icons left">mic</i> Microfone Habilitado.</span>', 'blue darken-2');
     }
@@ -121,17 +131,17 @@ function setVol(status) {
     var vol = document.getElementById('toggle-volume');
     if (status === 'dis') {
         vol.setAttribute('data-active', 'disabled');
-        vol.classList.add("grey-text");
+        vol.classList.add("grey");
         vol.innerHTML = "<i class='material-icons'>volume_off</i>";
         $('#li-toggle-volume').hide();
     } else if (status === 'off') {
         vol.setAttribute('data-active', 'disabled');
-        vol.classList.add("red-text");
+        vol.classList.add("red");
         vol.innerHTML = "<i class='material-icons'>volume_off</i>";
         callToast('<span class="white-text"><i class="material-icons left">volume_off</i> Áudio Desabilitado.</span>', 'red darken-3');
     } else if (status === 'on') {
         vol.setAttribute('data-active', 'enabled');
-        vol.classList.remove("red-text");
+        vol.classList.remove("red");
         vol.innerHTML = "<i class='material-icons'>volume_up</i>";
         callToast('<span class="white-text"><i class="material-icons left">volume_up</i> Áudio Habilitado.</span>', 'blue darken-2');
     }
@@ -145,19 +155,19 @@ function setShare(status) {
     if (status === 'dis') {
         share.setAttribute('data-active', 'disabled');
         share.disabled = true;
-        share.classList.add("grey-text");
+        share.classList.add("grey");
         share.innerHTML = "<i class='material-icons'>stop_screen_share</i>";
         $('#li-share-screen').hide();
     } else if (status === 'off') {
         $('#share-screen').show();
         share.setAttribute('data-active', 'disabled');
-        share.classList.add("red-text");
+        share.classList.add("red");
         share.innerHTML = "<i class='material-icons'>stop_screen_share</i>";
         callToast('<span class="white-text"><i class="material-icons left">screen_share</i> Tela compartilhada.</span>', 'blue darken-2');
     } else if (status === 'on') {
         $('#share-screen').show();
         share.setAttribute('data-active', 'enabled');
-        share.classList.remove("red-text");
+        share.classList.remove("red");
         share.innerHTML = "<i class='material-icons'>screen_share</i>";
         callToast('<span class="white-text"><i class="material-icons left">stop_screen_share</i> Compartilhamento de tela finalizado.</span>', 'red darken-3');
     }
@@ -170,8 +180,7 @@ function setPedir(status) {
     var pedir = document.getElementById('pedir-vez');
     if (status === 'dis') {
         pedir.setAttribute('data-active', 'disabled');
-        pedir.classList.add("grey-text");
-        pedir.innerHTML = "<i class='material-icons left'>pan_tool</i> <b class='hide-on-med-and-down'>Áudio</b>";
+        pedir.classList.add("grey");
         $('#pedir-vez').hide();
     } else if (status === 'allow') {
         var toastContent = '<span class="white-text"><i class="fa fa-check"></i> ' +
@@ -273,7 +282,7 @@ function writeMessage(msg, rmt) {
     var scrollsize;
     var instance = M.Sidenav.getInstance(elem);
     if (!instance.isOpen) {
-        callToast('<i class="fa fa-comment-o blue-text"></i> ' + message + '.', 'grey darken-4');
+        callToast('<div align="right"><i class="fa fa-comment-o blue-text"></i> ' + message + '</div>', 'grey darken-4');
     }
     if (rmt) {
         element.innerHTML += '<p class="chat-in blue">' + message + '</p>';
@@ -281,10 +290,11 @@ function writeMessage(msg, rmt) {
         element.innerHTML += '<p class="chat-out grey" align="right">' + message + '</p>';
     }
     countMessages++;
-    scrollsize = (countMessages * 150);
-    $('#chat-textarea').animate({ scrollTop: scrollsize }, 'slow');
+    document.getElementById('chat-textarea').style.height = (window.innerHeight - 100) + 'px';
+    scrollsize = (countMessages * 90);
+    $('#chat-textarea').animate({ scrollTop: scrollsize });
 }
-//Verifica a existência de dispositivos de vídeo
+// Verifica a existência de dispositivos de vídeo
 /**
  * Param sourceInfos: dispositivos verificados
  */
@@ -293,7 +303,7 @@ function getCameras(sourceInfos) {
         cameras = true;
     }
 }
-//Verificação de classes para elementos html
+// Verificação de classes para elementos html
 /**
  * Param element: elemento a ser verificado
  * Param cls: classe a ser verificada no elemento
@@ -301,12 +311,12 @@ function getCameras(sourceInfos) {
 function hasClass(element, cls) {
     return (' ' + element.className + ' ').indexOf(' ' + cls + ' ') > -1;
 }
-//Exibição de campos de vídeo
+// Exibição de campos de vídeo
 function callTeacherStream() {
     $('#initial-access').slideUp(300);
     $('#video-panel').slideDown(300);
 }
-//Toggle de controle de audio para elem. video
+// Toggle de controle de audio para elem. video
 function toggleControls() {
     var player = document.getElementById('video-preview');
     if (player.hasAttribute("controls")) {
@@ -315,7 +325,7 @@ function toggleControls() {
         player.setAttribute("controls", "controls");
     }
 }
-//Controle para exibição toggle de elem. html
+// Controle para exibição toggle de elem. html
 /**
  * Param elemId: Id do elemento a ser verificado
  */
@@ -329,7 +339,7 @@ function toggleElem(elemId) {
 // Constroi um botão de 'Pedir vez' 
 // *Uso pontual
 function constructBtnActionPedir() {
-    var htmlBtn = "<a id='pedir-vez' data-active='enabled' class='media-control tooltipped' data-position='top' data-tooltip='Solicitar vez'>" +
+    var htmlBtn = "<a id='pedir-vez' data-active='enabled' class='media-control btn-floating btn-large tooltipped' data-position='top' data-tooltip='Solicitar vez'>" +
         "<i class='material-icons center'>pan_tool</i>" +
         "</a>";
     return htmlBtn;
