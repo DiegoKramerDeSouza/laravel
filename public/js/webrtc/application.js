@@ -23,7 +23,7 @@
  *  var streamVideos        Array           -> Lista de vídeos exibidos
  *  var incomingCon         String          -> Registra quem está efetuando a conexão no momento
  *  var connectedAt         String          -> Registra o ID do Broadcaster
- *  var urlSocket           String:SSL URL  -> URL para conexão com o serviço de sinalização
+ *  const urlSocket         String:SSL URL  -> URL para conexão com o serviço de sinalização
  */
 var solicita = 0;
 var broadcastStatus = 0;
@@ -36,7 +36,7 @@ var arrVideos = [];
 var streamVideos = [];
 var incomingCon;
 var connectedAt;
-var urlSocket = 'https://rtcmulticonnection.herokuapp.com:443/';
+const urlSocket = 'https://rtcmulticonnection.herokuapp.com:443/';
 
 $(document).ready(function() {
 
@@ -48,8 +48,8 @@ $(document).ready(function() {
      *  const   isPublicModerator   Boolean:true
      */
     var connection = new RTCMultiConnection();
-    var enableRecordings = false;
-    var isPublicModerator = true;
+    const enableRecordings = false;
+    const isPublicModerator = true;
 
     // Definições de conexão
     connection.enableScalableBroadcast = true;
@@ -237,7 +237,6 @@ $(document).ready(function() {
             if (arrVideos['main']) {
                 incomingCon = event.stream.streamid;
                 thirdVideoPreview.srcObject = event.stream;
-                thirdVideoPreview.title = event.userid;
                 arrVideos['user'] = event.stream;
                 var playPromise = thirdVideoPreview.play();
                 if (playPromise !== undefined) {
@@ -370,7 +369,7 @@ $(document).ready(function() {
                         //peer.removeStream(event.stream);
                     }
                 });
-                return;
+                //return;
             }
             // Conexão remota sem compartilhamento de tela
             if (arrVideos['main']) {
@@ -378,7 +377,6 @@ $(document).ready(function() {
                 incomingCon = event.stream.streamid;
                 thirdVideoPreview.srcObject = event.stream;
                 arrVideos['user'] = event.stream;
-                thirdVideoPreview.title = event.userid;
                 var playPromise = thirdVideoPreview.play();
                 if (playPromise !== undefined) {
                     playPromise.then(_ => {
@@ -394,7 +392,6 @@ $(document).ready(function() {
                 onParticipation = false;
                 videoPreview.srcObject = event.stream;
                 arrVideos['main'] = event.stream;
-                videoPreview.title = event.userid;
                 try {
                     videoPreview.play();
                 } catch (e) {
@@ -493,7 +490,6 @@ $(document).ready(function() {
             var currentStream = [event.stream];
 
             videoPreview.srcObject = event.stream;
-            videoPreview.title = event.userid;
             videoPreview.userid = event.userid;
             videoPreview.muted = true;
             videoPreview.play();
@@ -689,7 +685,6 @@ $(document).ready(function() {
                         onParticipation = false;
                     }
                 }, 500);
-                console.log(connection.attachStreams);
             } else if (sessionAccess.getAttribute('data-active') == 'enabled' && onParticipation) {
                 setParticipation('dis');
                 onParticipation = false;
@@ -745,7 +740,7 @@ $(document).ready(function() {
     };
 
     // Ação de criar uma sala ao clicar em 'btn-join-as-productor' ==========================================
-    document.getElementById('btn-join-as-productor').onclick = function() {
+    document.getElementById('btn-join-as-productor').onclick = () => {
         /*
          *    var elem          html elem.
          *    var roomId        integer
@@ -758,13 +753,13 @@ $(document).ready(function() {
          *    var strValues     string
          *    var broadcastId   string
          */
-        var elem = document.getElementById(this.id);
-        var roomId = document.getElementById('room-id').value;
-        var materia = document.querySelector('#tema').value;
-        var assunto = document.querySelector('#assunto').value;
-        var roomName = currentUser;
-        var values = $('#cursos-list').val();
-        var strValues = '';
+        let elem = document.getElementById(this.id);
+        let roomId = document.getElementById('room-id').value;
+        let materia = document.querySelector('#tema').value;
+        let assunto = document.querySelector('#assunto').value;
+        let roomName = currentUser;
+        let values = $('#cursos-list').val();
+        let strValues = '';
         for ($i = 0; $i < values.length; $i++) {
             strValues += values[$i];
             if ($i != (values.length - 1)) {
@@ -1045,14 +1040,10 @@ $(document).ready(function() {
                 for (var j = 0; j < btnDisconnect.length; j++) {
                     btnDisconnect[j].onclick = function() {
                         disconnectId = this.getAttribute('data-announced');
-                        if (isModerator) {
-                            connection.disconnectWith(disconnectId);
-                        } else {
-                            connection.send({
-                                userRemoved: true,
-                                removedUserId: disconnectId
-                            });
-                        }
+                        connection.send({
+                            userRemoved: true,
+                            removedUserId: disconnectId
+                        });
                         callToast('<i class="fa fa-times"></i> ' + this.name + ' foi desconectado!', 'red darken-4');
                     }
                 }
@@ -1097,6 +1088,7 @@ $(document).ready(function() {
         if (event.data.userRemoved === true) {
             if (event.data.removedUserId == connection.userid) {
                 connection.close();
+                setTimeout(location.reload.bind(location), 3000);
             }
             return;
         } else {
