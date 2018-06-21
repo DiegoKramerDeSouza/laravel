@@ -291,8 +291,8 @@ function writeMessage(msg, rmt) {
     }
     countMessages++;
     document.getElementById('chat-textarea').style.height = (window.innerHeight - 100) + 'px';
-    scrollsize = (countMessages * 90);
-    $('#chat-textarea').animate({ scrollTop: scrollsize });
+    //scrollsize = (countMessages * 90);
+    //$('#chat-textarea').animate({ scrollTop: scrollsize });
 }
 // Verifica a existência de dispositivos de vídeo
 /**

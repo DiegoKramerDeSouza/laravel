@@ -3,7 +3,6 @@
 
             </div>
         </main>
-        <!-- Barra de footer padrão-->
         <footer id="main-footer" class="page-footer grey darken-4">
             <div class="container">
                 <div class="row">
@@ -28,22 +27,22 @@
                 </div>
             </div>
         </footer>
-
+        <!-- Inicialização de Javascript -->
         <script type="text/javascript" src="{!! asset('js/jquery-3.1.1.min.js') !!}"></script>
         <script type="text/javascript" src="{!! asset('js/materialize.min.js') !!}"></script>
         <script type="text/javascript" src="{!! asset('js/geral.js') !!}"></script>
+
+        <!-- Condicionais.start -->
         @if(isset($resultToString))
-            <!-- Inicialização in-page condicional de elementos das páginas de cadastros -->
-            <!-- Utilização do JS para autocomplete -->
+            <!-- Elementos das páginas de cadastros para autocomplete -->
+            <!-- A variável $resultToString deve ser passada pelo controller para inicialização-->
             <script type="text/javascript" src="{!! asset('js/formAutocomplete.js') !!}"></script>
         @endif
         @if(isset($streamPage))
-            <!-- Inicialização in-page condicional de elementos para a formação de uma sala-->
+            <!-- Elementos para a formação de uma sala-->
             <!-- A variável $streamPage deve ser passada pelo controller para inicialização-->
-            <!-- Controle de login - O usuário deve estar autenticado-->
             @if(! Auth::guest())
-                <!-- Barra com menu de controle de áudio e video-->
-        
+                <!-- O usuário deve estar autenticado-->
                 <!-- Adição dos scripts de utilização do WEBRTC-->
                 <script type="text/javascript" src="{!! asset('js/webrtc/control-components.js') !!}"></script>  
                 <script type="text/javascript" src="{!! asset('js/webrtc/socket.io.js') !!}"></script>
@@ -53,86 +52,23 @@
                 <script type="text/javascript" src="{!! asset('js/webrtc/MultiStreamsMixer.min.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/webrtc/application.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/webrtc/getScreenId.js') !!}"></script>
-                <script>
-                    // Definições para apresentação do campo de chat
-                    var chatHeight = window.screen.height
-                    var chatArea = document.getElementById('chat-panel')
-                    chatArea.style.height = (chatHeight - 250) + 'px';
-                    chatArea.style.maxHeight = (chatHeight - 250) + 'px';
-                </script>
+                <script type="text/javascript" src="{!! asset('js/chat.bottom.js') !!}"></script>
             @endif
         @endif
         @if(isset($grant))
-            <!-- Inicialização in-page condicional de elementos para cadastro de perfis de usuários-->
+            <!-- Elemento para cadastro de perfis de usuários-->
             <!-- A variável $grant deve ser passada pelo controller para a inicialização-->
-            <script>
-                document.querySelector('button').onclick = function(evt) {
-                    var values = $('#grantList').val();
-                    var strValues = '';
-                    for($i = 0; $i<values.length; $i++){
-                        strValues += values[$i];
-                        if($i != (values.length - 1)){
-                            strValues += ';';
-                        }
-                    }
-                    if(strValues == ''){
-                        strValues = '0';
-                    }
-                    document.getElementById('grant').value = strValues;                  
-                }
-            </script>
+            <script type="text/javascript" src="{!! asset('js/grant.bottom.js') !!}"></script>
         @endif
         @if(isset($classroom))
-            <!-- Inicialização in-page condicional de elementos para cadastro de turmas-->
+            <!-- Elemento para cadastro de turmas-->
             <!-- A variável $classroom deve ser passada pelo controller para a inicialização-->
-            <script>
-                document.querySelector('button').onclick = function(evt) {
-                    var values = $('#curso_id_list').val();
-                    var strValues = '';
-                    for($i = 0; $i<values.length; $i++){
-                        strValues += values[$i];
-                        if($i != (values.length - 1)){
-                            strValues += ';';
-                        }
-                    }
-                    if(strValues == ''){
-                        strValues = '0';
-                    }
-                    document.getElementById('curso_id').value = strValues;                  
-                }
-            </script>
+            <script type="text/javascript" src="{!! asset('js/turmas.bottom.js') !!}"></script>
         @endif
-        <!-- Inicialização in-page de elementos padrões-->
-        <!-- Inicialização padrão de funções e padrões do MaterializeCSS para todas as páginas-->
-        <script>
-            // M.*: Padrão de inicialização do MaterializeCSS
-            $(document).ready(function(){
-                //Inicialização do Materialize com JQuery
-                /*
-                $(".dropdown-trigger").dropdown();
-                $('.sidenav').sidenav();
-                $('select').formSelect();
-                $('.modal').modal();
-                $('.tooltipped').tooltip();
-                */
-                //Inicialização do Materialize sem utilizar JQuery
-                var elems;
-                var instances;
-                elems = document.querySelectorAll('.dropdown-trigger');
-                instances = M.Dropdown.init(elems);
-                elems = document.querySelectorAll('.sidenav');
-                instances = M.Sidenav.init(elems);
-                elems = document.querySelectorAll('select');
-                instances = M.FormSelect.init(elems);
-                elems = document.querySelectorAll('.modal');
-                instances = M.Modal.init(elems);
-                elems = document.querySelectorAll('.tooltipped');
-                instances = M.Tooltip.init(elems);
-                elems = document.querySelectorAll('.collapsible');
-                instances = M.Collapsible.init(elems);
-                M.updateTextFields();
-                $('input#input_text, textarea#textarea2').characterCounter();
-            });
-        </script>
+        <!-- Condicionais.end -->
+
+        <!-- Inicialização de elementos MaterializeCSS para todas as páginas -->
+        <!-- Deve ser executada por último -->
+        <script type="text/javascript" src="{!! asset('js/materialize.bottom.js') !!}"></script>
     </body>
 </html>

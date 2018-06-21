@@ -790,8 +790,8 @@ $(document).ready(function() {
             };
             // Controle da utilização de banda
             connection.bandwidth = {
-                audio: 300,
-                video: 700
+                audio: 100,
+                video: 200
             };
             // Inicializa Socket
             var socket = connection.getSocket();
