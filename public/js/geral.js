@@ -12,7 +12,7 @@ $(document).ready(function() {
 // Inicialização do tratamento de click em objetos da classe load para apresentar tela de loading
 // -> Ignora chamada de loading se houver algum campo required :invalid
 function deployLoading() {
-    var load = document.getElementsByClassName('load');
+    var load = document.getElementsByClassName(config.classes.LOAD_ELEM);
     for (var j = 0; j < load.length; j++) {
         var isValid = true;
         load[j].onclick = function() {
@@ -26,7 +26,7 @@ function deployLoading() {
 }
 // Monta e trata apresentações de loading específicos para botões Cancel
 function deployLoadingCancel() {
-    var load = document.getElementsByClassName('load-cancel');
+    var load = document.getElementsByClassName(config.classes.LOAD_CANCEL_ELEM);
     for (var j = 0; j < load.length; j++) {
         load[j].onclick = function() {
             callLoading();
@@ -35,9 +35,9 @@ function deployLoadingCancel() {
 }
 // Inicia apresentação de tela de loading
 function callLoading() {
-    var center = document.getElementById('centralized');
-    $('#fglayer').show();
-    $('#centralized').show();
+    let center = document.getElementById(config.ids.LOAD_POSITION_ELEM);
+    $('#' + config.ids.LOAD_LAYER_ELEM).show();
+    $('#' + config.ids.LOAD_POSITION_ELEM).show();
     center.innerHTML = '<h5>' +
         '<b>Aguarde...</b><br><br>' +
         '<div class="preloader-wrapper big active">' +
@@ -55,9 +55,9 @@ function callLoading() {
 }
 // Finaliza apresentação tela de loading
 function destroyLoading() {
-    var center = document.getElementById('centralized');
-    $('#fglayer').fadeOut(300);
-    $('#centralized').fadeOut(300);
+    let center = document.getElementById(config.ids.LOAD_POSITION_ELEM);
+    $('#' + config.ids.LOAD_LAYER_ELEM).fadeOut(300);
+    $('#' + config.ids.LOAD_POSITION_ELEM).fadeOut(300);
     center.innerHTML = '';
 }
 // Retorna a página

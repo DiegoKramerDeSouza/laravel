@@ -1,6 +1,11 @@
 // Inicialização de recursos de variáveis Javascript
 const config = {
-    MSG_INVALID_VALUE: "Testando Dados!!",
-    URL_INVALID: "/errors/invalid.php",
-    CSS_SELECTED: "selected"
+    classes: {
+        LOAD_ELEM: "load",
+        LOAD_CANCEL_ELEM: "load-cancel"
+    },
+    ids: {
+        LOAD_POSITION_ELEM: "centralized",
+        LOAD_LAYER_ELEM: "fglayer"
+    }
 };
