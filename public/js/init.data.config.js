@@ -9,3 +9,16 @@ const config = {
         LOAD_LAYER_ELEM: "fglayer"
     }
 };
+
+const comp = {
+    elem: {
+        div: {
+            MAIN_VIDEO: "div-main-video",
+            INCOMING_VIDEO: "div-incoming-videos"
+        },
+        span: {
+            SECOND_VIDEO: "span-video-preview-2nd",
+            THIRD_VIDEO: "span-video-preview-3rd"
+        }
+    }
+}
