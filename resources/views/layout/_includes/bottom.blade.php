@@ -45,6 +45,7 @@
             @if(! Auth::guest())
                 <!-- O usuário deve estar autenticado-->
                 <!-- Adição dos scripts de utilização do WEBRTC-->
+                <script type="text/javascript" src="{!! asset('js/model/Connect.js') !!}"></script>  
                 <script type="text/javascript" src="{!! asset('js/webrtc/control-components.js') !!}"></script>  
                 <script type="text/javascript" src="{!! asset('js/webrtc/socket.io.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/webrtc/getHTMLMediaElement.js') !!}"></script>

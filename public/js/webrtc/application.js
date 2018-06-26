@@ -25,21 +25,24 @@
  *  var connectedAt         String          -> Registra o ID do Broadcaster
  *  const urlSocket         String:SSL URL  -> URL para conexão com o serviço de sinalização
  */
-var solicita = 0;
-var broadcastStatus = 0;
-var isModerator = true;
-var onlobby = true;
-var onParticipation = false;
-var lockSolicitation = false;
-var connections = [];
-var arrVideos = [];
-var streamVideos = [];
-var incomingCon;
-var connectedAt;
-const urlSocket = 'https://rtcmulticonnection.herokuapp.com:443/';
+let solicita = 0;
+let broadcastStatus = 0;
+let isModerator = true;
+let onlobby = true;
+let onParticipation = false;
+let lockSolicitation = false;
+let connections = [];
+let arrVideos = [];
+let streamVideos = [];
+let incomingCon;
+let connectedAt;
+
+let bindConnect = new Connect();
+
+const urlSocket = bindConnect.urlSocket;
 
 $(document).ready(function() {
-
+    //bindConnect.exibeConexao();
     window.enableAdapter = true;
     //Application - Inicia a chamada e tratamento de multiconexão
     /**
@@ -47,13 +50,13 @@ $(document).ready(function() {
      *  const   enableRecordings    Boolean:false
      *  const   isPublicModerator   Boolean:true
      */
-    var connection = new RTCMultiConnection();
+    let connection = new RTCMultiConnection();
     const enableRecordings = false;
     const isPublicModerator = true;
 
     // Definições de conexão
-    connection.enableScalableBroadcast = true;
-    connection.maxRelayLimitPerUser = 0;
+    connection.enableScalableBroadcast = bindConnect.enableScalableBroadcast;
+    connection.maxRelayLimitPerUser = bindConnect.maxRelayLimitPerUser;
     connection.socketMessageEvent = 'inicia-apresentacao';
     //connection.autoCloseEntireSession = true;
     //connection.dontCaptureUserMedia = true;
