@@ -114,13 +114,17 @@
 }
 
 .main-container {
+    -webkit-transition-duration: 0.4s;
+    transition-duration: 0.4s;
     margin-top: 40px;
     padding-bottom: 60px;
     margin-left: 10%;
     margin-right: 10%;
 }
 
-.main-container-0 {
+.main-container-full {
+    -webkit-transition-duration: 0.4s;
+    transition-duration: 0.4s;
     margin-top: 40px;
     padding-bottom: 60px;
     margin-left: 0%;
@@ -139,7 +143,7 @@
 }
 
 .min-video {
-    max-width: 320px;
+    max-width: 100%;
 }
 
 .room-enter:hover {

@@ -270,6 +270,22 @@ function fullscreen() {
     }
     return;
 }
+// Controle do tamanho da view de videos
+function toggleFullsize() {
+    let content = document.getElementById('main-content');
+    let videoContent = document.getElementById('span-video-preview');
+    if (hasClass(content, 'main-container')) {
+        content.classList.remove('main-container');
+        content.classList.add('main-container-full');
+        videoContent.classList.remove('width-limit');
+        videoContent.classList.add('col', 's12');
+    } else {
+        content.classList.remove('main-container-full');
+        content.classList.add('main-container');
+        videoContent.classList.add('width-limit');
+        videoContent.classList.remove('col', 's12');
+    }
+}
 // Tratamento de mensagens de chat
 /**
  * Param msg: Mensagem enviada ou recebida
@@ -339,7 +355,7 @@ function toggleElem(elemId) {
 // Constroi um botão de 'Pedir vez' 
 // *Uso pontual
 function constructBtnActionPedir() {
-    var htmlBtn = "<a id='pedir-vez' data-active='enabled' class='media-control btn-floating btn-large tooltipped' data-position='top' data-tooltip='Solicitar vez'>" +
+    var htmlBtn = "<a id='pedir-vez' data-active='enabled' class='media-control btn-floating btn-large' title='Solicitar vez'>" +
         "<i class='material-icons center'>pan_tool</i>" +
         "</a>";
     return htmlBtn;

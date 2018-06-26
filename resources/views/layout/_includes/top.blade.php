@@ -113,7 +113,7 @@
 				<img id="backgroundLayer" src="{!! asset($bgImage) !!}" />
             </div>
             <!-- Conteúdo da página em container -->
-            <div class='main-container'>
+            <div id='main-content' class='main-container'>
 
             <!-- Corpo central de página -->
 

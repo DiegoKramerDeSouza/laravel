@@ -43,6 +43,7 @@ class ViewsBasicBindingProvider extends ServiceProvider
         view()->share('screenShareIcon',            "<i class='material-icons'>screen_share</i>");
         view()->share('sendIcon',                   "<i class='material-icons'>send</i>");
         view()->share('shareLargeIcon',             "<i class='material-icons large'>share</i>");
+        view()->share('sizeIcon',                   "<i class='material-icons'>zoom_out_map</i>");
         view()->share('swapIcon',                   "<i class='material-icons'>swap_horiz</i>");
         view()->share('transmitLargeIcon',          "<i class='material-icons large'>wifi_tethering</i>");
         view()->share('tvBlueIcon',                 "<i class='material-icons blue-text'>live_tv</i>");

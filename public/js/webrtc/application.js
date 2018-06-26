@@ -410,7 +410,7 @@ $(document).ready(function() {
             // Ajusta elementos de exibição (define o menu de áudio e video para espectadores)
             $('#div-connect').hide();
             ctlPedir.innerHTML = constructBtnActionPedir();
-            $('#pedir-vez').tooltip();
+            //$('#pedir-vez').tooltip();
             pedir = document.getElementById('pedir-vez');
             // Desabilita botão de ação para microfone
             setCam('dis');
@@ -712,6 +712,10 @@ $(document).ready(function() {
                 }
             }
         };
+        let fullsize = document.getElementById('toggle-size');
+        fullsize.onclick = function() {
+            toggleFullsize();
+        };
     };
     //=======================================================================================================
     // Listener para abertura de conexões
@@ -789,10 +793,12 @@ $(document).ready(function() {
                 oneway: true
             };
             // Controle da utilização de banda
+            /*
             connection.bandwidth = {
                 audio: 100,
                 video: 200
             };
+            */
             // Inicializa Socket
             var socket = connection.getSocket();
             // Verifica existência do broadcast
@@ -806,8 +812,8 @@ $(document).ready(function() {
                 socket.emit('join-broadcast', {
                     broadcastId: broadcastId,
                     userid: connection.userid,
-                    typeOfStreams: connection.session,
-                    bandwidth: connection.bandwidth
+                    typeOfStreams: connection.session
+                        //bandwidth: connection.bandwidth
                 });
             });
         } else {
