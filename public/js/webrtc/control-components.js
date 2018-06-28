@@ -369,25 +369,25 @@ function constructBtnActionPedir() {
  * Param moderador: Id do criador da sala (moderador)
  */
 function constructAccessList(classe, assunto, apresentador, viwer, moderador) {
-    var htmlItem = '<div class="row valign-wrapper li-hover grey-text text-darken-3">' +
-        '<div id="_' + moderador + '" align="center" class="col s3 m2">' +
-        '<span class="blue-text">Entrar</span><br>' +
-        '</div>' +
-        '<div class="col s9 m10 l11">' +
-        '<span class="card-title">' +
-        '<b>' + classe + ': ' + assunto + '</b>' +
-        '</span>' +
-        '<div class="divider"></div>' +
-        '<div class="blockquoted">' +
-        '<span>' +
-        '<b class="blue-text"> Apresentado por:</b> ' + apresentador +
-        '</span><br>' +
-        '<span>' +
-        '<b class="blue-text"> Espectadores:</b><b> ' + viwer + '</b>' +
-        '</span>' +
-        '</div>' +
-        '</div>' +
-        '</div>';
+    var htmlItem = `<div class="row valign-wrapper li-hover grey-text text-darken-3">
+    <div id="_${moderador}" align="center" class="col s3 m2">
+            <span class="blue-text">Entrar</span><br>
+        </div>
+        <div class="col s9 m10 l11">
+            <span class="card-title">
+                <b>${classe}: ${assunto}</b>
+            </span>
+            <div class="divider"></div>
+            <div class="blockquoted">
+                <span>
+                    <b class="blue-text"> Apresentado por:</b> ${apresentador}
+                </span><br>
+                <span>
+                    <b class="blue-text"> Espectadores:</b><b> ${viwer}</b>
+                </span>
+            </div>
+        </div>
+    </div>`;
     return htmlItem;
 }
 // Constroi lista de usuários conectados
