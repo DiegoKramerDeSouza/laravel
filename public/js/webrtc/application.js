@@ -945,7 +945,7 @@ $(document).ready(function() {
                             };
                             //Append de elementos html
                             publicRoomsDiv.appendChild(divOpen);
-                            let divClose = bindDocument.tag("#_" + moderator.userid);
+                            let divClose = document.getElementById("_" + moderator.userid);
                             divClose.appendChild(button);
                         }
                         if (countRooms == 0) ComponentSalaHelper.noRooms();
