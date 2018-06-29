@@ -46,7 +46,12 @@
                 <!-- O usuário deve estar autenticado-->
                 <!-- Adição dos scripts de utilização do WEBRTC-->
                 <script type="text/javascript" src="{!! asset('js/models/Document.js') !!}"></script>  
+                <script type="text/javascript" src="{!! asset('js/models/Room.js') !!}"></script>  
+                <script type="text/javascript" src="{!! asset('js/controllers/RoomController.js') !!}"></script>
+                <script type="text/javascript" src="{!! asset('js/models/Viewer.js') !!}"></script>  
+                <script type="text/javascript" src="{!! asset('js/controllers/ViewerController.js') !!}"></script> 
                 <script type="text/javascript" src="{!! asset('js/models/Connect.js') !!}"></script>  
+
                 <script type="text/javascript" src="{!! asset('js/webrtc/control-components.js') !!}"></script>  
                 <script type="text/javascript" src="{!! asset('js/helpers/ComponentSalaHelper.js') !!}"></script>   
                 <script type="text/javascript" src="{!! asset('js/webrtc/socket.io.js') !!}"></script>

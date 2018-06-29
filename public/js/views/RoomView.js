@@ -1,4 +1,4 @@
-class ConnectControler {
+class RoomtView {
     constructor() {
 
     }

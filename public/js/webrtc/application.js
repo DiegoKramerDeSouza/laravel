@@ -89,10 +89,11 @@ $(document).ready(function() {
      *  var broadcaster         elem. html
      *  var sessionAccess       elem. html
      *  var endSessionAccess    elem. html
+     *  let currentRoomId       elem. html
+     *  let startRoom           elem. html
      *  var currentUser         String
      *  var viewers             String
      *  var usuario             String
-     *  var broadcastId         String
      *  var msgrash             String
      *  var myIdentity          String
      *  var width               integer
@@ -118,15 +119,18 @@ $(document).ready(function() {
     var broadcaster = bindDocument.getTag('#broadcaster');
     var sessionAccess = bindDocument.getTag('#enter-session');
     var endSessionAccess = bindDocument.getTag('#end-session');
+    let currentRoomId = bindDocument.getTag('#room-id');
+    let startRoom = bindDocument.getTag('#btn-join-as-productor');
+    let myClass = bindDocument.getTag('#target');
     var currentUser = bindDocument.getTag('#current-user').value;
     var viewers = 'Calculando...';
     var usuario = '';
     var width;
 
     // Tratamento de conexões Socket
-    connection.connectSocket(function(socket) {
+    connection.connectSocket((socket) => {
         // Socket - Join
-        socket.on('join-broadcaster', function(hintsToJoinBroadcast) {
+        socket.on('join-broadcaster', (hintsToJoinBroadcast) => {
             console.log('--> join-broadcaster', hintsToJoinBroadcast);
             broadcastStatus = 1;
             connection.session = hintsToJoinBroadcast.typeOfStreams;
@@ -134,7 +138,7 @@ $(document).ready(function() {
                 OfferToReceiveVideo: false,
                 OfferToReceiveAudio: false
             };
-            connection.extra.modifiedValue = document.getElementById('room-id').value;
+            connection.extra.modifiedValue = currentRoomId.value;
             connection.updateExtraData();
             connection.broadcastId = hintsToJoinBroadcast.broadcastId;
             connection.join(hintsToJoinBroadcast.userid);
@@ -142,32 +146,32 @@ $(document).ready(function() {
             callToast('<i class="fa fa-play-circle fa-lg"></i> Transmissão iniciada!', 'blue');
         });
         // Socket - Rejoin
-        socket.on('rejoin-broadcast', function(broadcastId) {
-            console.log('--> rejoin-broadcast', broadcastId);
+        socket.on('rejoin-broadcast', (getBroadcasterId) => {
+            console.log('--> rejoin-broadcast', getBroadcasterId);
             broadcastStatus = 1;
             connection.attachStreams = [];
-            connection.extra.modifiedValue = document.getElementById('room-id').value;
+            connection.extra.modifiedValue = currentRoomId.value;
             connection.updateExtraData();
-            socket.emit('check-broadcast-presence', broadcastId, function(isBroadcastExists) {
+            socket.emit('check-broadcast-presence', getBroadcasterId, (isBroadcastExists) => {
                 console.log('check-existente');
                 if (!isBroadcastExists) {
-                    connection.userid = broadcastId;
+                    connection.userid = getBroadcasterId;
                 }
                 socket.emit('join-broadcast', {
-                    broadcastId: broadcastId,
+                    broadcastId: getBroadcasterId,
                     userid: connection.userid,
                     typeOfStreams: connection.session
                 });
             });
         });
         // Socket - Parado
-        socket.on('broadcast-stopped', function(broadcastId) {
-            console.error('--> Broadcast finalizada', broadcastId);
+        socket.on('broadcast-stopped', (getBroadcasterId) => {
+            console.error('--> Broadcast finalizada', getBroadcasterId);
             broadcastStatus = 0;
             callToast('<i class="fa fa-stop-circle fa-lg"></i> Transmissão finalizada!', 'red darken-3');
         });
         // Socket - Iniciando
-        socket.on('start-broadcasting', function(typeOfStreams) {
+        socket.on('start-broadcasting', (typeOfStreams) => {
             console.log('--> Iniciando broadcasting', typeOfStreams);
             broadcastStatus = 1;
             connection.sdpConstraints.mandatory = {
@@ -179,15 +183,15 @@ $(document).ready(function() {
             console.log('--> Abrindo: ' + connection.userid);
         });
         // Socket - Saindo
-        socket.on('leave-the-room', function(targetconnection) {
+        socket.on('leave-the-room', (targetconnection) => {
             console.log('--> Saindo...' + targetconnection.remoteUserId + ' -> ' + connection.userid);
             if (targetconnection.remoteUserId != connection.userid) return;
             connection.leave();
         });
     });
     // Tratamento de erro para compartilhamento de tela
-    connection.getScreenConstraints = function(callback) {
-        getScreenConstraints(function(error, screen_constraints) {
+    connection.getScreenConstraints = (callback) => {
+        getScreenConstraints((error, screen_constraints) => {
             if (!error) {
                 screen_constraints = connection.modifyScreenConstraints(screen_constraints);
                 callback(error, screen_constraints);
@@ -206,7 +210,7 @@ $(document).ready(function() {
         });
     };
     // Inicia a transmissão
-    connection.onstream = function(event) {
+    connection.onstream = (event) => {
         if (!onParticipation) {
             inRoom.value = event.userid;
         }
@@ -219,7 +223,7 @@ $(document).ready(function() {
             console.log('PARTICIPAÇÃO REMOTA--------');
             // Remove qualquer conexão duplicada
             if (incomingCon == event.stream.streamid) {
-                connection.getAllParticipants().forEach(function(p) {
+                connection.getAllParticipants().forEach((p) => {
                     console.log('Transmitindo: ', event.stream.streamid, p, incomingCon);
                     if (p + '' == event.userid + '') {
                         var peer = connection.peers[p].peer;
@@ -246,10 +250,10 @@ $(document).ready(function() {
                 callToast('<i class="material-icons">videocam</i> Participação iniciada!', 'blue darken-2');
                 $('#span-video-preview-3rd').fadeIn(300);
                 setTimeout(function() {
-                    connection.getAllParticipants().forEach(function(p) {
+                    connection.getAllParticipants().forEach((p) => {
                         if (p + '' != event.userid + '') {
                             var peer = connection.peers[p].peer;
-                            event.stream.getTracks().forEach(function(track) {
+                            event.stream.getTracks().forEach((track) => {
                                 try {
                                     peer.addTrack(track, event.stream);
                                 } catch (e) {
@@ -266,8 +270,8 @@ $(document).ready(function() {
                 }, 500);
                 $('#div-end').fadeIn(300);
                 endSessionAccess.onclick = function() {
-                    streamVideos.forEach(function(stream) {
-                        connection.getAllParticipants().forEach(function(p) {
+                    streamVideos.forEach((stream) => {
+                        connection.getAllParticipants().forEach((p) => {
                             var peer = connection.peers[p].peer;
                             stream.stop();
                             peer.removeStream(stream);
@@ -290,7 +294,7 @@ $(document).ready(function() {
         } else if (!onParticipation && (event.type === 'remote' && event.stream.isScreen === true)) {
             console.log('REMOTO COM SCREEN --> ', event.stream.streamid);
             if (incomingCon == event.stream.streamid && incomingCon != connectedAt) {
-                connection.getAllParticipants().forEach(function(p) {
+                connection.getAllParticipants().forEach((p) => {
                     if (p + '' == event.userid + '') {
                         var peer = connection.peers[p].peer;
                         //event.stream.stop();
@@ -358,7 +362,7 @@ $(document).ready(function() {
         } else if (!onParticipation && (event.type === 'remote' && !event.stream.isScreen)) {
             console.log('REMOTO SEM SCREEN --> ' + event.stream.streamid);
             if (incomingCon == event.stream.streamid) {
-                connection.getAllParticipants().forEach(function(p) {
+                connection.getAllParticipants().forEach((p) => {
                     if (p + '' == event.userid + '') {
                         var peer = connection.peers[p].peer;
                         //event.stream.stop();
@@ -422,7 +426,7 @@ $(document).ready(function() {
                 if (broadcastStatus == 1 && (solicita === 0 && !lockSolicitation)) {
                     // Constroi e envia mensagem solicitando a vez
                     var msgrash = [];
-                    var myIdentity = document.getElementById('room-id').value;
+                    var myIdentity = currentRoomId.value;
                     msgrash[0] = btoa('@PedeAVez');
                     msgrash[1] = currentUser;
                     msgrash[2] = connection.userid;
@@ -447,19 +451,19 @@ $(document).ready(function() {
             // Tratamento de áudio: Botão "Áudio" -> Toggle on/off
             vol.onclick = function() {
                 if (vol.getAttribute('data-active') == 'enabled') {
-                    [event.stream].forEach(function(stream) {
+                    [event.stream].forEach((stream) => {
                         stream.mute('audio');
                     });
                     setVol('off');
                 } else {
-                    [event.stream].forEach(function(stream) {
+                    [event.stream].forEach((stream) => {
                         stream.unmute('audio');
                     });
                     setVol('on');
                 }
             };
             // Contagem de usuários conectados
-            connection.getAllParticipants().forEach(function(participantId) {
+            connection.getAllParticipants().forEach((participantId) => {
                 var user = connection.peers[participantId];
                 var userextra = user.extra;
             });
@@ -469,7 +473,7 @@ $(document).ready(function() {
         } else if (!onParticipation && (event.type === 'local' && !event.stream.isScreen)) {
             console.log('TRANSMISSÃO LOCAL------');
             if (incomingCon == event.stream.streamid) {
-                connection.getAllParticipants().forEach(function(p) {
+                connection.getAllParticipants().forEach((p) => {
                     if (p + '' == event.userid + '') {
                         var peer = connection.peers[p].peer;
                         stream.stop();
@@ -506,14 +510,14 @@ $(document).ready(function() {
             // Tratamento de áudio: Botão "Microfone" -> Toggle on/off
             mute.onclick = function() {
                 if (mute.getAttribute('data-active') == 'enabled') {
-                    currentStream.forEach(function(stream) {
+                    currentStream.forEach((stream) => {
                         if (!stream.isScreen) {
                             stream.mute('audio');
                         }
                     });
                     setMute('off');
                 } else {
-                    currentStream.forEach(function(stream) {
+                    currentStream.forEach((stream) => {
                         if (!stream.isScreen) {
                             stream.unmute({
                                 audio: true,
@@ -528,7 +532,7 @@ $(document).ready(function() {
             // Tratamento de áudio e video: Botão "Camera" -> Toggle on/off
             cam.onclick = function() {
                 if (cam.getAttribute('data-active') == 'enabled') {
-                    currentStream.forEach(function(stream) {
+                    currentStream.forEach((stream) => {
                         if (!stream.isScreen) {
                             stream.mute('video');
                             stream.mute('audio');
@@ -537,7 +541,7 @@ $(document).ready(function() {
                     setCam('off');
                     setMute('off');
                 } else {
-                    currentStream.forEach(function(stream) {
+                    currentStream.forEach((stream) => {
                         if (!stream.isScreen) {
                             stream.unmute('video');
                             stream.unmute('audio');
@@ -556,7 +560,7 @@ $(document).ready(function() {
                     response[j].onclick = function() {
                         var admResponse = this.id.split('_');
                         var msgrash = [];
-                        var myIdentity = document.getElementById('room-id').value;
+                        var myIdentity = currentRoomId.value;
                         msgrash[0] = btoa('@PedeAVez:' + admResponse[0]);
                         msgrash[1] = currentUser;
                         msgrash[2] = admResponse[1];
@@ -598,9 +602,9 @@ $(document).ready(function() {
                     connection.addStream({
                         screen: true,
                         oneway: true,
-                        streamCallback: function(stream) {
+                        streamCallback: (stream) => {
                             setTimeout(function() {
-                                connection.getAllParticipants().forEach(function(p) {
+                                connection.getAllParticipants().forEach((p) => {
                                     connection.renegotiate(p, {
                                         screen: true,
                                         oneway: true
@@ -616,14 +620,14 @@ $(document).ready(function() {
                     var streamConnection = document.getElementById('in-screen').value;
                     var streamToRemove = null;
                     var newArray = [];
-                    connection.attachStreams.forEach(function(stream) {
+                    connection.attachStreams.forEach((stream) => {
                         if (stream.id === streamConnection) {
                             streamToRemove = stream;
                             stream.stop();
                         } else newArray.push(stream);
                     });
                     connection.attachStreams = newArray;
-                    connection.getAllParticipants().forEach(function(p) {
+                    connection.getAllParticipants().forEach((p) => {
                         var peer = connection.peers[p].peer;
                         try {
                             peer.removeStream(streamToRemove);
@@ -635,7 +639,7 @@ $(document).ready(function() {
                     });
                     // Mensagem de finalização de screen sharing
                     var msgrash = [];
-                    var myIdentity = document.getElementById('room-id').value;
+                    var myIdentity = currentRoomId.value;
                     msgrash[0] = btoa('@Finaliza-Share');
                     msgrash[1] = currentUser;
                     msgrash[2] = streamConnection;
@@ -654,10 +658,10 @@ $(document).ready(function() {
         screen.onclick = function() { fullscreen(); };
         exitscreen.onclick = function() { fullscreen(); };
         // Tratamento das funções MUTE e UNMUTE
-        connection.onmute = function(event) {
+        connection.onmute = (event) => {
             event.mediaElement.setAttribute('poster', '/img/bg.jpg');
         };
-        connection.onunmute = function(event) {
+        connection.onunmute = (event) => {
             event.mediaElement.removeAttribute('poster');
         };
         // Tratamento da função de chat da barra de controle de mídia
@@ -685,15 +689,15 @@ $(document).ready(function() {
                 setParticipation('dis');
                 onParticipation = false;
                 try {
-                    connection.attachStreams.forEach(function(stream) {
-                        connection.getAllParticipants().forEach(function(p) {
+                    connection.attachStreams.forEach((stream) => {
+                        connection.getAllParticipants().forEach((p) => {
                             var peer = connection.peers[p].peer;
                             stream.stop();
                             peer.removeStream(stream);
                         });
                     });
                     var msgrash = [];
-                    var myIdentity = document.getElementById('room-id').value;
+                    var myIdentity = currentRoomId.value;
                     msgrash[0] = btoa('@Finaliza-Participante');
                     msgrash[1] = currentUser;
                     msgrash[2] = connection.userid;
@@ -715,16 +719,16 @@ $(document).ready(function() {
     };
     //=======================================================================================================
     // Listener para abertura de conexões
-    connection.onopen = function(event) {
+    connection.onopen = (event) => {
         console.log(event);
         if (event.userid != connectedAt) {
-            connection.getAllParticipants().forEach(function(p) {
+            connection.getAllParticipants().forEach((p) => {
                 //connection.disconnectWith(event.userid);
             });
         }
     };
     // Listener para finalização de streams
-    connection.onstreamended = function(event) {
+    connection.onstreamended = (event) => {
         if (event.stream.isScreen) {
             $('#span-video-preview-2nd').hide();
             ComponentSalaHelper.toggleIncomingVideos('out');
@@ -735,50 +739,28 @@ $(document).ready(function() {
         }
     };
     // Listener para fim de conexões
-    connection.onleave = function(event) {
+    connection.onleave = (event) => {
         console.log('DEIXANDO CONEXÃO...', event);
     };
 
     // Ação de criar uma sala ao clicar em 'btn-join-as-productor' ==========================================
-    document.getElementById('btn-join-as-productor').onclick = () => {
-        /*
-         *    var elem          html elem.
-         *    var roomId        integer
-         *    var materia       string
-         *    var assunto       string
-         *    var roomName      string
-         *    var roomCursos    string
-         *    var roomHash      string
-         *    var values        array
-         *    var strValues     string
-         *    var broadcastId   string
-         */
-        let elem = document.getElementById(this.id);
-        let roomId = document.getElementById('room-id').value;
-        let materia = document.querySelector('#tema').value;
-        let assunto = document.querySelector('#assunto').value;
-        let roomName = currentUser;
+    startRoom.onclick = function() {
+
+        let createRoom = new RoomController();
+        let newRoom = createRoom.setRoom();
+
         let values = $('#cursos-list').val();
-        let strValues = '';
-        for ($i = 0; $i < values.length; $i++) {
-            strValues += values[$i];
-            if ($i != (values.length - 1)) {
-                strValues += ';';
-            }
-        }
-        if (strValues != '' && (materia != '' && assunto != '')) {
-            // Definição do Hash da sala criada
-            var roomCursos = strValues;
-            var roomHash = btoa(materia + "|" + roomName + "|" + assunto + "|" + roomCursos + "|" + roomId);
-            usuario = roomName;
-            var broadcastId = roomHash;
+        let strValues = values.join(';');
+
+        if (createRoom.validade()) {
+            usuario = newRoom.name;
             onlobby = false;
-            // Inicializa a tela de apresentação (video)
+            // Inicializa a tela de apresentação
             callTeacherStream();
             // Modela e apresenta cabeçalho do video
-            setRoomLabel('video-camera', materia, assunto);
+            setRoomLabel('video-camera', newRoom.tema, newRoom.assunto);
 
-            document.getElementById('btn-join-as-productor').disabled = true;
+            startRoom.disabled = true;
             // Define inicialização de sessão
             // -> Permite Audio, Video e Dados
             connection.session = {
@@ -798,15 +780,13 @@ $(document).ready(function() {
             // Inicializa Socket
             var socket = connection.getSocket();
             // Verifica existência do broadcast
-            socket.emit('check-broadcast-presence', broadcastId, function(isBroadcastExists) {
+            socket.emit('check-broadcast-presence', newRoom.hash, (isBroadcastExists) => {
                 if (!isBroadcastExists) {
-                    connection.userid = broadcastId;
-                    console.log('Definindo userid broadcaster: ' + connection.userid);
+                    connection.userid = newRoom.hash;
                 }
-                console.log('check-broadcast-presence', broadcastId, isBroadcastExists);
                 //start-broadcasting
                 socket.emit('join-broadcast', {
-                    broadcastId: broadcastId,
+                    broadcastId: newRoom.hash,
                     userid: connection.userid,
                     typeOfStreams: connection.session
                         //bandwidth: connection.bandwidth
@@ -838,32 +818,28 @@ $(document).ready(function() {
             params[d(match[1])] = d(match[2]);
         window.params = params;
     })();
-    var broadcastId = '';
+    let broadcastId = '';
     if (localStorage.getItem(connection.socketMessageEvent)) {
         broadcastId = localStorage.getItem(connection.socketMessageEvent);
     } else {
         broadcastId = connection.token();
     }
-    //document.getElementById('room-id').value = broadcastId;
-    document.getElementById('room-id').onkeyup = function() {
+
+    currentRoomId.onkeyup = function() {
         localStorage.setItem(connection.socketMessageEvent, this.value);
     };
-    var hashString = location.hash.replace('#', '');
+    let hashString = location.hash.replace('#', '');
     if (hashString.length && hashString.indexOf('comment-') == 0) {
         hashString = '';
     }
-    var broadcastId = params.broadcastId;
-    if (!broadcastId && hashString.length) {
-        broadcastId = hashString;
-    }
 
     if (broadcastId && broadcastId.length) {
-        document.getElementById('room-id').value = broadcastId;
+        currentRoomId.value = broadcastId;
         localStorage.setItem(connection.socketMessageEvent, broadcastId);
         // Efetua o join automático na sala em caso de desconexão do espectador
         // ->Verificação a cada 5 segundos
         (function reCheckRoomPresence() {
-            connection.checkPresence(broadcastId, function(isRoomExists) {
+            connection.checkPresence(broadcastId, (isRoomExists) => {
                 if (isRoomExists) {
                     document.getElementById(broadcastId).onclick();
                     return;
@@ -873,7 +849,7 @@ $(document).ready(function() {
         })();
     }
     // Verifica quantas conexões estão ativas nesse broadcast
-    connection.onNumberOfBroadcastViewersUpdated = function(event) {
+    connection.onNumberOfBroadcastViewersUpdated = (event) => {
         if (!connection.isInitiator) return;
         viewers = event.numberOfBroadcastViewers;
         changeCounter(viewers);
@@ -884,61 +860,40 @@ $(document).ready(function() {
         // Se ainda estiver no lobby das salas
         if (onlobby) {
             //Verifica a existência de uma sala pública
-            connection.getPublicModerators(function(array) {
+            connection.getPublicModerators((array) => {
                 publicRoomsDiv.innerHTML = '';
                 // Se existir alguma sala pública execute
                 if (array.length > 0) {
-                    array.forEach(function(moderator) {
+                    array.forEach((moderator) => {
                         //Coleta o número de espectadores conectados à sala
-                        connection.getNumberOfBroadcastViewers(moderator.userid, function(numberOfBroadcastViewers) {
+                        connection.getNumberOfBroadcastViewers(moderator.userid, (numberOfBroadcastViewers) => {
                             viewers = numberOfBroadcastViewers;
                         });
                         // Verifica se quem conecta é o próprio moderador
                         if (moderator.userid == connection.userid) return;
                         // Cria labels para exibição de salas disponíveis
-                        /**
-                         *  var labelRoom           string
-                         *  var labelClasse         string
-                         *  var labelAssunto        string
-                         *  var labelApresentador   string
-                         *  var labelCurso          string
-                         *  var labelWhois          string
-                         *  var myClass             string
-                         *  var allowed             Boolean
-                         *  var countRooms          integer
-                         *  var classes             array
-                         *  var broadcastId         string
-                         *  var socket              connection.socket
-                         *  var message             string
-                         */
                         // Verifica se a sala criada atende às especificações do sistema
                         // -> Usado enquanto o connection.socketURL 
                         var labelRoom = moderator.userid;
                         try {
                             labelRoom = atob(labelRoom);
                         } catch (exp) {
-                            if (array.length < 2) {
-                                ComponentSalaHelper.noRooms();
-                            }
+                            if (array.length < 2) ComponentSalaHelper.noRooms();
                             return;
                         }
-                        var labelClasse = labelRoom.split('|')[0];
-                        var labelApresentador = labelRoom.split('|')[1];
-                        var labelAssunto = labelRoom.split('|')[2];
-                        var labelCurso = labelRoom.split('|')[3];
-                        var labelWhois = labelRoom.split('|')[4];
-                        var myClass = document.getElementById('target').value;
-                        var countRooms = 0;
-                        var allowed = false;
-                        var classes = myClass.split(';');
+
+                        let viewerData = new ViewerController();
+                        let newViewer = viewerData.setViewer(labelRoom);
+
+                        let countRooms = newViewer.activeRoom;
+                        let allowed = newViewer.allowed;
+                        let classes = newViewer.classes;
 
                         // Permissão de visualização do conteúdo em broadcast
-                        if (labelCurso !== undefined && labelCurso !== '') {
-                            for ($i = 0; $i < classes.length; $i++) {
-                                if (labelCurso.indexOf(classes[$i]) > -1) {
-                                    allowed = true;
-                                }
-                            }
+                        if (newViewer.curso !== undefined && newViewer.curso !== '') {
+                            classes.forEach((cls) => {
+                                if (newViewer.curso.indexOf(cls) > -1) allowed = true;
+                            });
                         }
                         if (allowed) {
                             countRooms++;
@@ -949,64 +904,51 @@ $(document).ready(function() {
                              *  var button  elem. html
                              */
                             usuario = currentUser;
-                            var divOpen = document.createElement('div');
-                            // Cria objeto de lista com as transmissões disponíveis
-                            var card = ComponentSalaHelper.constructAccessList(labelClasse, labelAssunto, labelApresentador, viewers, moderator.userid);
+                            let divOpen = bindDocument.createTag('div');
+                            let card = ComponentSalaHelper.constructAccessList(newViewer.classe, newViewer.assunto, newViewer.apresentador, viewers, moderator.userid);
 
                             divOpen.innerHTML = card;
                             divOpen.className = "card-panel hoverable";
-                            // Cria objeto botão para ingressar na transmissão selecionada
-                            var button = document.createElement('a');
+                            let button = bindDocument.createTag('a');
                             button.id = moderator.userid;
                             button.title = 'Entrar';
                             button.className = 'btn-floating room-enter blue darken-1';
+                            button.innerHTML = '<i class="material-icons large">play_arrow</i>';
                             // Atribui função para ingressar na sala disponível
                             button.onclick = function() {
+                                callTeacherStream();
+                                setRoomLabel('television', newViewer.classe, newViewer.assunto);
+
                                 onlobby = false;
                                 isModerator = false;
-                                broadcaster.value = labelWhois;
-                                // Desabilita botão de ingresso
-                                this.disabled = true;
-                                document.getElementById(this.id).disabled = true;
+                                broadcaster.value = newViewer.whois;
 
-                                // Inicializa apresentação
-                                callTeacherStream();
-
-                                var broadcastId = this.id;
+                                let getRoomId = this.id;
                                 connectedAt = this.id;
-                                // Definições de sessão
+
                                 connection.session = {
                                     audio: false,
                                     video: false
                                 };
                                 // Inicializa socket
-                                var socket = connection.getSocket();
+                                let socket = connection.getSocket();
                                 socket.emit('join-broadcast', {
-                                    broadcastId: broadcastId,
+                                    broadcastId: getRoomId,
                                     userid: connection.userid,
                                     typeOfStreams: connection.session
                                 });
 
                                 // Toggle de funções de Chat
-                                document.getElementById('toggle-chat').onclick = function() {
-                                    $('#text-message').focus();
+                                bindDocument.tag('#toggle-chat').onclick = function() {
+                                    bindDocument.tag('#text-message').focus();
                                 };
-                                // Modela e apresenta título do video
-                                setRoomLabel('television', labelClasse, labelAssunto);
                             };
-                            button.innerHTML = '<i class="material-icons large">play_arrow</i>';
-                            if (moderator.userid == connection.sessionid) {
-                                // Se já estiver conectado na sala desabilite o botão de integração
-                                button.disabled = true;
-                            }
                             //Append de elementos html
                             publicRoomsDiv.appendChild(divOpen);
-                            var divClose = document.getElementById("_" + moderator.userid);
+                            let divClose = bindDocument.tag("#_" + moderator.userid);
                             divClose.appendChild(button);
                         }
-                        if (countRooms == 0) {
-                            ComponentSalaHelper.noRooms();
-                        }
+                        if (countRooms == 0) ComponentSalaHelper.noRooms();
                     });
                 } else {
                     ComponentSalaHelper.noRooms();
@@ -1014,15 +956,15 @@ $(document).ready(function() {
             });
         } else {
             // Tratamento de conexões de espectadores
-            var htmlList = '';
-            var allParticipants = connection.getAllParticipants();
-            var numberOfUsers = allParticipants.length;
-            allParticipants.forEach(function(participantId) {
-                var myId = document.getElementById('room-id').value;
-                var user = connection.peers[participantId];
-                var userextra = user.extra;
+            let htmlList = '';
+            let allParticipants = connection.getAllParticipants();
+            let numberOfUsers = allParticipants.length;
+            allParticipants.forEach((participantId) => {
+                let myId = currentRoomId.value;
+                let user = connection.peers[participantId];
+                let userextra = user.extra;
                 if (userextra.modifiedValue) {
-                    var username = userextra.modifiedValue.split('-')[1];
+                    let username = userextra.modifiedValue.split('-')[1];
                     htmlList += constructConnectionList(userextra.modifiedValue, username, user.userid, true);
                 } else {
                     if (!isModerator) {
@@ -1086,7 +1028,7 @@ $(document).ready(function() {
         document.getElementById('text-message').value = '';
     };
     // Recebimento de mensagens
-    connection.onmessage = function(event) {
+    connection.onmessage = (event) => {
         if (event.data.userRemoved === true) {
             if (event.data.removedUserId == connection.userid) {
                 connection.close();
@@ -1131,7 +1073,6 @@ function appendDIV(event) {
             msgData[0] = chkrash[1];
             msgData[1] = (atob(chkrash[3])).split('|')[4];
             msgData[2] = chkrash[4];
-            console.log(solicita);
             listBox(msgData);
             return;
         } else if (chkrash[0] === btoa('@PedeAVez:allow')) {
