@@ -3,14 +3,14 @@ class ViewerController {
     constructor() {
 
         let tag = document.querySelector.bind(document);
-        this._myClass = tag('#target').value;
-        this._countRooms = 0;
-        this._allowed = false;
+        this._myClass = tag(conf.dom.viewer.TARGET);
+        this._countRooms = conf.viewer.COUNT_ROOMS;
+        this._allowed = conf.viewer.ALLOWED;
     }
 
     _setClasses() {
 
-        return this._myClass.split(';');
+        return this._myClass.value.split(';');
     }
 
     setViewer(roomid) {

@@ -23,7 +23,6 @@
  *  let streamVideos        Array           -> Lista de vídeos exibidos
  *  let incomingCon         String          -> Registra quem está efetuando a conexão no momento
  *  let connectedAt         String          -> Registra o ID do Broadcaster
- *  const urlSocket         String:SSL URL  -> URL para conexão com o serviço de sinalização
  */
 let solicita = 0;
 let broadcastStatus = 0;
@@ -37,95 +36,64 @@ let streamVideos = [];
 let incomingCon;
 let connectedAt;
 
-// Instancias
-let bindConnect = new Connect();
-let bindDocument = new Document();
-let connection = new RTCMultiConnection();
+// Instâncias
+let bindConnectController = new ConnectController();
+let bindConnect = bindConnectController.initiateConnection();
 
-const urlSocket = bindConnect.urlSocket;
+let bindMediaController = new MediaController();
+let bindMedia = bindMediaController.initiateMedia();
+
+let bindDocument = new Document();
+let createRoom = new RoomController();
+let viewerData = new ViewerController();
+let connection = new RTCMultiConnection();
 
 $(document).ready(function() {
 
     //bindConnect.exibeConexao();
     window.enableAdapter = true;
+
     //Application - Inicia a chamada e tratamento de multiconexão
-    /**
-     *  inst    connection          RTCMultiConnection
-     *  const   enableRecordings    Boolean:false
-     *  const   isPublicModerator   Boolean:true
-     */
-
-    const enableRecordings = false;
-    const isPublicModerator = true;
-
     // Definições de conexão
     connection.enableScalableBroadcast = bindConnect.enableScalableBroadcast;
     connection.maxRelayLimitPerUser = bindConnect.maxRelayLimitPerUser;
     connection.socketMessageEvent = bindConnect.socketMessageEvent;
-
-    // Conexão com serviço de websocket
-    connection.socketURL = urlSocket;
+    connection.socketURL = bindConnect.urlSocket;
 
     // Listeners de tratamento de tamanho de tela do video (Detecta Fullscreen OFF)
     ComponentSalaHelper.initListeners();
 
-    // Inicialização de variáveis de controle de elementos in-page
-    /**
-     *  var publicRoomsDiv      elem. html
-     *  var inRoom              elem. html
-     *  var videoPreview        elem. html
-     *  var mute                elem. html
-     *  var screen              elem. html
-     *  var exitscreen          elem. html
-     *  var vol                 elem. html
-     *  var cam                 elem. html
-     *  var pedir               elem. html
-     *  var ctlPedir            elem. html
-     *  var share               elem. html
-     *  var videoFirst          elem. html
-     *  var videoSecond         elem. html
-     *  var swapFirst           elem. html
-     *  var swapSecond          elem. html
-     *  var broadcaster         elem. html
-     *  var sessionAccess       elem. html
-     *  var endSessionAccess    elem. html
-     *  let currentRoomId       elem. html
-     *  let startRoom           elem. html
-     *  var currentUser         String
-     *  var viewers             String
-     *  var usuario             String
-     *  var msgrash             String
-     *  var myIdentity          String
-     *  var width               integer
-     */
+    let publicRoomsDiv = bindDocument.getTag('#public-conference');
+    let inRoom = bindDocument.getTag('#in-room');
 
-    var publicRoomsDiv = bindDocument.getTag('#public-conference');
-    var inRoom = bindDocument.getTag('#in-room');
-    var videoPreview = bindDocument.getTag('#video-preview');
-    var secondVideoPreview = bindDocument.getTag('#secondvideo-preview');
-    var thirdVideoPreview = bindDocument.getTag('#thirdvideo-preview');
-    var mute = bindDocument.getTag('#toggle-mute');
-    var screen = bindDocument.getTag('#toggle-screen');
-    var exitscreen = bindDocument.getTag('#exit-fullscreen');
-    var vol = bindDocument.getTag('#toggle-volume');
-    var cam = bindDocument.getTag('#toggle-camera');
-    var pedir = bindDocument.getTag('#pedir-vez');
-    var ctlPedir = bindDocument.getTag('#control-pedir-vez');
-    var share = bindDocument.getTag('#share-screen');
-    var videoFirst = bindDocument.getTag('#span-video-preview');
-    var videoSecond = bindDocument.getTag('#span-video-preview-2nd');
-    var videoThird = bindDocument.getTag('#span-video-preview-3rd');
-    var swapSecond = bindDocument.getTag('#swap-video');
-    var broadcaster = bindDocument.getTag('#broadcaster');
-    var sessionAccess = bindDocument.getTag('#enter-session');
-    var endSessionAccess = bindDocument.getTag('#end-session');
+    let mute = bindMedia.mute;
+    let screen = bindMedia.screen;
+    let exitscreen = bindMedia.exitscreen;
+    let vol = bindMedia.vol;
+    let cam = bindMedia.cam;
+    let pedir = bindMedia.pedir;
+    let ctlPedir = bindMedia.ctlPedir;
+    let share = bindMedia.share;
+    let videoSecond = bindMedia.videoSecond;
+    let swapSecond = bindMedia.swapSecond;
+    let sessionAccess = bindMedia.sessionAccess;
+    let endSessionAccess = bindMedia.endSessionAccess;
+
+    let broadcaster = bindDocument.getTag('#broadcaster');
+
     let currentRoomId = bindDocument.getTag('#room-id');
     let startRoom = bindDocument.getTag('#btn-join-as-productor');
     let myClass = bindDocument.getTag('#target');
-    var currentUser = bindDocument.getTag('#current-user').value;
-    var viewers = 'Calculando...';
-    var usuario = '';
-    var width;
+    let divEndBtn = bindDocument.getTag('#div-end');
+    let inScreen = bindDocument.getTag('#in-screen');
+    let toggleChat = bindDocument.getTag('#toggle-chat');
+    let textMessage = bindDocument.getTag('#text-message');
+    let contaUsuarios = bindDocument.getTag('#users-counter');
+    let connectList = bindDocument.getTag('#connected-users-list');
+    let currentUser = bindDocument.getTag('#current-user');
+    let viewers = 'Calculando...';
+    let usuario = '';
+    let width;
 
     // Tratamento de conexões Socket
     connection.connectSocket((socket) => {
@@ -179,7 +147,7 @@ $(document).ready(function() {
                 OfferToReceiveAudio: false
             };
             connection.session = typeOfStreams;
-            connection.open(connection.userid, isPublicModerator);
+            connection.open(connection.userid, bindConnect.isPublicModerator);
             console.log('--> Abrindo: ' + connection.userid);
         });
         // Socket - Saindo
@@ -200,7 +168,7 @@ $(document).ready(function() {
                 return;
             }
             if (error !== 'permission-denied') {
-                var elem = document.getElementById('msg-share');
+                var elem = bindDocument.getTag('#msg-share');
                 var instance = M.Modal.getInstance(elem);
                 instance.open();
             } else if (error === 'permission-denied') {
@@ -236,12 +204,12 @@ $(document).ready(function() {
             // Conexão remota de transmissão com o broadcaster
             if (arrVideos['main']) {
                 incomingCon = event.stream.streamid;
-                thirdVideoPreview.srcObject = event.stream;
+                bindMedia.thirdVideoPreview.srcObject = event.stream;
                 arrVideos['user'] = event.stream;
-                var playPromise = thirdVideoPreview.play();
+                var playPromise = bindMedia.thirdVideoPreview.play();
                 if (playPromise !== undefined) {
                     playPromise.then(_ => {
-                            thirdVideoPreview.play();
+                            bindMedia.thirdVideoPreview.play();
                         })
                         .catch(error => {
                             console.log('Carregando vídeo 3...');
@@ -281,7 +249,7 @@ $(document).ready(function() {
                     ComponentSalaHelper.toggleIncomingVideos('out');
                     var msgrash = [];
                     msgrash[0] = btoa('@Finaliza-Participacao');
-                    msgrash[1] = currentUser;
+                    msgrash[1] = currentUser.value;
                     msgrash[2] = connection.userid;
                     msgrash[3] = inRoom.value;
                     msgrash[4] = event.userid;
@@ -307,14 +275,14 @@ $(document).ready(function() {
             // Conexão remota com compartilhamento de tela
             $('#span-video-preview-2nd').fadeIn(300);
             ComponentSalaHelper.toggleIncomingVideos('in');
-            secondVideoPreview.srcObject = event.stream;
+            bindMedia.secondVideoPreview.srcObject = event.stream;
             arrVideos['screen'] = event.stream;
             incomingCon = event.stream.streamid
 
-            var playPromise = secondVideoPreview.play();
+            var playPromise = bindMedia.secondVideoPreview.play();
             if (playPromise !== undefined) {
                 playPromise.then(_ => {
-                        secondVideoPreview.play();
+                        bindMedia.secondVideoPreview.play();
                     })
                     .catch(error => {
                         console.log('Carregando vídeo 2...');
@@ -327,30 +295,30 @@ $(document).ready(function() {
                 var position = videoSecond.getAttribute('data-position');
                 if (position == 'second') {
                     videoSecond.setAttribute('data-position', 'main');
-                    videoPreview.classList.add('width-limit');
+                    bindMedia.videoPreview.classList.add('width-limit');
                 } else {
                     videoSecond.setAttribute('data-position', 'second');
-                    videoPreview.classList.remove('width-limit');
+                    bindMedia.videoPreview.classList.remove('width-limit');
                 }
                 // Inversão de src de vídeos
-                mvideoSrc = videoPreview.srcObject;
-                svideoSrc = secondVideoPreview.srcObject;
-                videoPreview.pause();
-                secondVideoPreview.pause();
-                videoPreview.srcObject = svideoSrc;
-                secondVideoPreview.srcObject = mvideoSrc;
+                mvideoSrc = bindMedia.videoPreview.srcObject;
+                svideoSrc = bindMedia.secondVideoPreview.srcObject;
+                bindMedia.videoPreview.pause();
+                bindMedia.secondVideoPreview.pause();
+                bindMedia.videoPreview.srcObject = svideoSrc;
+                bindMedia.secondVideoPreview.srcObject = mvideoSrc;
                 setTimeout(function() {
-                    var playSecReady = secondVideoPreview.play();
-                    var playReady = videoPreview.play();
+                    var playSecReady = bindMedia.secondVideoPreview.play();
+                    var playReady = bindMedia.videoPreview.play();
                     if (playSecReady !== undefined && playReady !== undefined) {
                         playSecReady.then(_ => {
-                                secondVideoPreview.play();
+                                bindMedia.secondVideoPreview.play();
                             })
                             .catch(error => {
                                 console.log('Carregando vídeo 2...');
                             });
                         playReady.then(_ => {
-                                videoPreview.play();
+                                bindMedia.videoPreview.play();
                             })
                             .catch(error => {
                                 console.log('Carregando vídeo 1...');
@@ -375,12 +343,12 @@ $(document).ready(function() {
             if (arrVideos['main']) {
                 $('#span-video-preview-3rd').fadeIn(300);
                 incomingCon = event.stream.streamid;
-                thirdVideoPreview.srcObject = event.stream;
+                bindMedia.thirdVideoPreview.srcObject = event.stream;
                 arrVideos['user'] = event.stream;
-                var playPromise = thirdVideoPreview.play();
+                var playPromise = bindMedia.thirdVideoPreview.play();
                 if (playPromise !== undefined) {
                     playPromise.then(_ => {
-                            thirdVideoPreview.play();
+                            bindMedia.thirdVideoPreview.play();
                         })
                         .catch(error => {
                             console.log('Carregando vídeo 3...');
@@ -390,15 +358,15 @@ $(document).ready(function() {
             } else {
                 incomingCon = event.stream.streamid;
                 onParticipation = false;
-                videoPreview.srcObject = event.stream;
+                bindMedia.videoPreview.srcObject = event.stream;
                 arrVideos['main'] = event.stream;
                 try {
-                    videoPreview.play();
+                    bindMedia.videoPreview.play();
                 } catch (e) {
-                    var playPromise = videoPreview.play();
+                    var playPromise = bindMedia.videoPreview.play();
                     if (playPromise !== undefined) {
                         playPromise.then(_ => {
-                                videoPreview.play();
+                                bindMedia.videoPreview.play();
                             })
                             .catch(error => {
                                 console.log('Carregando vídeo 1...');
@@ -411,7 +379,7 @@ $(document).ready(function() {
             $('#div-connect').hide();
             ctlPedir.innerHTML = constructBtnActionPedir();
             //$('#pedir-vez').tooltip();
-            pedir = document.getElementById('pedir-vez');
+            pedir = bindDocument.getTag('#pedir-vez');
             // Desabilita botão de ação para microfone
             setCam('dis');
             // Desabilita botão de ação para camera
@@ -428,7 +396,7 @@ $(document).ready(function() {
                     var msgrash = [];
                     var myIdentity = currentRoomId.value;
                     msgrash[0] = btoa('@PedeAVez');
-                    msgrash[1] = currentUser;
+                    msgrash[1] = currentUser.value;
                     msgrash[2] = connection.userid;
                     msgrash[3] = inRoom.value;
                     msgrash[4] = myIdentity;
@@ -489,10 +457,10 @@ $(document).ready(function() {
             incomingCon = event.stream.streamid;
             var currentStream = [event.stream];
 
-            videoPreview.srcObject = event.stream;
-            videoPreview.userid = event.userid;
-            videoPreview.muted = true;
-            videoPreview.play();
+            bindMedia.videoPreview.srcObject = event.stream;
+            bindMedia.videoPreview.userid = event.userid;
+            bindMedia.videoPreview.muted = true;
+            bindMedia.videoPreview.play();
 
             // Trata contador de solicitações
             $('#div-connect').hide();
@@ -562,7 +530,7 @@ $(document).ready(function() {
                         var msgrash = [];
                         var myIdentity = currentRoomId.value;
                         msgrash[0] = btoa('@PedeAVez:' + admResponse[0]);
-                        msgrash[1] = currentUser;
+                        msgrash[1] = currentUser.value;
                         msgrash[2] = admResponse[1];
                         msgrash[3] = inRoom.value;
                         msgrash[4] = myIdentity;
@@ -575,7 +543,7 @@ $(document).ready(function() {
                             trataSolicitacao(solicita);
                             if (admResponse[0] == 'allow') {
                                 lockSolicitation = true
-                                document.getElementById('div-end').setAttribute('data-target', admResponse[1]);
+                                divEndBtn.setAttribute('data-target', admResponse[1]);
                                 $('#div-end').fadeIn(300);
                             }
 
@@ -584,10 +552,10 @@ $(document).ready(function() {
                 }
                 endSessionAccess.onclick = function() {
                     $('#div-end').hide();
-                    var targetId = document.getElementById('div-end').getAttribute('data-target');
+                    var targetId = divEndBtn.getAttribute('data-target');
                     var msgrash = [];
                     msgrash[0] = btoa('@Finaliza-Participacao');
-                    msgrash[1] = currentUser;
+                    msgrash[1] = currentUser.value;
                     msgrash[2] = connection.userid;
                     msgrash[3] = inRoom.value;
                     msgrash[4] = targetId;
@@ -611,13 +579,13 @@ $(document).ready(function() {
                                     });
                                 });
                             }, 2000);
-                            document.getElementById('in-screen').value = stream.streamid;
+                            inScreen.value = stream.streamid;
                         }
                     });
                 } else {
                     $('#screen-share-alert').slideUp(300);
                     setShare('on');
-                    var streamConnection = document.getElementById('in-screen').value;
+                    var streamConnection = inScreen.value;
                     var streamToRemove = null;
                     var newArray = [];
                     connection.attachStreams.forEach((stream) => {
@@ -641,7 +609,7 @@ $(document).ready(function() {
                     var msgrash = [];
                     var myIdentity = currentRoomId.value;
                     msgrash[0] = btoa('@Finaliza-Share');
-                    msgrash[1] = currentUser;
+                    msgrash[1] = currentUser.value;
                     msgrash[2] = streamConnection;
                     msgrash[3] = inRoom.value;
                     msgrash[4] = myIdentity;
@@ -665,8 +633,8 @@ $(document).ready(function() {
             event.mediaElement.removeAttribute('poster');
         };
         // Tratamento da função de chat da barra de controle de mídia
-        document.getElementById('toggle-chat').onclick = function() {
-            $('#text-message').focus();
+        toggleChat.onclick = function() {
+            textMessage.focus();
         };
         // Tratamento de ingresso na transmissão: Botão "Ingressar" -> Ingressa e participa da apresentação
         // ->Toggle On/Off
@@ -699,7 +667,7 @@ $(document).ready(function() {
                     var msgrash = [];
                     var myIdentity = currentRoomId.value;
                     msgrash[0] = btoa('@Finaliza-Participante');
-                    msgrash[1] = currentUser;
+                    msgrash[1] = currentUser.value;
                     msgrash[2] = connection.userid;
                     msgrash[3] = inRoom.value;
                     msgrash[4] = myIdentity;
@@ -712,7 +680,7 @@ $(document).ready(function() {
                 }
             }
         };
-        let fullsize = document.getElementById('toggle-size');
+        let fullsize = bindDocument.getTag('#toggle-size');
         fullsize.onclick = function() {
             toggleFullsize();
         };
@@ -746,7 +714,6 @@ $(document).ready(function() {
     // Ação de criar uma sala ao clicar em 'btn-join-as-productor' ==========================================
     startRoom.onclick = function() {
 
-        let createRoom = new RoomController();
         let newRoom = createRoom.setRoom();
 
         let values = $('#cursos-list').val();
@@ -841,7 +808,7 @@ $(document).ready(function() {
         (function reCheckRoomPresence() {
             connection.checkPresence(broadcastId, (isRoomExists) => {
                 if (isRoomExists) {
-                    document.getElementById(broadcastId).onclick();
+                    bindDocument.getTag('#' + broadcastId).onclick();
                     return;
                 }
                 setTimeout(reCheckRoomPresence, 5000);
@@ -865,24 +832,25 @@ $(document).ready(function() {
                 // Se existir alguma sala pública execute
                 if (array.length > 0) {
                     array.forEach((moderator) => {
-                        //Coleta o número de espectadores conectados à sala
-                        connection.getNumberOfBroadcastViewers(moderator.userid, (numberOfBroadcastViewers) => {
+                        let moderatorId = moderator.userid;
+
+                        connection.getNumberOfBroadcastViewers(moderatorId, (numberOfBroadcastViewers) => {
                             viewers = numberOfBroadcastViewers;
                         });
-                        // Verifica se quem conecta é o próprio moderador
-                        if (moderator.userid == connection.userid) return;
-                        // Cria labels para exibição de salas disponíveis
+
+                        if (moderatorId == connection.userid) return;
+
                         // Verifica se a sala criada atende às especificações do sistema
-                        // -> Usado enquanto o connection.socketURL 
-                        var labelRoom = moderator.userid;
+                        let labelRoom = moderatorId;
                         try {
                             labelRoom = atob(labelRoom);
+                            // PALEATIVO - ARRUMAR!
+                            if (labelRoom.length < 10) return;
                         } catch (exp) {
                             if (array.length < 2) ComponentSalaHelper.noRooms();
                             return;
                         }
 
-                        let viewerData = new ViewerController();
                         let newViewer = viewerData.setViewer(labelRoom);
 
                         let countRooms = newViewer.activeRoom;
@@ -903,18 +871,18 @@ $(document).ready(function() {
                              *  var divOpen elem. html
                              *  var button  elem. html
                              */
-                            usuario = currentUser;
+                            usuario = currentUser.value;
                             let divOpen = bindDocument.createTag('div');
-                            let card = ComponentSalaHelper.constructAccessList(newViewer.classe, newViewer.assunto, newViewer.apresentador, viewers, moderator.userid);
+                            let card = ComponentSalaHelper.constructAccessList(newViewer.classe, newViewer.assunto, newViewer.apresentador, viewers, moderatorId);
 
                             divOpen.innerHTML = card;
                             divOpen.className = "card-panel hoverable";
                             let button = bindDocument.createTag('a');
-                            button.id = moderator.userid;
+                            button.id = moderatorId;
                             button.title = 'Entrar';
                             button.className = 'btn-floating room-enter blue darken-1';
                             button.innerHTML = '<i class="material-icons large">play_arrow</i>';
-                            // Atribui função para ingressar na sala disponível
+
                             button.onclick = function() {
                                 callTeacherStream();
                                 setRoomLabel('television', newViewer.classe, newViewer.assunto);
@@ -937,15 +905,10 @@ $(document).ready(function() {
                                     userid: connection.userid,
                                     typeOfStreams: connection.session
                                 });
-
-                                // Toggle de funções de Chat
-                                bindDocument.tag('#toggle-chat').onclick = function() {
-                                    bindDocument.tag('#text-message').focus();
-                                };
                             };
                             //Append de elementos html
                             publicRoomsDiv.appendChild(divOpen);
-                            let divClose = document.getElementById("_" + moderator.userid);
+                            let divClose = document.getElementById('_' + moderatorId);
                             divClose.appendChild(button);
                         }
                         if (countRooms == 0) ComponentSalaHelper.noRooms();
@@ -968,19 +931,18 @@ $(document).ready(function() {
                     htmlList += constructConnectionList(userextra.modifiedValue, username, user.userid, true);
                 } else {
                     if (!isModerator) {
-                        htmlList += constructConnectionList(myId, currentUser + ' (você)', connection.userid, false);
+                        htmlList += constructConnectionList(myId, currentUser.value + ' (você)', connection.userid, false);
                     }
                 }
             });
             if (numberOfUsers > 0) {
-                var contaUsuarios = document.getElementById('users-counter');
                 if (contaUsuarios.getAttribute('data-target') == 0) {
-                    document.getElementById('connected-users-list').innerHTML = htmlList;
+                    connectList.innerHTML = htmlList;
                     changeCounter(numberOfUsers);
                     $('#connected-users').fadeIn(300);
                 }
                 var disconnectId;
-                var btnDisconnect = document.getElementsByClassName('disconnect-btn');
+                var btnDisconnect = bindDocument.getAllTags('.disconnect-btn');
                 for (var j = 0; j < btnDisconnect.length; j++) {
                     btnDisconnect[j].onclick = function() {
                         disconnectId = this.getAttribute('data-announced');
@@ -1004,7 +966,7 @@ $(document).ready(function() {
     /**
      *  var texto String
      */
-    document.getElementById('text-message').onkeyup = function(e) {
+    textMessage.onkeyup = function(e) {
         if (e.keyCode != 13) return;
         this.value = this.value.replace(/^\s+|\s+$/g, '');
         if (!this.value.length) return;
@@ -1017,15 +979,15 @@ $(document).ready(function() {
     /**
      *  var texto String
      */
-    document.getElementById('send-message-btn').onclick = function() {
-        var texto = document.getElementById('text-message').value
+    bindDocument.getTag('#send-message-btn').onclick = function() {
+        var texto = textMessage.value
         texto = texto.replace(/^\s+|\s+$/g, '');
         if (!texto.length) return;
         texto = "<b class='small'>" + usuario + "</b>:<br>" + texto;
         texto = btoa(texto);
         connection.send(texto);
         appendDIV(texto);
-        document.getElementById('text-message').value = '';
+        textMessage.value = '';
     };
     // Recebimento de mensagens
     connection.onmessage = (event) => {
@@ -1056,7 +1018,8 @@ $(document).ready(function() {
  * var message       string
  */
 function appendDIV(event) {
-    var chatContainer = document.getElementById('chat-panel');
+    let chatContainer = bindDocument.getTag('#chat-panel');
+    let accessBtn = bindDocument.getTag('#enter-session');
     var remoto = false;
     // Recebe mensagens de origem externa ou interna
     if (event.data) remoto = true;
@@ -1066,7 +1029,7 @@ function appendDIV(event) {
     if (remoto && (Array.isArray(text) && text.length > 4)) {
         var chkrash = event.data;
         var msgData = [];
-        var myRoom = document.getElementById('room-id').value;
+        var myRoom = bindDocument.getTag('#room-id').value;
         // Identifica se a mensagem é uma solicitação de serviço
         if (chkrash[0] === btoa('@PedeAVez')) {
             // Indica que algum usuário solicita a permissão para falar
@@ -1094,8 +1057,8 @@ function appendDIV(event) {
             }
             return;
         } else if (chkrash[0] === btoa('@Finaliza-Share')) {
-            var videoSecond = document.getElementById('span-video-preview-2nd');
-            var swapSecond = document.getElementById('swap-video');
+            var videoSecond = bindDocument.getTag('#span-video-preview-2nd');
+            var swapSecond = bindDocument.getTag('#swap-video');
             var position = videoSecond.getAttribute('data-position');
             if (position == 'main') {
                 swapSecond.click();
@@ -1107,10 +1070,10 @@ function appendDIV(event) {
         } else if (chkrash[0] === btoa('@Finaliza-Participacao')) {
             if (!onParticipation) {
                 onParticipation = true;
-                document.getElementById('enter-session').setAttribute('data-active', 'enabled');
+                accessBtn.setAttribute('data-active', 'enabled');
                 callToast('<i class="fa fa-times"></i> Solicitação cancelada.', 'red darken-3');
             }
-            document.getElementById('enter-session').click();
+            accessBtn.click();
         } else if (chkrash[0] === btoa('@Finaliza-Participante')) {
             $('#div-end').hide();
         } else {
@@ -1126,12 +1089,12 @@ function appendDIV(event) {
  * Param text: Array contando o nome so solicitante, o Id da conexão da sala e o Id da conexão do solicitante
  */
 function listBox(text) {
-    var msg = text;
-    var receiver = document.getElementById('room-id').value
-    var solList = document.getElementById('solicita-list');
-    var htmlList;
+    let msg = text;
+    let receiver = bindDocument.getTag('#room-id');
+    let solList = bindDocument.getTag('#solicita-list');
+    let htmlList;
     // Verifica se o destinatário é o broadcaster para entregar a solicitação
-    if (msg[1] === receiver) {
+    if (msg[1] === receiver.value) {
         solicita++;
         trataSolicitacao(solicita);
         if (solicita === 1) { solList.innerHTML = '' };
@@ -1147,17 +1110,17 @@ function listBox(text) {
  * Param userid: String de dados de quem efetuou a conexão
  */
 function alertConnection(userid) {
-    setTimeout(function() {
+    setTimeout(() => {
         console.log('Sala ' + userid + ' se conectou a você.');
         var htmlList = '';
-        var broadcaster = document.getElementById('in-room').value;
+        var broadcaster = bindDocument.getTag('#in-room').value;
         for (var j = 0; j < Object.keys(connections).length; j++) {
             var roomaccount = connections[j].split('|')[0];
             var roomname = connections[j].split('|')[1];
             var roomanounce = connections[j].split('|')[2];
             htmlList += constructConnectionList(roomaccount, roomname, roomanounce, true);
         }
-        document.getElementById('connection-list').innerHTML = htmlList;
+        bindDocument.getTag('#connection-list').innerHTML = htmlList;
     }, 1000);
 }
 
@@ -1166,7 +1129,7 @@ function alertConnection(userid) {
  * Param userid: String de dados de quem foi desconectado
  */
 function alertDisconnection(userid) {
-    var broadcaster = document.getElementById('in-room').value;
+    var broadcaster = bindDocument.getTag('#in-room').value;
     if (userid === broadcaster) {
         callToast('<i class="fa fa-times"></i> Você foi desconectado!', 'red darken-3');
         setTimeout(location.reload.bind(location), 3000);

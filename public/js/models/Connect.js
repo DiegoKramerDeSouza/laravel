@@ -1,11 +1,12 @@
 class Connect {
 
-    constructor() {
+    constructor(urlSocket, enableScalableBroadcast, maxRelayLimitPerUser, socketMessageEvent, isPublicModerator) {
 
-        this._urlSocket = 'https://rtcmulticonnection.herokuapp.com:443/';
-        this._enableScalableBroadcast = true;
-        this._maxRelayLimitPerUser = 0;
-        this._socketMessageEvent = 'Inicia-Apresentacao';
+        this._urlSocket = urlSocket;
+        this._enableScalableBroadcast = enableScalableBroadcast;
+        this._maxRelayLimitPerUser = maxRelayLimitPerUser;
+        this._socketMessageEvent = socketMessageEvent;
+        this._isPublicModerator = isPublicModerator;
         Object.freeze(this);
     }
 
@@ -29,4 +30,8 @@ class Connect {
         return this._socketMessageEvent;
     }
 
+    get isPublicModerator() {
+
+        return this._isPublicModerator;
+    }
 }
