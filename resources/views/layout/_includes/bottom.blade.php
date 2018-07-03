@@ -47,6 +47,7 @@
                 <!-- Adição dos scripts de utilização do WEBRTC-->
                 <script type="text/javascript" src="{!! asset('js/conf/conf.js') !!}"></script>  
                 <script type="text/javascript" src="{!! asset('js/models/Document.js') !!}"></script>  
+                <script type="text/javascript" src="{!! asset('js/controllers/DocumentController.js') !!}"></script>  
                 <script type="text/javascript" src="{!! asset('js/models/Room.js') !!}"></script>  
                 <script type="text/javascript" src="{!! asset('js/controllers/RoomController.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/models/Viewer.js') !!}"></script>  

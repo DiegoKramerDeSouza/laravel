@@ -1,7 +1,18 @@
 /**
- * Definições de configuração para inicialização de componentes JS
+ * Definições de configuração para INICIALIZAÇÃO de componentes JS
  */
 const conf = {
+    document: {
+        /*Atributos de inicialização do documento */
+        VIEWER: 'Calculando...',
+        USER: '',
+        SOLICITA: 0,
+        BROADCAST_STATUS: 0,
+        IS_MODERATOR: true,
+        ON_LOBBY: true,
+        ON_PARTICIPATION: false,
+        LOCK_SOLICITATION: false
+    },
     con: {
         /*Constantes de inicialização de conexão */
         URL: 'https://rtcmulticonnection.herokuapp.com:443/',
@@ -10,13 +21,11 @@ const conf = {
         MSG: 'Inicia-Apresentacao',
         IS_PUBLIC: true
     },
-
     viewer: {
         /*Atributos de inicialização por vizualisadores */
         COUNT_ROOMS: 0,
         ALLOWED: false
     },
-
     dom: {
         /*Elementos do DOM dividido por cada model */
         media: {
@@ -29,12 +38,15 @@ const conf = {
             VOL: '#toggle-volume',
             CAM: '#toggle-camera',
             PEDIR: '#pedir-vez',
+            SOL_PEDIR: '#sol-pedir',
             CTL_PEDIR: '#control-pedir-vez',
             SHARE: '#share-screen',
             VIDEO_SECOND: '#span-video-preview-2nd',
             SWAP_SECOND: '#swap-video',
             SESSION_ACCESS: '#enter-session',
-            END_SESSION_ACCESS: '#end-session'
+            END_SESSION_ACCESS: '#end-session',
+            DIV_BTN_END: '#div-end',
+            TOGGLE_CHAT: '#toggle-chat'
         },
         room: {
             ROOM: '#room-id',

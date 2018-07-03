@@ -13,7 +13,7 @@ class ViewerController {
         return this._myClass.value.split(';');
     }
 
-    setViewer(roomid) {
+    initiateViewer(roomid) {
 
         let arrRoomId = roomid.split('|');
         arrRoomId.push(this._countRooms, this._allowed, this._setClasses());

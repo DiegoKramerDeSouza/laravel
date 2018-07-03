@@ -9,13 +9,16 @@ class Media {
         exitscreen,
         vol,
         cam,
+        solPedir,
         pedir,
         ctlPedir,
         share,
         videoSecond,
         swapSecond,
         sessionAccess,
-        endSessionAccess
+        endSessionAccess,
+        divEndBtn,
+        toggleChat
     ) {
 
         this._videoPreview = videoPreview;
@@ -26,6 +29,7 @@ class Media {
         this._exitscreen = exitscreen;
         this._vol = vol;
         this._cam = cam;
+        this._solPedir = solPedir;
         this._pedir = pedir;
         this._ctlPedir = ctlPedir;
         this._share = share;
@@ -33,6 +37,8 @@ class Media {
         this._swapSecond = swapSecond;
         this._sessionAccess = sessionAccess;
         this._endSessionAccess = endSessionAccess;
+        this._divEndBtn = divEndBtn;
+        this._toggleChat = toggleChat;
         Object.freeze(this);
     }
 
@@ -76,6 +82,11 @@ class Media {
         return this._cam;
     }
 
+    get solPedir() {
+
+        return this._solPedir;
+    }
+
     get pedir() {
 
         return this._pedir;
@@ -109,6 +120,16 @@ class Media {
     get endSessionAccess() {
 
         return this._endSessionAccess;
+    }
+
+    get divEndBtn() {
+
+        return this._divEndBtn;
+    }
+
+    get toggleChat() {
+
+        return this._toggleChat;
     }
 
 }

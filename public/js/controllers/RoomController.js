@@ -25,7 +25,7 @@ class RoomController {
         return (this._createList() != '' && (this._inputMateria.value != '' && this._inputAssunto.value != ''));
     }
 
-    setRoom() {
+    initiateRoom() {
 
         return new Room(this._inputName.value, this._inputMateria.value, this._inputAssunto.value, this._createList(), this._createHash());
     }

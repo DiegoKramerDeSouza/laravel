@@ -71,8 +71,8 @@ class ComponentSalaHelper {
     // Mensagem de 0 salas disponíveis por conexão
     static noRooms() {
         //var publicRoomsDiv = document.getElementById('public-conference');
-        var publicRoomsDiv = bindDocument.getTag('#public-conference');
-        var divOpen = bindDocument.createTag('div');
+        var publicRoomsDiv = bindDocumentController.getTag('#public-conference');
+        var divOpen = bindDocumentController.createTag('div');
         var message = `<div class='red-text' style='margin-top:50px; margin-bottom:50px;' align='center'>
             <h6><i class='fa fa-times-circle fa-lg red-text text-darken-3'></i> <b>Não há salas disponíveis.</b></h6>
         </div>`;
