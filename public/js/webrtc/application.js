@@ -20,8 +20,9 @@ let bindMedia = bindMediaController.initiateMedia();
 let bindDocumentController = new DocumentController();
 let bindDocument = bindDocumentController.initiateDocument();
 
-let createRoom = new RoomController();
-let viewerData = new ViewerController();
+let bindRoomController = new RoomController();
+let bindViewerController = new ViewerController();
+
 let connection = new RTCMultiConnection();
 
 $(document).ready(function() {
@@ -29,7 +30,6 @@ $(document).ready(function() {
     window.enableAdapter = true;
 
     //Application - Inicia a chamada e tratamento de multiconexão
-    // Definições de conexão
     connection.enableScalableBroadcast = bindConnect.enableScalableBroadcast;
     connection.maxRelayLimitPerUser = bindConnect.maxRelayLimitPerUser;
     connection.socketMessageEvent = bindConnect.socketMessageEvent;
@@ -135,12 +135,13 @@ $(document).ready(function() {
             }
             throw error;
         });
-    };
+    }
+
     // Inicia a transmissão
     connection.onstream = (event) => {
 
         let currentStream;
-        if (!bindDocument.onParticipation) {
+        if (!bindDocument.onParticipation && !event.extra.modifiedValue) {
             inRoom.value = event.userid;
         }
         /**==================================================================================================
@@ -150,25 +151,26 @@ $(document).ready(function() {
         // Broadcaster recebendo uma conexão remota==========================================================
         if (event.type === 'remote' && connection.isInitiator) {
 
-            console.log('PARTICIPAÇÃO REMOTA--------');
+            let msgrash = [];
 
             // Remove qualquer conexão duplicada
             if (bindDocument.incomingCon == event.stream.streamid) {
                 connection.getAllParticipants().forEach((p) => {
-                    console.log('Transmitindo: ', event.stream.streamid, p, bindDocument.incomingCon);
                     if (p + '' == event.userid + '') {
-                        var peer = connection.peers[p].peer;
+                        let peer = connection.peers[p].peer;
                         stream.stop();
                         peer.removeStream(event.stream);
+                        p.close();
                     }
                 });
                 return;
             }
+
             // Conexão remota de transmissão com o broadcaster
-            if (bindDocument.arrVideos['main']) {
+            if (bindDocument.mainVideo != 'waiting') {
                 bindDocument.incomingCon = event.stream.streamid;
                 bindMedia.thirdVideoPreview.srcObject = event.stream;
-                bindDocument.arrVideos['user'] = event.stream;
+                bindDocument.userVideo = event.stream;
 
                 bindMediaController.initiateVideo(bindMedia.thirdVideoPreview);
 
@@ -178,7 +180,7 @@ $(document).ready(function() {
                 setTimeout(function() {
                     connection.getAllParticipants().forEach((p) => {
                         if (p + '' != event.userid + '') {
-                            var peer = connection.peers[p].peer;
+                            let peer = connection.peers[p].peer;
                             event.stream.getTracks().forEach((track) => {
                                 try {
                                     peer.addTrack(track, event.stream);
@@ -198,16 +200,18 @@ $(document).ready(function() {
 
                 $('#div-end').fadeIn(300);
                 bindMedia.endSessionAccess.onclick = function() {
+
                     bindDocument.streamVideos.forEach((stream) => {
                         connection.getAllParticipants().forEach((p) => {
-                            var peer = connection.peers[p].peer;
+                            let peer = connection.peers[p].peer;
                             stream.stop();
                             peer.removeStream(stream);
                         });
                     });
                     $('#div-end').hide();
+                    bindDocument.emptyStreamVideos();
+                    bindDocument.incomingCon = '';
                     ComponentSalaHelper.toggleIncomingVideos('out');
-                    var msgrash = [];
                     msgrash[0] = btoa('@Finaliza-Participacao');
                     msgrash[1] = currentUser.value;
                     msgrash[2] = connection.userid;
@@ -217,12 +221,15 @@ $(document).ready(function() {
                     bindDocument.lockSolicitation = false;
                 }
 
+            } else {
+                return;
             }
             // Usuário recebendo uma conexão remota com compartilhamento de tela=============================
         } else if (!bindDocument.onParticipation && (event.type === 'remote' && event.stream.isScreen === true)) {
 
             console.log('REMOTO COM SCREEN --> ', event.stream.streamid);
 
+            /*
             if (bindDocument.incomingCon == event.stream.streamid && bindDocument.incomingCon != bindDocument.connectedAt) {
                 connection.getAllParticipants().forEach((p) => {
                     if (p + '' == event.userid + '') {
@@ -233,12 +240,12 @@ $(document).ready(function() {
                 });
                 //return;
             }
+            */
 
             // Conexão remota com compartilhamento de tela
             $('#span-video-preview-2nd').fadeIn(300);
             ComponentSalaHelper.toggleIncomingVideos('in');
             bindMedia.secondVideoPreview.srcObject = event.stream;
-            bindDocument.arrVideos['screen'] = event.stream;
             bindDocument.incomingCon = event.stream.streamid;
 
             bindMediaController.initiateVideo(bindMedia.secondVideoPreview);
@@ -264,11 +271,11 @@ $(document).ready(function() {
                 //return;
             }
             // Conexão remota sem compartilhamento de tela
-            if (bindDocument.arrVideos['main']) {
+            if (bindDocument.mainVideo != 'waiting' || event.extra.modifiedValue) {
                 $('#span-video-preview-3rd').fadeIn(300);
                 bindDocument.incomingCon = event.stream.streamid;
                 bindMedia.thirdVideoPreview.srcObject = event.stream;
-                bindDocument.arrVideos['user'] = event.stream;
+                bindDocument.userVideo = event.stream;
 
                 bindMediaController.initiateVideo(bindMedia.thirdVideoPreview);
 
@@ -277,7 +284,7 @@ $(document).ready(function() {
                 bindDocument.incomingCon = event.stream.streamid;
                 bindDocument.onParticipation = false;
                 bindMedia.videoPreview.srcObject = event.stream;
-                bindDocument.arrVideos['main'] = event.stream;
+                bindDocument.mainVideo = event.stream;
                 currentStream = [event.stream];
 
                 bindMediaController.initiateVideo(bindMedia.videoPreview);
@@ -314,6 +321,7 @@ $(document).ready(function() {
                     msgrash[3] = inRoom.value;
                     msgrash[4] = myIdentity;
                     try {
+                        console.log('Enviando para: ' + inRoom.value);
                         connection.send(msgrash, inRoom.value);
                         bindDocument.solicita += 1;
                         callToast('<i class="fa fa-check"></i> Solicitação enviada!', 'blue darken-2');
@@ -323,7 +331,7 @@ $(document).ready(function() {
                 } else if (bindDocument.solicita > 0) {
                     callToast('<i class="fa fa-exclamation-triangle"></i> Você já encaminhou uma solicitação.<br>Aguarde a resposta.', 'amber darken-4');
                 } else if (bindDocument.lockSolicitation) {
-                    callToast('<i class="fa fa-exclamation-triangle"></i> Sua solicitação já foi aceita.<br>Acesse clicando no botão ao lado.', 'amber darken-4');
+                    callToast('<i class="fa fa-exclamation-triangle"></i> Sua solicitação já foi aceita.<br>Você não pode efetuar uma nova solicitação até finalizar esta.', 'amber darken-4');
                 } else {
                     callToast('<i class="fa fa-times"></i> Não há conexão com a sala!', 'red darken-3');
                 }
@@ -332,14 +340,14 @@ $(document).ready(function() {
             // Broadcaster executando uma conexão local =====================================================
         } else if (!bindDocument.onParticipation && (event.type === 'local' && !event.stream.isScreen)) {
 
-            console.log('TRANSMISSÃO LOCAL------');
+            console.log('TRANSMISSÃO LOCAL------', bindDocument.mainVideo);
 
             if (bindDocument.incomingCon == event.stream.streamid) {
                 connection.getAllParticipants().forEach((p) => {
                     if (p + '' == event.userid + '') {
                         var peer = connection.peers[p].peer;
-                        stream.stop();
-                        peer.removeStream(event.stream);
+                        //stream.stop();
+                        //peer.removeStream(event.stream);
                     }
                 });
                 return;
@@ -347,7 +355,7 @@ $(document).ready(function() {
             // Conexão local sem compartilhamento de tela
             bindDocument.onParticipation = true;
             connection.isUpperUserLeft = false;
-            bindDocument.arrVideos['main'] = event.stream;
+            bindDocument.mainVideo = event.stream;
             bindDocument.incomingCon = event.stream.streamid;
             currentStream = [event.stream];
 
@@ -397,7 +405,6 @@ $(document).ready(function() {
                         if (admResponse[0] == 'allow' && bindDocument.lockSolicitation) {
                             callToast('<i class="fa fa-times"></i> Já existe uma solicitação aceita!<br>Finalize-a para aceitar outra.', 'red darken-3');
                         } else {
-                            //solicita--;
                             bindDocument.solicita -= 1;
                             connection.send(msgrash);
                             constructList(admResponse[1]);
@@ -412,9 +419,15 @@ $(document).ready(function() {
                     }
                 }
                 bindMedia.endSessionAccess.onclick = function() {
+                    console.log('---> Chamada via LOCAL');
                     $('#div-end').hide();
-                    var targetId = bindMedia.divEndBtn.getAttribute('data-target');
-                    var msgrash = [];
+
+                    bindDocument.emptyStreamVideos();
+                    bindDocument.incomingCon = '';
+                    ComponentSalaHelper.toggleIncomingVideos('out');
+
+                    let targetId = bindMedia.divEndBtn.getAttribute('data-target');
+                    let msgrash = [];
                     msgrash[0] = btoa('@Finaliza-Participacao');
                     msgrash[1] = currentUser.value;
                     msgrash[2] = connection.userid;
@@ -550,6 +563,7 @@ $(document).ready(function() {
     //=======================================================================================================
     // Listener para abertura de conexões
     connection.onopen = (event) => {
+
         console.log(event);
         if (event.userid != bindDocument.connectedAt) {
             connection.getAllParticipants().forEach((p) => {
@@ -559,11 +573,16 @@ $(document).ready(function() {
     };
     // Listener para finalização de streams
     connection.onstreamended = (event) => {
+        console.log(event);
+        console.log(bindDocument.userVideo);
+
         if (event.stream.isScreen) {
             $('#span-video-preview-2nd').hide();
             ComponentSalaHelper.toggleIncomingVideos('out');
-        } else {
+        } else if (event.streamid == bindDocument.userVideo.streamid) {
+            console.log('EVENTO: ', event);
             $('#span-video-preview-3rd').hide();
+            bindDocument.userVideo = 'waiting';
             bindDocument.lockSolicitation = false;
             ComponentSalaHelper.toggleIncomingVideos('out');
         }
@@ -576,18 +595,18 @@ $(document).ready(function() {
     // Ação de criar uma sala ao clicar em 'btn-join-as-productor' ==========================================
     startRoom.onclick = function() {
 
-        let newRoom = createRoom.initiateRoom();
+        let bindRoom = bindRoomController.initiateRoom();
 
         let values = $('#cursos-list').val();
         let strValues = values.join(';');
 
-        if (createRoom.validade()) {
-            bindDocument.usuario = newRoom.name;
+        if (bindRoomController.validade()) {
+            bindDocument.usuario = bindRoom.name;
             bindDocument.onlobby = false;
             // Inicializa a tela de apresentação
             callTeacherStream();
             // Modela e apresenta cabeçalho do video
-            setRoomLabel('video-camera', newRoom.tema, newRoom.assunto);
+            setRoomLabel('video-camera', bindRoom.tema, bindRoom.assunto);
 
             startRoom.disabled = true;
             // Define inicialização de sessão
@@ -609,13 +628,13 @@ $(document).ready(function() {
             // Inicializa Socket
             var socket = connection.getSocket();
             // Verifica existência do broadcast
-            socket.emit('check-broadcast-presence', newRoom.hash, (isBroadcastExists) => {
+            socket.emit('check-broadcast-presence', bindRoom.hash, (isBroadcastExists) => {
                 if (!isBroadcastExists) {
-                    connection.userid = newRoom.hash;
+                    connection.userid = bindRoom.hash;
                 }
                 //start-broadcasting
                 socket.emit('join-broadcast', {
-                    broadcastId: newRoom.hash,
+                    broadcastId: bindRoom.hash,
                     userid: connection.userid,
                     typeOfStreams: connection.session
                         //bandwidth: connection.bandwidth
@@ -713,16 +732,16 @@ $(document).ready(function() {
                             return;
                         }
 
-                        let newViewer = viewerData.initiateViewer(labelRoom);
+                        let bindViewer = bindViewerController.initiateViewer(labelRoom);
 
-                        let countRooms = newViewer.activeRoom;
-                        let allowed = newViewer.allowed;
-                        let classes = newViewer.classes;
+                        let countRooms = bindViewer.activeRoom;
+                        let allowed = bindViewer.allowed;
+                        let classes = bindViewer.classes;
 
                         // Permissão de visualização do conteúdo em broadcast
-                        if (newViewer.curso !== undefined && newViewer.curso !== '') {
+                        if (bindViewer.curso !== undefined && bindViewer.curso !== '') {
                             classes.forEach((cls) => {
-                                if (newViewer.curso.indexOf(cls) > -1) allowed = true;
+                                if (bindViewer.curso.indexOf(cls) > -1) allowed = true;
                             });
                         }
                         if (allowed) {
@@ -735,7 +754,7 @@ $(document).ready(function() {
                              */
                             bindDocument.usuario = currentUser.value;
                             let divOpen = bindDocumentController.createTag('div');
-                            let card = ComponentSalaHelper.constructAccessList(newViewer.classe, newViewer.assunto, newViewer.apresentador, bindDocument.viewers, moderatorId);
+                            let card = ComponentSalaHelper.constructAccessList(bindViewer.classe, bindViewer.assunto, bindViewer.apresentador, bindDocument.viewers, moderatorId);
 
                             divOpen.innerHTML = card;
                             divOpen.className = "card-panel hoverable";
@@ -747,11 +766,11 @@ $(document).ready(function() {
 
                             button.onclick = function() {
                                 callTeacherStream();
-                                setRoomLabel('television', newViewer.classe, newViewer.assunto);
+                                setRoomLabel('television', bindViewer.classe, bindViewer.assunto);
 
                                 bindDocument.onlobby = false;
                                 bindDocument.isModerator = false;
-                                broadcaster.value = newViewer.whois;
+                                broadcaster.value = bindViewer.whois;
 
                                 let getRoomId = this.id;
                                 bindDocument.connectedAt = this.id;
@@ -889,6 +908,9 @@ function appendDIV(event) {
     // -> Definição do padrão de solicitação
     if (remoto && (Array.isArray(text) && text.length > 4)) {
         var chkrash = event.data;
+
+        console.log(chkrash[3], atob(chkrash[0]));
+
         var msgData = [];
         var myRoom = bindDocumentController.getTag('#room-id').value;
         // Identifica se a mensagem é uma solicitação de serviço

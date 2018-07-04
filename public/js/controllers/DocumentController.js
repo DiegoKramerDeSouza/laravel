@@ -13,11 +13,13 @@ class DocumentController {
         this._onlobby = conf.document.ON_LOBBY;
         this._onParticipation = conf.document.ON_PARTICIPATION;
         this._lockSolicitation = conf.document.LOCK_SOLICITATION;
+        this._mainVideo = conf.document.WAITING_FOR_VIDEO;
+        this._userVideo = conf.document.WAITING_FOR_VIDEO;
     }
 
     initiateDocument() {
 
-        return new Document(
+        let arrDocument = [
             this._viewer,
             this._user,
             this._solicita,
@@ -25,8 +27,11 @@ class DocumentController {
             this._isModerator,
             this._onlobby,
             this._onParticipation,
-            this._lockSolicitation
-        );
+            this._lockSolicitation,
+            this._mainVideo,
+            this._userVideo
+        ];
+        return new Document(...arrDocument);
     }
 
     getTag(obj) {

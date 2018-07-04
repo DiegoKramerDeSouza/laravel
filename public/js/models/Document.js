@@ -1,6 +1,17 @@
 class Document {
 
-    constructor(viewers, usuario, solicita, broadcastStatus, isModerator, onlobby, onParticipation, lockSolicitation) {
+    constructor(
+        viewers,
+        usuario,
+        solicita,
+        broadcastStatus,
+        isModerator,
+        onlobby,
+        onParticipation,
+        lockSolicitation,
+        mainVideo,
+        userVideo
+    ) {
 
         this._viewers = viewers;
         this._usuario = usuario;
@@ -12,8 +23,9 @@ class Document {
         this._lockSolicitation = lockSolicitation;
         this._incomingCon;
         this._connectedAt;
+        this._mainVideo = mainVideo;
+        this._userVideo = userVideo;
         this._connections = [];
-        this._arrVideos = [];
         this._streamVideos = [];
     }
 
@@ -127,14 +139,24 @@ class Document {
         this._connections.push(value);
     }
 
-    get arrVideos() {
+    get mainVideo() {
 
-        return this._arrVideos;
+        return this._mainVideo;
     }
 
-    set arrVideos(value) {
+    set mainVideo(value) {
 
-        this._arrVideos.push(value);
+        this._mainVideo = value;
+    }
+
+    get userVideo() {
+
+        return this._userVideo;
+    }
+
+    set userVideo(value) {
+
+        this._userVideo = value;
     }
 
     get streamVideos() {
@@ -145,6 +167,16 @@ class Document {
     set streamVideos(value) {
 
         this._streamVideos.push(value);
+    }
+
+    emptyStreamVideos() {
+
+        this._streamVideos = [];
+    }
+
+    waitingForVideos(index) {
+
+        this._arrVideos[index] = 'waiting';
     }
 
 }

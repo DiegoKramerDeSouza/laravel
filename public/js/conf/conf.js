@@ -2,6 +2,7 @@
  * Definições de configuração para INICIALIZAÇÃO de componentes JS
  */
 const conf = {
+
     document: {
         /*Atributos de inicialização do documento */
         VIEWER: 'Calculando...',
@@ -11,7 +12,8 @@ const conf = {
         IS_MODERATOR: true,
         ON_LOBBY: true,
         ON_PARTICIPATION: false,
-        LOCK_SOLICITATION: false
+        LOCK_SOLICITATION: false,
+        WAITING_FOR_VIDEO: 'waiting'
     },
     con: {
         /*Constantes de inicialização de conexão */

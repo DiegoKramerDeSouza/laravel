@@ -25,7 +25,7 @@ class MediaController {
 
     initiateMedia() {
 
-        return new Media(
+        let arrMedia = [
             this._videoPreview,
             this._secondVideoPreview,
             this._thirdVideoPreview,
@@ -44,7 +44,8 @@ class MediaController {
             this._endSessionAccess,
             this._divEndBtn,
             this._toggleChat
-        );
+        ];
+        return new Media(...arrMedia);
     }
 
     initiateVideo(targetVideo) {
