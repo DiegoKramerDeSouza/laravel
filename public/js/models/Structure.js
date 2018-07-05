@@ -1,4 +1,4 @@
-class Document {
+class Structure {
 
     constructor(
         viewers,

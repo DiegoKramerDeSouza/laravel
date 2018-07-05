@@ -3,7 +3,7 @@
  */
 const conf = {
 
-    document: {
+    structure: {
         /*Atributos de inicialização do documento */
         VIEWER: 'Calculando...',
         USER: '',
@@ -23,8 +23,8 @@ const conf = {
         MSG: 'Inicia-Apresentacao',
         IS_PUBLIC: true
     },
-    viewer: {
-        /*Atributos de inicialização por vizualisadores */
+    roomdata: {
+        /*Atributos de inicialização por espectadores */
         COUNT_ROOMS: 0,
         ALLOWED: false
     },
@@ -55,10 +55,11 @@ const conf = {
             MATERIA: '#tema',
             ASSUNTO: '#assunto',
             NAME: '#current-user',
-            CURSO_LIST: '#cursos-list'
-        },
-        viewer: {
-            TARGET: '#target'
+            CURSO_LIST: '#cursos-list',
+            TARGET: '#target',
+            BROADCASTER: '#broadcaster',
+            IN_ROOM: '#in-room',
+            IN_SCREEN: '#in-screen',
         }
     }
 }

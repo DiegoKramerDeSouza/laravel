@@ -1,11 +1,11 @@
-class ComponentSalaHelper {
+class RoomHelper {
     /**
      * MANIPULAÇÃO DE ELEMENTOS VISUAIS APLICÁVEIS À SALAS.INDEX.BLADE
      * Métodos de criação/alteração de elementos visuais para a plataforma de video conferência
      */
 
     constructor() {
-        throw new Error('ComponetSalaHelper não pode ser instanciada. Possui apenas métodos estáticos.');
+        throw new Error('RoomHelper não pode ser instanciada.');
     }
 
     // Inicia os Listeners de tela cheia para todos os tipos de navegadores
@@ -16,7 +16,7 @@ class ComponentSalaHelper {
         document.addEventListener('MSFullscreenChange', exitHandler);
     }
 
-    // Toggle de vídeos secundários ComponentSalaHelper
+    // Toggle de vídeos secundários RoomHelper
     /**
      * 
      * Param cmd: Comando para apresentar ou não um vídeo - in/out
@@ -71,8 +71,8 @@ class ComponentSalaHelper {
     // Mensagem de 0 salas disponíveis por conexão
     static noRooms() {
         //var publicRoomsDiv = document.getElementById('public-conference');
-        var publicRoomsDiv = bindDocumentController.getTag('#public-conference');
-        var divOpen = bindDocumentController.createTag('div');
+        var publicRoomsDiv = structureController.tag('#public-conference');
+        var divOpen = structureController.addTag('div');
         var message = `<div class='red-text' style='margin-top:50px; margin-bottom:50px;' align='center'>
             <h6><i class='fa fa-times-circle fa-lg red-text text-darken-3'></i> <b>Não há salas disponíveis.</b></h6>
         </div>`;
@@ -432,7 +432,7 @@ class ComponentSalaHelper {
     static constructConnectionList(userid, username, announce, deletable) {
         var deleteButton;
         if (deletable) {
-            deleteButton = '<a id="disconnect-' + userid + '" name="' + username + '" data-announced="' + announce + '" title="Disconectar espectador" class="disconnect-btn"><i class="material-icons red-text text-darken-4">close</i></a>';
+            deleteButton = '<a id="disconnect-' + userid + '" name="' + username + '" data-announced="' + announce + '" title="Desconectar espectador" class="disconnect-btn"><i class="material-icons red-text text-darken-4">close</i></a>';
         } else {
             deleteButton = '<a id="disabled-' + userid + '" name="' + username + '" data-announced="' + announce + '" ><i class="material-icons grey-text text-lighten-1">close</i></a>';
         }

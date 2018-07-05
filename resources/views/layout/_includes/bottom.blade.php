@@ -46,19 +46,22 @@
                 <!-- O usuário deve estar autenticado-->
                 <!-- Adição dos scripts de utilização do WEBRTC-->
                 <script type="text/javascript" src="{!! asset('js/conf/conf.js') !!}"></script>  
-                <script type="text/javascript" src="{!! asset('js/models/Document.js') !!}"></script>  
-                <script type="text/javascript" src="{!! asset('js/controllers/DocumentController.js') !!}"></script>  
+                <script type="text/javascript" src="{!! asset('js/models/Structure.js') !!}"></script>  
+                <script type="text/javascript" src="{!! asset('js/controllers/StructureController.js') !!}"></script>  
                 <script type="text/javascript" src="{!! asset('js/models/Room.js') !!}"></script>  
                 <script type="text/javascript" src="{!! asset('js/controllers/RoomController.js') !!}"></script>
-                <script type="text/javascript" src="{!! asset('js/models/Viewer.js') !!}"></script>  
-                <script type="text/javascript" src="{!! asset('js/controllers/ViewerController.js') !!}"></script> 
+                <script type="text/javascript" src="{!! asset('js/models/RoomData.js') !!}"></script>  
+                <script type="text/javascript" src="{!! asset('js/controllers/RoomDataController.js') !!}"></script>
+                <script type="text/javascript" src="{!! asset('js/models/RoomInfo.js') !!}"></script>  
+                <script type="text/javascript" src="{!! asset('js/controllers/RoomInfoController.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/models/Connect.js') !!}"></script>  
                 <script type="text/javascript" src="{!! asset('js/controllers/ConnectController.js') !!}"></script>  
                 <script type="text/javascript" src="{!! asset('js/models/Media.js') !!}"></script>  
-                <script type="text/javascript" src="{!! asset('js/controllers/MediaController.js') !!}"></script>  
+                <script type="text/javascript" src="{!! asset('js/controllers/MediaController.js') !!}"></script>
 
-                <script type="text/javascript" src="{!! asset('js/webrtc/control-components.js') !!}"></script>  
-                <script type="text/javascript" src="{!! asset('js/helpers/ComponentSalaHelper.js') !!}"></script>   
+                <script type="text/javascript" src="{!! asset('js/helpers/RoomHelper.js') !!}"></script>    
+
+                <script type="text/javascript" src="{!! asset('js/webrtc/control-components.js') !!}"></script>   
                 <script type="text/javascript" src="{!! asset('js/webrtc/socket.io.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/webrtc/getHTMLMediaElement.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/webrtc/adapter.js') !!}"></script>                      

@@ -1,4 +1,4 @@
-class Viewer {
+class RoomData {
 
     constructor(classe, apresentador, assunto, curso, whois, activeRoom, allowed, classes) {
 

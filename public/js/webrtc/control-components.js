@@ -398,7 +398,7 @@ function constructAccessList(classe, assunto, apresentador, viwer, moderador) {
 function constructConnectionList(userid, username, announce, deletable) {
     var deleteButton;
     if (deletable) {
-        deleteButton = '<a id="disconnect-' + userid + '" name="' + username + '" data-announced="' + announce + '" title="Disconectar espectador" class="disconnect-btn"><i class="material-icons red-text text-darken-4">close</i></a>';
+        deleteButton = '<a id="disconnect-' + userid + '" name="' + username + '" data-announced="' + announce + '" title="Desconectar espectador" class="disconnect-btn"><i class="material-icons red-text text-darken-4">close</i></a>';
     } else {
         deleteButton = '<a id="disabled-' + userid + '" name="' + username + '" data-announced="' + announce + '" ><i class="material-icons grey-text text-lighten-1">close</i></a>';
     }
