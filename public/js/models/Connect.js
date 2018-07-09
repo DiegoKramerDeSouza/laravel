@@ -1,3 +1,6 @@
+/**
+ * Módulo de definição de configurações básicas de conexão com o RTCMulticonnection
+ */
 class Connect {
 
     constructor(urlSocket, enableScalableBroadcast, maxRelayLimitPerUser, socketMessageEvent, isPublicModerator) {

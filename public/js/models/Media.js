@@ -1,3 +1,7 @@
+/**
+ * Módulo de definição de elementos de mídia
+ *  -> Suporta os elementos do DOM de controle de mídias
+ */
 class Media {
 
     constructor(

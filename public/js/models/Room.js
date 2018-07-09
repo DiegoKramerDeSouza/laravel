@@ -1,3 +1,7 @@
+/**
+ * Módulo de criação de salas
+ *  -> Define as informações básicas de salas para formação do seu rótulo
+ */
 class Room {
 
     constructor(name, tema, assunto, cursos, hash) {

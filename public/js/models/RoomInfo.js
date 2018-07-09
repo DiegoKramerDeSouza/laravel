@@ -1,3 +1,7 @@
+/**
+ * Módulo de informatívo de sala
+ *  -> Apresenta o rótulo da sala, informando os dados básicos da sala criada
+ */
 class RoomInfo {
 
     constructor(currentRoomId, broadcaster, inRoom, inScreen, currentUser, myClass) {

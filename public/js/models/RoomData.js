@@ -1,3 +1,7 @@
+/**
+ * Módulo de gerenciamento de dados da sala
+ *  -> Suporta as variáveis de controle para utilização de aplicações da sala
+ */
 class RoomData {
 
     constructor(classe, apresentador, assunto, curso, whois, activeRoom, allowed, classes) {

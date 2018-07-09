@@ -59,6 +59,10 @@
                 <script type="text/javascript" src="{!! asset('js/models/Media.js') !!}"></script>  
                 <script type="text/javascript" src="{!! asset('js/controllers/MediaController.js') !!}"></script>
 
+                <script type="text/javascript" src="{!! asset('js/models/Message.js') !!}"></script>  
+                <script type="text/javascript" src="{!! asset('js/views/View.js') !!}"></script>
+                <script type="text/javascript" src="{!! asset('js/views/MessageView.js') !!}"></script>
+
                 <script type="text/javascript" src="{!! asset('js/helpers/RoomHelper.js') !!}"></script>    
 
                 <script type="text/javascript" src="{!! asset('js/webrtc/control-components.js') !!}"></script>   

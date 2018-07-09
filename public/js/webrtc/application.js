@@ -29,8 +29,10 @@ let roomInfo = roomInfoController.initiateRoomInfo();
 
 let roomController = new RoomController();
 let roomDataController = new RoomDataController();
+let alerta = new MessageView();
 
 let connection = new RTCMultiConnection();
+
 
 $(document).ready(function() {
 
@@ -68,7 +70,8 @@ $(document).ready(function() {
             connection.broadcastId = hintsToJoinBroadcast.broadcastId;
             connection.join(hintsToJoinBroadcast.userid);
             console.log('--> Joined at: ' + hintsToJoinBroadcast.userid);
-            callToast('<i class="fa fa-play-circle fa-lg"></i> Transmissão iniciada!', 'blue');
+
+            alerta.update(conf.message.START_TRANSMITION);
         });
         // Socket - Rejoin
         socket.on('rejoin-broadcast', (getBroadcasterId) => {
@@ -93,7 +96,8 @@ $(document).ready(function() {
         socket.on('broadcast-stopped', (getBroadcasterId) => {
             console.error('--> Broadcast finalizada', getBroadcasterId);
             structure.broadcastStatus = 0;
-            callToast('<i class="fa fa-stop-circle fa-lg"></i> Transmissão finalizada!', 'red darken-3');
+
+            alerta.update(conf.message.END_TRANSMITION);
         });
         // Socket - Iniciando
         socket.on('start-broadcasting', (typeOfStreams) => {
@@ -173,7 +177,8 @@ $(document).ready(function() {
 
                 mediaController.initiateVideo(media.thirdVideoPreview);
 
-                callToast('<i class="material-icons">videocam</i> Participação iniciada!', 'blue darken-2');
+                alerta.update(conf.message.START_PARTICIPATION);
+
                 $('#span-video-preview-3rd').fadeIn(300);
 
                 setTimeout(function() {
@@ -310,30 +315,31 @@ $(document).ready(function() {
 
             // Tratamento do botão de pedir a vez
             media.solPedir.onclick = function() {
+                let altText = [];
                 if (structure.broadcastStatus == 1 && (structure.solicita === 0 && !structure.lockSolicitation)) {
                     // Constroi e envia mensagem solicitando a vez
-                    var msgrash = [];
-                    var myIdentity = roomInfo.currentRoomId.value;
+                    let msgrash = [];
+                    let myIdentity = roomInfo.currentRoomId.value;
                     msgrash[0] = btoa('@PedeAVez');
                     msgrash[1] = roomInfo.currentUser.value;
                     msgrash[2] = connection.userid;
                     msgrash[3] = roomInfo.inRoom.value;
                     msgrash[4] = myIdentity;
                     try {
-                        console.log('Enviando para: ' + roomInfo.inRoom.value);
                         connection.send(msgrash, roomInfo.inRoom.value);
                         structure.solicita += 1;
-                        callToast('<i class="fa fa-check"></i> Solicitação enviada!', 'blue darken-2');
+                        altText = conf.message.SEND_SOLICITATION;
                     } catch (err) {
-                        callToast('<i class="fa fa-times"></i> Não foi possível solicitar a vez: ' + err + '.', 'red darken-3');
+                        altText = conf.message.ERROR_SOLICITATION;
                     }
                 } else if (structure.solicita > 0) {
-                    callToast('<i class="fa fa-exclamation-triangle"></i> Você já encaminhou uma solicitação.<br>Aguarde a resposta.', 'amber darken-4');
+                    altText = conf.message.DUP_SOLICITATION;
                 } else if (structure.lockSolicitation) {
-                    callToast('<i class="fa fa-exclamation-triangle"></i> Sua solicitação já foi aceita.<br>Você não pode efetuar uma nova solicitação até finalizar esta.', 'amber darken-4');
+                    altText = conf.message.ERR_ACP_SOLICITATION;
                 } else {
-                    callToast('<i class="fa fa-times"></i> Não há conexão com a sala!', 'red darken-3');
+                    altText = conf.message.NO_CONNECTION;
                 }
+                alerta.update(altText);
             };
 
             // Broadcaster executando uma conexão local =====================================================
@@ -402,7 +408,7 @@ $(document).ready(function() {
                         msgrash[3] = roomInfo.inRoom.value;
                         msgrash[4] = myIdentity;
                         if (admResponse[0] == 'allow' && structure.lockSolicitation) {
-                            callToast('<i class="fa fa-times"></i> Já existe uma solicitação aceita!<br>Finalize-a para aceitar outra.', 'red darken-3');
+                            alerta.update(conf.message.ACCEPT_SOLICITATION);
                         } else {
                             structure.solicita -= 1;
                             connection.send(msgrash);
@@ -521,7 +527,7 @@ $(document).ready(function() {
                         connection.peers[roomInfo.inRoom.value].addStream({
                             video: true
                         });
-                        callToast('<i class="material-icons left">videocam</i> Transmissão Iniciada.', 'blue darken-2');
+
                     } catch (e) {
                         setParticipation('on');
                         structure.onParticipation = false;
@@ -547,7 +553,7 @@ $(document).ready(function() {
                     msgrash[4] = myIdentity;
                     connection.send(msgrash, roomInfo.inRoom.value);
                     structure.lockSolicitation = false;
-                    callToast('<i class="material-icons left">videocam_off</i> Transmissão finalizada.', 'red darken-3');
+                    alerta.update(conf.message.END_TRANSMITION);
                 } catch (e) {
                     setParticipation('off');
                     structure.onParticipation = true;
@@ -640,7 +646,7 @@ $(document).ready(function() {
                 });
             });
         } else {
-            callToast('<i class="fa fa-exclamation-triangle fa-lg"></i> Por favor informe todos os campos indicados!', 'red darken-3');
+            alerta.update(conf.message.FORM_ALERT);
         }
     };
     //=======================================================================================================
@@ -829,7 +835,7 @@ $(document).ready(function() {
                             userRemoved: true,
                             removedUserId: disconnectId
                         });
-                        callToast('<i class="fa fa-times"></i> ' + this.name + ' foi desconectado!', 'red darken-4');
+                        alerta.update(conf.message.DISCONNECT_USER, this.name);
                     }
                 }
             }
@@ -948,13 +954,13 @@ function appendDIV(event) {
             }
             setTimeout(function() {
                 $('#span-video-preview-2nd').hide();
-                callToast('<span class="white-text"><i class="material-icons left">stop_screen_share</i> Compartilhamento de tela finalizado.</span>', 'red darken-3');
+                alerta.update(conf.message.STOP_SHARE);
             }, 1000);
         } else if (chkrash[0] === btoa('@Finaliza-Participacao')) {
             if (!structure.onParticipation) {
                 structure.onParticipation = true;
                 accessBtn.setAttribute('data-active', 'enabled');
-                callToast('<i class="fa fa-times"></i> Solicitação cancelada.', 'red darken-3');
+                alerta.update(conf.message.CANCEL_SOLICITATION);
             }
             accessBtn.click();
         } else if (chkrash[0] === btoa('@Finaliza-Participante')) {
@@ -984,7 +990,7 @@ function listBox(text) {
         if (structure.solicita === 1) { solList.innerHTML = '' };
         htmlList = constructSolicitationList(msg[2], msg[0]);
         solList.innerHTML += htmlList;
-        callToast('<i class="material-icons">pan_tool</i> ' + msg[0] + ' solicita a vez!', 'blue darken-2');
+        alerta.update(conf.message.NEW_SOLICITATION, msg[0]);
     }
     return;
 }
@@ -1016,7 +1022,7 @@ function alertDisconnection(userid) {
 
     console.log(userid, roomInfo.inRoom.value);
     if (userid === roomInfo.inRoom.value) {
-        callToast('<i class="fa fa-times"></i> Você foi desconectado!', 'red darken-3');
+        alerta.update(conf.message.ALERT_DISCONNECTION);
         setTimeout(location.reload.bind(location), 3000);
     } else {
         try {

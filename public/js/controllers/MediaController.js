@@ -72,7 +72,7 @@ class MediaController {
             currentStream.forEach((stream) => {
                 stream.unmute('audio');
             });
-            setVol('on');
+            RoomHelper.setVol('on');
         }
     }
 
@@ -84,7 +84,7 @@ class MediaController {
                     stream.mute('audio');
                 }
             });
-            setMute('off');
+            RoomHelper.setMute('off');
         } else {
             currentStream.forEach((stream) => {
                 if (!stream.isScreen) {
@@ -95,7 +95,7 @@ class MediaController {
                     });
                 }
             });
-            setMute('on');
+            RoomHelper.setMute('on');
         }
     }
 
@@ -108,8 +108,8 @@ class MediaController {
                     stream.mute('audio');
                 }
             });
-            setCam('off');
-            setMute('off');
+            RoomHelper.setCam('off');
+            RoomHelper.setMute('off');
         } else {
             currentStream.forEach((stream) => {
                 if (!stream.isScreen) {
@@ -117,8 +117,8 @@ class MediaController {
                     stream.unmute('audio');
                 }
             });
-            setCam('on');
-            setMute('on');
+            RoomHelper.setCam('on');
+            RoomHelper.setMute('on');
         }
     }
 

@@ -1,3 +1,7 @@
+/**
+ * Módulo de estrutura de uma sala
+ *  -> Suporta as variáveis de controle para a criação de uma sala
+ */
 class Structure {
 
     constructor(

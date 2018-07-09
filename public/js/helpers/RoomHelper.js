@@ -1,8 +1,8 @@
+/**
+ * MANIPULAÇÃO DE ELEMENTOS VISUAIS APLICÁVEIS À SALAS.INDEX.BLADE
+ * Métodos de criação/alteração de elementos visuais para a plataforma de video conferência
+ */
 class RoomHelper {
-    /**
-     * MANIPULAÇÃO DE ELEMENTOS VISUAIS APLICÁVEIS À SALAS.INDEX.BLADE
-     * Métodos de criação/alteração de elementos visuais para a plataforma de video conferência
-     */
 
     constructor() {
         throw new Error('RoomHelper não pode ser instanciada.');
@@ -109,12 +109,14 @@ class RoomHelper {
             cam.setAttribute('data-active', 'disabled');
             cam.classList.add("red");
             cam.innerHTML = "<i class='material-icons'>videocam_off</i>";
-            callToast('<span class="white-text"><i class="material-icons left">videocam_off</i> Camera Desabilitada.</span>', 'red darken-3');
+
+            alerta.update(conf.message.CAM_OFF);
         } else if (status === 'on') {
             cam.setAttribute('data-active', 'enabled');
             cam.classList.remove("red");
             cam.innerHTML = "<i class='material-icons'>videocam</i>";
-            callToast('<span class="white-text"><i class="material-icons left">videocam</i> Camera Habilitada.</span>', 'blue darken-2');
+
+            alerta.update(conf.message.CAM_ON);
         }
     }
 
@@ -133,12 +135,14 @@ class RoomHelper {
             mute.setAttribute('data-active', 'disabled');
             mute.classList.add("red");
             mute.innerHTML = "<i class='material-icons'>mic_off</i>";
-            callToast('<span class="white-text"><i class="material-icons left">mic_off</i> Microfone Desabilitado.</span>', 'red darken-3');
+
+            alerta.update(conf.message.MIC_OFF);
         } else if (status === 'on') {
             mute.setAttribute('data-active', 'enabled');
             mute.classList.remove("red");
             mute.innerHTML = "<i class='material-icons'>mic</i>";
-            callToast('<span class="white-text"><i class="material-icons left">mic</i> Microfone Habilitado.</span>', 'blue darken-2');
+
+            alerta.update(conf.message.MIC_ON);
         }
     }
 
@@ -157,12 +161,14 @@ class RoomHelper {
             vol.setAttribute('data-active', 'disabled');
             vol.classList.add("red");
             vol.innerHTML = "<i class='material-icons'>volume_off</i>";
-            callToast('<span class="white-text"><i class="material-icons left">volume_off</i> Áudio Desabilitado.</span>', 'red darken-3');
+
+            alerta.update(conf.message.VOL_DOWN);
         } else if (status === 'on') {
             vol.setAttribute('data-active', 'enabled');
             vol.classList.remove("red");
             vol.innerHTML = "<i class='material-icons'>volume_up</i>";
-            callToast('<span class="white-text"><i class="material-icons left">volume_up</i> Áudio Habilitado.</span>', 'blue darken-2');
+
+            alerta.update(conf.message.VOL_UP);
         }
     }
 
@@ -183,13 +189,15 @@ class RoomHelper {
             share.setAttribute('data-active', 'disabled');
             share.classList.add("red");
             share.innerHTML = "<i class='material-icons'>stop_screen_share</i>";
-            callToast('<span class="white-text"><i class="material-icons left">screen_share</i> Tela compartilhada.</span>', 'blue darken-2');
+
+            alerta.update(conf.message.START_SHARE);
         } else if (status === 'on') {
             $('#share-screen').show();
             share.setAttribute('data-active', 'enabled');
             share.classList.remove("red");
             share.innerHTML = "<i class='material-icons'>screen_share</i>";
-            callToast('<span class="white-text"><i class="material-icons left">stop_screen_share</i> Compartilhamento de tela finalizado.</span>', 'red darken-3');
+
+            alerta.update(conf.message.STOP_SHARE);
         }
     }
 
@@ -204,16 +212,14 @@ class RoomHelper {
             pedir.classList.add("grey");
             $('#pedir-vez').hide();
         } else if (status === 'allow') {
-            var toastContent = '<span class="white-text"><i class="fa fa-check"></i> ' +
-                'Sua solicitação foi atendida.<br>' +
-                'Clique no botão ao lado para participar.' +
-                '</span>';
-            callToast(toastContent, 'blue darken-2');
+
+            alerta.update(conf.message.SEND_ACP_SOLICITATION);
             $('#div-enter').fadeIn(300);
             setParticipation('on');
         } else if (status === 'deny') {
             setParticipation('dis');
-            callToast('<span class="white-text"><i class="fa fa-times"></i> Sua solicitação foi negada!</span>', 'red darken-3');
+
+            alerta.update(conf.message.NOT_ACP_SOLICITATION);
         }
     }
 
@@ -324,7 +330,7 @@ class RoomHelper {
         var scrollsize;
         var instance = M.Sidenav.getInstance(elem);
         if (!instance.isOpen) {
-            callToast(`<div align="right"><i class="fa fa-comment-o blue-text"></i> ${message}</div>`, 'grey darken-4');
+            alerta.update(conf.message.CHAT_MESSAGE, message);
         }
         if (rmt) {
             element.innerHTML = `${element.innerHTML}<p class="chat-in blue">${message}</p>`;
