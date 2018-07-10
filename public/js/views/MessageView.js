@@ -5,16 +5,16 @@ class MessageView {
         this._text;
     }
 
-    _template(model, detail) {
+    _template(arrModelo, detail) {
 
-        return detail ? `<span class="white-text">${model[0]} ${detail} ${model[1]}</span>` : `<span class="white-text">${model[0]} ${model[1]}</span>`;
+        return detail ? `<span class="white-text">${arrModelo[0]} ${detail} ${arrModelo[1]}</span>` : `<span class="white-text">${arrModelo[0]} ${arrModelo[1]}</span>`;
     }
 
-    update(model, value) {
+    update(arrModelo, value) {
 
-        this._text = value ? this._template(model, value) : this._template(model);
-        M.toast({ html: this._text, classes: model[2], displayLength: 2000 });
-        return new Message(this._text);
+        this._text = value ? this._template(arrModelo, value) : this._template(arrModelo);
+        let mensagem = new Message(this._text, arrModelo[2]);
+        M.toast({ html: mensagem.text, classes: mensagem.model, displayLength: 2000 });
     }
 
 }

@@ -3,15 +3,15 @@ class RoomController {
     constructor() {
 
         let tag = document.querySelector.bind(document);
-        this._roomId = tag(conf.dom.room.ROOM);
-        this._inputMateria = tag(conf.dom.room.MATERIA);
-        this._inputAssunto = tag(conf.dom.room.ASSUNTO);
-        this._inputName = tag(conf.dom.room.NAME);
+        this._roomId = tag(conf.dom.ROOM);
+        this._inputMateria = tag(conf.dom.MATERIA);
+        this._inputAssunto = tag(conf.dom.ASSUNTO);
+        this._inputName = tag(conf.dom.NAME);
     }
 
     _createList() {
 
-        this._inputCursos = $(conf.dom.room.CURSO_LIST).val();
+        this._inputCursos = $(conf.dom.CURSO_LIST).val();
         return this._inputCursos.join(';');
     }
 

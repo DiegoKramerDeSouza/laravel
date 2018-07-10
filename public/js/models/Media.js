@@ -22,7 +22,8 @@ class Media {
         sessionAccess,
         endSessionAccess,
         divEndBtn,
-        toggleChat
+        toggleChat,
+        textMessage
     ) {
 
         this._videoPreview = videoPreview;
@@ -43,6 +44,7 @@ class Media {
         this._endSessionAccess = endSessionAccess;
         this._divEndBtn = divEndBtn;
         this._toggleChat = toggleChat;
+        this._textMessage = textMessage;
         Object.freeze(this);
     }
 
@@ -134,6 +136,11 @@ class Media {
     get toggleChat() {
 
         return this._toggleChat;
+    }
+
+    get textMessage() {
+
+        return this._textMessage;
     }
 
 }

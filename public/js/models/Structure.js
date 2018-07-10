@@ -6,15 +6,17 @@ class Structure {
 
     constructor(
         viewers,
-        usuario,
-        solicita,
+        usuario, solicita,
         broadcastStatus,
         isModerator,
         onlobby,
         onParticipation,
         lockSolicitation,
         mainVideo,
-        userVideo
+        userVideo,
+        startRoom,
+        publicRoomsList,
+        connectList
     ) {
 
         this._viewers = viewers;
@@ -29,6 +31,9 @@ class Structure {
         this._connectedAt;
         this._mainVideo = mainVideo;
         this._userVideo = userVideo;
+        this._startRoom = startRoom;
+        this._publicRoomsList = publicRoomsList;
+        this._connectList = connectList;
         this._connections = [];
         this._streamVideos = [];
     }
@@ -162,6 +167,25 @@ class Structure {
 
         this._userVideo = value;
     }
+
+    // Apenas getters ---------------------------
+
+    get startRoom() {
+
+        return this._startRoom;
+    }
+
+    get publicRoomsList() {
+
+        return this._publicRoomsList;
+    }
+
+    get connectList() {
+
+        return this._connectList;
+    }
+
+    // ------------------------------------------
 
     get streamVideos() {
 

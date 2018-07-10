@@ -1,10 +1,10 @@
 /**
  * Módulo de informatívo de sala
- *  -> Apresenta o rótulo da sala, informando os dados básicos da sala criada
+ *  -> Apresenta o rótulo da sala, informando os dados básicos da sala criada/acessada
  */
 class RoomInfo {
 
-    constructor(currentRoomId, broadcaster, inRoom, inScreen, currentUser, myClass) {
+    constructor(currentRoomId, broadcaster, inRoom, inScreen, currentUser, myClass, countUsers) {
 
         this._currentRoomId = currentRoomId;
         this._broadcaster = broadcaster;
@@ -12,6 +12,7 @@ class RoomInfo {
         this._inScreen = inScreen;
         this._currentUser = currentUser;
         this._myClass = myClass;
+        this._countUsers = countUsers;
         Object.freeze(this);
     }
 
@@ -43,6 +44,11 @@ class RoomInfo {
     get myClass() {
 
         return this._myClass;
+    }
+
+    get countUsers() {
+
+        return this._countUsers;
     }
 
 }

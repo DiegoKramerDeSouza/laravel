@@ -70,10 +70,11 @@ class RoomHelper {
 
     // Mensagem de 0 salas disponíveis por conexão
     static noRooms() {
-        //var publicRoomsDiv = document.getElementById('public-conference');
-        var publicRoomsDiv = structureController.tag('#public-conference');
-        var divOpen = structureController.addTag('div');
-        var message = `<div class='red-text' style='margin-top:50px; margin-bottom:50px;' align='center'>
+        let tag = document.querySelector.bind(document);
+        let allTags = document.querySelectorAll.bind(document);
+        let publicRoomsDiv = tag('#public-conference');
+        let divOpen = addTag('div');
+        let message = `<div class='red-text' style='margin-top:50px; margin-bottom:50px;' align='center'>
             <h6><i class='fa fa-times-circle fa-lg red-text text-darken-3'></i> <b>Não há salas disponíveis.</b></h6>
         </div>`;
         divOpen.innerHTML = message;

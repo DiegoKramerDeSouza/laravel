@@ -1,6 +1,6 @@
 /**
  * Módulo de criação de salas
- *  -> Define as informações básicas de salas para formação do seu rótulo
+ *  -> Define as informações básicas para criação de salas e formação de rótulo
  */
 class Room {
 

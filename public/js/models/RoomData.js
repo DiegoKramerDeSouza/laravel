@@ -11,9 +11,9 @@ class RoomData {
         this._assunto = assunto;
         this._curso = curso;
         this._whois = whois;
+        this._activeRoom = activeRoom;
         this._allowed = allowed;
         this._classes = classes;
-        this._activeRoom = activeRoom;
         Object.freeze(this);
     }
 
@@ -42,6 +42,11 @@ class RoomData {
         return this._whois;
     }
 
+    get activeRoom() {
+
+        return this._activeRoom;
+    }
+
     get allowed() {
 
         return this._allowed;
@@ -51,10 +56,4 @@ class RoomData {
 
         return this._classes;
     }
-
-    get activeRoom() {
-
-        return this._activeRoom;
-    }
-
 }

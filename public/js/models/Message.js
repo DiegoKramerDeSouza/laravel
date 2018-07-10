@@ -3,9 +3,10 @@
  */
 class Message {
 
-    constructor(text = '') {
+    constructor(text = '', model = '') {
 
         this._text = text;
+        this._model = model;
     }
 
     get text() {
@@ -16,5 +17,15 @@ class Message {
     set text(text) {
 
         this._text = text;
+    }
+
+    get model() {
+
+        return this._model;
+    }
+
+    set model(model) {
+
+        this._model = model;
     }
 }

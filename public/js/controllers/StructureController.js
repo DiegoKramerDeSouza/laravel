@@ -2,10 +2,7 @@ class StructureController {
 
     constructor() {
 
-        this._tag = document.querySelector.bind(document);
-        this._allTags = document.querySelectorAll.bind(document);
-        this._addTag = document.createElement.bind(document);
-
+        let tag = document.querySelector.bind(document);
         this._viewer = conf.structure.VIEWER;
         this._user = conf.structure.USER;
         this._solicita = conf.structure.SOLICITA;
@@ -16,6 +13,9 @@ class StructureController {
         this._lockSolicitation = conf.structure.LOCK_SOLICITATION;
         this._mainVideo = conf.structure.WAITING_FOR_VIDEO;
         this._userVideo = conf.structure.WAITING_FOR_VIDEO;
+        this._startRoom = tag(conf.dom.BTN_START_ROOM);
+        this._publicRoomsList = tag(conf.dom.PUBLIC_CONFERENCE);
+        this._connectList = tag(conf.dom.USERS_LIST);
     }
 
     initiateStructure() {
@@ -30,23 +30,11 @@ class StructureController {
             this._onParticipation,
             this._lockSolicitation,
             this._mainVideo,
-            this._userVideo
+            this._userVideo,
+            this._startRoom,
+            this._publicRoomsList,
+            this._connectList
         ];
         return new Structure(...arrDocument);
-    }
-
-    tag(obj) {
-
-        return this._tag(obj);
-    }
-
-    allTags(obj) {
-
-        return this._allTags(obj);
-    }
-
-    addTag(obj) {
-
-        return this._addTag(obj);
     }
 }

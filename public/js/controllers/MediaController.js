@@ -3,24 +3,26 @@ class MediaController {
     constructor() {
 
         let tag = document.querySelector.bind(document);
-        this._videoPreview = tag(conf.dom.media.FIRST_VIDEO);
-        this._secondVideoPreview = tag(conf.dom.media.SECOND_VIDEO);
-        this._thirdVideoPreview = tag(conf.dom.media.THIRD_VIDEO);
-        this._mute = tag(conf.dom.media.MUTE);
-        this._screen = tag(conf.dom.media.SCREEN);
-        this._exitscreen = tag(conf.dom.media.EXIT_SCREEN);
-        this._vol = tag(conf.dom.media.VOL);
-        this._solPedir = tag(conf.dom.media.SOL_PEDIR);
-        this._cam = tag(conf.dom.media.CAM);
-        this._pedir = tag(conf.dom.media.PEDIR);
-        this._ctlPedir = tag(conf.dom.media.CTL_PEDIR);
-        this._share = tag(conf.dom.media.SHARE);
-        this._videoSecond = tag(conf.dom.media.VIDEO_SECOND);
-        this._swapSecond = tag(conf.dom.media.SWAP_SECOND);
-        this._sessionAccess = tag(conf.dom.media.SESSION_ACCESS);
-        this._endSessionAccess = tag(conf.dom.media.END_SESSION_ACCESS);
-        this._divEndBtn = tag(conf.dom.media.DIV_BTN_END);
-        this._toggleChat = tag(conf.dom.media.TOGGLE_CHAT);
+
+        this._videoPreview = tag(conf.dom.FIRST_VIDEO);
+        this._secondVideoPreview = tag(conf.dom.SECOND_VIDEO);
+        this._thirdVideoPreview = tag(conf.dom.THIRD_VIDEO);
+        this._mute = tag(conf.dom.MUTE);
+        this._screen = tag(conf.dom.SCREEN);
+        this._exitscreen = tag(conf.dom.EXIT_SCREEN);
+        this._vol = tag(conf.dom.VOL);
+        this._solPedir = tag(conf.dom.SOL_PEDIR);
+        this._cam = tag(conf.dom.CAM);
+        this._pedir = tag(conf.dom.PEDIR);
+        this._ctlPedir = tag(conf.dom.CTL_PEDIR);
+        this._share = tag(conf.dom.SHARE);
+        this._videoSecond = tag(conf.dom.VIDEO_SECOND);
+        this._swapSecond = tag(conf.dom.SWAP_SECOND);
+        this._sessionAccess = tag(conf.dom.SESSION_ACCESS);
+        this._endSessionAccess = tag(conf.dom.END_SESSION_ACCESS);
+        this._divEndBtn = tag(conf.dom.DIV_BTN_END);
+        this._toggleChat = tag(conf.dom.TOGGLE_CHAT);
+        this._textMessage = tag(conf.dom.TEXT_MESSAGE);
     }
 
     initiateMedia() {
@@ -43,7 +45,8 @@ class MediaController {
             this._sessionAccess,
             this._endSessionAccess,
             this._divEndBtn,
-            this._toggleChat
+            this._toggleChat,
+            this._textMessage
         ];
         return new Media(...arrMedia);
     }

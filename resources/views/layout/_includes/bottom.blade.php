@@ -27,25 +27,23 @@
                 </div>
             </div>
         </footer>
+
         <!-- Inicialização de Javascript -->
         <script type="text/javascript" src="{!! asset('js/init.data.config.js') !!}"></script>
         <script type="text/javascript" src="{!! asset('js/jquery-3.1.1.min.js') !!}"></script>
         <script type="text/javascript" src="{!! asset('js/materialize.min.js') !!}"></script>
         <script type="text/javascript" src="{!! asset('js/geral.js') !!}"></script>
 
-        <!-- Condicionais.start -->
         @if(isset($resultToString))
             <!-- Elementos das páginas de cadastros para autocomplete -->
-            <!-- A variável $resultToString deve ser passada pelo controller para inicialização-->
             <script type="text/javascript" src="{!! asset('js/formAutocomplete.js') !!}"></script>
         @endif
         @if(isset($streamPage))
-            <!-- Elementos para a formação de uma sala-->
-            <!-- A variável $streamPage deve ser passada pelo controller para inicialização-->
+            <!-- Elementos para a formação de uma SALA ==================================================== -->
             @if(! Auth::guest())
-                <!-- O usuário deve estar autenticado-->
                 <!-- Adição dos scripts de utilização do WEBRTC-->
-                <script type="text/javascript" src="{!! asset('js/conf/conf.js') !!}"></script>  
+                <script type="text/javascript" src="{!! asset('js/conf/conf.js') !!}"></script>
+
                 <script type="text/javascript" src="{!! asset('js/models/Structure.js') !!}"></script>  
                 <script type="text/javascript" src="{!! asset('js/controllers/StructureController.js') !!}"></script>  
                 <script type="text/javascript" src="{!! asset('js/models/Room.js') !!}"></script>  
@@ -60,8 +58,8 @@
                 <script type="text/javascript" src="{!! asset('js/controllers/MediaController.js') !!}"></script>
 
                 <script type="text/javascript" src="{!! asset('js/models/Message.js') !!}"></script>  
-                <script type="text/javascript" src="{!! asset('js/views/View.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/views/MessageView.js') !!}"></script>
+                <script type="text/javascript" src="{!! asset('js/views/RoomView.js') !!}"></script>
 
                 <script type="text/javascript" src="{!! asset('js/helpers/RoomHelper.js') !!}"></script>    
 
@@ -75,21 +73,17 @@
                 <script type="text/javascript" src="{!! asset('js/webrtc/getScreenId.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/chat.bottom.js') !!}"></script>
             @endif
+            <!-- ========================================================================================== -->
         @endif
         @if(isset($grant))
             <!-- Elemento para cadastro de perfis de usuários-->
-            <!-- A variável $grant deve ser passada pelo controller para a inicialização-->
             <script type="text/javascript" src="{!! asset('js/grant.bottom.js') !!}"></script>
         @endif
         @if(isset($classroom))
             <!-- Elemento para cadastro de turmas-->
-            <!-- A variável $classroom deve ser passada pelo controller para a inicialização-->
             <script type="text/javascript" src="{!! asset('js/turmas.bottom.js') !!}"></script>
         @endif
-        <!-- Condicionais.end -->
-
-        <!-- Inicialização de elementos MaterializeCSS para todas as páginas -->
-        <!-- Deve ser executada por último -->
+        <!-- Inicialização de elementos MaterializeCSS -->
         <script type="text/javascript" src="{!! asset('js/materialize.bottom.js') !!}"></script>
     </body>
 </html>

@@ -29,6 +29,7 @@ let roomInfo = roomInfoController.initiateRoomInfo();
 
 let roomController = new RoomController();
 let roomDataController = new RoomDataController();
+let roomView = new RoomView();
 let alerta = new MessageView();
 
 let connection = new RTCMultiConnection();
@@ -47,41 +48,30 @@ $(document).ready(function() {
     // Listeners de tratamento de tamanho de tela do video (Detecta Fullscreen OFF)
     RoomHelper.initListeners();
 
-    // Dom actions
-    let startRoom = tag('#btn-join-as-productor');
-    let textMessage = tag('#text-message');
-    let contaUsuarios = tag('#users-counter');
-    let publicRoomsDiv = tag('#public-conference');
-    let connectList = tag('#connected-users-list');
+
 
     connection.connectSocket((socket) => {
         // Socket - Join
         socket.on('join-broadcaster', (hintsToJoinBroadcast) => {
-            console.log('--> join-broadcaster', hintsToJoinBroadcast);
             structure.broadcastStatus = 1;
             connection.session = hintsToJoinBroadcast.typeOfStreams;
             connection.sdpConstraints.mandatory = {
                 OfferToReceiveVideo: false,
                 OfferToReceiveAudio: false
             };
-            console.log(roomInfo.currentRoomId.value);
             connection.extra.modifiedValue = roomInfo.currentRoomId.value + '-' + roomInfo.currentUser.value;
             connection.updateExtraData();
             connection.broadcastId = hintsToJoinBroadcast.broadcastId;
             connection.join(hintsToJoinBroadcast.userid);
-            console.log('--> Joined at: ' + hintsToJoinBroadcast.userid);
-
             alerta.update(conf.message.START_TRANSMITION);
         });
         // Socket - Rejoin
         socket.on('rejoin-broadcast', (getBroadcasterId) => {
-            console.log('--> rejoin-broadcast', getBroadcasterId);
             structure.broadcastStatus = 1;
             connection.attachStreams = [];
             connection.extra.modifiedValue = roomInfo.currentRoomId.value + '-' + roomInfo.currentUser.value;
             connection.updateExtraData();
             socket.emit('check-broadcast-presence', getBroadcasterId, (isBroadcastExists) => {
-                console.log('check-existente');
                 if (!isBroadcastExists) {
                     connection.userid = getBroadcasterId;
                 }
@@ -94,14 +84,11 @@ $(document).ready(function() {
         });
         // Socket - Parado
         socket.on('broadcast-stopped', (getBroadcasterId) => {
-            console.error('--> Broadcast finalizada', getBroadcasterId);
             structure.broadcastStatus = 0;
-
             alerta.update(conf.message.END_TRANSMITION);
         });
         // Socket - Iniciando
         socket.on('start-broadcasting', (typeOfStreams) => {
-            console.log('--> Iniciando broadcasting', typeOfStreams);
             structure.broadcastStatus = 1;
             connection.sdpConstraints.mandatory = {
                 OfferToReceiveVideo: false,
@@ -109,11 +96,9 @@ $(document).ready(function() {
             };
             connection.session = typeOfStreams;
             connection.open(connection.userid, connect.isPublicModerator);
-            console.log('--> Abrindo: ' + connection.userid);
         });
         // Socket - Saindo
         socket.on('leave-the-room', (targetconnection) => {
-            console.log('--> Saindo...' + targetconnection.remoteUserId + ' -> ' + connection.userid);
             if (targetconnection.remoteUserId != connection.userid) return;
             connection.leave();
         });
@@ -130,8 +115,8 @@ $(document).ready(function() {
                 return;
             }
             if (error !== 'permission-denied') {
-                var elem = tag('#msg-share');
-                var instance = M.Modal.getInstance(elem);
+                let elem = tag('#msg-share');
+                let instance = M.Modal.getInstance(elem);
                 instance.open();
             } else if (error === 'permission-denied') {
                 setShare('on');
@@ -150,11 +135,9 @@ $(document).ready(function() {
         /**==================================================================================================
          * Tratamento de conexões REMOTAS e LOCAIS
          * -> Identificação de compartilhamentos de tela e ingressos em transmissões
+         * ==================================================================================================
          */
-        // Broadcaster recebendo uma conexão remota==========================================================
         if (event.type === 'remote' && connection.isInitiator) {
-
-            let msgrash = [];
 
             // Remove qualquer conexão duplicada
             if (structure.incomingCon == event.stream.streamid) {
@@ -176,7 +159,6 @@ $(document).ready(function() {
                 structure.userVideo = event.stream;
 
                 mediaController.initiateVideo(media.thirdVideoPreview);
-
                 alerta.update(conf.message.START_PARTICIPATION);
 
                 $('#span-video-preview-3rd').fadeIn(300);
@@ -188,23 +170,19 @@ $(document).ready(function() {
                             event.stream.getTracks().forEach((track) => {
                                 try {
                                     peer.addTrack(track, event.stream);
-                                } catch (e) {
-                                    console.log('Track já existe: ', e);
-                                }
+                                } catch (e) {}
                             });
                             connection.dontAttachStream = true;
                             connection.renegotiate(p);
                             connection.dontAttachStream = false;
                         }
                     });
-                    //streamVideos.push(event.stream);
                     structure.streamVideos = event.stream;
                     RoomHelper.toggleIncomingVideos('in');
                 }, 500);
 
                 $('#div-end').fadeIn(300);
                 media.endSessionAccess.onclick = function() {
-
                     structure.streamVideos.forEach((stream) => {
                         connection.getAllParticipants().forEach((p) => {
                             let peer = connection.peers[p].peer;
@@ -216,23 +194,23 @@ $(document).ready(function() {
                     structure.emptyStreamVideos();
                     structure.incomingCon = '';
                     RoomHelper.toggleIncomingVideos('out');
-                    msgrash[0] = btoa('@Finaliza-Participacao');
-                    msgrash[1] = roomInfo.currentUser.value;
-                    msgrash[2] = connection.userid;
-                    msgrash[3] = roomInfo.inRoom.value;
-                    msgrash[4] = event.userid;
+                    let msgrash = [
+                        btoa('@Finaliza-Participacao'),
+                        roomInfo.currentUser.value,
+                        connection.userid,
+                        roomInfo.inRoom.value,
+                        event.userid
+                    ];
                     connection.send(msgrash, event.userid);
                     structure.lockSolicitation = false;
                 }
-
             } else {
                 return;
             }
-            // Usuário recebendo uma conexão remota com compartilhamento de tela=============================
+
         } else if (!structure.onParticipation && (event.type === 'remote' && event.stream.isScreen === true)) {
 
             console.log('REMOTO COM SCREEN --> ', event.stream.streamid);
-
             /*
             if (structure.incomingCon == event.stream.streamid && structure.incomingCon != structure.connectedAt) {
                 connection.getAllParticipants().forEach((p) => {
@@ -245,7 +223,6 @@ $(document).ready(function() {
                 //return;
             }
             */
-
             // Conexão remota com compartilhamento de tela
             $('#span-video-preview-2nd').fadeIn(300);
             RoomHelper.toggleIncomingVideos('in');
@@ -259,21 +236,21 @@ $(document).ready(function() {
                 mediaController.controlSwapVideo();
             }
 
-            // Usuário recebendo uma conexão remota sem compartilhamento de tela=============================
         } else if (!structure.onParticipation && (event.type === 'remote' && !event.stream.isScreen)) {
 
             console.log('REMOTO SEM SCREEN --> ' + event.stream.streamid);
-
+            /*
             if (structure.incomingCon == event.stream.streamid) {
                 connection.getAllParticipants().forEach((p) => {
                     if (p + '' == event.userid + '') {
                         var peer = connection.peers[p].peer;
-                        //event.stream.stop();
-                        //peer.removeStream(event.stream);
+                        event.stream.stop();
+                        peer.removeStream(event.stream);
                     }
                 });
-                //return;
+                return;
             }
+            */
             // Conexão remota sem compartilhamento de tela
             if (structure.mainVideo != 'waiting' || event.extra.modifiedValue) {
                 $('#span-video-preview-3rd').fadeIn(300);
@@ -297,11 +274,11 @@ $(document).ready(function() {
             $('#div-connect').hide();
             $('#control-pedir-vez').hide();
             // Desabilita botão de ação para microfone
-            setCam('dis');
+            RoomHelper.setCam('dis');
             // Desabilita botão de ação para camera
-            setMute('dis');
+            RoomHelper.setMute('dis');
             // Desabilita botão de ação para compartilhar tela
-            setShare('dis');
+            RoomHelper.setShare('dis');
             // Habilita barra de controle de mídia
             $('#div-controller').fadeIn(300);
 
@@ -310,21 +287,23 @@ $(document).ready(function() {
                 mediaController.controlVolume(currentStream);
             };
 
-            let numberOfUsers = connection.getAllParticipants().length;
-            changeCounter(numberOfUsers);
+            //let numberOfUsers = connection.getAllParticipants().length;
+            structure.viewers = connection.getAllParticipants().length;
+            roomView.changeCounter(structure.viewers);
 
             // Tratamento do botão de pedir a vez
             media.solPedir.onclick = function() {
                 let altText = [];
                 if (structure.broadcastStatus == 1 && (structure.solicita === 0 && !structure.lockSolicitation)) {
                     // Constroi e envia mensagem solicitando a vez
-                    let msgrash = [];
                     let myIdentity = roomInfo.currentRoomId.value;
-                    msgrash[0] = btoa('@PedeAVez');
-                    msgrash[1] = roomInfo.currentUser.value;
-                    msgrash[2] = connection.userid;
-                    msgrash[3] = roomInfo.inRoom.value;
-                    msgrash[4] = myIdentity;
+                    let msgrash = [
+                        btoa('@PedeAVez'),
+                        roomInfo.currentUser.value,
+                        connection.userid,
+                        roomInfo.inRoom.value,
+                        myIdentity
+                    ];
                     try {
                         connection.send(msgrash, roomInfo.inRoom.value);
                         structure.solicita += 1;
@@ -399,14 +378,15 @@ $(document).ready(function() {
                 let response = document.getElementsByClassName('responses');
                 for (var j = 0; j < response.length; j++) {
                     response[j].onclick = function() {
-                        var admResponse = this.id.split('_');
-                        var msgrash = [];
-                        var myIdentity = roomInfo.currentRoomId.value;
-                        msgrash[0] = btoa('@PedeAVez:' + admResponse[0]);
-                        msgrash[1] = roomInfo.currentUser.value;
-                        msgrash[2] = admResponse[1];
-                        msgrash[3] = roomInfo.inRoom.value;
-                        msgrash[4] = myIdentity;
+                        let admResponse = this.id.split('_');
+                        let myIdentity = roomInfo.currentRoomId.value;
+                        let msgrash = [
+                            btoa('@PedeAVez:' + admResponse[0]),
+                            roomInfo.currentUser.value,
+                            admResponse[1],
+                            roomInfo.inRoom.value,
+                            myIdentity
+                        ];
                         if (admResponse[0] == 'allow' && structure.lockSolicitation) {
                             alerta.update(conf.message.ACCEPT_SOLICITATION);
                         } else {
@@ -424,7 +404,6 @@ $(document).ready(function() {
                     }
                 }
                 media.endSessionAccess.onclick = function() {
-                    console.log('---> Chamada via LOCAL');
                     $('#div-end').hide();
 
                     structure.emptyStreamVideos();
@@ -432,12 +411,13 @@ $(document).ready(function() {
                     RoomHelper.toggleIncomingVideos('out');
 
                     let targetId = media.divEndBtn.getAttribute('data-target');
-                    let msgrash = [];
-                    msgrash[0] = btoa('@Finaliza-Participacao');
-                    msgrash[1] = roomInfo.currentUser.value;
-                    msgrash[2] = connection.userid;
-                    msgrash[3] = roomInfo.inRoom.value;
-                    msgrash[4] = targetId;
+                    let msgrash = [
+                        btoa('@Finaliza-Participacao'),
+                        roomInfo.currentUser.value,
+                        connection.userid,
+                        roomInfo.inRoom.value,
+                        targetId
+                    ];
                     connection.send(msgrash, targetId);
                     structure.lockSolicitation = false;
                 }
@@ -485,13 +465,14 @@ $(document).ready(function() {
                         } catch (e) { console.log(e) }
                     });
                     // Mensagem de finalização de screen sharing
-                    var msgrash = [];
-                    var myIdentity = roomInfo.currentRoomId.value;
-                    msgrash[0] = btoa('@Finaliza-Share');
-                    msgrash[1] = roomInfo.currentUser.value;
-                    msgrash[2] = streamConnection;
-                    msgrash[3] = roomInfo.inRoom.value;
-                    msgrash[4] = myIdentity;
+                    let myIdentity = roomInfo.currentRoomId.value;
+                    let msgrash = [
+                        btoa('@Finaliza-Share'),
+                        roomInfo.currentUser.value,
+                        streamConnection,
+                        roomInfo.inRoom.value,
+                        myIdentity
+                    ];
                     connection.send(msgrash);
                 }
             }
@@ -514,7 +495,7 @@ $(document).ready(function() {
         };
         // Tratamento da função de chat da barra de controle de mídia
         media.toggleChat.onclick = function() {
-            textMessage.focus();
+            media.textMessage.focus();
         };
         // Tratamento de ingresso na transmissão: Botão "Ingressar" -> Ingressa e participa da apresentação
         // ->Toggle On/Off
@@ -539,18 +520,19 @@ $(document).ready(function() {
                 try {
                     connection.attachStreams.forEach((stream) => {
                         connection.getAllParticipants().forEach((p) => {
-                            var peer = connection.peers[p].peer;
+                            let peer = connection.peers[p].peer;
                             stream.stop();
                             peer.removeStream(stream);
                         });
                     });
-                    var msgrash = [];
-                    var myIdentity = roomInfo.currentRoomId.value;
-                    msgrash[0] = btoa('@Finaliza-Participante');
-                    msgrash[1] = roomInfo.currentUser.value;
-                    msgrash[2] = connection.userid;
-                    msgrash[3] = roomInfo.inRoom.value;
-                    msgrash[4] = myIdentity;
+                    let myIdentity = roomInfo.currentRoomId.value;
+                    let msgrash = [
+                        btoa('@Finaliza-Participante'),
+                        roomInfo.currentUser.value,
+                        connection.userid,
+                        roomInfo.inRoom.value,
+                        myIdentity
+                    ];
                     connection.send(msgrash, roomInfo.inRoom.value);
                     structure.lockSolicitation = false;
                     alerta.update(conf.message.END_TRANSMITION);
@@ -598,7 +580,7 @@ $(document).ready(function() {
     };
 
     // Ação de criar uma sala ao clicar em 'btn-join-as-productor' ==========================================
-    startRoom.onclick = function() {
+    structure.startRoom.onclick = function() {
 
         let room = roomController.initiateRoom();
 
@@ -613,7 +595,7 @@ $(document).ready(function() {
             // Modela e apresenta cabeçalho do video
             setRoomLabel('video-camera', room.tema, room.assunto);
 
-            startRoom.disabled = true;
+            structure.startRoom.disabled = true;
             // Define inicialização de sessão
             // -> Permite Audio, Video e Dados
             connection.session = {
@@ -705,7 +687,7 @@ $(document).ready(function() {
     connection.onNumberOfBroadcastViewersUpdated = (event) => {
         if (!connection.isInitiator) return;
         structure.viewers = event.numberOfBroadcastViewers;
-        changeCounter(structure.viewers);
+        roomView.changeCounter(structure.viewers);
     };
     // Verifica listagem de de salas públicas que se enquadrem no perfil do usuário
     // ->A cada 3 segundos
@@ -714,7 +696,7 @@ $(document).ready(function() {
         if (structure.onlobby) {
             //Verifica a existência de uma sala pública
             connection.getPublicModerators((array) => {
-                publicRoomsDiv.innerHTML = '';
+                structure.publicRoomsList.innerHTML = '';
                 // Se existir alguma sala pública execute
                 if (array.length > 0) {
                     array.forEach((moderator) => {
@@ -765,7 +747,7 @@ $(document).ready(function() {
                             divOpen.className = "card-panel hoverable";
                             let button = addTag('a');
                             button.id = moderatorId;
-                            button.title = 'Entrar';
+                            button.title = 'Acessar sala';
                             button.className = 'btn-floating room-enter blue darken-1';
                             button.innerHTML = '<i class="material-icons large">play_arrow</i>';
 
@@ -793,7 +775,7 @@ $(document).ready(function() {
                                 });
                             };
                             //Append de elementos html
-                            publicRoomsDiv.appendChild(divOpen);
+                            structure.publicRoomsList.appendChild(divOpen);
                             let divClose = document.getElementById('_' + moderatorId);
                             divClose.appendChild(button);
                         }
@@ -807,7 +789,8 @@ $(document).ready(function() {
             // Tratamento de conexões de espectadores
             let htmlList = '';
             let allParticipants = connection.getAllParticipants();
-            let numberOfUsers = allParticipants.length;
+            //let numberOfUsers = allParticipants.length;
+            structure.viewers = allParticipants.length;
             allParticipants.forEach((participantId) => {
                 let myId = roomInfo.currentRoomId.value;
                 let user = connection.peers[participantId];
@@ -820,10 +803,10 @@ $(document).ready(function() {
                     }
                 }
             });
-            if (numberOfUsers > 0) {
-                if (contaUsuarios.getAttribute('data-target') == 0) {
-                    connectList.innerHTML = htmlList;
-                    changeCounter(numberOfUsers);
+            if (structure.viewers > 0) {
+                if (roomInfo.countUsers.getAttribute('data-target') == 0) {
+                    structure.connectList.innerHTML = htmlList;
+                    roomView.changeCounter(structure.viewers);
                     $('#connected-users').fadeIn(300);
                 }
                 let disconnectId;
@@ -851,7 +834,7 @@ $(document).ready(function() {
     /**
      *  var texto String
      */
-    textMessage.onkeyup = function(e) {
+    media.textMessage.onkeyup = function(e) {
         if (e.keyCode != 13) return;
         this.value = this.value.replace(/^\s+|\s+$/g, '');
         if (!this.value.length) return;
@@ -865,14 +848,14 @@ $(document).ready(function() {
      *  var texto String
      */
     tag('#send-message-btn').onclick = function() {
-        var texto = textMessage.value
+        var texto = media.textMessage.value
         texto = texto.replace(/^\s+|\s+$/g, '');
         if (!texto.length) return;
         texto = "<b class='small'>" + structure.usuario + "</b>:<br>" + texto;
         texto = btoa(texto);
         connection.send(texto);
         appendDIV(texto);
-        textMessage.value = '';
+        media.textMessage.value = '';
     };
     // Recebimento de mensagens
     connection.onmessage = (event) => {
@@ -1035,6 +1018,6 @@ function alertDisconnection(userid) {
             return;
         }
         constructConnectionExpList(userid);
-        changeCounter(Object.keys(structure.connections).length);
+        roomView.changeCounter(Object.keys(structure.connections).length);
     }
 }
