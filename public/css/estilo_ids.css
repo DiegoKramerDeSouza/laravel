@@ -28,6 +28,32 @@
     overflow-x: hidden;
 }
 
+#chat-textarea::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track {
+    background-color: #F4F4F4;
+    -webkit-transition-duration: 0.4s;
+    transition-duration: 0.4s;
+}
+
+#chat-textarea::-webkit-scrollbar,
+body::-webkit-scrollbar {
+    width: 6px;
+    background: #F4F4F4;
+}
+
+#chat-textarea::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb {
+    background: #646464;
+    border-radius: 3px;
+    -webkit-transition-duration: 0.4s;
+    transition-duration: 0.4s;
+}
+
+#chat-textarea::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover {
+    background: #535353;
+}
+
 #connected-users-list {
     overflow-y: auto;
     max-height: 380px;
