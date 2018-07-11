@@ -1,6 +1,5 @@
 /**
- * MANIPULAÇÃO DE ELEMENTOS VISUAIS APLICÁVEIS À SALAS.INDEX.BLADE
- * Métodos de criação/alteração de elementos visuais para a plataforma de video conferência
+ * Criação de métodos estáticos com finalidades específicas
  */
 class RoomHelper {
 
@@ -16,89 +15,11 @@ class RoomHelper {
         document.addEventListener('MSFullscreenChange', exitHandler);
     }
 
-    // Toggle de vídeos secundários RoomHelper
-    /**
-     * 
-     * Param cmd: Comando para apresentar ou não um vídeo - in/out
-     */
-    static toggleIncomingVideos(cmd) {
-        var divMainVideo = document.getElementById('div-main-video');
-        var divIncomingVideo = document.getElementById('div-incoming-videos');
-        var showingVideo = false
-        if ($('#span-video-preview-2nd').is(':visible') || $('#span-video-preview-3rd').is(':visible')) {
-            showingVideo = true;
-        }
-        if (cmd === 'out' && (!showingVideo)) {
-            $('#div-incoming-videos').fadeOut(300);
-            setTimeout(function() {
-                divIncomingVideo.classList.remove("s6", "m4");
-                divMainVideo.classList.add("s12");
-                divMainVideo.classList.remove("s6", "m8");
-            }, 500);
-        } else if (cmd === 'in') {
-            divMainVideo.classList.remove("s12");
-            divMainVideo.classList.add("s6", "m8");
-            divIncomingVideo.classList.add("s6", "m4");
-            setTimeout(function() {
-                $('#div-incoming-videos').fadeIn(300);
-            }, 500);
-        }
-    }
-
-    // Chama alertas em elementos toast do MaterializeCSS
-    /**
-     * Param content: conteúdo da mensagem em html
-     * Param classe: classes aplicadas ao elem. toast
-     */
-    static callToast(content, classe) {
-        content = '<span class="white-text">' + content + '</span>';
-        M.toast({ html: content, classes: classe, displayLength: 2000 });
-    }
-
-    // Altera o contador de usuários conectados à sala e exibe em 'broadcast-viewers-counter'
-    /**
-     * Param number: número de usuários conectados
-     */
-    static changeCounter(number) {
-        var controller = document.getElementById('users-counter');
-        if (controller) {
-            if (controller.getAttribute('data-target') == '0') {
-                controller.innerHTML = number;
-            }
-        }
-    }
-
-    // Mensagem de 0 salas disponíveis por conexão
-    static noRooms() {
-        let tag = document.querySelector.bind(document);
-        let allTags = document.querySelectorAll.bind(document);
-        let publicRoomsDiv = tag('#public-conference');
-        let divOpen = addTag('div');
-        let message = `<div class='red-text' style='margin-top:50px; margin-bottom:50px;' align='center'>
-            <h6><i class='fa fa-times-circle fa-lg red-text text-darken-3'></i> <b>Não há salas disponíveis.</b></h6>
-        </div>`;
-        divOpen.innerHTML = message;
-        publicRoomsDiv.appendChild(divOpen);
-    }
-
-    // Define o cabeçalho da sala criada
-    /**
-     * Param icon: Ícone da sala
-     * Param classe: Temática da sala
-     * Param assunto: Assunto da sala
-     */
-    static setRoomLabel(icon, classe, assunto) {
-        var roomtitle = document.getElementById('class-title');
-        var label = "<i class='fa fa-" + icon + " blue-text'></i> <b>" + classe + "</b> (" + assunto + ")" +
-            "<span class='right'><a href='' title='Sair' class='red-text text-darken-3'>" +
-            "<i class='fa fa-times'></i></a></span>";
-        roomtitle.innerHTML = label;
-    }
-
     // Configurações visuais de status da webcam
     /**
      * Param status: 'disabled', 'off', 'on' 
      */
+    /*
     static setCam(status) {
         var cam = document.getElementById('toggle-camera');
         if (status === 'dis') {
@@ -110,21 +31,21 @@ class RoomHelper {
             cam.setAttribute('data-active', 'disabled');
             cam.classList.add("red");
             cam.innerHTML = "<i class='material-icons'>videocam_off</i>";
-
-            alerta.update(conf.message.CAM_OFF);
+            callToast('<span class="white-text"><i class="material-icons left">videocam_off</i> Camera Desabilitada.</span>', 'red darken-3');
         } else if (status === 'on') {
             cam.setAttribute('data-active', 'enabled');
             cam.classList.remove("red");
             cam.innerHTML = "<i class='material-icons'>videocam</i>";
-
-            alerta.update(conf.message.CAM_ON);
+            callToast('<span class="white-text"><i class="material-icons left">videocam</i> Camera Habilitada.</span>', 'blue darken-2');
         }
     }
+    */
 
     // Configurações visuais de status do botão Mute
     /**
      * Param status: 'disabled', 'off', 'on' 
      */
+    /*
     static setMute(status) {
         var mute = document.getElementById('toggle-mute');
         if (status === 'dis') {
@@ -137,20 +58,22 @@ class RoomHelper {
             mute.classList.add("red");
             mute.innerHTML = "<i class='material-icons'>mic_off</i>";
 
-            alerta.update(conf.message.MIC_OFF);
+            alerta.initiateMessage(conf.message.MIC_OFF);
         } else if (status === 'on') {
             mute.setAttribute('data-active', 'enabled');
             mute.classList.remove("red");
             mute.innerHTML = "<i class='material-icons'>mic</i>";
 
-            alerta.update(conf.message.MIC_ON);
+            alerta.initiateMessage(conf.message.MIC_ON);
         }
     }
+    */
 
     // Configurações visuais de status do volume
     /**
      * Param status: 'disabled', 'off', 'on' 
      */
+    /*
     static setVol(status) {
         var vol = document.getElementById('toggle-volume');
         if (status === 'dis') {
@@ -163,15 +86,16 @@ class RoomHelper {
             vol.classList.add("red");
             vol.innerHTML = "<i class='material-icons'>volume_off</i>";
 
-            alerta.update(conf.message.VOL_DOWN);
+            alerta.initiateMessage(conf.message.VOL_DOWN);
         } else if (status === 'on') {
             vol.setAttribute('data-active', 'enabled');
             vol.classList.remove("red");
             vol.innerHTML = "<i class='material-icons'>volume_up</i>";
 
-            alerta.update(conf.message.VOL_UP);
+            alerta.initiateMessage(conf.message.VOL_UP);
         }
     }
+    */
 
     // Configurações visuais de status do compartilhamento de tela
     /**
@@ -191,14 +115,14 @@ class RoomHelper {
             share.classList.add("red");
             share.innerHTML = "<i class='material-icons'>stop_screen_share</i>";
 
-            alerta.update(conf.message.START_SHARE);
+            alerta.initiateMessage(conf.message.START_SHARE);
         } else if (status === 'on') {
             $('#share-screen').show();
             share.setAttribute('data-active', 'enabled');
             share.classList.remove("red");
             share.innerHTML = "<i class='material-icons'>screen_share</i>";
 
-            alerta.update(conf.message.STOP_SHARE);
+            alerta.initiateMessage(conf.message.STOP_SHARE);
         }
     }
 
@@ -214,13 +138,13 @@ class RoomHelper {
             $('#pedir-vez').hide();
         } else if (status === 'allow') {
 
-            alerta.update(conf.message.SEND_ACP_SOLICITATION);
+            alerta.initiateMessage(conf.message.SEND_ACP_SOLICITATION);
             $('#div-enter').fadeIn(300);
             setParticipation('on');
         } else if (status === 'deny') {
             setParticipation('dis');
 
-            alerta.update(conf.message.NOT_ACP_SOLICITATION);
+            alerta.initiateMessage(conf.message.NOT_ACP_SOLICITATION);
         }
     }
 
@@ -331,7 +255,7 @@ class RoomHelper {
         var scrollsize;
         var instance = M.Sidenav.getInstance(elem);
         if (!instance.isOpen) {
-            alerta.update(conf.message.CHAT_MESSAGE, message);
+            alerta.initiateMessage(conf.message.CHAT_MESSAGE, message);
         }
         if (rmt) {
             element.innerHTML = `${element.innerHTML}<p class="chat-in blue">${message}</p>`;

@@ -15,6 +15,7 @@ function toggleIncomingVideos(cmd) {
     var divIncomingVideo = document.getElementById('div-incoming-videos');
     var showingVideo = false
     if ($('#span-video-preview-2nd').is(':visible') || $('#span-video-preview-3rd').is(':visible')) {
+
         showingVideo = true;
     }
     if (cmd === 'out' && (!showingVideo)) {

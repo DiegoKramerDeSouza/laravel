@@ -1,8 +1,14 @@
+/**
+ * Controla mecanismos de elementos de mídia como vídeos, volume e câmeras
+ *  ->  Controla também as funções de operações relativas às mídias como
+ *      pedir a vez e compartilhamento de tela
+ */
 class MediaController {
 
     constructor() {
 
         let tag = document.querySelector.bind(document);
+        this._mediaView = new MediaView();
 
         this._videoPreview = tag(conf.dom.FIRST_VIDEO);
         this._secondVideoPreview = tag(conf.dom.SECOND_VIDEO);
@@ -23,6 +29,17 @@ class MediaController {
         this._divEndBtn = tag(conf.dom.DIV_BTN_END);
         this._toggleChat = tag(conf.dom.TOGGLE_CHAT);
         this._textMessage = tag(conf.dom.TEXT_MESSAGE);
+
+        this._controlCam = true;
+        this._controlMute = true;
+        this._controlVolume = true;
+        this._videoIsMain = false;
+        this._divMainVideo = tag(conf.dom.DIV_MAIN_VIDEO);
+        this._divIncomingVideo = tag(conf.dom.DIV_INCOMING_VIDEO);
+        this._otherVideos = {
+            screen: '',
+            user: ''
+        };
     }
 
     initiateMedia() {
@@ -58,36 +75,42 @@ class MediaController {
             playPromise.then(_ => {
                     targetVideo.play();
                 })
-                .catch(error => {
-                    console.log('Carregando vídeo...');
-                });
+                .catch(error => {});
         }
     }
 
     controlVolume(currentStream) {
 
-        if (this._vol.getAttribute('data-active') == 'enabled') {
+        if (this._controlVolume) {
             currentStream.forEach((stream) => {
                 stream.mute('audio');
             });
-            setVol('off');
+            this._mediaView.setVolume();
+            this._controlVolume = false;
         } else {
             currentStream.forEach((stream) => {
                 stream.unmute('audio');
             });
-            RoomHelper.setVol('on');
+            this._mediaView.setVolume();
+            this._controlVolume = true;
         }
+    }
+
+    disableVolume() {
+
+        this._mediaView.volumeOff();
     }
 
     controlMute(currentStream) {
 
-        if (this._mute.getAttribute('data-active') == 'enabled') {
+        if (this._controlMute) {
             currentStream.forEach((stream) => {
                 if (!stream.isScreen) {
                     stream.mute('audio');
                 }
             });
-            RoomHelper.setMute('off');
+            this._mediaView.setMute();
+            this._controlMute = false;
         } else {
             currentStream.forEach((stream) => {
                 if (!stream.isScreen) {
@@ -98,21 +121,31 @@ class MediaController {
                     });
                 }
             });
-            RoomHelper.setMute('on');
+            this._mediaView.setMute();
+            this._controlMute = true;
         }
+    }
+
+    disableMute() {
+
+        this._mediaView.muteOff();
     }
 
     controlCam(currentStream) {
 
-        if (this._cam.getAttribute('data-active') == 'enabled') {
+        if (this._controlCam) {
             currentStream.forEach((stream) => {
                 if (!stream.isScreen) {
                     stream.mute('video');
                     stream.mute('audio');
                 }
             });
-            RoomHelper.setCam('off');
-            RoomHelper.setMute('off');
+            this._mediaView.setCam();
+            this._controlCam = false;
+            if (this._controlMute) {
+                this._mediaView.setMute();
+                this._controlMute = false;
+            }
         } else {
             currentStream.forEach((stream) => {
                 if (!stream.isScreen) {
@@ -120,24 +153,32 @@ class MediaController {
                     stream.unmute('audio');
                 }
             });
-            RoomHelper.setCam('on');
-            RoomHelper.setMute('on');
+            this._mediaView.setCam();
+            this._controlCam = true;
+            if (!this._controlMute) {
+                this._mediaView.setMute();
+                this._controlMute = true;
+            }
         }
+    }
+
+    disableCam() {
+
+        this._mediaView.camOff();
     }
 
     controlSwapVideo() {
 
         let mVideoP = this._videoPreview;
         let sVideoP = this._secondVideoPreview;
-        let videoS = this._videoSecond;
         let mainVideoSrc;
 
-        if (videoS.getAttribute('data-position') == 'second') {
-            videoS.setAttribute('data-position', 'main');
-            mVideoP.classList.add('width-limit');
+        if (!this._videoIsMain) {
+            this._videoIsMain = true;
+            mVideoP.classList.add(conf.misc.CLASS_WIDTH_LIMIT);
         } else {
-            videoS.setAttribute('data-position', 'second');
-            mVideoP.classList.remove('width-limit');
+            this._videoIsMain = false;
+            mVideoP.classList.remove(conf.misc.CLASS_WIDTH_LIMIT);
         }
         mainVideoSrc = mVideoP.srcObject;
         mVideoP.pause();
@@ -153,15 +194,39 @@ class MediaController {
                         sVideoP.play();
                     })
                     .catch(error => {
-                        console.log('Carregando vídeo 2...');
+                        console.log('Tentando iniciar vídeo...');
                     });
                 playReady.then(_ => {
                         mVideoP.play();
                     })
                     .catch(error => {
-                        console.log('Carregando vídeo 1...');
+                        console.log('Tentando iniciar vídeo...');
                     });
             }
         }, 500);
+    }
+
+    openIncomingVideos(stream) {
+
+        if (stream) {
+            stream.isScreen ? this._otherVideos.screen = stream.id : this._otherVideos.user = stream.id;
+            this._mediaView.incomingVideos(this._divMainVideo, this._divIncomingVideo, true);
+        } else {
+            return;
+        }
+    }
+
+    closeIncomingVideos(stream) {
+
+        if (stream) {
+            stream.isScreen ? this._otherVideos.screen = '' : this._otherVideos.user = '';
+            if (this._otherVideos.screen == '' && this._otherVideos.user == '') {
+                this._mediaView.incomingVideos(this._divMainVideo, this._divIncomingVideo);
+            } else {
+                return;
+            }
+        } else {
+            return;
+        }
     }
 }

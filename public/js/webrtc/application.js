@@ -27,10 +27,12 @@ let structure = structureController.initiateStructure();
 let roomInfoController = new RoomInfoController();
 let roomInfo = roomInfoController.initiateRoomInfo();
 
+let alerta = new MessageController();
+
 let roomController = new RoomController();
 let roomDataController = new RoomDataController();
 let roomView = new RoomView();
-let alerta = new MessageView();
+//let alerta = new MessageView();
 
 let connection = new RTCMultiConnection();
 
@@ -48,8 +50,6 @@ $(document).ready(function() {
     // Listeners de tratamento de tamanho de tela do video (Detecta Fullscreen OFF)
     RoomHelper.initListeners();
 
-
-
     connection.connectSocket((socket) => {
         // Socket - Join
         socket.on('join-broadcaster', (hintsToJoinBroadcast) => {
@@ -63,7 +63,7 @@ $(document).ready(function() {
             connection.updateExtraData();
             connection.broadcastId = hintsToJoinBroadcast.broadcastId;
             connection.join(hintsToJoinBroadcast.userid);
-            alerta.update(conf.message.START_TRANSMITION);
+            alerta.initiateMessage(conf.message.START_TRANSMITION);
         });
         // Socket - Rejoin
         socket.on('rejoin-broadcast', (getBroadcasterId) => {
@@ -85,7 +85,7 @@ $(document).ready(function() {
         // Socket - Parado
         socket.on('broadcast-stopped', (getBroadcasterId) => {
             structure.broadcastStatus = 0;
-            alerta.update(conf.message.END_TRANSMITION);
+            alerta.initiateMessage(conf.message.END_TRANSMITION);
         });
         // Socket - Iniciando
         socket.on('start-broadcasting', (typeOfStreams) => {
@@ -159,7 +159,7 @@ $(document).ready(function() {
                 structure.userVideo = event.stream;
 
                 mediaController.initiateVideo(media.thirdVideoPreview);
-                alerta.update(conf.message.START_PARTICIPATION);
+                alerta.initiateMessage(conf.message.START_PARTICIPATION);
 
                 $('#span-video-preview-3rd').fadeIn(300);
 
@@ -178,7 +178,7 @@ $(document).ready(function() {
                         }
                     });
                     structure.streamVideos = event.stream;
-                    RoomHelper.toggleIncomingVideos('in');
+                    mediaController.openIncomingVideos(event.stream);
                 }, 500);
 
                 $('#div-end').fadeIn(300);
@@ -193,7 +193,8 @@ $(document).ready(function() {
                     $('#div-end').hide();
                     structure.emptyStreamVideos();
                     structure.incomingCon = '';
-                    RoomHelper.toggleIncomingVideos('out');
+                    //RoomHelper.toggleIncomingVideos();
+                    mediaController.closeIncomingVideos(event.stream);
                     let msgrash = [
                         btoa('@Finaliza-Participacao'),
                         roomInfo.currentUser.value,
@@ -211,21 +212,10 @@ $(document).ready(function() {
         } else if (!structure.onParticipation && (event.type === 'remote' && event.stream.isScreen === true)) {
 
             console.log('REMOTO COM SCREEN --> ', event.stream.streamid);
-            /*
-            if (structure.incomingCon == event.stream.streamid && structure.incomingCon != structure.connectedAt) {
-                connection.getAllParticipants().forEach((p) => {
-                    if (p + '' == event.userid + '') {
-                        var peer = connection.peers[p].peer;
-                        //event.stream.stop();
-                        //peer.removeStream(event.stream);
-                    }
-                });
-                //return;
-            }
-            */
+
             // Conexão remota com compartilhamento de tela
             $('#span-video-preview-2nd').fadeIn(300);
-            RoomHelper.toggleIncomingVideos('in');
+            mediaController.openIncomingVideos(event.stream);
             media.secondVideoPreview.srcObject = event.stream;
             structure.incomingCon = event.stream.streamid;
 
@@ -239,18 +229,7 @@ $(document).ready(function() {
         } else if (!structure.onParticipation && (event.type === 'remote' && !event.stream.isScreen)) {
 
             console.log('REMOTO SEM SCREEN --> ' + event.stream.streamid);
-            /*
-            if (structure.incomingCon == event.stream.streamid) {
-                connection.getAllParticipants().forEach((p) => {
-                    if (p + '' == event.userid + '') {
-                        var peer = connection.peers[p].peer;
-                        event.stream.stop();
-                        peer.removeStream(event.stream);
-                    }
-                });
-                return;
-            }
-            */
+
             // Conexão remota sem compartilhamento de tela
             if (structure.mainVideo != 'waiting' || event.extra.modifiedValue) {
                 $('#span-video-preview-3rd').fadeIn(300);
@@ -260,7 +239,7 @@ $(document).ready(function() {
 
                 mediaController.initiateVideo(media.thirdVideoPreview);
 
-                RoomHelper.toggleIncomingVideos('in');
+                mediaController.openIncomingVideos(event.stream);
             } else {
                 structure.incomingCon = event.stream.streamid;
                 structure.onParticipation = false;
@@ -274,9 +253,9 @@ $(document).ready(function() {
             $('#div-connect').hide();
             $('#control-pedir-vez').hide();
             // Desabilita botão de ação para microfone
-            RoomHelper.setCam('dis');
+            mediaController.disableCam();
             // Desabilita botão de ação para camera
-            RoomHelper.setMute('dis');
+            mediaController.disableMute();
             // Desabilita botão de ação para compartilhar tela
             RoomHelper.setShare('dis');
             // Habilita barra de controle de mídia
@@ -318,7 +297,7 @@ $(document).ready(function() {
                 } else {
                     altText = conf.message.NO_CONNECTION;
                 }
-                alerta.update(altText);
+                alerta.initiateMessage(altText);
             };
 
             // Broadcaster executando uma conexão local =====================================================
@@ -356,7 +335,7 @@ $(document).ready(function() {
                 $('#count-pedir-vez').hide();
             }
             // Desabilita botão de ação para áudio
-            setVol('dis');
+            mediaController.disableVolume();
             if (!connection.isInitiator) {
                 setPedir('dis');
             }
@@ -388,7 +367,7 @@ $(document).ready(function() {
                             myIdentity
                         ];
                         if (admResponse[0] == 'allow' && structure.lockSolicitation) {
-                            alerta.update(conf.message.ACCEPT_SOLICITATION);
+                            alerta.initiateMessage(conf.message.ACCEPT_SOLICITATION);
                         } else {
                             structure.solicita -= 1;
                             connection.send(msgrash);
@@ -408,7 +387,7 @@ $(document).ready(function() {
 
                     structure.emptyStreamVideos();
                     structure.incomingCon = '';
-                    RoomHelper.toggleIncomingVideos('out');
+                    mediaController.closeIncomingVideos(event.stream);
 
                     let targetId = media.divEndBtn.getAttribute('data-target');
                     let msgrash = [
@@ -535,7 +514,7 @@ $(document).ready(function() {
                     ];
                     connection.send(msgrash, roomInfo.inRoom.value);
                     structure.lockSolicitation = false;
-                    alerta.update(conf.message.END_TRANSMITION);
+                    alerta.initiateMessage(conf.message.END_TRANSMITION);
                 } catch (e) {
                     setParticipation('off');
                     structure.onParticipation = true;
@@ -565,14 +544,15 @@ $(document).ready(function() {
 
         if (event.stream.isScreen) {
             $('#span-video-preview-2nd').hide();
-            RoomHelper.toggleIncomingVideos('out');
+            //mediaController.closeIncomingVideos(event.stream);
         } else if (event.streamid == structure.userVideo.streamid) {
             console.log('EVENTO: ', event);
             $('#span-video-preview-3rd').hide();
             structure.userVideo = 'waiting';
             structure.lockSolicitation = false;
-            RoomHelper.toggleIncomingVideos('out');
+
         }
+        mediaController.closeIncomingVideos(event.stream);
     };
     // Listener para fim de conexões
     connection.onleave = (event) => {
@@ -593,7 +573,7 @@ $(document).ready(function() {
             // Inicializa a tela de apresentação
             callTeacherStream();
             // Modela e apresenta cabeçalho do video
-            setRoomLabel('video-camera', room.tema, room.assunto);
+            roomView.setRoomLabel('video-camera', room.tema, room.assunto);
 
             structure.startRoom.disabled = true;
             // Define inicialização de sessão
@@ -628,7 +608,7 @@ $(document).ready(function() {
                 });
             });
         } else {
-            alerta.update(conf.message.FORM_ALERT);
+            alerta.initiateMessage(conf.message.FORM_ALERT);
         }
     };
     //=======================================================================================================
@@ -715,7 +695,7 @@ $(document).ready(function() {
                             // PALEATIVO - ARRUMAR!
                             if (labelRoom.length < 10) return;
                         } catch (exp) {
-                            if (array.length < 2) RoomHelper.noRooms();
+                            if (array.length < 2) roomView.noRooms();
                             return;
                         }
 
@@ -753,7 +733,7 @@ $(document).ready(function() {
 
                             button.onclick = function() {
                                 callTeacherStream();
-                                setRoomLabel('television', roomData.classe, roomData.assunto);
+                                roomView.setRoomLabel('television', roomData.classe, roomData.assunto);
 
                                 structure.onlobby = false;
                                 structure.isModerator = false;
@@ -779,10 +759,10 @@ $(document).ready(function() {
                             let divClose = document.getElementById('_' + moderatorId);
                             divClose.appendChild(button);
                         }
-                        if (countRooms == 0) RoomHelper.noRooms();
+                        if (countRooms == 0) roomView.noRooms();
                     });
                 } else {
-                    RoomHelper.noRooms();
+                    roomView.noRooms();
                 }
             });
         } else {
@@ -818,7 +798,7 @@ $(document).ready(function() {
                             userRemoved: true,
                             removedUserId: disconnectId
                         });
-                        alerta.update(conf.message.DISCONNECT_USER, this.name);
+                        alerta.initiateMessage(conf.message.DISCONNECT_USER, this.name);
                     }
                 }
             }
@@ -930,20 +910,18 @@ function appendDIV(event) {
             }
             return;
         } else if (chkrash[0] === btoa('@Finaliza-Share')) {
-            //var swapSecond = tag('#swap-video');
-            var position = media.videoSecond.getAttribute('data-position');
-            if (position == 'main') {
+            if (mediaController._videoIsMain) {
                 media.swapSecond.click();
             }
             setTimeout(function() {
                 $('#span-video-preview-2nd').hide();
-                alerta.update(conf.message.STOP_SHARE);
+                alerta.initiateMessage(conf.message.STOP_SHARE);
             }, 1000);
         } else if (chkrash[0] === btoa('@Finaliza-Participacao')) {
             if (!structure.onParticipation) {
                 structure.onParticipation = true;
                 accessBtn.setAttribute('data-active', 'enabled');
-                alerta.update(conf.message.CANCEL_SOLICITATION);
+                alerta.initiateMessage(conf.message.CANCEL_SOLICITATION);
             }
             accessBtn.click();
         } else if (chkrash[0] === btoa('@Finaliza-Participante')) {
@@ -973,7 +951,7 @@ function listBox(text) {
         if (structure.solicita === 1) { solList.innerHTML = '' };
         htmlList = constructSolicitationList(msg[2], msg[0]);
         solList.innerHTML += htmlList;
-        alerta.update(conf.message.NEW_SOLICITATION, msg[0]);
+        alerta.initiateMessage(conf.message.NEW_SOLICITATION, msg[0]);
     }
     return;
 }
@@ -1005,7 +983,7 @@ function alertDisconnection(userid) {
 
     console.log(userid, roomInfo.inRoom.value);
     if (userid === roomInfo.inRoom.value) {
-        alerta.update(conf.message.ALERT_DISCONNECTION);
+        alerta.initiateMessage(conf.message.ALERT_DISCONNECTION);
         setTimeout(location.reload.bind(location), 3000);
     } else {
         try {

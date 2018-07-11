@@ -29,7 +29,7 @@ const conf = {
         ALLOWED: false
     },
     message: {
-        /*Atributos para formação de mensagens padronizadas: [ícone, texto, cor de fundo] */
+        /*Atributos para formação de mensagens padronizadas: [ícone(html), texto, cor de fundo] */
         CHAT_MESSAGE: ['<div align="right"><i class="fa fa-comment-o blue-text"></i>', '</div>', 'grey darken-4'],
         START_TRANSMITION: ['<i class="fa fa-play-circle fa-lg"></i>', 'Transmissão iniciada!', 'blue darken-1'],
         END_TRANSMITION: ['<i class="fa fa-stop-circle fa-lg"></i>', 'Transmissão finalizada!', 'red darken-4'],
@@ -62,15 +62,21 @@ const conf = {
         BROADCASTER: '#broadcaster',
         BTN_START_ROOM: '#btn-join-as-productor',
         CAM: '#toggle-camera',
+        CLASS_TITLE: '#class-title',
         CTL_PEDIR: '#control-pedir-vez',
         CURSO_LIST: '#cursos-list',
         DIV_BTN_END: '#div-end',
+        DIV_INCOMING_VIDEO: '#div-incoming-videos',
+        DIV_MAIN_VIDEO: '#div-main-video',
         END_SESSION_ACCESS: '#end-session',
         EXIT_SCREEN: '#exit-fullscreen',
         FIRST_VIDEO: '#video-preview',
         IN_ROOM: '#in-room',
         IN_SCREEN: '#in-screen',
         LABEL_USERS: '#users-counter',
+        LI_CAM: '#li-toggle-camera',
+        LI_MUTE: '#li-toggle-mute',
+        LI_VOLUME: '#li-toggle-volume',
         MATERIA: '#tema',
         MUTE: '#toggle-mute',
         NAME: '#current-user',
@@ -88,7 +94,21 @@ const conf = {
         THIRD_VIDEO: '#thirdvideo-preview',
         TOGGLE_CHAT: '#toggle-chat',
         USERS_LIST: '#connected-users-list',
+        VIDEO_MAIN: '#span-video-preview',
         VIDEO_SECOND: '#span-video-preview-2nd',
+        VIDEO_THIRD: '#span-video-preview-3rd',
         VOL: '#toggle-volume'
+    },
+    misc: {
+        DISABLED_COLOR: 'grey',
+        ON_COLOR: 'blue',
+        OFF_COLOR: 'red',
+        CLASS_WIDTH_LIMIT: 'width-limit',
+        ICON_MIC: '<i class="material-icons">mic</i>',
+        ICON_MUTE_MIC: '<i class="material-icons">mic_off</i>',
+        ICON_CAM_ON: '<i class="material-icons">videocam</i>',
+        ICON_CAM_OFF: '<i class="material-icons">videocam_off</i>',
+        ICON_VOL_ON: '<i class="material-icons">volume_up</i>',
+        ICON_VOL_OFF: '<i class="material-icons">volume_off</i>'
     }
 }

@@ -142,7 +142,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div id='div-incoming-videos' class='d-none col'>
+                        <div id='div-incoming-videos' data-active='out' class='d-none col'>
                             <!--TERCEIRO VÍDEO-->
                             <div id='span-video-preview-3rd' data-status='disabled' data-position='second' class='col s12 d-none'>
                                 <video id="thirdvideo-preview" preload="none" loop class='min-video responsive-video'></video>
