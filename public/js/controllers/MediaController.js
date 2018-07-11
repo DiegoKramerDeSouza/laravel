@@ -33,6 +33,9 @@ class MediaController {
         this._controlCam = true;
         this._controlMute = true;
         this._controlVolume = true;
+        this._controlSharing = true;
+
+        this._session = false;
         this._videoIsMain = false;
         this._divMainVideo = tag(conf.dom.DIV_MAIN_VIDEO);
         this._divIncomingVideo = tag(conf.dom.DIV_INCOMING_VIDEO);
@@ -66,6 +69,11 @@ class MediaController {
             this._textMessage
         ];
         return new Media(...arrMedia);
+    }
+
+    _switchValue(value) {
+
+        return value ? false : true;
     }
 
     initiateVideo(targetVideo) {
@@ -173,13 +181,9 @@ class MediaController {
         let sVideoP = this._secondVideoPreview;
         let mainVideoSrc;
 
-        if (!this._videoIsMain) {
-            this._videoIsMain = true;
-            mVideoP.classList.add(conf.misc.CLASS_WIDTH_LIMIT);
-        } else {
-            this._videoIsMain = false;
-            mVideoP.classList.remove(conf.misc.CLASS_WIDTH_LIMIT);
-        }
+        this._videoIsMain ? mVideoP.classList.remove(conf.misc.CLASS_WIDTH_LIMIT) : mVideoP.classList.add(conf.misc.CLASS_WIDTH_LIMIT);
+        this._videoIsMain = this._switchValue(this._videoIsMain);
+
         mainVideoSrc = mVideoP.srcObject;
         mVideoP.pause();
         sVideoP.pause();
@@ -194,13 +198,13 @@ class MediaController {
                         sVideoP.play();
                     })
                     .catch(error => {
-                        console.log('Tentando iniciar vídeo...');
+                        console.log('Iniciando vídeo...');
                     });
                 playReady.then(_ => {
                         mVideoP.play();
                     })
                     .catch(error => {
-                        console.log('Tentando iniciar vídeo...');
+                        console.log('Iniciando vídeo...');
                     });
             }
         }, 500);
@@ -228,5 +232,49 @@ class MediaController {
         } else {
             return;
         }
+    }
+
+    switchShare() {
+
+        this._controlSharing = this._switchValue(this._controlSharing);
+        this._mediaView.setShare();
+    }
+
+    disableShare() {
+
+        this._mediaView.shareOff();
+    }
+
+    startParticipation() {
+
+        this._session = true;
+        this._mediaView.startParticipation();
+    }
+
+    endParticipation() {
+
+        this._session = false;
+        this._mediaView.endParticipation();
+    }
+
+    disableParticipation() {
+
+        this._session = false;
+        this._mediaView.participationOff();
+    }
+
+    allow() {
+
+        this._mediaView.allowSolicitation();
+    }
+
+    deny() {
+
+        this._mediaView.denySolicitation();
+    }
+
+    disablePedir() {
+
+        this._mediaView.pedirOff();
     }
 }

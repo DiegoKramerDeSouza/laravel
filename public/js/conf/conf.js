@@ -66,6 +66,7 @@ const conf = {
         CTL_PEDIR: '#control-pedir-vez',
         CURSO_LIST: '#cursos-list',
         DIV_BTN_END: '#div-end',
+        DIV_ENTER: '#div-enter',
         DIV_INCOMING_VIDEO: '#div-incoming-videos',
         DIV_MAIN_VIDEO: '#div-main-video',
         END_SESSION_ACCESS: '#end-session',
@@ -76,6 +77,7 @@ const conf = {
         LABEL_USERS: '#users-counter',
         LI_CAM: '#li-toggle-camera',
         LI_MUTE: '#li-toggle-mute',
+        LI_SHARE: '#li-share-screen',
         LI_VOLUME: '#li-toggle-volume',
         MATERIA: '#tema',
         MUTE: '#toggle-mute',
@@ -103,12 +105,15 @@ const conf = {
         DISABLED_COLOR: 'grey',
         ON_COLOR: 'blue',
         OFF_COLOR: 'red',
+        HILIGHT_COLOR: 'cyan',
         CLASS_WIDTH_LIMIT: 'width-limit',
         ICON_MIC: '<i class="material-icons">mic</i>',
         ICON_MUTE_MIC: '<i class="material-icons">mic_off</i>',
         ICON_CAM_ON: '<i class="material-icons">videocam</i>',
         ICON_CAM_OFF: '<i class="material-icons">videocam_off</i>',
         ICON_VOL_ON: '<i class="material-icons">volume_up</i>',
-        ICON_VOL_OFF: '<i class="material-icons">volume_off</i>'
+        ICON_VOL_OFF: '<i class="material-icons">volume_off</i>',
+        ICON_SHARE_ON: '<i class="material-icons">screen_share</i>',
+        ICON_SHARE_OFF: '<i class="material-icons">stop_screen_share</i>'
     }
 }

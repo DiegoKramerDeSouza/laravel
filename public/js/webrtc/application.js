@@ -111,7 +111,7 @@ $(document).ready(function() {
                 screen_constraints = connection.modifyScreenConstraints(screen_constraints);
                 callback(error, screen_constraints);
                 $('#screen-share-alert').slideDown(300);
-                setShare('off');
+                mediaController.switchShare();
                 return;
             }
             if (error !== 'permission-denied') {
@@ -119,7 +119,7 @@ $(document).ready(function() {
                 let instance = M.Modal.getInstance(elem);
                 instance.open();
             } else if (error === 'permission-denied') {
-                setShare('on');
+                mediaController.switchShare();
             }
             throw error;
         });
@@ -257,7 +257,7 @@ $(document).ready(function() {
             // Desabilita botão de ação para camera
             mediaController.disableMute();
             // Desabilita botão de ação para compartilhar tela
-            RoomHelper.setShare('dis');
+            mediaController.disableShare();
             // Habilita barra de controle de mídia
             $('#div-controller').fadeIn(300);
 
@@ -337,7 +337,7 @@ $(document).ready(function() {
             // Desabilita botão de ação para áudio
             mediaController.disableVolume();
             if (!connection.isInitiator) {
-                setPedir('dis');
+                mediaController.disablePedir();
             }
             // Habilita barra de controle de mídia
             $('#div-controller').fadeIn(300);
@@ -403,7 +403,7 @@ $(document).ready(function() {
             };
             // Tratamento de solicitações: Botão "Compartilhar" -> Compartilha a tela do apresentador: Toggle On/Off
             media.share.onclick = function() {
-                if (media.share.getAttribute('data-active') == 'enabled') {
+                if (mediaController._controlSharing) {
                     $('#share-screen').hide();
                     connection.addStream({
                         screen: true,
@@ -422,7 +422,7 @@ $(document).ready(function() {
                     });
                 } else {
                     $('#screen-share-alert').slideUp(300);
-                    setShare('on');
+                    mediaController.switchShare();
                     var streamConnection = roomInfo.inScreen.value;
                     var streamToRemove = null;
                     var newArray = [];
@@ -479,8 +479,9 @@ $(document).ready(function() {
         // Tratamento de ingresso na transmissão: Botão "Ingressar" -> Ingressa e participa da apresentação
         // ->Toggle On/Off
         media.sessionAccess.onclick = function() {
-            if (media.sessionAccess.getAttribute('data-active') == 'disabled' && !structure.onParticipation) {
-                setParticipation('off');
+            if (!mediaController._session && !structure.onParticipation) {
+                //setParticipation('off');
+                mediaController.startParticipation();
                 structure.onParticipation = true;
                 setTimeout(function() {
                     try {
@@ -489,12 +490,14 @@ $(document).ready(function() {
                         });
 
                     } catch (e) {
-                        setParticipation('on');
+                        //setParticipation('on');
+                        mediaController.endParticipation();
                         structure.onParticipation = false;
                     }
                 }, 500);
-            } else if (media.sessionAccess.getAttribute('data-active') == 'enabled' && structure.onParticipation) {
-                setParticipation('dis');
+            } else if (mediaController._session && structure.onParticipation) {
+                //setParticipation('dis');
+                mediaController.disableParticipation();
                 structure.onParticipation = false;
                 try {
                     connection.attachStreams.forEach((stream) => {
@@ -516,7 +519,8 @@ $(document).ready(function() {
                     structure.lockSolicitation = false;
                     alerta.initiateMessage(conf.message.END_TRANSMITION);
                 } catch (e) {
-                    setParticipation('off');
+                    //setParticipation('off');
+                    mediaController.startParticipation();
                     structure.onParticipation = true;
                 }
             }
@@ -895,7 +899,7 @@ function appendDIV(event) {
             if (chkrash[2] === myRoom) {
                 //solicita--;
                 structure.solicita -= 1;
-                setPedir('allow');
+                mediaController.allow();
                 structure.lockSolicitation = true;
             }
             return;
@@ -905,7 +909,7 @@ function appendDIV(event) {
             if (chkrash[2] === myRoom) {
                 //solicita--;
                 structure.solicita -= 1;
-                setPedir('deny');
+                mediaController.deny();
                 structure.lockSolicitation = false;
             }
             return;
@@ -920,10 +924,11 @@ function appendDIV(event) {
         } else if (chkrash[0] === btoa('@Finaliza-Participacao')) {
             if (!structure.onParticipation) {
                 structure.onParticipation = true;
-                accessBtn.setAttribute('data-active', 'enabled');
+                //accessBtn.setAttribute('data-active', 'enabled');
+                mediaController._session = false;
                 alerta.initiateMessage(conf.message.CANCEL_SOLICITATION);
             }
-            accessBtn.click();
+            media.sessionAccess.click();
         } else if (chkrash[0] === btoa('@Finaliza-Participante')) {
             $('#div-end').hide();
         } else {

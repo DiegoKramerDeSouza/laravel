@@ -101,6 +101,7 @@ class RoomHelper {
     /**
      * Param status: 'disabled', 'off', 'on' 
      */
+    /*
     static setShare(status) {
         var share = document.getElementById('share-screen');
         if (status === 'dis') {
@@ -125,6 +126,7 @@ class RoomHelper {
             alerta.initiateMessage(conf.message.STOP_SHARE);
         }
     }
+    */
 
     // Configurações visuais de status de uma solicitação
     /**
