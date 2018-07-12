@@ -14,126 +14,118 @@ class MediaView {
         this._share = tag(conf.dom.SHARE);
         this._pedir = tag(conf.dom.PEDIR);
         this._participation = tag(conf.dom.SESSION_ACCESS);
-
+        this._divParticipation = tag(conf.dom.DIV_ENTER);
         this._divMainVideo = tag(conf.dom.DIV_MAIN_VIDEO);
         this._divIncomingVideo = tag(conf.dom.DIV_INCOMING_VIDEO);
-        this._otherVideos = {
-            screen: '',
-            user: ''
-        };
-
-        this._isMute = false;
-        this._isVolOff = false;
-        this._camIsOn = true;
-        this._isSharing = false;
+        this._spanMainVideo = tag(conf.dom.VIDEO_MAIN);
+        this._mainVideo = tag(conf.dom.FIRST_VIDEO);
+        this._pageMainContainer = tag(conf.dom.PAGE_MAIN_CONTENT);
+        this._chatPanel = tag(conf.dom.CHAT_PANEL);
+        this._sideNavbar = tag(conf.dom.SIDE_NAVBAR);
+        this._chatTextArea = tag(conf.dom.CHAT_TEXTAREA);
+        this._countPedirVez = tag(conf.dom.COUNT_PEDIR);
     }
 
-    setMute() {
+    setVoiceOn() {
 
-        if (!this._isMute) {
-            this._isMute = true;
-            this._mute.classList.add(conf.misc.OFF_COLOR);
-            this._mute.innerHTML = conf.misc.ICON_MUTE_MIC;
-            alerta.initiateMessage(conf.message.MIC_OFF);
-        } else {
-            this._isMute = false;
-            this._mute.classList.remove(conf.misc.OFF_COLOR);
-            this._mute.innerHTML = conf.misc.ICON_MIC;
-            alerta.initiateMessage(conf.message.MIC_ON);
-        }
+        this._mute.classList.remove(conf.misc.OFF_COLOR);
+        this._mute.innerHTML = conf.misc.ICON_MIC;
+        alerta.initiateMessage(conf.message.MIC_ON);
     }
 
-    muteOff() {
+    setVoiceOff() {
 
-        this._isMute = true;
+        this._mute.classList.add(conf.misc.OFF_COLOR);
+        this._mute.innerHTML = conf.misc.ICON_MUTE_MIC;
+        alerta.initiateMessage(conf.message.MIC_OFF);
+    }
+
+    voiceOff() {
+
         this._mute.classList.add(conf.misc.DISABLED_COLOR);
         this._mute.innerHTML = conf.misc.ICON_MUTE_MIC;
         $(conf.dom.LI_MUTE).hide();
     }
 
-    setVolume() {
+    setVolumeOn() {
 
-        if (!this._isVolOff) {
-            this._isVolOff = true;
-            this._vol.classList.add(conf.misc.OFF_COLOR);
-            this._vol.innerHTML = conf.misc.ICON_VOL_OFF;
-            alerta.initiateMessage(conf.message.VOL_DOWN);
-        } else {
-            this._isVolOff = false;
-            this._vol.classList.remove(conf.misc.OFF_COLOR);
-            this._vol.innerHTML = conf.misc.ICON_VOL_ON;
-            alerta.initiateMessage(conf.message.VOL_UP);
-        }
+        this._vol.classList.remove(conf.misc.OFF_COLOR);
+        this._vol.innerHTML = conf.misc.ICON_VOL_ON;
+        alerta.initiateMessage(conf.message.VOL_UP);
+    }
+
+    setVolumeOff() {
+
+        this._vol.classList.add(conf.misc.OFF_COLOR);
+        this._vol.innerHTML = conf.misc.ICON_VOL_OFF;
+        alerta.initiateMessage(conf.message.VOL_DOWN);
     }
 
     volumeOff() {
 
-        this._isVolOff = true;
         this._vol.classList.add(conf.misc.DISABLED_COLOR);
         this._vol.innerHTML = conf.misc.ICON_VOL_OFF;
         $(conf.dom.LI_VOLUME).hide();
     }
 
-    setCam() {
+    setCamOn() {
 
-        if (this._camIsOn) {
-            this._camIsOn = false;
-            this._cam.classList.add(conf.misc.OFF_COLOR);
-            this._cam.innerHTML = conf.misc.ICON_CAM_OFF;
-            alerta.initiateMessage(conf.message.CAM_OFF);
-        } else {
-            this._camIsOn = true;
-            this._cam.classList.remove(conf.misc.OFF_COLOR);
-            this._cam.innerHTML = conf.misc.ICON_CAM_ON;
-            alerta.initiateMessage(conf.message.CAM_ON);
-        }
+        this._cam.classList.remove(conf.misc.OFF_COLOR);
+        this._cam.innerHTML = conf.misc.ICON_CAM_ON;
+        alerta.initiateMessage(conf.message.CAM_ON);
+    }
+
+    setCamOff() {
+
+        this._cam.classList.add(conf.misc.OFF_COLOR);
+        this._cam.innerHTML = conf.misc.ICON_CAM_OFF;
+        alerta.initiateMessage(conf.message.CAM_OFF);
     }
 
     camOff() {
 
-        this._camIsOn = false;
         this._cam.classList.add(conf.misc.DISABLED_COLOR);
         this._cam.innerHTML = conf.misc.ICON_CAM_OFF;
         $(conf.dom.LI_CAM).hide();
     }
 
-    incomingVideos(mainVideo, inVideo, status) {
+    openIncomingVideos(mainVideo, inVideo) {
 
-        if (status) {
-            mainVideo.classList.remove("s12");
-            mainVideo.classList.add("s6", "m8");
-            inVideo.classList.add("s6", "m4");
-            setTimeout(() => {
-                $(conf.dom.DIV_INCOMING_VIDEO).fadeIn(300);
-            }, 500);
-        } else {
-            $(conf.dom.DIV_INCOMING_VIDEO).fadeOut(300);
-            inVideo.classList.remove("s6", "m4");
-            mainVideo.classList.add("s12");
-            mainVideo.classList.remove("s6", "m8");
-        }
+        mainVideo.classList.remove("s12");
+        mainVideo.classList.add("s6", "m8");
+        inVideo.classList.add("s6", "m4");
+        setTimeout(() => {
+            $(conf.dom.DIV_INCOMING_VIDEO).fadeIn(300);
+        }, 500);
     }
 
-    setShare() {
+    closeIncomingVideos(mainVideo, inVideo) {
 
-        if (!this._isSharing) {
-            $(conf.dom.SHARE).show();
-            this._isSharing = true;
-            this._share.classList.add(conf.misc.OFF_COLOR);
-            this._share.innerHTML = conf.misc.ICON_SHARE_OFF;
-            alerta.initiateMessage(conf.message.START_SHARE);
-        } else {
-            $(conf.dom.SHARE).show();
-            this._isSharing = false;
-            this._share.classList.remove(conf.misc.OFF_COLOR);
-            this._share.innerHTML = conf.misc.ICON_SHARE_ON;
-            alerta.initiateMessage(conf.message.STOP_SHARE);
-        }
+        $(conf.dom.DIV_INCOMING_VIDEO).fadeOut(300);
+        inVideo.classList.remove("s6", "m4");
+        mainVideo.classList.add("s12");
+        mainVideo.classList.remove("s6", "m8");
     }
+
+    startShare() {
+
+        $(conf.dom.SHARE).show();
+        this._share.classList.add(conf.misc.OFF_COLOR);
+        this._share.innerHTML = conf.misc.ICON_SHARE_OFF;
+        alerta.initiateMessage(conf.message.START_SHARE);
+    }
+
+    exitShare() {
+
+        $(conf.dom.SHARE).show();
+        this._share.classList.remove(conf.misc.OFF_COLOR);
+        this._share.innerHTML = conf.misc.ICON_SHARE_ON;
+        alerta.initiateMessage(conf.message.STOP_SHARE);
+    }
+
 
     shareOff() {
 
-        this._isSharing = false;
         this._share.disabled = true;
         this._share.classList.add(conf.misc.DISABLED_COLOR);
         this._share.innerHTML = conf.misc.ICON_SHARE_ON;
@@ -143,6 +135,7 @@ class MediaView {
     startParticipation() {
 
         $(conf.dom.DIV_ENTER).show();
+        this._divParticipation.title = 'Finalizar participação';
         this._participation.classList.remove(conf.misc.HILIGHT_COLOR);
         this._participation.classList.add(conf.misc.OFF_COLOR);
         this._participation.innerHTML = conf.misc.ICON_CAM_OFF;
@@ -151,6 +144,7 @@ class MediaView {
     endParticipation() {
 
         $(conf.dom.DIV_ENTER).show();
+        this._divParticipation.title = 'Ingressar';
         this._participation.classList.remove(conf.misc.OFF_COLOR);
         this._participation.classList.add(conf.misc.HILIGHT_COLOR);
         this._participation.innerHTML = conf.misc.ICON_CAM_ON;
@@ -182,4 +176,61 @@ class MediaView {
         this._pedir.classList.add(conf.misc.OFF_COLOR);
         $(conf.dom.PEDIR).hide();
     }
+
+    exitFullscreen() {
+
+        $(conf.dom.DIV_EXIT_FSCREEN).fadeOut(500);
+        this._spanMainVideo.classList.remove(conf.misc.TURNOFF_COLOR);
+        this._spanMainVideo.classList.add(conf.misc.CLASS_WIDTH_LIMIT);
+        this._spanMainVideo.style.height = conf.misc.STYLE_HEIGHT_INHERIT;
+        this.shrinkVideoSize();
+    }
+
+    enterFullscreen() {
+
+        $(conf.dom.DIV_EXIT_FSCREEN).fadeIn(500);
+        this._spanMainVideo.classList.add(conf.misc.TURNOFF_COLOR);
+        this._spanMainVideo.classList.remove(conf.misc.CLASS_WIDTH_LIMIT);
+        this._spanMainVideo.style.height = (window.innerHeight) + 'px';
+    }
+
+    enlargeVideoSize() {
+
+        this._pageMainContainer.classList.remove(conf.misc.CLASS_MAIN_CONTAINER);
+        this._pageMainContainer.classList.add(conf.misc.CLASS_MAIN_CONTAINER_FULL);
+        this._spanMainVideo.classList.remove(conf.misc.CLASS_WIDTH_LIMIT);
+        this._spanMainVideo.classList.add('col', 's12');
+    }
+
+    shrinkVideoSize() {
+
+        this._pageMainContainer.classList.remove(conf.misc.CLASS_MAIN_CONTAINER_FULL);
+        this._pageMainContainer.classList.add(conf.misc.CLASS_MAIN_CONTAINER);
+        this._spanMainVideo.classList.add(conf.misc.CLASS_WIDTH_LIMIT);
+        this._spanMainVideo.classList.remove('col', 's12');
+    }
+
+    adjustStreamScreen() {
+        $(conf.dom.ROOM_LOBBY).slideUp(500);
+        $(conf.dom.VIDEOS_PANEL).slideDown(500);
+    }
+
+    writeReceiveMessage(message, pContainer, isOpen) {
+
+        isOpen ? null : alerta.initiateMessage(conf.message.CHAT_MESSAGE, message);
+        this._chatPanel.innerHTML = `${this._chatPanel.innerHTML}${pContainer}${message}</p>`;
+        this._chatTextArea.style.height = (window.innerHeight - 100) + 'px';
+    }
+
+    showSolicitation(val) {
+
+        this._countPedirVez.innerHTML = val;
+        $(conf.dom.COUNT_PEDIR).fadeIn(300);
+    }
+
+    hideSolicitation() {
+
+        $(conf.dom.COUNT_PEDIR).fadeOut(300);
+    }
+
 }

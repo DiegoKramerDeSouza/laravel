@@ -29,15 +29,19 @@ class MediaController {
         this._divEndBtn = tag(conf.dom.DIV_BTN_END);
         this._toggleChat = tag(conf.dom.TOGGLE_CHAT);
         this._textMessage = tag(conf.dom.TEXT_MESSAGE);
+        this._sideNavbar = tag(conf.dom.SIDE_NAVBAR);
 
         this._controlCam = true;
-        this._controlMute = true;
+        this._controlVoice = true;
         this._controlVolume = true;
-        this._controlSharing = true;
+        this._controlSharing = false;
+        this._controlScreen = true;
 
         this._session = false;
         this._videoIsMain = false;
         this._divMainVideo = tag(conf.dom.DIV_MAIN_VIDEO);
+        this._spanMainVideo = tag(conf.dom.VIDEO_MAIN);
+        this._pageMainContainer = tag(conf.dom.PAGE_MAIN_CONTENT);
         this._divIncomingVideo = tag(conf.dom.DIV_INCOMING_VIDEO);
         this._otherVideos = {
             screen: '',
@@ -71,9 +75,22 @@ class MediaController {
         return new Media(...arrMedia);
     }
 
+    initListeners() {
+
+        document.addEventListener('fullscreenchange', this.escFullScreen);
+        document.addEventListener('webkitfullscreenchange', this.escFullScreen);
+        document.addEventListener('mozfullscreenchange', this.escFullScreen);
+        document.addEventListener('MSFullscreenChange', this.escFullScreen);
+    }
+
     _switchValue(value) {
 
         return value ? false : true;
+    }
+
+    initiateStream() {
+
+        this._mediaView.adjustStreamScreen();
     }
 
     initiateVideo(targetVideo) {
@@ -93,13 +110,13 @@ class MediaController {
             currentStream.forEach((stream) => {
                 stream.mute('audio');
             });
-            this._mediaView.setVolume();
+            this._mediaView.setVolumeOff();
             this._controlVolume = false;
         } else {
             currentStream.forEach((stream) => {
                 stream.unmute('audio');
             });
-            this._mediaView.setVolume();
+            this._mediaView.setVolumeOn();
             this._controlVolume = true;
         }
     }
@@ -109,16 +126,16 @@ class MediaController {
         this._mediaView.volumeOff();
     }
 
-    controlMute(currentStream) {
+    controlVoice(currentStream) {
 
-        if (this._controlMute) {
+        if (this._controlVoice) {
             currentStream.forEach((stream) => {
                 if (!stream.isScreen) {
                     stream.mute('audio');
                 }
             });
-            this._mediaView.setMute();
-            this._controlMute = false;
+            this._mediaView.setVoiceOff();
+            this._controlVoice = false;
         } else {
             currentStream.forEach((stream) => {
                 if (!stream.isScreen) {
@@ -129,14 +146,14 @@ class MediaController {
                     });
                 }
             });
-            this._mediaView.setMute();
-            this._controlMute = true;
+            this._mediaView.setVoiceOn();
+            this._controlVoice = true;
         }
     }
 
     disableMute() {
 
-        this._mediaView.muteOff();
+        this._mediaView.voiceOff();
     }
 
     controlCam(currentStream) {
@@ -148,11 +165,11 @@ class MediaController {
                     stream.mute('audio');
                 }
             });
-            this._mediaView.setCam();
+            this._mediaView.setCamOff();
             this._controlCam = false;
-            if (this._controlMute) {
-                this._mediaView.setMute();
-                this._controlMute = false;
+            if (this._controlVoice) {
+                this._mediaView.setVoiceOff();
+                this._controlVoice = false;
             }
         } else {
             currentStream.forEach((stream) => {
@@ -161,11 +178,11 @@ class MediaController {
                     stream.unmute('audio');
                 }
             });
-            this._mediaView.setCam();
+            this._mediaView.setCamOn();
             this._controlCam = true;
-            if (!this._controlMute) {
-                this._mediaView.setMute();
-                this._controlMute = true;
+            if (!this._controlVoice) {
+                this._mediaView.setVoiceOn();
+                this._controlVoice = true;
             }
         }
     }
@@ -214,7 +231,7 @@ class MediaController {
 
         if (stream) {
             stream.isScreen ? this._otherVideos.screen = stream.id : this._otherVideos.user = stream.id;
-            this._mediaView.incomingVideos(this._divMainVideo, this._divIncomingVideo, true);
+            this._mediaView.openIncomingVideos(this._divMainVideo, this._divIncomingVideo);
         } else {
             return;
         }
@@ -225,7 +242,7 @@ class MediaController {
         if (stream) {
             stream.isScreen ? this._otherVideos.screen = '' : this._otherVideos.user = '';
             if (this._otherVideos.screen == '' && this._otherVideos.user == '') {
-                this._mediaView.incomingVideos(this._divMainVideo, this._divIncomingVideo);
+                this._mediaView.closeIncomingVideos(this._divMainVideo, this._divIncomingVideo);
             } else {
                 return;
             }
@@ -237,7 +254,7 @@ class MediaController {
     switchShare() {
 
         this._controlSharing = this._switchValue(this._controlSharing);
-        this._mediaView.setShare();
+        this._controlSharing ? this._mediaView.startShare() : this._mediaView.exitShare();
     }
 
     disableShare() {
@@ -277,4 +294,74 @@ class MediaController {
 
         this._mediaView.pedirOff();
     }
+
+    enterFullScreen() {
+
+        if (this._spanMainVideo.mozRequestFullScreen) {
+            this._spanMainVideo.mozRequestFullScreen();
+        } else if (this._spanMainVideo.requestFullScreen) {
+            this._spanMainVideo.requestFullScreen();
+        } else if (this._spanMainVideo.webkitRequestFullScreen) {
+            this._spanMainVideo.webkitRequestFullScreen();
+        }
+        this._mediaView.enterFullscreen();
+    }
+
+    exitFullScreen() {
+
+        if (document.fullscreen) {
+            document.cancelFullScreen();
+        } else if (document.mozFullScreen) {
+            document.mozCancelFullScreen();
+        } else if (document.webkitIsFullScreen) {
+            document.webkitCancelFullScreen();
+        }
+        this._mediaView.exitFullscreen();
+    }
+
+    escFullScreen() {
+
+        if (!document.fullscreenElement && !document.webkitIsFullScreen && !document.mozFullScreen && !document.msFullscreenElement) {
+            if (document.fullscreen) {
+                document.cancelFullScreen();
+            } else if (document.mozFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.webkitIsFullScreen) {
+                document.webkitCancelFullScreen();
+            }
+            $(conf.dom.DIV_EXIT_FSCREEN).fadeOut(500);
+            let tag = document.querySelector.bind(document);
+            let videoContainer = tag(conf.dom.VIDEO_MAIN);
+            videoContainer.classList.remove(conf.misc.TURNOFF_COLOR);
+            videoContainer.classList.add(conf.misc.CLASS_WIDTH_LIMIT);
+            videoContainer.style.height = conf.misc.STYLE_HEIGHT_INHERIT;
+        }
+        return;
+    }
+
+    toggleFullSize() {
+
+        if (hasClass(this._pageMainContainer, conf.misc.CLASS_MAIN_CONTAINER)) {
+            this._mediaView.enlargeVideoSize();
+        } else {
+            this._mediaView.shrinkVideoSize();
+        }
+    }
+
+    writeMessage(msg, rmt) {
+
+        let msgbox;
+        let message = atob(msg);
+        let instance = M.Sidenav.getInstance(this._sideNavbar);
+
+        rmt ? msgbox = `<p class="chat-in blue">` : msgbox = `<p class="chat-out grey" align="right">`;
+        this._mediaView.writeReceiveMessage(message, msgbox, instance.isOpen);
+    }
+
+    trataSolicitacao(value) {
+
+        if (value > 0) this._mediaView.showSolicitation(value);
+        else this._mediaView.hideSolicitation();
+    }
+
 }

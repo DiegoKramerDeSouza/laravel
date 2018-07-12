@@ -16,7 +16,8 @@ class Structure {
         userVideo,
         startRoom,
         publicRoomsList,
-        connectList
+        connectList,
+        countRooms
     ) {
 
         this._viewers = viewers;
@@ -34,6 +35,7 @@ class Structure {
         this._startRoom = startRoom;
         this._publicRoomsList = publicRoomsList;
         this._connectList = connectList;
+        this._countRooms = countRooms;
         this._connections = [];
         this._streamVideos = [];
     }
@@ -186,6 +188,16 @@ class Structure {
     }
 
     // ------------------------------------------
+
+    get countRooms() {
+
+        return this._countRooms;
+    }
+
+    set countRooms(countRooms) {
+
+        this._countRooms = countRooms;
+    }
 
     get streamVideos() {
 

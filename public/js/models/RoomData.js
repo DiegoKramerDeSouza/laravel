@@ -14,7 +14,6 @@ class RoomData {
         this._activeRoom = activeRoom;
         this._allowed = allowed;
         this._classes = classes;
-        Object.freeze(this);
     }
 
     get classe() {
@@ -22,9 +21,19 @@ class RoomData {
         return this._classe;
     }
 
+    set classe(classe) {
+
+        this._classe = classe;
+    }
+
     get apresentador() {
 
         return this._apresentador;
+    }
+
+    set apresentador(apresentador) {
+
+        this._apresentador = apresentador;
     }
 
     get assunto() {
@@ -32,9 +41,19 @@ class RoomData {
         return this._assunto;
     }
 
+    set assunto(assunto) {
+
+        this._assunto = assunto;
+    }
+
     get curso() {
 
         return this._curso;
+    }
+
+    set curso(curso) {
+
+        this._curso = curso;
     }
 
     get whois() {
@@ -42,9 +61,19 @@ class RoomData {
         return this._whois;
     }
 
+    set whois(whois) {
+
+        this._whois = whois;
+    }
+
     get activeRoom() {
 
         return this._activeRoom;
+    }
+
+    set activeRoom(activeRoom) {
+
+        this._activeRoom = activeRoom;
     }
 
     get allowed() {
@@ -52,8 +81,18 @@ class RoomData {
         return this._allowed;
     }
 
+    set allowed(allowed) {
+
+        this._allowed = allowed;
+    }
+
     get classes() {
 
         return this._classes;
+    }
+
+    set classes(classes) {
+
+        this._classes = classes;
     }
 }

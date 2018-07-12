@@ -16,6 +16,7 @@ class StructureController {
         this._startRoom = tag(conf.dom.BTN_START_ROOM);
         this._publicRoomsList = tag(conf.dom.PUBLIC_CONFERENCE);
         this._connectList = tag(conf.dom.USERS_LIST);
+        this._countRooms = conf.structure.NUMBER_OF_ROOMS;
     }
 
     initiateStructure() {
@@ -33,7 +34,8 @@ class StructureController {
             this._userVideo,
             this._startRoom,
             this._publicRoomsList,
-            this._connectList
+            this._connectList,
+            this._countRooms
         ];
         return new Structure(...arrDocument);
     }

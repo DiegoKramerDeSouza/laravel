@@ -13,7 +13,8 @@ const conf = {
         ON_LOBBY: true,
         ON_PARTICIPATION: false,
         LOCK_SOLICITATION: false,
-        WAITING_FOR_VIDEO: 'waiting'
+        WAITING_FOR_VIDEO: 'waiting',
+        NUMBER_OF_ROOMS: 0
     },
     con: {
         /*Constantes de inicialização de conexão */
@@ -23,13 +24,24 @@ const conf = {
         MSG: 'Inicia-Apresentacao',
         IS_PUBLIC: true
     },
+    socket: {
+        MSG_JOIN: 'join-broadcaster',
+        MSG_REJOIN: 'rejoin-broadcast',
+        MSG_CHK_PRESENCE: 'check-broadcast-presence',
+        MSG_JOIN_BROADCAST: 'join-broadcast',
+        MSG_BROADCAST_STOP: 'broadcast-stopped',
+        MSG_START_BROADCAST: 'start-broadcasting',
+        MSG_LEAVE_ROOM: 'leave-the-room'
+
+    },
     roomdata: {
         /*Atributos de inicialização por espectadores */
         COUNT_ROOMS: 0,
-        ALLOWED: false
+        ALLOWED: false,
+        ADMIN_ACCESS: 'ADMIN'
     },
     message: {
-        /*Atributos para formação de mensagens padronizadas: [ícone(html), texto, cor de fundo] */
+        /*Atributos para formação de mensagens padronizadas: [ícone(html), texto(html), cor de fundo(classes MaterializeCSS)] */
         CHAT_MESSAGE: ['<div align="right"><i class="fa fa-comment-o blue-text"></i>', '</div>', 'grey darken-4'],
         START_TRANSMITION: ['<i class="fa fa-play-circle fa-lg"></i>', 'Transmissão iniciada!', 'blue darken-1'],
         END_TRANSMITION: ['<i class="fa fa-stop-circle fa-lg"></i>', 'Transmissão finalizada!', 'red darken-4'],
@@ -62,11 +74,15 @@ const conf = {
         BROADCASTER: '#broadcaster',
         BTN_START_ROOM: '#btn-join-as-productor',
         CAM: '#toggle-camera',
+        CHAT_PANEL: '#chat-panel',
+        CHAT_TEXTAREA: '#chat-textarea',
         CLASS_TITLE: '#class-title',
+        COUNT_PEDIR: '#count-pedir-vez',
         CTL_PEDIR: '#control-pedir-vez',
         CURSO_LIST: '#cursos-list',
         DIV_BTN_END: '#div-end',
         DIV_ENTER: '#div-enter',
+        DIV_EXIT_FSCREEN: '#div-exit-fullscreen',
         DIV_INCOMING_VIDEO: '#div-incoming-videos',
         DIV_MAIN_VIDEO: '#div-main-video',
         END_SESSION_ACCESS: '#end-session',
@@ -82,23 +98,30 @@ const conf = {
         MATERIA: '#tema',
         MUTE: '#toggle-mute',
         NAME: '#current-user',
+        PAGE_MAIN_CONTENT: '#main-content',
         PEDIR: '#pedir-vez',
         PUBLIC_CONFERENCE: '#public-conference',
         ROOM: '#room-id',
+        ROOM_LOBBY: '#initial-access',
         SCREEN: '#toggle-screen',
         SECOND_VIDEO: '#secondvideo-preview',
         SESSION_ACCESS: '#enter-session',
         SHARE: '#share-screen',
+        SIDE_NAVBAR: '#slide-out',
+        SOL_LIST: '#solicita-list',
         SOL_PEDIR: '#sol-pedir',
+        SOL_RESPONSE: '.sol-response',
         SWAP_SECOND: '#swap-video',
         TARGET: '#target',
         TEXT_MESSAGE: '#text-message',
         THIRD_VIDEO: '#thirdvideo-preview',
         TOGGLE_CHAT: '#toggle-chat',
+        TOGGLE_VIDEO_SIZE: '#toggle-size',
         USERS_LIST: '#connected-users-list',
         VIDEO_MAIN: '#span-video-preview',
         VIDEO_SECOND: '#span-video-preview-2nd',
         VIDEO_THIRD: '#span-video-preview-3rd',
+        VIDEOS_PANEL: '#video-panel',
         VOL: '#toggle-volume'
     },
     misc: {
@@ -106,7 +129,14 @@ const conf = {
         ON_COLOR: 'blue',
         OFF_COLOR: 'red',
         HILIGHT_COLOR: 'cyan',
+        TURNOFF_COLOR: 'black',
+
         CLASS_WIDTH_LIMIT: 'width-limit',
+        CLASS_MAIN_CONTAINER: 'main-container',
+        CLASS_MAIN_CONTAINER_FULL: 'main-container-full',
+
+        STYLE_HEIGHT_INHERIT: 'inherit',
+
         ICON_MIC: '<i class="material-icons">mic</i>',
         ICON_MUTE_MIC: '<i class="material-icons">mic_off</i>',
         ICON_CAM_ON: '<i class="material-icons">videocam</i>',
@@ -114,6 +144,8 @@ const conf = {
         ICON_VOL_ON: '<i class="material-icons">volume_up</i>',
         ICON_VOL_OFF: '<i class="material-icons">volume_off</i>',
         ICON_SHARE_ON: '<i class="material-icons">screen_share</i>',
-        ICON_SHARE_OFF: '<i class="material-icons">stop_screen_share</i>'
+        ICON_SHARE_OFF: '<i class="material-icons">stop_screen_share</i>',
+        ICON_FA_TV: '<i class="fa fa-television blue-text"></i>',
+        ICON_FA_VIDEOCAM: '<i class="fa fa-video-camera blue-text"></i>'
     }
 }

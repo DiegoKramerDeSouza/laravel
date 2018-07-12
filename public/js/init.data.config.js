@@ -1,16 +1,14 @@
 // Inicialização de recursos de variáveis Javascript
-const config = {
-    classes: {
+const init = {
+    dom: {
         LOAD_ELEM: ".load",
-        LOAD_CANCEL_ELEM: ".load-cancel"
-    },
-    ids: {
+        LOAD_CANCEL_ELEM: ".load-cancel",
         LOAD_POSITION_ELEM: "#centralized",
         LOAD_LAYER_ELEM: "#fglayer"
     }
 };
 
-const comp = {
+const compgtpty = {
     elem: {
         div: {
             MAIN_VIDEO: "#div-main-video",
