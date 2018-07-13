@@ -726,24 +726,20 @@ $(document).ready(function() {
             });
         } else {
             // Tratamento de conexões de espectadores
-            let htmlList = '';
+            roomController.clearConList();
             let allParticipants = connection.getAllParticipants();
             structure.viewers = allParticipants.length;
             allParticipants.forEach((participantId) => {
                 let myId = roomInfo.currentRoomId.value;
                 let user = connection.peers[participantId];
-                let userextra = user.extra;
-                if (userextra.modifiedValue) {
-                    htmlList += constructConnectionList(userextra.modifiedValue, userextra.modifiedValue.split('-')[1], user.userid, true);
-                } else {
-                    if (!structure.isModerator) {
-                        htmlList += constructConnectionList(myId, roomInfo.currentUser.value + ' (você)', connection.userid, false);
-                    }
-                }
+
+                user.extra.modifiedValue ?
+                    roomController.constructConnectionList(user.extra.modifiedValue, user.extra.modifiedValue.split('-')[1], user.userid, true) :
+                    roomController.constructConnectionList(myId, roomInfo.currentUser.value + ' (você)', connection.userid, false);
             });
             if (structure.viewers > 0) {
                 if (roomInfo.countUsers.getAttribute('data-target') == 0) {
-                    structure.connectList.innerHTML = htmlList;
+                    roomController.inputConList();
                     roomView.changeCounter(structure.viewers);
                     $('#connected-users').fadeIn(300);
                 }
@@ -887,25 +883,6 @@ function appendDIV(event) {
     }
 }
 
-// Emite alerta de conexão.
-/**
- * Param userid: String de dados de quem efetuou a conexão
- */
-function alertConnection(userid) {
-    setTimeout(() => {
-        console.log('Sala ' + userid + ' se conectou a você.');
-        var htmlList = '';
-        //var broadcaster = tag('#in-room').value;
-        for (var j = 0; j < Object.keys(structure.connections).length; j++) {
-            var roomaccount = structure.connections[j].split('|')[0];
-            var roomname = structure.connections[j].split('|')[1];
-            var roomanounce = structure.connections[j].split('|')[2];
-            htmlList += constructConnectionList(roomaccount, roomname, roomanounce, true);
-        }
-        tag('#connection-list').innerHTML = htmlList;
-    }, 1000);
-}
-
 // Emite alerta de desconexão.
 /**
  * Param userid: String de dados de quem foi desconectado
@@ -925,7 +902,7 @@ function alertDisconnection(userid) {
         } catch (e) {
             return;
         }
-        constructConnectionExpList(userid);
+        roomController.constructConnectionExpList(userid);
         roomView.changeCounter(Object.keys(structure.connections).length);
     }
 }

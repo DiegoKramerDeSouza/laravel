@@ -16,7 +16,9 @@ class RoomView {
         this._divMessage;
         this._roomCard;
         this._roomList = tag(conf.dom.PUBLIC_CONFERENCE);
-        this._countPedirVez = tag(conf.dom.COUNT_PEDIR);
+        this._connectionList = tag(conf.dom.CONNECTION_LIST);
+        this._connectList = tag(conf.dom.USERS_LIST);
+        this._listOfConCards = '';
     }
 
     changeCounter(value) {
@@ -82,5 +84,36 @@ class RoomView {
 
         this._roomList.appendChild(container);
         getId('_' + moderatorId).appendChild(obj);
+    }
+
+    clearLabelCon() {
+
+        this._listOfConCards = '';
+    }
+
+    newLabelCon(userid, username, deleteBtn) {
+
+        this._listOfConCards += `
+                            <div id="li-disconnect-${ userid }" data-sender="${ username }" class="li-disconnect truncate">
+                                <i class="fa fa-user-o blue-text lighten-2"></i> <b>${ username }</b>
+                                <span class="right">
+                                    ${ deleteBtn }
+                                </span>
+                            </div>`;
+    }
+
+    setDisabledConBtn(userid, username, announce) {
+
+        return '<a id="disabled-' + userid + '" name="' + username + '" data-announced="' + announce + '" ><i class="material-icons grey-text text-lighten-1">close</i></a>';
+    }
+
+    setRemoveConBtn(userid, username, announce) {
+
+        return '<a id="disconnect-' + userid + '" name="' + username + '" data-announced="' + announce + '" title="Desconectar espectador" class="disconnect-btn"><i class="material-icons red-text text-darken-4">close</i></a>';;
+    }
+
+    putList() {
+
+        this._connectList.innerHTML = this._listOfConCards;
     }
 }

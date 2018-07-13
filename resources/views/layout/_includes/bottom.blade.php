@@ -64,8 +64,7 @@
                 <script type="text/javascript" src="{!! asset('js/views/RoomView.js') !!}"></script>
 
                 <script type="text/javascript" src="{!! asset('js/helpers/RoomHelper.js') !!}"></script>    
-
-                <script type="text/javascript" src="{!! asset('js/webrtc/control-components.js') !!}"></script>   
+  
                 <script type="text/javascript" src="{!! asset('js/webrtc/socket.io.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/webrtc/getHTMLMediaElement.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/webrtc/adapter.js') !!}"></script>                      

@@ -3,6 +3,7 @@ class RoomController {
     constructor() {
 
         let tag = document.querySelector.bind(document);
+        this._getTags = document.querySelectorAll.bind(document);
         this._roomView = new RoomView();
 
         this._roomId = tag(conf.dom.ROOM);
@@ -51,5 +52,43 @@ class RoomController {
 
         this._roomView.noRooms();
     }
+
+    clearConList() {
+
+        this._roomView.clearLabelCon();
+    }
+
+    constructConnectionList(userid, username, announce, deletable) {
+
+        let deleteButton;
+        deletable ?
+            deleteButton = this._roomView.setRemoveConBtn(userid, username, announce) :
+            deleteButton = this._roomView.setDisabledConBtn(userid, username, announce);
+        this._roomView.newLabelCon(userid, username, deleteButton);
+    }
+
+    inputConList() {
+
+        this._roomView.putList();
+    }
+
+    constructConnectionExpList(exp) {
+
+        let announce;
+        let removeBtn;
+        let liList = this._getTags(conf.dom.DISCONNECT_BTN);
+        this._roomView.clearLabelCon();
+
+        liList.forEach(elem => {
+            announce = elem.getAttribute('data-announced');
+            if (announce != exp) {
+                removeBtn = this._roomView.setRemoveConBtn(elem.id, elem.name, announce);
+                this._roomView.newLabelCon(elem.id, elem.name, removeBtn);
+            }
+        });
+        this._roomView.putList();
+    }
+
+
 
 }
