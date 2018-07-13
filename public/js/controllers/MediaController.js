@@ -35,10 +35,10 @@ class MediaController {
         this._controlVoice = true;
         this._controlVolume = true;
         this._controlSharing = false;
-        this._controlScreen = true;
-
         this._session = false;
         this._videoIsMain = false;
+
+        this._roomId = tag(conf.dom.ROOM);
         this._divMainVideo = tag(conf.dom.DIV_MAIN_VIDEO);
         this._spanMainVideo = tag(conf.dom.VIDEO_MAIN);
         this._pageMainContainer = tag(conf.dom.PAGE_MAIN_CONTENT);
@@ -342,7 +342,7 @@ class MediaController {
     toggleFullSize() {
 
         if (hasClass(this._pageMainContainer, conf.misc.CLASS_MAIN_CONTAINER)) {
-            this._mediaView.enlargeVideoSize();
+            this._mediaView.expandVideoSize();
         } else {
             this._mediaView.shrinkVideoSize();
         }
@@ -354,7 +354,7 @@ class MediaController {
         let message = atob(msg);
         let instance = M.Sidenav.getInstance(this._sideNavbar);
 
-        rmt ? msgbox = `<p class="chat-in blue">` : msgbox = `<p class="chat-out grey" align="right">`;
+        rmt ? msgbox = conf.misc.DEFAULT_MSGBOX_OUT : msgbox = conf.misc.DEFAULT_MSGBOX_IN;
         this._mediaView.writeReceiveMessage(message, msgbox, instance.isOpen);
     }
 
@@ -362,6 +362,34 @@ class MediaController {
 
         if (value > 0) this._mediaView.showSolicitation(value);
         else this._mediaView.hideSolicitation();
+    }
+
+    listBox(text, count) {
+
+        if (text[1] === this._roomId.value) {
+            count++
+            this.trataSolicitacao(count);
+            this._mediaView.listSolicitation(count, text[0], text[2]);
+        }
+        return count;
+    }
+
+    reconstructList(exp) {
+
+        let allTags = document.querySelectorAll.bind(document);
+        let responseList = allTags(conf.dom.SOL_RESPONSE);
+
+        this._mediaView.clearSolicitationLis();
+        if (responseList.length <= 1) this._mediaView.noSolicitation();
+        else {
+            responseList.forEach(response => {
+                console.log(response.id, exp);
+                if (response.id != exp) {
+                    this._mediaView.newSolicitation(response);
+                }
+            });
+        }
+        this._mediaView.constructSolicitationList();
     }
 
 }

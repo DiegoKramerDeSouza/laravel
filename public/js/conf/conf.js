@@ -14,7 +14,8 @@ const conf = {
         ON_PARTICIPATION: false,
         LOCK_SOLICITATION: false,
         WAITING_FOR_VIDEO: 'waiting',
-        NUMBER_OF_ROOMS: 0
+        NUMBER_OF_ROOMS: 0,
+        POSTER_IMG: '/img/bg.jpg'
     },
     con: {
         /*Constantes de inicialização de conexão */
@@ -41,11 +42,13 @@ const conf = {
         ADMIN_ACCESS: 'ADMIN'
     },
     message: {
+        TIMEOUT: 2000,
         /*Atributos para formação de mensagens padronizadas: [ícone(html), texto(html), cor de fundo(classes MaterializeCSS)] */
         CHAT_MESSAGE: ['<div align="right"><i class="fa fa-comment-o blue-text"></i>', '</div>', 'grey darken-4'],
         START_TRANSMITION: ['<i class="fa fa-play-circle fa-lg"></i>', 'Transmissão iniciada!', 'blue darken-1'],
         END_TRANSMITION: ['<i class="fa fa-stop-circle fa-lg"></i>', 'Transmissão finalizada!', 'red darken-4'],
         START_PARTICIPATION: ['<i class="material-icons">videocam</i>', 'Participação iniciada!', 'blue darken-1'],
+        END_PARTICIPATION: ['<i class="material-icons left">videocam_off</i>', 'Participação Finalizada!', 'red darken-4'],
         SEND_SOLICITATION: ['<i class="fa fa-check"></i>', 'Solicitação enviada!', 'blue darken-1'],
         ERROR_SOLICITATION: ['<i class="fa fa-times"></i>', 'Não foi possível solicitar a vez.', 'red darken-4'],
         DUP_SOLICITATION: ['<i class="fa fa-exclamation-triangle"></i>', 'Você já encaminhou uma solicitação.<br>Aguarde a resposta.', 'amber darken-4'],
@@ -117,6 +120,7 @@ const conf = {
         THIRD_VIDEO: '#thirdvideo-preview',
         TOGGLE_CHAT: '#toggle-chat',
         TOGGLE_VIDEO_SIZE: '#toggle-size',
+        UL_CON_USERS: '#connected-users',
         USERS_LIST: '#connected-users-list',
         VIDEO_MAIN: '#span-video-preview',
         VIDEO_SECOND: '#span-video-preview-2nd',
@@ -137,6 +141,8 @@ const conf = {
 
         STYLE_HEIGHT_INHERIT: 'inherit',
 
+        ATTR_SOLICITATION: 'data-sender',
+
         ICON_MIC: '<i class="material-icons">mic</i>',
         ICON_MUTE_MIC: '<i class="material-icons">mic_off</i>',
         ICON_CAM_ON: '<i class="material-icons">videocam</i>',
@@ -146,6 +152,9 @@ const conf = {
         ICON_SHARE_ON: '<i class="material-icons">screen_share</i>',
         ICON_SHARE_OFF: '<i class="material-icons">stop_screen_share</i>',
         ICON_FA_TV: '<i class="fa fa-television blue-text"></i>',
-        ICON_FA_VIDEOCAM: '<i class="fa fa-video-camera blue-text"></i>'
+        ICON_FA_VIDEOCAM: '<i class="fa fa-video-camera blue-text"></i>',
+
+        DEFAULT_MSGBOX_OUT: '<p class="chat-in blue">',
+        DEFAULT_MSGBOX_IN: '<p class="chat-out grey" align="right">',
     }
 }

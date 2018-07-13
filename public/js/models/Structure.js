@@ -36,6 +36,7 @@ class Structure {
         this._publicRoomsList = publicRoomsList;
         this._connectList = connectList;
         this._countRooms = countRooms;
+        this._targetUser;
         this._connections = [];
         this._streamVideos = [];
     }
@@ -197,6 +198,16 @@ class Structure {
     set countRooms(countRooms) {
 
         this._countRooms = countRooms;
+    }
+
+    get targetUser() {
+
+        return this._targetUser;
+    }
+
+    set targetUser(targetUser) {
+
+        this._targetUser = targetUser;
     }
 
     get streamVideos() {

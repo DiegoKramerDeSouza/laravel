@@ -21,13 +21,13 @@ class RoomDataController {
         return new RoomData(...arrRoomId);
     }
 
-    validateRoomName(labelRoom) {
+    validateRoomName(labelRoom, roomsArray) {
 
         try {
             labelRoom = atob(labelRoom);
             if (!(labelRoom.split('|').length === 5)) return false;
         } catch (exp) {
-            if (array.length < 2) roomView.noRooms();
+            if (roomsArray.length < 2) roomView.noRooms();
             return false;
         }
         return labelRoom;

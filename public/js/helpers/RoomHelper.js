@@ -4,7 +4,7 @@
 class RoomHelper {
 
     constructor() {
-        throw new Error('RoomHelper não pode ser instanciada.');
+        throw new Error('RoomHelper apresenta apenas métodos estáticos.');
     }
 
     // Verifica a existência de dispositivos de vídeo
@@ -70,55 +70,6 @@ class RoomHelper {
             }
         }
         connectionList.innerHTML = htmlList;
-    }
-
-    // Constroi lista inicial de solicitação de usuários - Solicitação feita a partir do botão 'pedir vez'
-    /**
-     * Param userid: Id da conexão
-     * Param username: Nome do usuário
-     * Classes css:
-     *      sol-response    -> <li> que representa uma solicitação;
-     *      responses.      -> <a> que representa uma resposta a uma solicitação;
-     * São de uso exclusivo desta função e classificam todas as solicitações enviadas ao broadcaster
-     */
-    static constructSolicitationList(userid, username) {
-        var htmlList = '<li id="' + userid + '" data-sender="' + username + '" class="sol-response collection-item avatar li-hover">' +
-            '<i class="material-icons blue lighten-2 circle">tv</i>' +
-            '<h6><b>' + username + '</b> solicita vez.</h6>' +
-            '<div class="secondary-content">' +
-            '<a id="allow_' + userid + '" class="room-enter responses blue-text text-darken-2 modal-close" title="Permitir"><i class="fa fa-check-circle fa-2x"></i></a> &nbsp;&nbsp;' +
-            '<a id="deny_' + userid + '" class="room-enter responses red-text text-darken-3 modal-close" title="Negar"><i class="fa fa-times-circle fa-2x"></i></a>' +
-            '</div>' +
-            '</li>';
-        return htmlList;
-    }
-
-    // Reconstroi lista <ul> 'solicita-list' após ação tomada (allow/deny) na lista inicial
-    /**
-     * Param exp: Id da conexão onde a ação foi tomada
-     */
-    static constructList(exp) {
-        var pedeList = document.getElementById('solicita-list');
-        var liList = document.getElementsByClassName('sol-response');
-        var htmlList = '';
-        if (liList.length <= 1) {
-            htmlList = "<li align='center' class='red-text text-darken-3' style='padding:40px;' ><b><i class='fa fa-times fa-lg'></i> Não há solicitações no momento.</b></li>";
-        } else {
-            for (var j = 0; j < liList.length; j++) {
-                if (liList[j].id != exp) {
-                    var sender = liList[j].getAttribute('data-sender');
-                    htmlList += '<li id="' + liList[j].id + '" data-sender="' + sender + '" class="sol-response collection-item avatar li-hover">' +
-                        '<i class="material-icons blue lighten-2 circle">tv</i>' +
-                        '<h6><b>' + sender + '</b> solicita vez.</h6>' +
-                        '<span class="secondary-content">' +
-                        '<a id="allow_' + liList[j].id + '" class="room-enter responses blue-text text-darken-2 modal-close" title="Permitir"><i class="fa fa-check-circle fa-2x"></i></a> &nbsp;&nbsp;' +
-                        '<a id="deny_' + liList[j].id + '" class="room-enter responses red-text text-darken-3 modal-close" title="Negar"><i class="fa fa-times-circle fa-2x"></i></a>' +
-                        '</span>' +
-                        '</li>';
-                }
-            }
-        }
-        pedeList.innerHTML = htmlList;
     }
 
 }

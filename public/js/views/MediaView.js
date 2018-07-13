@@ -24,6 +24,8 @@ class MediaView {
         this._sideNavbar = tag(conf.dom.SIDE_NAVBAR);
         this._chatTextArea = tag(conf.dom.CHAT_TEXTAREA);
         this._countPedirVez = tag(conf.dom.COUNT_PEDIR);
+        this._solicitationList = tag(conf.dom.SOL_LIST);
+        this._listContent = '';
     }
 
     setVoiceOn() {
@@ -194,7 +196,7 @@ class MediaView {
         this._spanMainVideo.style.height = (window.innerHeight) + 'px';
     }
 
-    enlargeVideoSize() {
+    expandVideoSize() {
 
         this._pageMainContainer.classList.remove(conf.misc.CLASS_MAIN_CONTAINER);
         this._pageMainContainer.classList.add(conf.misc.CLASS_MAIN_CONTAINER_FULL);
@@ -231,6 +233,51 @@ class MediaView {
     hideSolicitation() {
 
         $(conf.dom.COUNT_PEDIR).fadeOut(300);
+    }
+
+    listSolicitation(count, username, userid) {
+
+        if (count === 1) this._listContent = '';
+        this._listContent += `
+                <li id="${ userid }" data-sender="${ username }" class="sol-response collection-item avatar li-hover">
+                    <i class="material-icons blue lighten-2 circle">tv</i>
+                    <h6><b>${ username }</b> solicita vez.</h6>
+                    <div class="secondary-content">
+                        <a id="allow_${ userid }" class="room-enter responses blue-text text-darken-2 modal-close" title="Permitir"><i class="fa fa-check-circle fa-2x"></i></a> &nbsp;&nbsp;
+                        <a id="deny_${ userid }" class="room-enter responses red-text text-darken-3 modal-close" title="Negar"><i class="fa fa-times-circle fa-2x"></i></a>
+                    </div>
+                </li>`;
+        this._solicitationList.innerHTML = this._listContent;
+        alerta.initiateMessage(conf.message.NEW_SOLICITATION, username);
+    }
+
+    clearSolicitationLis() {
+
+        this._listContent = '';
+    }
+
+    noSolicitation() {
+
+        this._listContent = "<li align='center' class='red-text text-darken-3' style='padding:40px;' ><b><i class='fa fa-times fa-lg'></i> Não há solicitações no momento.</b></li>";
+    }
+
+    newSolicitation(item) {
+
+        let sender = item.getAttribute(conf.misc.ATTR_SOLICITATION);
+        this._listContent += `
+            <li id="${ item.id }" data-sender="${ sender }" class="sol-response collection-item avatar li-hover">
+                <i class="material-icons blue lighten-2 circle">tv</i>
+                <h6><b>${ sender }</b> solicita vez.</h6>
+                <span class="secondary-content">
+                    <a id="allow_${ item.id }" class="room-enter responses blue-text text-darken-2 modal-close" title="Permitir"><i class="fa fa-check-circle fa-2x"></i></a> &nbsp;&nbsp;
+                    <a id="deny_${ item.id }" class="room-enter responses red-text text-darken-3 modal-close" title="Negar"><i class="fa fa-times-circle fa-2x"></i></a>
+                </span>
+            </li>`;
+    }
+
+    constructSolicitationList() {
+
+        this._solicitationList.innerHTML = this._listContent;
     }
 
 }

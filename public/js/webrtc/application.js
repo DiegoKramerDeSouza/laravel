@@ -183,8 +183,9 @@ $(document).ready(function() {
                     mediaController.openIncomingVideos(event.stream);
                 }, 500);
 
-                $('#div-end').fadeIn(300);
+                $(conf.dom.DIV_BTN_END).fadeIn(300);
                 media.endSessionAccess.onclick = function() {
+                    console.log('------------->     REMOTO', event.userid, structure.targetUser);
                     structure.streamVideos.forEach((stream) => {
                         connection.getAllParticipants().forEach((p) => {
                             let peer = connection.peers[p].peer;
@@ -192,10 +193,9 @@ $(document).ready(function() {
                             peer.removeStream(stream);
                         });
                     });
-                    $('#div-end').hide();
+                    $(conf.dom.DIV_BTN_END).hide();
                     structure.emptyStreamVideos();
                     structure.incomingCon = '';
-                    //RoomHelper.toggleIncomingVideos();
                     mediaController.closeIncomingVideos(event.stream);
                     let msgrash = [
                         btoa('@Finaliza-Participacao'),
@@ -268,7 +268,6 @@ $(document).ready(function() {
                 mediaController.controlVolume(currentStream);
             };
 
-            //let numberOfUsers = connection.getAllParticipants().length;
             structure.viewers = connection.getAllParticipants().length;
             roomView.changeCounter(structure.viewers);
 
@@ -307,16 +306,7 @@ $(document).ready(function() {
 
             console.log('TRANSMISSÃO LOCAL------', structure.mainVideo);
 
-            if (structure.incomingCon == event.stream.streamid) {
-                connection.getAllParticipants().forEach((p) => {
-                    if (p + '' == event.userid + '') {
-                        var peer = connection.peers[p].peer;
-                        //stream.stop();
-                        //peer.removeStream(event.stream);
-                    }
-                });
-                return;
-            }
+            if (structure.incomingCon == event.stream.streamid) return;
             // Conexão local sem compartilhamento de tela
             structure.onParticipation = true;
             connection.isUpperUserLeft = false;
@@ -356,7 +346,8 @@ $(document).ready(function() {
             // Tratamento de solicitações: Botão "Solicitações" -> Abra listagem de solicitações e respostas
             media.ctlPedir.onclick = function() {
                 // Tratamento de respostas (permitir / negar)
-                let response = document.getElementsByClassName('responses');
+                //let response = document.getElementsByClassName('responses');
+                let response = allTags('.responses');
                 for (var j = 0; j < response.length; j++) {
                     response[j].onclick = function() {
                         let admResponse = this.id.split('_');
@@ -373,25 +364,24 @@ $(document).ready(function() {
                         } else {
                             structure.solicita -= 1;
                             connection.send(msgrash);
-                            constructList(admResponse[1]);
+                            mediaController.reconstructList(admResponse[1]);
                             mediaController.trataSolicitacao(structure.solicita);
                             if (admResponse[0] == 'allow') {
                                 structure.lockSolicitation = true
+                                structure.targetUser = admResponse[1];
                                 media.divEndBtn.setAttribute('data-target', admResponse[1]);
-                                $('#div-end').fadeIn(300);
+                                $(conf.dom.DIV_BTN_END).fadeIn(300);
                             }
 
                         }
                     }
                 }
                 media.endSessionAccess.onclick = function() {
-                    $('#div-end').hide();
 
+                    $(conf.dom.DIV_BTN_END).hide();
                     structure.emptyStreamVideos();
                     structure.incomingCon = '';
-                    mediaController.closeIncomingVideos(event.stream);
-
-                    let targetId = media.divEndBtn.getAttribute('data-target');
+                    let targetId = structure.targetUser;
                     let msgrash = [
                         btoa('@Finaliza-Participacao'),
                         roomInfo.currentUser.value,
@@ -401,6 +391,7 @@ $(document).ready(function() {
                     ];
                     connection.send(msgrash, targetId);
                     structure.lockSolicitation = false;
+                    console.log('------------->     LOCAL', targetId, event.userid);
                 }
             };
             // Tratamento de solicitações: Botão "Compartilhar" -> Compartilha a tela do apresentador: Toggle On/Off
@@ -459,32 +450,26 @@ $(document).ready(function() {
             }
 
             // Apresenta o número de espectadores conectados
-            $('#connected-users').fadeIn(300);
+            $(conf.dom.UL_CON_USERS).fadeIn(300);
         }
         /**==================================================================================================
          * Tratamentos e controles complementares
          */
         // Botão de maximizar o video -> toggle on:off
-        media.screen.onclick = function() { mediaController.enterFullScreen(); };
-        //media.screen.onclick = function() { fullscreen(); };
-        media.exitscreen.onclick = function() { mediaController.exitFullScreen(); };
-        //media.exitscreen.onclick = function() { fullscreen(); };
+        media.screen.onclick = () => mediaController.enterFullScreen();
+        media.exitscreen.onclick = () => mediaController.exitFullScreen();
+
         // Tratamento das funções MUTE e UNMUTE
-        connection.onmute = (event) => {
-            event.mediaElement.setAttribute('poster', '/img/bg.jpg');
-        };
-        connection.onunmute = (event) => {
-            event.mediaElement.removeAttribute('poster');
-        };
+        connection.onmute = event => event.mediaElement.setAttribute('poster', conf.structure.POSTER_IMG);
+        connection.onunmute = event => event.mediaElement.removeAttribute('poster');
+
         // Tratamento da função de chat da barra de controle de mídia
-        media.toggleChat.onclick = function() {
-            media.textMessage.focus();
-        };
+        media.toggleChat.onclick = () => media.textMessage.focus();
+
         // Tratamento de ingresso na transmissão: Botão "Ingressar" -> Ingressa e participa da apresentação
-        // ->Toggle On/Off
         media.sessionAccess.onclick = function() {
+
             if (!mediaController._session && !structure.onParticipation) {
-                //setParticipation('off');
                 mediaController.startParticipation();
                 structure.onParticipation = true;
                 setTimeout(function() {
@@ -494,13 +479,11 @@ $(document).ready(function() {
                         });
 
                     } catch (e) {
-                        //setParticipation('on');
                         mediaController.endParticipation();
                         structure.onParticipation = false;
                     }
                 }, 500);
             } else if (mediaController._session && structure.onParticipation) {
-                //setParticipation('dis');
                 mediaController.disableParticipation();
                 structure.onParticipation = false;
                 try {
@@ -521,9 +504,8 @@ $(document).ready(function() {
                     ];
                     connection.send(msgrash, roomInfo.inRoom.value);
                     structure.lockSolicitation = false;
-                    alerta.initiateMessage(conf.message.END_TRANSMITION);
+                    alerta.initiateMessage(conf.message.END_PARTICIPATION);
                 } catch (e) {
-                    //setParticipation('off');
                     mediaController.startParticipation();
                     structure.onParticipation = true;
                 }
@@ -547,8 +529,6 @@ $(document).ready(function() {
     };
     // Listener para finalização de streams
     connection.onstreamended = (event) => {
-        console.log(event);
-        console.log(structure.userVideo);
 
         if (event.stream.isScreen) {
             $('#span-video-preview-2nd').hide();
@@ -694,7 +674,7 @@ $(document).ready(function() {
                             structure.viewers = numberOfBroadcastViewers;
                         });
 
-                        let labelRoom = roomDataController.validateRoomName(moderatorId);
+                        let labelRoom = roomDataController.validateRoomName(moderatorId, array);
                         if (!labelRoom) return;
                         if (moderatorId == connection.userid) return;
 
@@ -748,7 +728,6 @@ $(document).ready(function() {
             // Tratamento de conexões de espectadores
             let htmlList = '';
             let allParticipants = connection.getAllParticipants();
-            //let numberOfUsers = allParticipants.length;
             structure.viewers = allParticipants.length;
             allParticipants.forEach((participantId) => {
                 let myId = roomInfo.currentRoomId.value;
@@ -855,9 +834,6 @@ function appendDIV(event) {
     // -> Definição do padrão de solicitação
     if (remoto && (Array.isArray(text) && text.length > 4)) {
         var chkrash = event.data;
-
-        console.log(chkrash[3], atob(chkrash[0]));
-
         var msgData = [];
         var myRoom = tag('#room-id').value;
         // Identifica se a mensagem é uma solicitação de serviço
@@ -866,13 +842,12 @@ function appendDIV(event) {
             msgData[0] = chkrash[1];
             msgData[1] = (atob(chkrash[3])).split('|')[4];
             msgData[2] = chkrash[4];
-            listBox(msgData);
+            structure.solicita = mediaController.listBox(msgData, structure.solicita);
             return;
         } else if (chkrash[0] === btoa('@PedeAVez:allow')) {
             // Indica que o broadcaster atendeu à solicitação do usuário
             // Verifica se o destinatário é o criador da solicitação para entregar a resposta
             if (chkrash[2] === myRoom) {
-                //solicita--;
                 structure.solicita -= 1;
                 mediaController.allow();
                 structure.lockSolicitation = true;
@@ -882,7 +857,6 @@ function appendDIV(event) {
             // Indica que o broadcaster negou a solicitação do usuário
             // Verifica se o destinatário é o criador da solicitação para entregar a resposta
             if (chkrash[2] === myRoom) {
-                //solicita--;
                 structure.solicita -= 1;
                 mediaController.deny();
                 structure.lockSolicitation = false;
@@ -899,42 +873,18 @@ function appendDIV(event) {
         } else if (chkrash[0] === btoa('@Finaliza-Participacao')) {
             if (!structure.onParticipation) {
                 structure.onParticipation = true;
-                //accessBtn.setAttribute('data-active', 'enabled');
-                mediaController._session = false;
-                alerta.initiateMessage(conf.message.CANCEL_SOLICITATION);
+                mediaController._session = true;
             }
             media.sessionAccess.click();
         } else if (chkrash[0] === btoa('@Finaliza-Participante')) {
-            $('#div-end').hide();
+            $(conf.dom.DIV_BTN_END).hide();
         } else {
             return;
         }
     } else {
         // Tratamento de mensagens comuns (fora do padrão de solicitação)
-        //RoomHelper.writeMessage(text, remoto);
         mediaController.writeMessage(text, remoto);
     }
-}
-// Lista todas as solicitações de "Pedir a vez" e incrementa contador
-/**
- * Param text: Array contando o nome so solicitante, o Id da conexão da sala e o Id da conexão do solicitante
- */
-function listBox(text) {
-    let msg = text;
-    let receiver = tag('#room-id');
-    let solList = tag('#solicita-list');
-    let htmlList;
-    // Verifica se o destinatário é o broadcaster para entregar a solicitação
-    if (msg[1] === receiver.value) {
-        //solicita++;
-        structure.solicita += 1;
-        mediaController.trataSolicitacao(structure.solicita);
-        if (structure.solicita === 1) { solList.innerHTML = '' };
-        htmlList = constructSolicitationList(msg[2], msg[0]);
-        solList.innerHTML += htmlList;
-        alerta.initiateMessage(conf.message.NEW_SOLICITATION, msg[0]);
-    }
-    return;
 }
 
 // Emite alerta de conexão.
@@ -962,7 +912,6 @@ function alertConnection(userid) {
  */
 function alertDisconnection(userid) {
 
-    console.log(userid, roomInfo.inRoom.value);
     if (userid === roomInfo.inRoom.value) {
         alerta.initiateMessage(conf.message.ALERT_DISCONNECTION);
         setTimeout(location.reload.bind(location), 3000);
