@@ -107,18 +107,3 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/admin/cadastro/{module}/autocomplete/', ['as' => 'admin.cadastro.autocomplete', 'uses' => 'Admin\CadastroAutocompleteController@autocomplete']);
     Route::get('/admin/cadastro/{module}/result/{name}', ['as' => 'admin.cadastro.autocomplete.result', 'uses' => 'Admin\CadastroAutocompleteController@resultAutocomplete']);
 });
-
-
-
-/*
- *  Rotas de Testes e Debugs
- */
-
-//Rota de teste para colleta de dados a prtir de cep
-Route::get('/admin/cadastro/escolas/coletar/{cep?}', ['as' => 'admin.cadastro.escolas.coleta', 'uses' => 'Admin\CadastroEscolaController@collect']);
-
-//Encaminhamentos para o Controller ContatoController > app/Http/Controllers/ContatoController
-//Rota de teste - criar
-Route::post('/controle/{id?}', ['uses' => 'ContatoController@criar']);
-//Rota de teste - editar
-Route::put('/controle/{id?}', ['uses' => 'ContatoController@editar']);
