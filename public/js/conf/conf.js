@@ -159,4 +159,13 @@ const conf = {
         DEFAULT_MSGBOX_OUT: '<p class="chat-in blue">',
         DEFAULT_MSGBOX_IN: '<p class="chat-out grey" align="right">',
     }
-}
+};
+
+const init = {
+    dom: {
+        LOAD_ELEM: ".load",
+        LOAD_CANCEL_ELEM: ".load-cancel",
+        LOAD_POSITION_ELEM: "#centralized",
+        LOAD_LAYER_ELEM: "#fglayer"
+    }
+};

@@ -7,6 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class Componente extends Model
 {
     protected $fillable = [
-        'id', 'name',
+        'id', 'name', 'cadastrado', 'model'
     ];
 }

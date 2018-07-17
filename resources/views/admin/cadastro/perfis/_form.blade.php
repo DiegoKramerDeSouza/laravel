@@ -7,7 +7,13 @@
     <div class='input-field col s12 m6'>
         <select id='grantList' multiple name='grantList[]'>
             @if(isset($html))
-                {!! $html !!}
+                @foreach($html as $arrData)
+                    @if($arrData['selected'])
+                        <option value="{{ $arrData['id'] }}" selected>{{ $arrData['name'] }}</option>
+                    @else
+                        <option value="{{ $arrData['id'] }}">{{ $arrData['name'] }}</option>
+                    @endif
+                @endforeach
             @else
                 @foreach($componentes as $componente)
                     <option value="{{ $componente->id }}">{{ $componente->name }}</option>

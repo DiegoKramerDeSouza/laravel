@@ -15,28 +15,50 @@ class CadastroUsuarioController extends Controller
 {
     use EspecialMethods;
 
+    /**
+     * Validação de permissão de acesso;
+     * Coleta todos os usuários de type = 0;
+     * Direciona para a View de Listagem de usuários;
+     */
     public function index(){
-        if($this->validade('5')){
+        
+        if($this->validade('User')){
             $users = User::where('type', 0)->orderBy('name', 'asc')->paginate(5);
-            $resultToString = true;
-            return view('admin.cadastro.usuarios.index', compact('users', 'resultToString'));
+            $isAutocomplete = true;
+            return view('admin.cadastro.usuarios.index', compact('users', 'isAutocomplete'));
         } else {
-            return redirect()->route('denied');
+            return $this->accessDenied();
         }
     }
+
+    /**
+     * Validação de permissão de acesso;
+     * Coleta dados das bases Escolas e Perfis a partir do ID de User;
+     * Direciona para View de novo Cadastro;
+     */
     public function add(){
-        if($this->validade('5')){
-            //Coleta todas as escolas cadastradas
+
+        if($this->validade('User')){
             $escolas = Escola::all();
             $perfis = Perfil::all();
             return view('admin.cadastro.usuarios.adicionar', compact('escolas', 'perfis'));
         } else {
-            return redirect()->route('denied');
+            return $this->accessDenied();
         }
     }
+
+    /**
+     * 1. Validação de permissão de acesso;
+     * 2. Validação dos campos a gravar;
+     * 3. Define os campos enviados que devem ser gravados em Users;
+     * 4. Insere na base de dados Users;
+     * 5. Define os campos enviados que devem ser atualizados em UserDados;
+     * 6. user_id recebe o id criado durante o cadastro do usuário $created;
+     * 7. Insere na base de dados UserDados;
+     */
     public function save(Request $req){
-        if($this->validade('5')){
-            // Validação dos campos
+
+        if($this->validade('User')){
             $validator = Validator::make($req->all(), [
                 'name' => 'bail|required|min:4|max:191',
                 'login' => 'bail|required|unique:users|min:4|max:191',
@@ -51,50 +73,60 @@ class CadastroUsuarioController extends Controller
                             ->withInput();
             }
             
-            if(User::where('email', $req->email)->count() == 0){
-                //Define os campos enviados que devem ser gravados no banco
-                $user = [
-                    '_token'=>$req->_token,
-                    'name'=>$req->name,
-                    'login'=>$req->login,
-                    'email'=>$req->email,
-                    'password'=>bcrypt($req->password),
-                    'type'=>0
-                ];
-                //Insere dados na base User
-                $created = User::create($user);
-                //Define os campos enviados que devem ser criados no banco
-                //user_id recebe o id criado durante o cadastro do usuário $created
-                $userdata = [
-                    '_token'=>$req->_token,
-                    'user_id'=>$created->id,
-                    'group'=>$req->group
-                ];
-                //Insere dados na base UserDados
-                UserDado::create($userdata);
-                return redirect()->route('admin.cadastro.usuarios', ['page' => '1']);
-            } else {
-                echo "<h4>O endereço de e-mail " . $req->email . " já encontra-se cadastrado!</h4>";
-            }
+            $user = [
+                '_token'=>$req->_token,
+                'name'=>$req->name,
+                'login'=>$req->login,
+                'email'=>$req->email,
+                'password'=>bcrypt($req->password),
+                'type'=>0
+            ];
+            $created = User::create($user);
+            
+            $userdata = [
+                '_token'=>$req->_token,
+                'user_id'=>$created->id,
+                'group'=>$req->group
+            ];
+            UserDado::create($userdata);
+
+            return redirect()->route('admin.cadastro.usuarios', ['page' => '1']);
         } else {
-            return redirect()->route('denied');
+
+            return $this->accessDenied();
         }
     }
+
+    /**
+     * Validação de permissão de acesso;
+     * Coleta dados das bases UserData, Escolas e Perfis a partir do ID de User;
+     * Direciona para View de edição;
+     */
     public function edit($id){
-        if($this->validade('5')){
-            //Direciona para View de edição
+
+        if($this->validade('User')){
             $user = User::find($id);
             $userdata = UserDado::where('user_id', $id)->first();
             $escolas = Escola::all();
             $perfis = Perfil::all();
             return view('admin.cadastro.usuarios.editar', compact('user', 'userdata', 'escolas', 'perfis'));
         } else {
-            return redirect()->route('denied');
+
+            return $this->accessDenied();
         }
     }
+
+    /**
+     * 1. Validação de permissão de acesso;
+     * 2. Validação dos campos a alterar;
+     * 3. Define os campos enviados que devem ser atualizados em Users;
+     * 4. Atualiza base de dados Users;
+     * 5. Define os campos enviados que devem ser atualizados em UserDados;
+     * 6. Atualiza base de dados UserDados;
+     */
     public function update(Request $req, $id){
-        if($this->validade('5')){
-            // Validação dos campos
+
+        if($this->validade('User')){
             $validator = Validator::make($req->all(), [
                 'name' => 'bail|required|min:4|max:191',
                 'login' => 'bail|required|unique:users,login,' . $id . '|min:4|max:191',
@@ -106,7 +138,7 @@ class CadastroUsuarioController extends Controller
                             ->withErrors($validator)
                             ->withInput();
             }
-            //Define os campos enviados que devem ser atualizados no banco
+
             $user = [
                 '_token'=>$req->_token,
                 'name'=>$req->name,
@@ -114,27 +146,35 @@ class CadastroUsuarioController extends Controller
                 'email'=>$req->email,
                 'type'=>0
             ];
-            //Atualiza base de dados Users
             User::find($id)->update($user);
-            //Define os campos enviados que devem ser atualizados no banco
+
             $userdata = [
                 '_token'=>$req->_token,
                 'group'=>$req->group
             ];
-            //Atualiza base de dados UserDados
             UserDado::where('user_id', $id)->first()->update($userdata);
+
             return redirect()->route('admin.cadastro.usuarios', ['page' => '1']);
         } else {
-            return redirect()->route('denied');
+
+            return $this->accessDenied();
         }
     }
+
+    /**
+     * Validação de permissão de acesso;
+     * Deleta ID informado na base User e em sequência em UserDado;
+     */
     public function delete($id){
-        if($this->validade('5')){
+
+        if($this->validade('User')){
             User::find($id)->delete();
             UserDado::where('user_id', $id)->first()->delete();
             return redirect()->route('admin.cadastro.usuarios', ['page' => '1']);
         } else {
-            return redirect()->route('denied');
+
+            return $this->accessDenied();
         }
     }
+
 }

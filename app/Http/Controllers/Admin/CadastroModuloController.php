@@ -12,28 +12,46 @@ class CadastroModuloController extends Controller
 {
     use EspecialMethods;
 
+    /**
+     * Validação de permissão de acesso;
+     * Coleta todos os módulos por nome;
+     * Direciona para a View de Listagem de turmas;
+     */
     public function index(){
-        if($this->validade('2')){
-            //Paginação dos valores coletados na entidade Modulos
+
+        if($this->validade('Modulo')){
             $modulos = Modulo::orderBy('name', 'asc')->paginate(5);
-            $resultToString = true;
-            return view('admin.cadastro.modulos.index', compact('modulos', 'resultToString'));
+            $isAutocomplete = true;
+            return view('admin.cadastro.modulos.index', compact('modulos', 'isAutocomplete'));
         } else {
-            return redirect()->route('denied');
+            return $this->accessDenied();
         }
     }
+
+    /**
+     * Validação de permissão de acesso;
+     * Coleta todas os modulos cadastrado;
+     * Direciona para View de novo Cadastro;
+     */
     public function add(){
-        if($this->validade('2')){
-            //Coleta todas os modulos cadastrados
+
+        if($this->validade('Modulo')){
             $modulos = Modulo::all();
             return view('admin.cadastro.modulos.adicionar', compact('modulos'));
         } else {
-            return redirect()->route('denied');
+            return $this->accessDenied();
         }
     }
+
+    /**
+     * 1. Validação de permissão de acesso;
+     * 2. Validação dos campos a gravar;
+     * 3. Define os campos enviados que devem ser gravados em Modulos;
+     * 4. Insere na base de dados Users;
+     */
     public function save(Request $req){
-        if($this->validade('2')){
-            // Validação dos campos
+
+        if($this->validade('Modulo')){
             $validator = Validator::make($req->all(), [
                 'name' => 'bail|required|unique:modulos|min:4|max:191'
             ]);
@@ -42,30 +60,43 @@ class CadastroModuloController extends Controller
                             ->withErrors($validator)
                             ->withInput();
             }
-            //Define os campos enviados que devem ser gravados no banco
+            
             $modulos = [
                 '_token'=>$req->_token,
                 'name'=>$req->name
             ];
-            //Insere dados na base Turma
             Modulo::create($modulos);
+
             return redirect()->route('admin.cadastro.modulos', ['page' => '1']);
         } else {
-            return redirect()->route('denied');
+
+            return $this->accessDenied();
         }
     }
+
+    /**
+     * 1. Validação de permissão de acesso;
+     * 2. Direciona para View de edição;
+     */   
     public function edit($id){
-        if($this->validade('2')){
-            //Direciona para View de edição
+
+        if($this->validade('Modulo')){
             $modulos = Modulo::find($id);
             return view('admin.cadastro.modulos.editar', compact('modulos'));
         } else {
-            return redirect()->route('denied');
+            return $this->accessDenied();
         }
     }
+
+    /**
+     * 1. Validação de permissão de acesso;
+     * 2. Validação dos campos a alterar;
+     * 3. Define os campos enviados que devem ser atualizados em Modulos;
+     * 4. Atualiza base de dados Modulos;
+     */
     public function update(Request $req, $id){
-        if($this->validade('2')){
-            // Validação dos campos
+
+        if($this->validade('Modulo')){
             $validator = Validator::make($req->all(), [
                 'name' => 'bail|required|unique:modulos,name,' . $id . '|min:4|max:191'
             ]);
@@ -74,39 +105,31 @@ class CadastroModuloController extends Controller
                             ->withErrors($validator)
                             ->withInput();
             }
-            //Define os campos enviados que devem ser atualizados no banco
+
             $modulos = [
                 '_token'=>$req->_token,
                 'name'=>$req->name
             ];
-            //Atualiza base de dados Turma
             Modulo::find($id)->update($modulos);
+
             return redirect()->route('admin.cadastro.modulos', ['page' => '1']);
         } else {
-            return redirect()->route('denied');
+
+            return $this->accessDenied();
         }
     }
+
+    /**
+     * Validação de permissão de acesso;
+     * Deleta ID informado na base Modulos;
+     */
     public function delete($id){
-        if($this->validade('2')){
+        if($this->validade('Modulo')){
             Modulo::find($id)->delete();
             return redirect()->route('admin.cadastro.modulos', ['page' => '1']);
         } else {
             return redirect()->route('denied');
         }
     }
-    public function autocomplete(){
-        $allModulos = Modulo::all()->toArray();
-        $result = array();
-        for($i = 0; $i < count($allModulos); $i++){
-            $data = str_replace("\0", "", $allModulos[$i]['name']);
-            $result[$allModulos[$i]['name']] = null;       
-        }
-        header('Content-Type: application/json; charset=utf-8');
-        echo json_encode($result, JSON_UNESCAPED_UNICODE);
-    }
-    public function resultAutocomplete($data){
-        $modulosToString = true;
-        $modulos = Modulo::where('name', '=', $data)->orderBy('name', 'asc')->paginate(5);
-        return view('admin.cadastro.modulos.index', compact('modulos', 'modulosToString'));
-    }
+
 }

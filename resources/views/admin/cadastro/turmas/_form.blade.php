@@ -22,7 +22,13 @@
     <div class='input-field col s12 m6'>
         <select id='curso_id_list' multiple required name='curso_id_list[]'>
             @if(isset($html))
-                {!! $html !!}
+                @foreach($html as $arrData)
+                    @if($arrData['selected'])
+                        <option value="{{ $arrData['id'] }}" selected>{{ $arrData['name'] }}</option>
+                    @else
+                        <option value="{{ $arrData['id'] }}">{{ $arrData['name'] }}</option>
+                    @endif
+                @endforeach
             @else
                 <option value="" disabled>Escolha um curso</option>
                 @foreach($cursos as $curso)

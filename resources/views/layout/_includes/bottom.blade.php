@@ -29,12 +29,12 @@
         </footer>
 
         <!-- Inicialização de Javascript -->
-        <script type="text/javascript" src="{!! asset('js/init.data.config.js') !!}"></script>
+        <script type="text/javascript" src="{!! asset('js/conf/conf.js') !!}"></script>
         <script type="text/javascript" src="{!! asset('js/jquery-3.1.1.min.js') !!}"></script>
         <script type="text/javascript" src="{!! asset('js/materialize.min.js') !!}"></script>
         <script type="text/javascript" src="{!! asset('js/geral.js') !!}"></script>
 
-        @if(isset($resultToString))
+        @if(isset($isAutocomplete))
             <!-- Elementos das páginas de cadastros para autocomplete -->
             <script type="text/javascript" src="{!! asset('js/formAutocomplete.js') !!}"></script>
         @endif
@@ -42,8 +42,7 @@
             <!-- Elementos para a formação de uma SALA ==================================================== -->
             @if(! Auth::guest())
                 <!-- Adição dos scripts de utilização do WEBRTC-->
-                <script type="text/javascript" src="{!! asset('js/conf/conf.js') !!}"></script>
-
+                
                 <script type="text/javascript" src="{!! asset('js/models/Structure.js') !!}"></script>  
                 <script type="text/javascript" src="{!! asset('js/controllers/StructureController.js') !!}"></script>  
                 <script type="text/javascript" src="{!! asset('js/models/Room.js') !!}"></script>  

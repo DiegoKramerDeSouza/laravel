@@ -17,31 +17,50 @@ class CadastroEscolaController extends Controller
 {
     use EspecialMethods;
     
-    //->View escolas cadastradas
+    /**
+     * Validação de permissão de acesso;
+     * Coleta todas as escolas por nome;
+     * Direciona para a View de Listagem de turmas;
+     */
     public function index(){
-        if($this->validade('4')){
-            //Paginação dos valores coletados na entidade Escolas
+
+        if($this->validade('Escola')){
             $escolas = Escola::orderBy('name', 'asc')->paginate(5);
-            $resultToString = true;
-            return view('admin.cadastro.escolas.index', compact('escolas', 'resultToString'));
+            $isAutocomplete = true;
+            return view('admin.cadastro.escolas.index', compact('escolas', 'isAutocomplete'));
         } else {
-            return redirect()->route('denied');
+            return $this->accessDenied();
         }
     }
-    //->View para adição de novas escolas
+
+    /**
+     * Validação de permissão de acesso;
+     * Coleta os recursos de API cadastradas para escolas;
+     * Direciona para View de novo Cadastro;
+     */
     public function add(){
-        if($this->validade('4')){
+
+        if($this->validade('Escola')){
             $api = RecursoApi::where('name', 'Google Maps Geolocation')->first();
             $apicep = RecursoApi::where('name', 'ViaCEP Consulta')->first();
             return view('admin.cadastro.escolas.adicionar', compact('api', 'apicep'));
         } else {
-            return redirect()->route('denied');
+            return $this->accessDenied();
         }
     }
-    //Salvar uma nova escola na base de dados
+
+    /**
+     * 1. Validação de permissão de acesso;
+     * 2. Validação dos campos a gravar;
+     * 3. Define os campos enviados que devem ser gravados em Escolas;
+     * 4. Insere na base de dados Escolas;
+     * 5. Define os campos enviados que devem ser gravados em EnderecoEscolas;
+     * 6. Referencia o school_id ao id criado na criação da escola ($created->id)
+     * 7. Insere na base de dados EnderecoEscolas;
+     */
     public function save(Request $req){
-        if($this->validade('4')){
-            // Validação dos campos
+
+        if($this->validade('Escola')){
             $validator = Validator::make($req->all(), [
                 'name' => 'bail|required|min:4|max:191',
                 'register' => 'bail|required|unique:escolas|min:4|max:191',
@@ -56,18 +75,15 @@ class CadastroEscolaController extends Controller
                             ->withErrors($validator)
                             ->withInput();
             }
+
             if(Escola::where('register', $req->register)->count() == 0){
-                //Define os campos enviados que devem ser criados no banco
                 $escola = [
                     '_token'=>$req->_token,
                     'register'=>$req->register,
                     'name'=>$req->name
                 ];
-                //Insere dados na base Escolas
                 $created = Escola::create($escola);
 
-                //Define os campos enviados que devem ser gravados no banco
-                //Referencia o school_id ao id criado na criação da escola ($created->id)
                 $enderecoescola = [
                     '_token'=>$req->_token,
                     'school_id'=>$created->id,
@@ -79,33 +95,47 @@ class CadastroEscolaController extends Controller
                     'st'=>$req->st,
                     'coordinates'=>$req->location
                 ];
-                //Insere dados na base UserDados
                 EnderecoEscola::create($enderecoescola);
+
                 return redirect()->route('admin.cadastro.escolas', ['page' => '1']);
-            } else {
-                echo "<h4>Instituição com registro " . $req->register . " já existente!</h4>";
             }
         } else {
-            return redirect()->route('denied');
+
+            return $this->accessDenied();
         }
-        
     }
-    //->View para editar dados de escolas
+
+    /**
+     * 1. Validação de permissão de acesso;
+     * 2. Coleta os recursos de API cadastradas para escolas;
+     * 3. Direciona para View de edição;
+     */  
     public function edit($id){
-        if($this->validade('4')){
+
+        if($this->validade('Escola')){
             $api = RecursoApi::where('name', 'Google Maps Geolocation')->first();
             $apicep = RecursoApi::where('name', 'ViaCEP Consulta')->first();
             $escolas = Escola::find($id);
             $endereco = EnderecoEscola::where('school_id', $id)->first();
             return view('admin.cadastro.escolas.editar', compact('api', 'apicep', 'escolas', 'endereco'));
         } else {
-            return redirect()->route('denied');
+            return $this->accessDenied();
         }
     }
-    //Atualizar dados de escola e gravar na base
+
+    /**
+     * 1. Validação de permissão de acesso;
+     * 2. Validação dos campos a alterar;
+     * 3. Define os campos enviados que devem ser atualizados em Escolas;
+     * 4. Atualiza base de dados Escolas;
+     * 5. Define os campos enviados que devem ser atualizados em EnderecoEscolas;
+     * 6. Atualiza base de dados EnderecoEscolas;
+     * 7. Define os campos enviados que devem ser atualizados em Turmas;
+     * 8. Atualiza base de dados Turmas;
+     */
     public function update(Request $req, $id){
-        if($this->validade('4')){
-            // Validação dos campos
+
+        if($this->validade('Escola')){
             $validator = Validator::make($req->all(), [
                 'name' => 'bail|required|min:4|max:191',
                 'register' => 'bail|required|unique:escolas,register,' . $id . '|min:4|max:191',
@@ -120,15 +150,14 @@ class CadastroEscolaController extends Controller
                             ->withErrors($validator)
                             ->withInput();
             }
-            //Define os campos enviados que devem ser atualizados no banco
+            
             $escola = [
                 '_token'=>$req->_token,
                 'register'=>$req->register,
                 'name'=>$req->name
             ];
-            //Atualiza base de dados Escola
             Escola::find($id)->update($escola);
-            //Define os campos enviados que devem ser atualizados no banco
+            
             $enderecoescola = [
                 '_token'=>$req->_token,
                 'postal'=>$req->postal,
@@ -139,7 +168,6 @@ class CadastroEscolaController extends Controller
                 'st'=>$req->st,
                 'coordinates'=>$req->location
             ];
-            //Atualiza base de dados EnderecoEscola
             EnderecoEscola::where('school_id', $id)->first()->update($enderecoescola);
 
             $turmas = [
@@ -149,16 +177,24 @@ class CadastroEscolaController extends Controller
             foreach($toupdateTurma as $updateTurma){
                 $updateTurma->update($turmas);
             }
+
             return redirect()->route('admin.cadastro.escolas', ['page' => '1']);
         } else {
-            return redirect()->route('denied');
+
+            return $this->accessDenied();
         }
     }
-    //Deletar escolas registradas e todos os usuários vinculados a esta
+
+    /**
+     * Validação de permissão de acesso;
+     * Deleta cada turma registrada para a mesma escola;
+     * Deleta ID informado na base Escolas;
+     * Deleta ID informado na base EnderecoEscolas;
+     */
     public function delete($id){
-        if($this->validade('4')){
+
+        if($this->validade('Escola')){
             $todeleteTurma = Turma::where('school_id', '=', $id)->get();
-            //Para cada turma vinculada à instituição
             foreach($todeleteTurma as $deleteTurma){
                 $deleteTurma->delete();
             }
@@ -168,18 +204,5 @@ class CadastroEscolaController extends Controller
         } else {
             return redirect()->route('denied');
         }
-    }
-    //Função de teste para coleta de geolocalização 
-    //Apenas Debug
-    public function collect($data){
-        $api = RecursoApi::where('name', 'Google Maps Geolocation')->first();
-        $cep = explode('-', $data, 2);
-        $postalcode =$cep[0] . $cep[1][0] . '00';
-        $url = $api->details . '?address=' . $postalcode . '&key=' . $api->key;
-        $json = json_decode(file_get_contents($url), true);
-        $lat = $json['results'][0]['geometry']['location']['lat'];
-        $lng = $json['results'][0]['geometry']['location']['lng'];
-        $location = $lat . ";" . $lng;
-        echo $location;
     }
 }
