@@ -9,6 +9,22 @@
     src: url(fonts/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2) format('woff2');
 }
 
+body {
+    font-family: 'Raleway', sans-serif !important;
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+html {
+    font-family: 'Raleway', sans-serif !important;
+    overflow-x: hidden;
+}
+
+main {
+    flex: 1 0 auto;
+}
+
 .material-icons {
     font-family: 'Material Icons';
     font-weight: normal;
@@ -26,14 +42,4 @@
 
 nav {
     box-shadow: 5px 10px 18px transparent !important;
-}
-
-body {
-    display: flex;
-    min-height: 100vh;
-    flex-direction: column;
-}
-
-main {
-    flex: 1 0 auto;
 }

@@ -2,7 +2,6 @@
 @extends('layout.site')
 <!--Define yield('titulo') em layout._includes.top-->
 @section('titulo', 'Acesso')
-@section('nome', 'Coordenador')
 <!--Define yield('content') em layout.site-->
 @section('content')
     <div class='card z-depth-5'>
@@ -19,7 +18,7 @@
                     <div class='row'>
                         <div class='input-field col s12 m6'>
                             <input class='validate' autofocus required type='text' name='login' id='login'>
-                            <label for='login'><i class='fa fa-envelope-o'></i> E-mail</label>
+                            <label for='login'><i class='fa fa-user-o'></i> Usuário</label>
                         </div>
                         <div class='input-field col s12 m6'>
                             <input class='validate' required type='password' name='password' id='password'>
@@ -27,7 +26,7 @@
                         </div>
                     </div>
                     <div class='card-action' align='right'>
-                        <button id='access' type='submit' class='btn green darken-2 waves-effect waves-light'>Entrar <i class='fa fa-sign-in'></i></button>
+                        <button id='access' type='submit' class='load btn-flat green-text text-darken-2 waves-effect waves-green'>Entrar <i class='fa fa-sign-in'></i></button>
                     </div>
                 </form>
             </div>

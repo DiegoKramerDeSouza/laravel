@@ -1,6 +1,78 @@
 /*
 *   Folha de estilos aplicados às classes de elementos HTML
+*   -> Referencia elementos da página "salas"
 */
+
+.autocomplete-content {
+    color: rgb(33, 150, 243) !important;
+}
+
+.blockquoted {
+    border-left: 5px solid rgb(33, 150, 243);
+    padding: 5px;
+    margin: 2px;
+}
+
+.blockquoted-red {
+    border-left: 5px solid rgb(202, 52, 52);
+    padding: 5px;
+    margin: 2px;
+}
+
+.chat-in,
+.chat-out {
+    padding: 8px;
+    margin: 5px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    -webkit-transition-duration: 0.4s;
+    transition-duration: 0.4s;
+    max-width: 320px;
+}
+
+.chat-in {
+    border-bottom-right-radius: 8px;
+}
+
+.chat-out {
+    border-bottom-left-radius: 8px;
+}
+
+.constructed-videos {
+    margin: 5px;
+    border: 1px solid black;
+    border-radius: 2px;
+}
+
+.container-min {
+    margin-left: 70px;
+    margin-right: 70px;
+}
+
+.controllers-container {
+    padding: 5px;
+}
+
+.d-none {
+    display: none;
+}
+
+.disconnect-btn:hover {
+    cursor: pointer;
+}
+
+.height-limit {
+    max-height: 441px;
+}
+
+.hover-footer-btn {
+    -webkit-transition-duration: 0.4s;
+    transition-duration: 0.4s;
+}
+
+.hover-footer-btn:hover {
+    background-color: rgba(250, 250, 250, 0.1);
+}
 
 .hoverarchor {
     -webkit-transition-duration: 0.4s;
@@ -16,19 +88,6 @@
     color: rgb(33, 150, 243) !important;
 }
 
-.hover-footer-btn {
-    -webkit-transition-duration: 0.4s !important;
-    transition-duration: 0.4s !important;
-}
-
-.hover-footer-btn:hover {
-    background-color: rgba(250, 250, 250, 0.1);
-}
-
-.d-none {
-    display: none;
-}
-
 .incoming-videos {
     display: block;
     position: absolute;
@@ -37,10 +96,16 @@
     width: 20%;
 }
 
-.constructed-videos {
-    margin: 5px;
-    border: 1px solid black;
-    border-radius: 4px;
+.li-disconnect {
+    -webkit-transition-duration: 0.4s;
+    transition-duration: 0.4s;
+    margin: 3px;
+    padding: 3px;
+    border-radius: 2px;
+}
+
+.li-disconnect:hover {
+    background-color: rgba(86, 130, 138, 0.2);
 }
 
 .li-hover {
@@ -48,6 +113,63 @@
     transition-duration: 0.4s;
 }
 
-.li-hover:hover {
-    background-color: rgb(231, 231, 231) !important;
+.margin-50-top {
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.main-container {
+    -webkit-transition-duration: 0.4s;
+    transition-duration: 0.4s;
+    margin-top: 40px;
+    padding-bottom: 60px;
+    margin-left: 10%;
+    margin-right: 10%;
+}
+
+.main-container-full {
+    -webkit-transition-duration: 0.4s;
+    transition-duration: 0.4s;
+    margin-top: 40px;
+    padding-bottom: 60px;
+    margin-left: 0%;
+    margin-right: 0%;
+}
+
+.media-control {
+    -webkit-transition-duration: 0.4s;
+    transition-duration: 0.4s;
+    background-color: rgb(34, 155, 255) !important;
+    margin: 3px;
+}
+
+.media-control:hover {
+    background-color: rgb(27, 24, 24) !important;
+}
+
+.min-video {
+    max-width: 100%;
+}
+
+.room-enter:hover {
+    cursor: pointer;
+}
+
+.second-video {
+    position: fixed !important;
+    top: 168px !important;
+    right: 0px !important;
+    max-width: 320px;
+    -webkit-transition-duration: 0.4s !important;
+    transition-duration: 0.4s !important;
+    z-index: 2 !important;
+    padding-bottom: 20px;
+}
+
+.valign-wrapper {
+    margin: -10px !important;
+}
+
+.width-limit {
+    max-width: 662px;
 }

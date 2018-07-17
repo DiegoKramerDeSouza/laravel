@@ -1,573 +1,605 @@
 /**
  *  Javascript + JQuery + WebRTC
  *  Controle de transmissão de mídia com stream;
- *  Controle de acesso de usuários por perfil;
  *  Configurações do WebRTC -> Sockets e RTCMulticonnection
  *                          -> Transmissão escalável em Broadcast
  *                          -> Controles do Chat
  *                          -> Controles de envio e recebimento de mensagens;
- *  Validação de campos de formulários;
- *  Controle e tratamento das funções dos botões da barra de funções de video;
- *  Utilizado EXCLUSIVAMENTE para rotas "salas/*";
+ *  Controle e tratamento das funções dos botões da barra de controle de mídia;
+ *  Utilizado EXCLUSIVAMENTE para "salas";
  */
+//-------------------------------------------------------------------------------------------------
 
-/**
- *  Variáveis Globais
- * 
- *  var solicita        integer
- *  var broadcastStatus integer
- */
-var solicita = 0;
-var broadcastStatus = 0;
+
+let tag = document.querySelector.bind(document);
+let allTags = document.querySelectorAll.bind(document);
+let addTag = document.createElement.bind(document);
+
+// Instâncias
+let connectController = new ConnectController();
+let connect = connectController.initiateConnection();
+
+let mediaController = new MediaController();
+let media = mediaController.initiateMedia();
+
+let structureController = new StructureController();
+let structure = structureController.initiateStructure();
+
+let roomInfoController = new RoomInfoController();
+let roomInfo = roomInfoController.initiateRoomInfo();
+
+let alerta = new MessageController();
+
+let roomController = new RoomController();
+let roomDataController = new RoomDataController();
+let roomView = new RoomView();
+
+let connection = new RTCMultiConnection();
 
 $(document).ready(function() {
+
+    window.enableAdapter = true;
+
     //Application - Inicia a chamada e tratamento de multiconexão
-    /**
-     *  var connection          RTCMultiConnection
-     *  var enableRecordings    Boolean
-     *  var isPublicModerator   Boolean
-     */
-    var enableRecordings = false;
-    var isPublicModerator = true;
-    var connection = new RTCMultiConnection();
+    connection.enableScalableBroadcast = connect.enableScalableBroadcast;
+    connection.maxRelayLimitPerUser = connect.maxRelayLimitPerUser;
+    connection.socketMessageEvent = connect.socketMessageEvent;
+    connection.socketURL = connect.urlSocket;
 
-    // Definições de conexão
-    connection.enableScalableBroadcast = true;
-    connection.maxRelayLimitPerUser = 1;
-    connection.autoCloseEntireSession = true;
-    connection.socketMessageEvent = 'Broadcast';
-    // Elemento alvo para iniciar o stream de video
-    connection.teacherVideosContainer = document.getElementById('main-video');
+    // Listeners de tratamento de tamanho de tela do video (Detecta Fullscreen OFF)
+    mediaController.initListeners();
 
-    // Inicialização de variáveis de controle de elementos in-page
-    /**
-     *  var width           integer
-     *  var status          Boolean
-     *  var usuario         string
-     *  var viewers         integer
-     *  var cameras         Boolean
-     *  var publicRoomsDiv  elem. html
-     *  var inRoom          elem. html
-     *  var videoPreview    elem. html
-     *  var mute            elem. html
-     *  var vol             elem. html
-     *  var cam             elem. html
-     *  var pedir           elem. html
-     *  var ctlPedir        elem. html
-     *  var broadcaster        elem. html
-     *  var currentUser     string
-     */
-    var width;
-    var status = false;
-    var usuario = '';
-    var viewers = 'Calculando...';
-    var cameras;
-    var publicRoomsDiv = document.getElementById('public-conference');
-    var inRoom = document.getElementById('in-room');
-    var videoPreview = document.getElementById('video-preview');
-    var mute = document.getElementById('toggle-mute');
-    var vol = document.getElementById('toggle-volume');
-    var cam = document.getElementById('toggle-camera');
-    var pedir = document.getElementById('pedir-vez');
-    var ctlPedir = document.getElementById('control-pedir-vez');
-    var broadcaster = document.getElementById('broadcaster');
-    var currentUser = document.getElementById('current-user').value;
-
-    // Conexão com serviço de websocket
-    // Servidor de signaling de teste gratúito:
-    connection.socketURL = 'https://rtcmulticonnection.herokuapp.com:443/';
-
-    window.onbeforeunload = function() {
-        document.getElementById('btn-join-as-productor').disabled = false;
-    };
-
-    connection.connectSocket(function(socket) {
-        // Socket - Join
-        // Evento emitido quando a transmissão já existe
-        socket.on('join-broadcaster', function(hintsToJoinBroadcast) {
-            console.log('2**join-broadcaster', hintsToJoinBroadcast);
-            broadcastStatus = 1;
+    // Tratamento de mensagem de emit de sockets
+    connection.connectSocket((socket) => {
+        // Socket - Join: 'join-broadcaster'
+        socket.on(conf.socket.MSG_JOIN, (hintsToJoinBroadcast) => {
+            structure.broadcastStatus = 1;
             connection.session = hintsToJoinBroadcast.typeOfStreams;
-            console.log(connection.session);
             connection.sdpConstraints.mandatory = {
-                OfferToReceiveVideo: !!connection.session.video,
-                OfferToReceiveAudio: !!connection.session.audio
+                OfferToReceiveVideo: false,
+                OfferToReceiveAudio: false
             };
+            connection.extra.modifiedValue = roomInfo.currentRoomId.value + '-' + roomInfo.currentUser.value;
+            connection.updateExtraData();
             connection.broadcastId = hintsToJoinBroadcast.broadcastId;
             connection.join(hintsToJoinBroadcast.userid);
-            console.log('Joined at: ' + hintsToJoinBroadcast.userid);
-            toastContent = '<span class="white-text"><i class="fa fa-play-circle fa-lg"></i> Transmissão iniciada!</span>';
-            M.toast({ html: toastContent, classes: 'blue' });
+            alerta.initiateMessage(conf.message.START_TRANSMITION);
         });
-        // Socket - Rejoin
-        socket.on('rejoin-broadcast', function(broadcastId) {
-            console.log('**rejoin-broadcast', broadcastId);
-            broadcastStatus = 1;
+        // Socket - Rejoin: 'rejoin-broadcast'
+        socket.on(conf.socket.MSG_REJOIN, (getBroadcasterId) => {
+            structure.broadcastStatus = 1;
             connection.attachStreams = [];
-            socket.emit('check-broadcast-presence', broadcastId, function(isBroadcastExists) {
+            connection.extra.modifiedValue = roomInfo.currentRoomId.value + '-' + roomInfo.currentUser.value;
+            connection.updateExtraData();
+            // Socket - check presence: 'check-broadcast-presence'
+            socket.emit(conf.socket.MSG_CHK_PRESENCE, getBroadcasterId, (isBroadcastExists) => {
                 if (!isBroadcastExists) {
-                    // O broadcaster TEM de definir seu user-id
-                    connection.userid = broadcastId;
+                    connection.userid = getBroadcasterId;
                 }
-                socket.emit('join-broadcast', {
-                    broadcastId: broadcastId,
+                // Socket - Join to broadcast: 'join-broadcast'
+                socket.emit(conf.socket.MSG_JOIN_BROADCAST, {
+                    broadcastId: getBroadcasterId,
                     userid: connection.userid,
                     typeOfStreams: connection.session
                 });
             });
         });
-        // Socket - Stopped
-        socket.on('broadcast-stopped', function(broadcastId) {
-            // Transmissão interrompida 
-            console.error('broadcast-stopped', broadcastId);
-            broadcastStatus = 0;
-            toastContent = '<span class="white-text"><i class="fa fa-stop-circle fa-lg"></i> Transmissão finalizada!</span>';
-            M.toast({ html: toastContent, classes: 'red darken-3' });
+        // Socket - Parado: 'broadcast-stopped'
+        socket.on(conf.socket.MSG_BROADCAST_STOP, (getBroadcasterId) => {
+            structure.broadcastStatus = 0;
+            alerta.initiateMessage(conf.message.END_TRANSMITION);
         });
-        // Socket - Started -> Quando não há um broadcast inicia-se esse evento
-        socket.on('start-broadcasting', function(typeOfStreams) {
-            console.log('**start-broadcasting', typeOfStreams);
-            broadcastStatus = 1;
-            // O broadcaster sempre utilizará essas configurações
+        // Socket - Iniciando: 'start-broadcasting
+        socket.on(conf.socket.MSG_START_BROADCAST, (typeOfStreams) => {
+            structure.broadcastStatus = 1;
             connection.sdpConstraints.mandatory = {
                 OfferToReceiveVideo: false,
                 OfferToReceiveAudio: false
             };
             connection.session = typeOfStreams;
-            // Início da captura de mídia
-            connection.open(connection.userid, true);
-            console.log('Open: ' + connection.userid);
+            connection.open(connection.userid, connect.isPublicModerator);
+        });
+        // Socket - Saindo: 'leave-the-room'
+        socket.on(conf.socket.MSG_LEAVE_ROOM, (targetconnection) => {
+            if (targetconnection.remoteUserId != connection.userid) return;
+            connection.leave();
         });
     });
-    connection.onstream = function(event) {
-        //Apresentação da barra de funções de video
-        $('#nav-footer').slideDown(500);
-        inRoom.value = event.userid;
-        if (connection.isInitiator && event.type !== 'local') {
-            return;
-        }
-        if (event.type === 'remote') {
-            /**
-             *  Ações para conexão REMOTA para controle de funções de áudio e video do webRTC
-             */
-            connection.isUpperUserLeft = false;
-            videoPreview.srcObject = event.stream;
-            // Definições de video
-            width = parseInt(connection.teacherVideosContainer.clientWidth);
-            videoPreview.width = width;
-            videoPreview.play();
-            // Ajusta elementos de exibição (define o menu de áudio e video para ESPECTADORES)
-            $('#div-connect').hide();
-            $('#broadcast-viewers-counter').hide();
-            ctlPedir.innerHTML = "<li class='hover-footer-btn'>" +
-                "<a id='pedir-vez' data-active='enabled' class='blue-text text-darken-3' title='Pedir a vez'>" +
-                "<i class='material-icons left'>pan_tool</i> <b class='white-text hide-on-med-and-down'>Pedir a vez</b>" +
-                "</a>" +
-                "</li>";
-            pedir = document.getElementById('pedir-vez');
 
-            //Controle de elementos da conexão
-            videoPreview.userid = event.userid;
-            if (connection.isInitiator == false && event.type === 'remote') {
-                /**
-                 * Verifica se a pessoa que está conectando é o produtor do conteúdo (broadcaster)
-                 * e se a conexão é local. Se não:
-                 * ->Está apenas fazendo um relaying de media
-                 */
-                console.log('3**STREAM Remoto!');
-                connection.dontCaptureUserMedia = true;
-                connection.attachStreams = [event.stream];
-                connection.sdpConstraints.mandatory = {
-                    OfferToReceiveAudio: false,
-                    OfferToReceiveVideo: false
-                };
-                var socket = connection.getSocket();
-                socket.emit('can-relay-broadcast');
-                if (connection.DetectRTC.browser.name === 'Chrome') {
-                    connection.getAllParticipants().forEach(function(p) {
+    // Tratamento de erro para compartilhamento de tela
+    connection.getScreenConstraints = (callback) => {
+        getScreenConstraints((error, screen_constraints) => {
+            if (!error) {
+                screen_constraints = connection.modifyScreenConstraints(screen_constraints);
+                callback(error, screen_constraints);
+                $('#screen-share-alert').slideDown(300);
+                mediaController.switchShare();
+                return;
+            }
+            if (error !== 'permission-denied') {
+                let elem = tag('#msg-share');
+                let instance = M.Modal.getInstance(elem);
+                instance.open();
+            } else if (error === 'permission-denied') {
+                mediaController.switchShare();
+            }
+            throw error;
+        });
+    }
+
+    // Inicia a transmissão
+    connection.onstream = (event) => {
+
+        let currentStream;
+        if (!structure.onParticipation && !event.extra.modifiedValue) {
+            roomInfo.inRoom.value = event.userid;
+        }
+        /**==================================================================================================
+         * Tratamento de conexões REMOTAS e LOCAIS
+         * -> Identificação de compartilhamentos de tela e ingressos em transmissões
+         * ==================================================================================================
+         */
+        if (event.type === 'remote' && connection.isInitiator) {
+
+            // Remove qualquer conexão duplicada
+            if (structure.incomingCon == event.stream.streamid) {
+                connection.getAllParticipants().forEach((p) => {
+                    if (p + '' == event.userid + '') {
+                        let peer = connection.peers[p].peer;
+                        stream.stop();
+                        peer.removeStream(event.stream);
+                        p.close();
+                    }
+                });
+                return;
+            }
+
+            // Conexão remota de transmissão com o broadcaster
+            if (structure.mainVideo != conf.structure.WAITING_FOR_VIDEO) {
+                structure.incomingCon = event.stream.streamid;
+                media.thirdVideoPreview.srcObject = event.stream;
+                structure.userVideo = event.stream;
+
+                mediaController.initiateVideo(media.thirdVideoPreview);
+                alerta.initiateMessage(conf.message.START_PARTICIPATION);
+
+                $('#span-video-preview-3rd').fadeIn(300);
+
+                setTimeout(function() {
+                    connection.getAllParticipants().forEach((p) => {
                         if (p + '' != event.userid + '') {
-                            var peer = connection.peers[p].peer;
-                            peer.getLocalStreams().forEach(function(localStream) {
-                                peer.removeStream(localStream);
-                            });
-                            event.stream.getTracks().forEach(function(track) {
-                                peer.addTrack(track, event.stream);
+                            let peer = connection.peers[p].peer;
+                            event.stream.getTracks().forEach((track) => {
+                                try {
+                                    peer.addTrack(track, event.stream);
+                                } catch (e) {}
                             });
                             connection.dontAttachStream = true;
                             connection.renegotiate(p);
                             connection.dontAttachStream = false;
                         }
                     });
-                }
-                if (connection.DetectRTC.browser.name === 'Firefox') {
-                    /**
-                     *  Método alternativo para o Firefox utilizar 'removeStream'
-                     *  Possibilita rejoin para navegadores Firefox
-                     */
-                    connection.getAllParticipants().forEach(function(p) {
-                        if (p + '' != event.userid + '') {
-                            connection.replaceTrack(event.stream, p);
-                        }
-                    });
-                }
-                // Habilita recording para navegadores Chrome.
-                if (connection.DetectRTC.browser.name === 'Chrome') {
-                    repeatedlyRecordStream(event.stream);
-                }
+                    structure.streamVideos = event.stream;
+                    mediaController.openIncomingVideos(event.stream);
+                }, 500);
 
-                // Ação padrão para conexões remotas:
-                /**
-                 * Desabilita botão de ação para microfone
-                 * Desabilita botão de ação para camera
-                 */
-                mute.setAttribute('data-active', 'disabled');
-                cam.setAttribute('data-active', 'disabled');
-                /**
-                 * Alteração de UI
-                 */
-                mute.classList.remove("blue-text");
-                mute.classList.add("grey-text");
-                mute.innerHTML = "<i class='material-icons left'>mic_off</i> <b class='hide-on-med-and-down'>Microfone</b>";
-                cam.classList.remove("blue-text");
-                cam.classList.add("grey-text");
-                cam.innerHTML = "<i class='material-icons left'>videocam_off</i> <b class='hide-on-med-and-down'>Camera</b>";
-            };
-            /**
-             * Tratamento dos botões da barra de funções de video----------------------------------
-             */
-            // Tratamento do botão de pedir a vez
-            pedir.onclick = function() {
-                if (broadcastStatus == 1 && solicita === 0) {
-                    var msgrash = btoa('@PedeAVez');
-                    var myIdentity = document.getElementById('room-id').value;
-                    msgrash = msgrash + '|' + currentUser + '|' + connection.userid + '|' + inRoom.value + '|' + myIdentity;
-                    try {
-                        connection.send(msgrash);
-                        solicita++;
-                        toastContent = '<span class="white-text"><i class="fa fa-check"></i> Solicitação enviada!</span>';
-                        M.toast({ html: toastContent, classes: 'blue darken-2' });
-                    } catch (err) {
-                        toastContent = '<span class="white-text"><i class="fa fa-times"></i> Não foi possível solicitar a vez: ' + err + '.</span>';
-                        M.toast({ html: toastContent, classes: 'red darken-3' });
-                    }
-                } else if (solicita > 0) {
-                    toastContent = '<span class="white-text"><i class="fa fa-exclamation-triangle"></i> Você já encaminhou uma solicitação.<br>Aguarde a resposta.</span>';
-                    M.toast({ html: toastContent, classes: 'amber darken-4' });
-                } else {
-                    toastContent = '<span class="white-text"><i class="fa fa-times"></i> Não há conexão com a sala!</span>';
-                    M.toast({ html: toastContent, classes: 'red darken-3' });
-                }
-            };
-            // Tratamento de áudio: Botão "Áudio" -> Toggle on/off
-            vol.onclick = function() {
-                if (vol.getAttribute('data-active') == 'enabled') {
-                    vol.setAttribute('data-active', 'disabled');
-                    // Alteração de conexão -> Set audio: false
-                    connection.attachStreams.forEach(function(stream) {
-                        stream.mute('audio');
-                    });
-                    /**
-                     * Alteração de UI
-                     */
-                    vol.classList.remove("blue-text");
-                    vol.classList.add("red-text");
-                    vol.innerHTML = "<i class='material-icons left'>volume_off</i> <b class='white-text hide-on-med-and-down'>Áudio</b>";
-                    toastContent = '<span class="white-text"><i class="material-icons left">volume_off</i> Áudio Desabilitado.</span>';
-                    M.toast({ html: toastContent, classes: 'red darken-3' });
-                } else {
-                    vol.setAttribute('data-active', 'enabled');
-                    // Alteração de conexão -> Set audio: true
-                    connection.attachStreams.forEach(function(stream) {
-                        stream.unmute('audio');
-                    });
-                    /**
-                     * Alteração de UI
-                     */
-                    vol.classList.remove("red-text");
-                    vol.classList.add("blue-text");
-                    vol.innerHTML = "<i class='material-icons left'>volume_up</i> <b class='white-text hide-on-med-and-down'>Áudio</b>";
-                    toastContent = '<span class="white-text"><i class="material-icons left">volume_up</i> Áudio Habilitado.</span>';
-                    M.toast({ html: toastContent, classes: 'blue darken-2' });
-                }
-            };
-        } else {
-            /**
-             *  Ações para conexão LOCAL para controle de funções de áudio e video do webRTC
-             */
-            connection.isUpperUserLeft = false;
-            videoPreview.srcObject = event.stream;
-            // Definições de video
-            width = parseInt(connection.teacherVideosContainer.clientWidth);
-            videoPreview.width = width;
-            videoPreview.userid = event.userid;
-            videoPreview.muted = true;
-            videoPreview.play();
-
-            $('#div-connect').hide();
-            if (solicita <= 0) {
-                $('#count-pedir-vez').hide();
-            }
-
-            // Ação padrão para conexões locais:
-            /**
-             * Desabilita botão de ação para áudio
-             */
-            vol.setAttribute('data-active', 'disabled');
-            pedir.setAttribute('data-active', 'disabled');
-            /**
-             * Alteração de UI
-             */
-            vol.classList.remove("blue-text");
-            vol.classList.add("grey-text");
-            vol.innerHTML = "<i class='material-icons left'>volume_off</i> <b class='hide-on-med-and-down'>Áudio</b>";
-            if (!connection.isInitiator) {
-                pedir.classList.remove("blue-text");
-                pedir.classList.add("grey-text");
-                pedir.innerHTML = "<i class='material-icons left'>pan_tool</i> <b class='hide-on-med-and-down'>Áudio</b>";
-            }
-
-            var response;
-            document.getElementById('control-pedir-vez').onclick = function() {
-                response = document.getElementsByClassName('response_allow');
-                for (var j = 0; j < response.length; j++) {
-                    response[j].onclick = function() {
-                        console.log(this.id);
-                    }
-                }
-            }
-
-            /**
-             * Tratamento dos botões da barra de funções de video----------------------------------
-             */
-            // Tratamento de áudio: Botão "Microfone" -> Toggle on/off
-            mute.onclick = function() {
-                if (mute.getAttribute('data-active') == 'enabled') {
-                    mute.setAttribute('data-active', 'disabled');
-                    // Alteração de conexão -> Set audio: false
-                    connection.attachStreams.forEach(function(stream) {
-                        stream.mute('audio');
-                    });
-                    /**
-                     * Alteração de UI
-                     */
-                    mute.classList.remove("blue-text");
-                    mute.classList.add("red-text");
-                    mute.innerHTML = "<i class='material-icons left'>mic_off</i> <b class='white-text hide-on-med-and-down'>Microfone</b>";
-                    toastContent = '<span class="white-text"><i class="material-icons left">mic_off</i> Microfone Desabilitado.</span>';
-                    M.toast({ html: toastContent, classes: 'red darken-3' });
-                } else {
-                    mute.setAttribute('data-active', 'enabled');
-                    // Alteração de conexão -> Set audio: true
-                    connection.attachStreams.forEach(function(stream) {
-                        stream.unmute({
-                            audio: true,
-                            video: false,
-                            type: 'remote'
+                $(conf.dom.DIV_BTN_END).fadeIn(300);
+                media.endSessionAccess.onclick = function() {
+                    console.log('------------->     REMOTO', event.userid, structure.targetUser);
+                    structure.streamVideos.forEach((stream) => {
+                        connection.getAllParticipants().forEach((p) => {
+                            let peer = connection.peers[p].peer;
+                            stream.stop();
+                            peer.removeStream(stream);
                         });
                     });
-                    /**
-                     * Alteração de UI
-                     */
-                    mute.classList.remove("red-text");
-                    mute.classList.add("blue-text");
-                    mute.innerHTML = "<i class='material-icons left'>mic</i> <b class='white-text hide-on-med-and-down'>Microfone</b>";
-                    toastContent = '<span class="white-text"><i class="material-icons left">mic</i> Microfone Habilitado.</span>';
-                    M.toast({ html: toastContent, classes: 'blue darken-2' });
+                    $(conf.dom.DIV_BTN_END).hide();
+                    structure.emptyStreamVideos();
+                    structure.incomingCon = '';
+                    mediaController.closeIncomingVideos(event.stream);
+                    let msgrash = [
+                        btoa('@Finaliza-Participacao'),
+                        roomInfo.currentUser.value,
+                        connection.userid,
+                        roomInfo.inRoom.value,
+                        event.userid
+                    ];
+                    connection.send(msgrash, event.userid);
+                    structure.lockSolicitation = false;
                 }
+            } else {
+                return;
+            }
+
+        } else if (!structure.onParticipation && (event.type === 'remote' && event.stream.isScreen === true)) {
+
+            console.log('REMOTO COM SCREEN --> ', event.stream.streamid);
+
+            // Conexão remota com compartilhamento de tela
+            $('#span-video-preview-2nd').fadeIn(300);
+            mediaController.openIncomingVideos(event.stream);
+            media.secondVideoPreview.srcObject = event.stream;
+            structure.incomingCon = event.stream.streamid;
+
+            mediaController.initiateVideo(media.secondVideoPreview);
+
+            // Tratamento de telas: Botão "Swap" -> Toggle Main/Second Video
+            media.swapSecond.onclick = function() {
+                mediaController.controlSwapVideo();
+            }
+
+        } else if (!structure.onParticipation && (event.type === 'remote' && !event.stream.isScreen)) {
+
+            console.log('REMOTO SEM SCREEN --> ' + event.stream.streamid);
+
+            // Conexão remota sem compartilhamento de tela
+            if (structure.mainVideo != conf.structure.WAITING_FOR_VIDEO || event.extra.modifiedValue) {
+                $('#span-video-preview-3rd').fadeIn(300);
+                structure.incomingCon = event.stream.streamid;
+                media.thirdVideoPreview.srcObject = event.stream;
+                structure.userVideo = event.stream;
+
+                mediaController.initiateVideo(media.thirdVideoPreview);
+
+                mediaController.openIncomingVideos(event.stream);
+            } else {
+                structure.incomingCon = event.stream.streamid;
+                structure.onParticipation = false;
+                media.videoPreview.srcObject = event.stream;
+                structure.mainVideo = event.stream;
+                currentStream = [event.stream];
+
+                mediaController.initiateVideo(media.videoPreview);
+            }
+            // Ajusta elementos de exibição (define o menu de áudio e video para espectadores)
+            $('#div-connect').hide();
+            $('#control-pedir-vez').hide();
+            // Desabilita botão de ação para microfone
+            mediaController.disableCam();
+            // Desabilita botão de ação para camera
+            mediaController.disableMute();
+            // Desabilita botão de ação para compartilhar tela
+            mediaController.disableShare();
+            // Habilita barra de controle de mídia
+            $('#div-controller').fadeIn(300);
+
+            // Tratamento de áudio: Botão "Áudio" -> Toggle on/off
+            media.vol.onclick = function() {
+                mediaController.controlVolume(currentStream);
+            };
+
+            structure.viewers = connection.getAllParticipants().length;
+            roomView.changeCounter(structure.viewers);
+
+            // Tratamento do botão de pedir a vez
+            media.solPedir.onclick = function() {
+                let altText = [];
+                if (structure.broadcastStatus == 1 && (structure.solicita === 0 && !structure.lockSolicitation)) {
+                    // Constroi e envia mensagem solicitando a vez
+                    let myIdentity = roomInfo.currentRoomId.value;
+                    let msgrash = [
+                        btoa('@PedeAVez'),
+                        roomInfo.currentUser.value,
+                        connection.userid,
+                        roomInfo.inRoom.value,
+                        myIdentity
+                    ];
+                    try {
+                        connection.send(msgrash, roomInfo.inRoom.value);
+                        structure.solicita += 1;
+                        altText = conf.message.SEND_SOLICITATION;
+                    } catch (err) {
+                        altText = conf.message.ERROR_SOLICITATION;
+                    }
+                } else if (structure.solicita > 0) {
+                    altText = conf.message.DUP_SOLICITATION;
+                } else if (structure.lockSolicitation) {
+                    altText = conf.message.ERR_ACP_SOLICITATION;
+                } else {
+                    altText = conf.message.NO_CONNECTION;
+                }
+                alerta.initiateMessage(altText);
+            };
+
+            // Broadcaster executando uma conexão local =====================================================
+        } else if (!structure.onParticipation && (event.type === 'local' && !event.stream.isScreen)) {
+
+            console.log('TRANSMISSÃO LOCAL------', structure.mainVideo);
+
+            if (structure.incomingCon == event.stream.streamid) return;
+            // Conexão local sem compartilhamento de tela
+            structure.onParticipation = true;
+            connection.isUpperUserLeft = false;
+            structure.mainVideo = event.stream;
+            structure.incomingCon = event.stream.streamid;
+            currentStream = [event.stream];
+
+            media.videoPreview.srcObject = event.stream;
+            media.videoPreview.userid = event.userid;
+            media.videoPreview.muted = true;
+
+            mediaController.initiateVideo(media.videoPreview);
+
+            // Trata contador de solicitações
+            $('#div-connect').hide();
+            $('#li-pedir-vez').hide();
+            if (structure.solicita <= 0) {
+                $('#count-pedir-vez').hide();
+            }
+            // Desabilita botão de ação para áudio
+            mediaController.disableVolume();
+            if (!connection.isInitiator) {
+                mediaController.disablePedir();
+            }
+            // Habilita barra de controle de mídia
+            $('#div-controller').fadeIn(300);
+
+            // Tratamento de áudio: Botão "Microfone" -> Toggle on/off
+            media.mute.onclick = function() {
+                mediaController.controlVoice(currentStream);
             };
             // Tratamento de áudio e video: Botão "Camera" -> Toggle on/off
-            cam.onclick = function() {
-                if (cam.getAttribute('data-active') == 'enabled') {
-                    cam.setAttribute('data-active', 'disabled');
-                    mute.setAttribute('data-active', 'disabled');
-                    // Alteração de conexão -> Set audio: false, video: false
-                    connection.attachStreams.forEach(function(stream) {
-                        stream.mute('video');
-                        stream.mute('audio');
-                    });
-                    /**
-                     * Alteração de UI
-                     */
-                    cam.classList.remove("blue-text");
-                    cam.classList.add("red-text");
-                    cam.innerHTML = "<i class='material-icons left'>videocam_off</i> <b class='white-text hide-on-med-and-down'>Camera</b>";
-                    mute.classList.remove("blue-text");
-                    mute.classList.add("red-text");
-                    mute.innerHTML = "<i class='material-icons left'>mic_off</i> <b class='white-text hide-on-med-and-down'>Microfone</b>";
-                    toastContent = '<span class="white-text"><i class="material-icons left">videocam_off</i> Camera Desabilitada.</span>';
-                    M.toast({ html: toastContent, classes: 'red darken-3' });
-                } else {
-                    cam.setAttribute('data-active', 'enabled');
-                    mute.setAttribute('data-active', 'enabled');
-                    // Alteração de conexão -> Set audio: true, video: true
-                    connection.attachStreams.forEach(function(stream) {
-                        stream.unmute('video');
-                        stream.unmute('audio');
-                    });
-                    /**
-                     * Alteração de UI
-                     */
-                    cam.classList.remove("red-text");
-                    cam.classList.add("blue-text");
-                    cam.innerHTML = "<i class='material-icons left'>videocam</i> <b class='white-text hide-on-med-and-down'>Camera</b>";
-                    mute.classList.remove("red-text");
-                    mute.classList.add("blue-text");
-                    mute.innerHTML = "<i class='material-icons left'>mic</i> <b class='white-text hide-on-med-and-down'>Microfone</b>";
-                    toastContent = '<span class="white-text"><i class="material-icons left">videocam</i> Camera Habilitada.</span>';
-                    M.toast({ html: toastContent, classes: 'blue darken-2' });
+            media.cam.onclick = function() {
+                mediaController.controlCam(currentStream);
+            }
+
+            // Tratamento de solicitações: Botão "Solicitações" -> Abra listagem de solicitações e respostas
+            media.ctlPedir.onclick = function() {
+                // Tratamento de respostas (permitir / negar)
+                //let response = document.getElementsByClassName('responses');
+                let response = allTags('.responses');
+                for (var j = 0; j < response.length; j++) {
+                    response[j].onclick = function() {
+                        let admResponse = this.id.split('_');
+                        let myIdentity = roomInfo.currentRoomId.value;
+                        let msgrash = [
+                            btoa('@PedeAVez:' + admResponse[0]),
+                            roomInfo.currentUser.value,
+                            admResponse[1],
+                            roomInfo.inRoom.value,
+                            myIdentity
+                        ];
+                        if (admResponse[0] == 'allow' && structure.lockSolicitation) {
+                            alerta.initiateMessage(conf.message.ACCEPT_SOLICITATION);
+                        } else {
+                            structure.solicita -= 1;
+                            connection.send(msgrash);
+                            mediaController.reconstructList(admResponse[1]);
+                            mediaController.trataSolicitacao(structure.solicita);
+                            if (admResponse[0] == 'allow') {
+                                structure.lockSolicitation = true
+                                structure.targetUser = admResponse[1];
+                                media.divEndBtn.setAttribute('data-target', admResponse[1]);
+                                $(conf.dom.DIV_BTN_END).fadeIn(300);
+                            }
+
+                        }
+                    }
+                }
+                media.endSessionAccess.onclick = function() {
+
+                    $(conf.dom.DIV_BTN_END).hide();
+                    structure.emptyStreamVideos();
+                    structure.incomingCon = '';
+                    let targetId = structure.targetUser;
+                    let msgrash = [
+                        btoa('@Finaliza-Participacao'),
+                        roomInfo.currentUser.value,
+                        connection.userid,
+                        roomInfo.inRoom.value,
+                        targetId
+                    ];
+                    connection.send(msgrash, targetId);
+                    structure.lockSolicitation = false;
+                    console.log('------------->     LOCAL', targetId, event.userid);
                 }
             };
+            // Tratamento de solicitações: Botão "Compartilhar" -> Compartilha a tela do apresentador: Toggle On/Off
+            media.share.onclick = function() {
+                if (!mediaController._controlSharing) {
+                    $('#share-screen').hide();
+                    connection.addStream({
+                        screen: true,
+                        oneway: true,
+                        streamCallback: (stream) => {
+                            setTimeout(function() {
+                                connection.getAllParticipants().forEach((p) => {
+                                    connection.renegotiate(p, {
+                                        screen: true,
+                                        oneway: true
+                                    });
+                                });
+                            }, 2000);
+                            roomInfo.inScreen.value = stream.streamid;
+                        }
+                    });
+                } else {
+                    $('#screen-share-alert').slideUp(300);
+                    mediaController.switchShare();
+                    var streamConnection = roomInfo.inScreen.value;
+                    var streamToRemove = null;
+                    var newArray = [];
+                    connection.attachStreams.forEach((stream) => {
+                        if (stream.id === streamConnection) {
+                            streamToRemove = stream;
+                            stream.stop();
+                        } else newArray.push(stream);
+                    });
+                    connection.attachStreams = newArray;
+                    connection.getAllParticipants().forEach((p) => {
+                        var peer = connection.peers[p].peer;
+                        try {
+                            peer.removeStream(streamToRemove);
+                            connection.renegotiate(p, {
+                                screen: false,
+                                oneway: true
+                            });
+                        } catch (e) { console.log(e) }
+                    });
+                    // Mensagem de finalização de screen sharing
+                    let myIdentity = roomInfo.currentRoomId.value;
+                    let msgrash = [
+                        btoa('@Finaliza-Share'),
+                        roomInfo.currentUser.value,
+                        streamConnection,
+                        roomInfo.inRoom.value,
+                        myIdentity
+                    ];
+                    connection.send(msgrash);
+                }
+            }
+
+            // Apresenta o número de espectadores conectados
+            $(conf.dom.UL_CON_USERS).fadeIn(300);
         }
-        // Tratamento das funções MUTE e UNMUTE (Obrigatórios)
-        connection.onmute = function(e) {
-            e.mediaElement.setAttribute('poster', '/img/bg.jpg');
+        /**==================================================================================================
+         * Tratamentos e controles complementares
+         */
+        // Botão de maximizar o video -> toggle on:off
+        media.screen.onclick = () => mediaController.enterFullScreen();
+        media.exitscreen.onclick = () => mediaController.exitFullScreen();
+
+        // Tratamento das funções MUTE e UNMUTE
+        connection.onmute = event => event.mediaElement.setAttribute('poster', conf.structure.POSTER_IMG);
+        connection.onunmute = event => event.mediaElement.removeAttribute('poster');
+
+        // Tratamento da função de chat da barra de controle de mídia
+        media.toggleChat.onclick = () => media.textMessage.focus();
+
+        // Tratamento de ingresso na transmissão: Botão "Ingressar" -> Ingressa e participa da apresentação
+        media.sessionAccess.onclick = function() {
+
+            if (!mediaController._session && !structure.onParticipation) {
+                mediaController.startParticipation();
+                structure.onParticipation = true;
+                setTimeout(function() {
+                    try {
+                        connection.peers[roomInfo.inRoom.value].addStream({
+                            video: true
+                        });
+
+                    } catch (e) {
+                        mediaController.endParticipation();
+                        structure.onParticipation = false;
+                    }
+                }, 500);
+            } else if (mediaController._session && structure.onParticipation) {
+                mediaController.disableParticipation();
+                structure.onParticipation = false;
+                try {
+                    connection.attachStreams.forEach((stream) => {
+                        connection.getAllParticipants().forEach((p) => {
+                            let peer = connection.peers[p].peer;
+                            stream.stop();
+                            peer.removeStream(stream);
+                        });
+                    });
+                    let myIdentity = roomInfo.currentRoomId.value;
+                    let msgrash = [
+                        btoa('@Finaliza-Participante'),
+                        roomInfo.currentUser.value,
+                        connection.userid,
+                        roomInfo.inRoom.value,
+                        myIdentity
+                    ];
+                    connection.send(msgrash, roomInfo.inRoom.value);
+                    structure.lockSolicitation = false;
+                    alerta.initiateMessage(conf.message.END_PARTICIPATION);
+                } catch (e) {
+                    mediaController.startParticipation();
+                    structure.onParticipation = true;
+                }
+            }
         };
-        connection.onunmute = function(e) {
-            e.mediaElement.removeAttribute('poster');
+        let fullsize = tag(conf.dom.TOGGLE_VIDEO_SIZE);
+        fullsize.onclick = function() {
+            mediaController.toggleFullSize();
         };
     };
+    //=======================================================================================================
+    // Listener para abertura de conexões
+    connection.onopen = (event) => {
 
-    // Ação de criar uma sala de aula ao clicar em 'btn-join-as-productor'
-    document.getElementById('btn-join-as-productor').onclick = function() {
-        /*
-         *    var elem          html elem.
-         *    var roomId        integer
-         *    var materia       string
-         *    var assunto       string
-         *    var roomName      string
-         *    var roomCursos    string
-         *    var roomHash      string
-         *    var values        array
-         *    var strValues     string
-         *    var broadcastId   string
-         */
-        var elem = document.getElementById(this.id);
-        var roomId = document.getElementById('room-id').value;
-        var materia = document.querySelector('#tema').value;
-        var assunto = document.querySelector('#assunto').value;
-        var roomName = currentUser;
-        var values = $('#cursos-list').val();
-        var strValues = '';
-        for ($i = 0; $i < values.length; $i++) {
-            strValues += values[$i];
-            if ($i != (values.length - 1)) {
-                strValues += ';';
-            }
+        console.log(event);
+        if (event.userid != structure.connectedAt) {
+            connection.getAllParticipants().forEach((p) => {
+                //connection.disconnectWith(event.userid);
+            });
         }
+    };
+    // Listener para finalização de streams
+    connection.onstreamended = (event) => {
 
-        if (strValues != '' && (materia != '' && assunto != '')) {
-            var roomCursos = strValues;
-            var roomHash = btoa(materia + "|" + roomName + "|" + assunto + "|" + roomCursos + "|" + roomId);
-            usuario = roomName;
-            var broadcastId = roomHash;
+        if (event.stream.isScreen) {
+            $('#span-video-preview-2nd').hide();
+            //mediaController.closeIncomingVideos(event.stream);
+        } else if (event.streamid == structure.userVideo.streamid) {
+            console.log('EVENTO: ', event);
+            $('#span-video-preview-3rd').hide();
+            structure.userVideo = conf.structure.WAITING_FOR_VIDEO;
+            structure.lockSolicitation = false;
 
-            // Inicializa a tela de apresentação (video)
-            callTeacherStream();
-            // Modela e apresenta título do video
-            setRoomLabel("<i class='fa fa-video-camera blue-text'></i> <b>" + materia + "</b> (" + assunto + ")" +
-                "<span class='right'><a href='' title='Finalizar' class='red-text text-darken-3'>" +
-                "<i class='fa fa-times'></i></a></span>");
+        }
+        mediaController.closeIncomingVideos(event.stream);
+    };
+    // Listener para fim de conexões
+    connection.onleave = (event) => {
+        console.log('DEIXANDO CONEXÃO...', event);
+    };
 
-            document.getElementById('btn-join-as-productor').disabled = true;
+    // Ação de criar uma sala ao clicar em 'btn-join-as-productor' ==========================================
+    structure.startRoom.onclick = function() {
+
+        let room = roomController.initiateRoom();
+
+        let values = $('#cursos-list').val();
+        let strValues = values.join(';');
+
+        if (roomController.validade()) {
+            structure.usuario = room.name;
+            structure.onlobby = false;
+            // Inicializa a tela de apresentação
+            mediaController.initiateStream();
+            // Modela e apresenta cabeçalho do video
+            roomController.setRoomLabel(conf.misc.ICON_FA_VIDEOCAM, room.tema, room.assunto);
+
+            structure.startRoom.disabled = true;
             // Define inicialização de sessão
             // -> Permite Audio, Video e Dados
             connection.session = {
                 audio: true,
                 video: true,
                 data: true,
+                broadcast: true,
                 oneway: true
             };
+            // Controle da utilização de banda
+            /*
+            connection.bandwidth = {
+                audio: 100,
+                video: 200
+            };
+            */
             // Inicializa Socket
             var socket = connection.getSocket();
-            socket.emit('check-broadcast-presence', broadcastId, function(isBroadcastExists) {
+            // Verifica existência do broadcast
+            socket.emit('check-broadcast-presence', room.hash, (isBroadcastExists) => {
                 if (!isBroadcastExists) {
-                    // O broadcaster TEM de definir seu user-id
-                    connection.userid = broadcastId;
+                    connection.userid = room.hash;
                 }
-                console.log('check-broadcast-presence', broadcastId, isBroadcastExists);
+                //start-broadcasting
                 socket.emit('join-broadcast', {
-                    broadcastId: broadcastId,
+                    broadcastId: room.hash,
                     userid: connection.userid,
                     typeOfStreams: connection.session
+                        //bandwidth: connection.bandwidth
                 });
-                // Habilita funções de chat
-                document.getElementById('toggle-chat').onclick = function() {
-                    toggleElem('#div-chat-panel');
-                    $('#text-message').focus();
-                };
             });
         } else {
-            toastContent = '<span class="white-text"><i class="fa fa-exclamation-triangle fa-lg"></i> Por favor informe todos os campos indicados!</span>';
-            M.toast({ html: toastContent, classes: 'red darken-3' });
-        }
-    }
-
-    connection.onstreamended = function() {};
-    /**
-     *  var socket      connection.socket
-     *  var lastBlob    array
-     *  var recorder    connection.currentRecorder
-     */
-    connection.onleave = function(event) {
-        if (event.userid !== videoPreview.userid) return;
-        var socket = connection.getSocket();
-        socket.emit('can-not-relay-broadcast');
-        connection.isUpperUserLeft = true;
-        if (allRecordedBlobs.length) {
-            // Play o último blob gravado
-            var lastBlob = allRecordedBlobs[allRecordedBlobs.length - 1];
-            videoPreview.src = URL.createObjectURL(lastBlob);
-
-            // Definições de video
-            width = parseInt(connection.teacherVideosContainer.clientWidth);
-            videoPreview.width = width;
-            videoPreview.play();
-            $('#div-connect').hide();
-            allRecordedBlobs = [];
-
-        } else if (connection.currentRecorder) {
-            var recorder = connection.currentRecorder;
-            connection.currentRecorder = null;
-            recorder.stopRecording(function() {
-                if (!connection.isUpperUserLeft) return;
-                videoPreview.src = URL.createObjectURL(recorder.getBlob());
-                //Definições de video
-                width = parseInt(connection.teacherVideosContainer.clientWidth);
-                videoPreview.width = width;
-                videoPreview.play();
-                $('#div-connect').hide();
-            });
-        }
-        if (connection.currentRecorder) {
-            connection.currentRecorder.stopRecording();
-            connection.currentRecorder = null;
+            alerta.initiateMessage(conf.message.FORM_ALERT);
         }
     };
-    // Lista blob de gravação 
-    var allRecordedBlobs = [];
-    // Atualiza blob de gravação a cada 30 segundos
-    function repeatedlyRecordStream(stream) {
-        if (!enableRecordings) {
-            return;
-        }
-        connection.currentRecorder = RecordRTC(stream, {
-            type: 'video'
-        });
-        connection.currentRecorder.startRecording();
-        setTimeout(function() {
-            if (connection.isUpperUserLeft || !connection.currentRecorder) {
-                return;
-            }
-            connection.currentRecorder.stopRecording(function() {
-                allRecordedBlobs.push(connection.currentRecorder.getBlob());
-                if (connection.isUpperUserLeft) {
-                    return;
-                }
-                connection.currentRecorder = null;
-                repeatedlyRecordStream(stream);
-            });
-        }, 30 * 1000); // 30 segundos
-    };
+    //=======================================================================================================
 
     // Tratamento do Id da sala e dos links para acesso -> Basea-se no URI
     /**
@@ -576,6 +608,7 @@ $(document).ready(function() {
      *  var broadcastId string
      *  var hashString  string
      */
+
     (function() {
         var params = {},
             r = /([^&=]+)=?([^&]*)/g;
@@ -583,359 +616,293 @@ $(document).ready(function() {
         function d(s) {
             return decodeURIComponent(s.replace(/\+/g, ' '));
         }
-        // Verifica padrão de URI
         var match, search = window.location.search;
         while (match = r.exec(search.substring(1)))
             params[d(match[1])] = d(match[2]);
         window.params = params;
     })();
-    var broadcastId = '';
+    let broadcastId = '';
     if (localStorage.getItem(connection.socketMessageEvent)) {
         broadcastId = localStorage.getItem(connection.socketMessageEvent);
     } else {
         broadcastId = connection.token();
     }
-    document.getElementById('room-id').value = broadcastId;
-    document.getElementById('room-id').onkeyup = function() {
+
+    roomInfo.currentRoomId.onkeyup = function() {
         localStorage.setItem(connection.socketMessageEvent, this.value);
     };
-    var hashString = location.hash.replace('#', '');
+    let hashString = location.hash.replace('#', '');
     if (hashString.length && hashString.indexOf('comment-') == 0) {
         hashString = '';
     }
-    var broadcastId = params.broadcastId;
-    if (!broadcastId && hashString.length) {
-        broadcastId = hashString;
-    }
+
     if (broadcastId && broadcastId.length) {
-        document.getElementById('room-id').value = broadcastId;
+        roomInfo.currentRoomId.value = broadcastId;
         localStorage.setItem(connection.socketMessageEvent, broadcastId);
         // Efetua o join automático na sala em caso de desconexão do espectador
         // ->Verificação a cada 5 segundos
         (function reCheckRoomPresence() {
-            connection.checkPresence(broadcastId, function(isRoomExists) {
+            connection.checkPresence(broadcastId, (isRoomExists) => {
                 if (isRoomExists) {
-                    document.getElementById('btn-join-as-productor').onclick();
+                    tag('#' + broadcastId).onclick();
                     return;
                 }
-                setTimeout(reCheckRoomPresence, 5000); // 5 segundos
+                setTimeout(reCheckRoomPresence, 5000);
             });
         })();
     }
     // Verifica quantas conexões estão ativas nesse broadcast
-    connection.onNumberOfBroadcastViewersUpdated = function(event) {
+    connection.onNumberOfBroadcastViewersUpdated = (event) => {
         if (!connection.isInitiator) return;
-        viewers = event.numberOfBroadcastViewers;
-        document.getElementById('broadcast-viewers-counter').innerHTML = '<i class="fa fa-desktop"></i> <b class="grey-text text-darken-3">' + event.numberOfBroadcastViewers + '</b>';
+        structure.viewers = event.numberOfBroadcastViewers;
+        roomView.changeCounter(structure.viewers);
     };
     // Verifica listagem de de salas públicas que se enquadrem no perfil do usuário
     // ->A cada 3 segundos
     (function looper() {
-        //Verifica a existência de uma sala pública
-        connection.getPublicModerators(function(array) {
-            publicRoomsDiv.innerHTML = '';
-            // Se existir alguma sala pública execute
-            if (array.length > 0) {
-                array.forEach(function(moderator) {
-                    // Definições de moderador:
-                    /*  moderator.userid
-                     *  moderator.extra
-                     */
-                    //Coleta o número de espectadores conectados à sala
-                    connection.getNumberOfBroadcastViewers(moderator.userid, function(numberOfBroadcastViewers) {
-                        viewers = numberOfBroadcastViewers;
-                        //console.log(connection.userid + ": " + numberOfBroadcastViewers);
-                    });
 
-                    // Verifica se quem conecta é o próprio moderador
-                    if (moderator.userid == connection.userid) {
-                        return;
-                    }
-                    // Cria labels para exibição de salas disponíveis
-                    /*
-                     *  var labelRoom       string
-                     *  var labelClasse     string
-                     *  var labelAssunto    string
-                     *  var labelProfessor  string
-                     *  var labelCurso      string
-                     *  var labelWhois      string
-                     *  var myClass         string
-                     *  var allowed         Boolean
-                     *  var countRooms      integer
-                     *  var classes         array
-                     *  var broadcastId     string
-                     *  var socket          connection.socket
-                     *  var message         string
-                     */
-                    var labelRoom = moderator.userid;
-                    labelRoom = atob(labelRoom);
-                    var labelClasse = labelRoom.split('|')[0];
-                    var labelProfessor = labelRoom.split('|')[1];
-                    var labelAssunto = labelRoom.split('|')[2];
-                    var labelCurso = labelRoom.split('|')[3];
-                    var labelWhois = labelRoom.split('|')[4];
-                    var myClass = document.getElementById('target').value;
-                    var countRooms = 0;
-                    var allowed = false;
-                    var classes = myClass.split(';');
+        if (structure.onlobby) {
+            //Verifica a existência des salas públicas
+            connection.getPublicModerators((array) => {
 
-                    // Permissão de visualização do conteúdo em broadcast
-                    for ($i = 0; $i < classes.length; $i++) {
-                        if (labelCurso.indexOf(classes[$i]) > -1) {
-                            allowed = true;
-                        }
-                    }
-                    // Se for permitido
-                    if (allowed) {
-                        countRooms++;
-                        // Cria elemento div para exibição de salas disponíveis em bloco
-                        /*
-                         *	var card    elem. html
-                         *  var divOpen elem. html
-                         *  var button  elem. html
-                         */
-                        usuario = currentUser;
-                        var divOpen = document.createElement('ul');
-                        // Cria objeto de lista com as broadcast disponíveis
-                        var card = '<li class="collection-item avatar li-hover grey-text text-darken-3">' +
-                            '<i class="material-icons circle blue lighten-1">videocam</i>' +
-                            '<span class="title"><b>' + labelClasse + ' (' + labelAssunto + ')' + '</b></span>' +
-                            '<p>' +
-                            '<b class="blue-text">Professor:</b> ' + labelProfessor +
-                            '</p>' +
-                            '<p>' +
-                            '<b class="blue-text">Espectadores:</b><b> ' + viewers + '</b>' +
-                            '</p>' +
-                            '<span id="_' + moderator.userid + '">' +
-                            '</span>' +
-                            '</li>';
+                structure.publicRoomsList.innerHTML = '';
+                if (array.length > 0) {
+                    array.forEach((moderator) => {
+                        let moderatorId = moderator.userid;
 
-                        divOpen.innerHTML = card;
-                        divOpen.className = "collection";
-                        // Cria objeto botão de ingresso na broadcast selecionada
-                        var button = document.createElement('a');
-                        button.id = moderator.userid;
-                        button.title = 'Entrar';
-                        button.className = 'btn-floating blue darken-2 waves-effect waves-light secondary-content';
-                        // Atribui função para ingressar na sala disponível
-                        button.onclick = function() {
-                            broadcaster.value = labelWhois;
-                            // Desabilita e muda aparência do botão de ingresso
-                            this.disabled = true;
-                            var elem = document.getElementById(this.id);
-                            if (hasClass(elem, "blue")) {
-                                elem.classList.remove("blue");
-                                elem.classList.add("grey");
-                            }
-                            // Inicializa apresentação
-                            callTeacherStream();
+                        connection.getNumberOfBroadcastViewers(moderatorId, (numberOfBroadcastViewers) => {
+                            structure.viewers = numberOfBroadcastViewers;
+                        });
 
-                            var broadcastId = this.id;
-                            document.getElementById(this.id).disabled = true;
-                            // Definições de sessão
-                            connection.session = {
-                                audio: true,
-                                video: true,
-                                data: true,
-                                oneway: true
-                            };
-                            // Inicializa socket
-                            var socket = connection.getSocket();
-                            socket.emit('check-broadcast-presence', broadcastId, function(isBroadcastExists) {
-                                if (!isBroadcastExists) {
-                                    // O broadcaster TEM de definir seu user-id
-                                    connection.userid = broadcastId;
-                                }
-                                console.log('1**check-broadcast-presence', broadcastId, isBroadcastExists);
+                        let labelRoom = roomDataController.validateRoomName(moderatorId, array);
+                        if (!labelRoom) return;
+                        if (moderatorId == connection.userid) return;
+
+                        let roomData = roomDataController.initiateRoomData(labelRoom);
+                        roomData.allowed = roomDataController.validateAccess(roomData.curso, roomData.classes);
+
+                        if (roomData.allowed) {
+
+                            // Cria rótulo de sala se o acesso a ela for permitido
+                            structure.countRooms += 1;
+                            structure.usuario = roomInfo.currentUser.value;
+
+                            let divOpen = addTag('div');
+                            let button = addTag('a');
+                            let card = roomController.constructAccessList(roomData.classe, roomData.assunto, roomData.apresentador, structure.viewers, moderatorId);
+
+                            roomController.initiateRoomCard(moderatorId, card, divOpen, button);
+
+                            //Função de entrada na sala a partir do botão ENTRAR
+                            button.onclick = function() {
+                                mediaController.initiateStream();
+                                roomController.setRoomLabel(conf.misc.ICON_FA_TV, roomData.classe, roomData.assunto);
+
+                                structure.onlobby = false;
+                                structure.isModerator = false;
+                                structure.connectedAt = this.id;
+                                roomInfo.broadcaster.value = roomData.whois;
+
+                                connection.session = {
+                                    audio: false,
+                                    video: false
+                                };
+
+                                let socket = connection.getSocket();
                                 socket.emit('join-broadcast', {
-                                    broadcastId: broadcastId,
+                                    broadcastId: structure.connectedAt,
                                     userid: connection.userid,
                                     typeOfStreams: connection.session
                                 });
-                                // Toggle de funções de Chat
-                                document.getElementById('toggle-chat').onclick = function() {
-                                    toggleElem('#div-chat-panel');
-                                    $('#text-message').focus();
-                                };
-                            });
-                            // Modela e apresenta título do video
-                            setRoomLabel("<i class='fa fa-television blue-text'></i> <b>" + labelClasse + "</b> (" + labelAssunto + ")" +
-                                "<span class='right'><a href='' title='Sair' class='red-text text-darken-3'>" +
-                                "<i class='fa fa-times'></i></a></span>");
-                        };
-                        button.innerHTML = '<i class="material-icons white-text">play_arrow</i>';
-                        if (moderator.userid == connection.sessionid) {
-                            // Se já estiver conectado na sala desabilite o botão de integração
-                            button.disabled = true;
+                            };
                         }
-                        //Append de elementos html
-                        publicRoomsDiv.appendChild(divOpen);
-                        var divClose = document.getElementById("_" + moderator.userid);
-                        divClose.appendChild(button);
+                        if (structure.countRooms == 0) {
+                            roomController.noRooms();
+                        }
+                    });
+                } else {
+                    roomController.noRooms();
+                }
+            });
+        } else {
+            // Tratamento de conexões de espectadores
+            roomController.clearConList();
+            let allParticipants = connection.getAllParticipants();
+            structure.viewers = allParticipants.length;
+            allParticipants.forEach((participantId) => {
+                let myId = roomInfo.currentRoomId.value;
+                let user = connection.peers[participantId];
+
+                user.extra.modifiedValue ?
+                    roomController.constructConnectionList(user.extra.modifiedValue, user.extra.modifiedValue.split('-')[1], user.userid, true) :
+                    roomController.constructConnectionList(myId, roomInfo.currentUser.value + ' (você)', connection.userid, false);
+            });
+            if (structure.viewers > 0) {
+                if (roomInfo.countUsers.getAttribute('data-target') == 0) {
+                    roomController.inputConList();
+                    roomView.changeCounter(structure.viewers);
+                    $('#connected-users').fadeIn(300);
+                }
+                let disconnectId;
+                let btnDisconnect = allTags('.disconnect-btn');
+                for (var j = 0; j < btnDisconnect.length; j++) {
+                    btnDisconnect[j].onclick = function() {
+                        disconnectId = this.getAttribute('data-announced');
+                        connection.send({
+                            userRemoved: true,
+                            removedUserId: disconnectId
+                        });
+                        alerta.initiateMessage(conf.message.DISCONNECT_USER, this.name);
                     }
-                    if (countRooms == 0) {
-                        //Mensagem de retorno para 0 salas encontradas na escola determinada
-                        var divOpen = document.createElement('div');
-                        var message = "<div class='red-text' style='margin-top:20px;' align='center'>" +
-                            "<i class='fa fa-times fa-lg red-text text-darken-3'></i> <b>Não há salas disponíveis.</b>" +
-                            "</div>";
-                        divOpen.innerHTML = message;
-                        publicRoomsDiv.appendChild(divOpen);
-                    }
-                });
-            } else {
-                //Mensagem de retorno para 0 salas encontradas
-                var divOpen = document.createElement('div');
-                var message = "<div class='red-text' style='margin-top:20px;' align='center'>" +
-                    "<i class='fa fa-times fa-lg red-text text-darken-3'></i> <b>Não há salas disponíveis.</b>" +
-                    "</div>";
-                divOpen.innerHTML = message;
-                publicRoomsDiv.appendChild(divOpen);
+                }
             }
-            setTimeout(looper, 3000); //3 segundos
-        });
+        }
+        setTimeout(looper, 3000);
     })();
 
     /**
      *  CHAT---------------------------------------------------------
      */
-    //Controles de envio e recebimento de mensagens
-    document.getElementById('text-message').onkeyup = function(e) {
-        //Se a tecla apertada não for ENTER -> não faça nada
+    // Controles de envio e recebimento de mensagens
+    // -> Efetua tratando entrada de texto
+    /**
+     *  var texto String
+     */
+    media.textMessage.onkeyup = function(e) {
         if (e.keyCode != 13) return;
-        // Tratando entrada de texto
         this.value = this.value.replace(/^\s+|\s+$/g, '');
         if (!this.value.length) return;
-        var texto = usuario + ": " + this.value;
+        var texto = "<b class='small'>" + structure.usuario + "</b>:<br>" + this.value;
         texto = btoa(texto);
         connection.send(texto);
-        // Função de append de texto ao elem. textarea
         appendDIV(texto);
         this.value = '';
     };
     /**
-     *  var texto string
+     *  var texto String
      */
-    document.getElementById('send-message-btn').onclick = function() {
-        // Tratando entrada de texto
-        var texto = document.getElementById('text-message').value
+    tag('#send-message-btn').onclick = function() {
+        var texto = media.textMessage.value
         texto = texto.replace(/^\s+|\s+$/g, '');
         if (!texto.length) return;
-        texto = usuario + ": " + texto;
+        texto = "<b class='small'>" + structure.usuario + "</b>:<br>" + texto;
         texto = btoa(texto);
         connection.send(texto);
-        // Função de append de texto ao elem. textarea
         appendDIV(texto);
-        document.getElementById('text-message').value = '';
+        media.textMessage.value = '';
     };
-    //Envio de mensagem
-    connection.onmessage = appendDIV;
+    // Recebimento de mensagens
+    connection.onmessage = (event) => {
+        if (event.data.userRemoved === true) {
+            if (event.data.removedUserId == connection.userid) {
+                connection.close();
+                setTimeout(location.reload.bind(location), 3000);
+            }
+            return;
+        } else {
+            appendDIV(event);
+        }
+    };
 
 });
 /**
- * FUNCTIONS-------------------------------------------------------------------
+ * FUNÇÕES-------------------------------------------------------------------
  */
-//Verifica a existência de dispositivos de vídeo
-function getCameras(sourceInfos) {
-    if (sourceInfos.length > 0) {
-        cameras = true;
-    }
-}
-//Verificação de classes para elementos html
-function hasClass(element, cls) {
-    return (' ' + element.className + ' ').indexOf(' ' + cls + ' ') > -1;
-}
-//Exibição de campos de vídeo
-function callTeacherStream() {
-    $('#initial-access').slideUp(300);
-    $('#video-panel').slideDown(300);
-}
-//Define label da sala acessada
+//Trata e escreve mensagem de chat e trata solicitações
 /*
- *  var roomtitle  html elem.
- */
-function setRoomLabel(label) {
-    var roomtitle = document.getElementById('class-title');
-    roomtitle.innerHTML = label;
-}
-//Trata e escreve mensagem de chat
-/*
- *    var chatContainer elem. html
- *    var text          string
- *    var message       string
+ * Param event: Mensagem recebida via connection.send (event || event.data)
+ *       -> mensagens em formato de array[4+] (length > 4) são tratadas como solicitações;
+ *       -> solicitações tem como padrão no array[0] o indicativo da solicitação;
+ *       -> os indicativos sempre iniciam com @, como @PedeAVez.
+ *   
+ * var chatContainer elem. html
+ * var text          string
+ * var message       string
  */
 function appendDIV(event) {
-    var chatContainer = document.getElementById('chat-panel');
+    let chatContainer = tag('#chat-panel');
+    let accessBtn = tag('#enter-session');
+    var remoto = false;
+    // Recebe mensagens de origem externa ou interna
+    if (event.data) remoto = true;
     var text = event.data || event;
-    // Verifica a origem da mensagem
-    if (event.data) {
-        var chkrash = event.data.split('|');
-        if (chkrash[1] && (chkrash[2] && (chkrash[3] && chkrash[4]))) {
-            var msgData = [];
-            //Identifica se é uma solicitação de serviço
-            if (chkrash[0] === btoa('@PedeAVez')) {
-                msgData[0] = chkrash[1];
-                msgData[1] = atob(chkrash[3]);
-                msgData[2] = msgData[1].split('|')[4];
-                msgData[3] = chkrash[4];
-                listBox(msgData[0] + "|" + msgData[2] + "|" + msgData[3]);
-                return;
+    // Verifica a origem da mensagem, se a menssagem é um array e se este array possui mais de 4 índices
+    // -> Definição do padrão de solicitação
+    if (remoto && (Array.isArray(text) && text.length > 4)) {
+        var chkrash = event.data;
+        var msgData = [];
+        var myRoom = tag('#room-id').value;
+        // Identifica se a mensagem é uma solicitação de serviço
+        if (chkrash[0] === btoa('@PedeAVez')) {
+            // Indica que algum usuário solicita a permissão para falar
+            msgData[0] = chkrash[1];
+            msgData[1] = (atob(chkrash[3])).split('|')[4];
+            msgData[2] = chkrash[4];
+            structure.solicita = mediaController.listBox(msgData, structure.solicita);
+            return;
+        } else if (chkrash[0] === btoa('@PedeAVez:allow')) {
+            // Indica que o broadcaster atendeu à solicitação do usuário
+            // Verifica se o destinatário é o criador da solicitação para entregar a resposta
+            if (chkrash[2] === myRoom) {
+                structure.solicita -= 1;
+                mediaController.allow();
+                structure.lockSolicitation = true;
             }
+            return;
+        } else if (chkrash[0] === btoa('@PedeAVez:deny')) {
+            // Indica que o broadcaster negou a solicitação do usuário
+            // Verifica se o destinatário é o criador da solicitação para entregar a resposta
+            if (chkrash[2] === myRoom) {
+                structure.solicita -= 1;
+                mediaController.deny();
+                structure.lockSolicitation = false;
+            }
+            return;
+        } else if (chkrash[0] === btoa('@Finaliza-Share')) {
+            if (mediaController._videoIsMain) {
+                media.swapSecond.click();
+            }
+            setTimeout(function() {
+                $('#span-video-preview-2nd').hide();
+                alerta.initiateMessage(conf.message.STOP_SHARE);
+            }, 1000);
+        } else if (chkrash[0] === btoa('@Finaliza-Participacao')) {
+            if (!structure.onParticipation) {
+                structure.onParticipation = true;
+                mediaController._session = true;
+            }
+            media.sessionAccess.click();
+        } else if (chkrash[0] === btoa('@Finaliza-Participante')) {
+            $(conf.dom.DIV_BTN_END).hide();
+        } else {
+            return;
         }
+    } else {
+        // Tratamento de mensagens comuns (fora do padrão de solicitação)
+        mediaController.writeMessage(text, remoto);
     }
-    var message = atob(text);
-    if (!$('#div-chat-panel').is(":visible")) {
-        toastContent = '<span class="white-text"><i class="fa fa-comment-o blue-text"></i> ' + message + '</span>';
-        M.toast({ html: toastContent, classes: 'grey darken-4' });
-    }
-    // Versão com adaptação para o MaterializeCSS
-    // Append mensagem no textarea e atualiza o tamanho do campo 
-    $('#chat-panel').val(chatContainer.value + message + '\n');
-    M.textareaAutoResize($('#chat-panel'));
-    M.updateTextFields();
 }
 
-//Toggle de controle de audio para elem. video
-function toggleControls() {
-    var player = document.getElementById('video-preview');
-    if (player.hasAttribute("controls")) {
-        player.removeAttribute("controls");
-    } else {
-        player.setAttribute("controls", "controls");
-    }
-}
-//Controle para exibição toggle de elem. html
-function toggleElem(elemId) {
-    if ($(elemId).is(":visible")) {
-        $(elemId).slideUp(500);
-    } else {
-        $(elemId).slideDown(500);
-    }
-}
-// Lista todas as solicitações de "Pedir a vez" e incrementa contador
-function listBox(text) {
-    var msg = text.split('|');
-    var receiver = document.getElementById('room-id').value
-    var pedeList = document.getElementById('solicita-list');
-    var htmlList;
-    if (msg[1] === receiver) {
-        solicita++;
-        /**
-         * Alteração de UI
-         */
-        document.getElementById('count-pedir-vez').innerHTML = solicita;
-        $('#count-pedir-vez').fadeIn(300);
-        toastContent = '<span class="white-text"><i class="material-icons">pan_tool</i> ' + msg[0] + ' solicita a vez!</span>';
-        M.toast({ html: toastContent, classes: 'blue darken-2' });
+// Emite alerta de desconexão.
+/**
+ * Param userid: String de dados de quem foi desconectado
+ */
+function alertDisconnection(userid) {
 
-        htmlList = '<li class="collection-item avatar li-hover">' +
-            '<i class="material-icons blue lighten-1 circle">tv</i>' +
-            '<h6><b>' + msg[0] + '</b> solicita vez.</h6>' +
-            '<span class="secondary-content">' +
-            '<a id="' + msg[2] + '" class="response_allow btn-flat waves-effect waves-teal blue-text text-darken-2 "><i class="fa fa-check"></i> permitir</a>' +
-            '<a id="' + msg[2] + '" class="response_deny btn-flat waves-effect waves-red  red-text text-darken-3 "><i class="fa fa-times"></i> negar</a>' +
-            '</span>' +
-            '</li>';
-        pedeList.innerHTML += htmlList;
+    if (userid === roomInfo.inRoom.value) {
+        alerta.initiateMessage(conf.message.ALERT_DISCONNECTION);
+        setTimeout(location.reload.bind(location), 3000);
+    } else {
+        try {
+            for (var j = 0; j < Object.keys(structure.connections).length; j++) {
+                if (structure.connections[j].split('|')[2] == userid) {
+                    structure.connections.splice(j, 1);
+                }
+            }
+        } catch (e) {
+            return;
+        }
+        roomController.constructConnectionExpList(userid);
+        roomView.changeCounter(Object.keys(structure.connections).length);
     }
 }
