@@ -23,7 +23,8 @@ const conf = {
         IS_BROADCAST: true,
         MAX_RELAY: 0,
         MSG: 'Inicia-Apresentacao',
-        IS_PUBLIC: true
+        IS_PUBLIC: true,
+        DIRECTION: 'one-to-many'
     },
     socket: {
         MSG_JOIN: 'join-broadcaster',
@@ -86,6 +87,8 @@ const conf = {
         CURSO_LIST: '#cursos-list',
         DISCONNECT_BTN: '.disconnect-btn',
         DIV_BTN_END: '#div-end',
+        DIV_CONNECT: '#div-connect',
+        DIV_CONTROLLER: '#div-controller',
         DIV_ENTER: '#div-enter',
         DIV_EXIT_FSCREEN: '#div-exit-fullscreen',
         DIV_INCOMING_VIDEO: '#div-incoming-videos',
@@ -98,6 +101,7 @@ const conf = {
         LABEL_USERS: '#users-counter',
         LI_CAM: '#li-toggle-camera',
         LI_MUTE: '#li-toggle-mute',
+        LI_PERDIR: '#li-pedir-vez',
         LI_SHARE: '#li-share-screen',
         LI_VOLUME: '#li-toggle-volume',
         MATERIA: '#tema',
@@ -112,6 +116,7 @@ const conf = {
         SECOND_VIDEO: '#secondvideo-preview',
         SESSION_ACCESS: '#enter-session',
         SHARE: '#share-screen',
+        SHARE_ALERT: '#screen-share-alert',
         SIDE_NAVBAR: '#slide-out',
         SOL_LIST: '#solicita-list',
         SOL_PEDIR: '#sol-pedir',

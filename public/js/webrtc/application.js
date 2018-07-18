@@ -15,7 +15,6 @@ let tag = document.querySelector.bind(document);
 let allTags = document.querySelectorAll.bind(document);
 let addTag = document.createElement.bind(document);
 
-// Instâncias
 let connectController = new ConnectController();
 let connect = connectController.initiateConnection();
 
@@ -39,6 +38,7 @@ let connection = new RTCMultiConnection();
 $(document).ready(function() {
 
     window.enableAdapter = true;
+    structure.singleConnection = false;
 
     //Application - Inicia a chamada e tratamento de multiconexão
     connection.enableScalableBroadcast = connect.enableScalableBroadcast;
@@ -52,6 +52,7 @@ $(document).ready(function() {
     // Tratamento de mensagem de emit de sockets
     connection.connectSocket((socket) => {
         // Socket - Join: 'join-broadcaster'
+        // connection.direction pode ser many-to-many ou one-to-many
         socket.on(conf.socket.MSG_JOIN, (hintsToJoinBroadcast) => {
             structure.broadcastStatus = 1;
             connection.session = hintsToJoinBroadcast.typeOfStreams;
@@ -62,8 +63,10 @@ $(document).ready(function() {
             connection.extra.modifiedValue = roomInfo.currentRoomId.value + '-' + roomInfo.currentUser.value;
             connection.updateExtraData();
             connection.broadcastId = hintsToJoinBroadcast.broadcastId;
+            connection.direction = connect.direction;
             connection.join(hintsToJoinBroadcast.userid);
             alerta.initiateMessage(conf.message.START_TRANSMITION);
+            console.log(connection);
         });
         // Socket - Rejoin: 'rejoin-broadcast'
         socket.on(conf.socket.MSG_REJOIN, (getBroadcasterId) => {
@@ -144,7 +147,7 @@ $(document).ready(function() {
             // Remove qualquer conexão duplicada
             if (structure.incomingCon == event.stream.streamid) {
                 connection.getAllParticipants().forEach((p) => {
-                    if (p + '' == event.userid + '') {
+                    if (p == event.userid) {
                         let peer = connection.peers[p].peer;
                         stream.stop();
                         peer.removeStream(event.stream);
@@ -163,7 +166,7 @@ $(document).ready(function() {
                 mediaController.initiateVideo(media.thirdVideoPreview);
                 alerta.initiateMessage(conf.message.START_PARTICIPATION);
 
-                $('#span-video-preview-3rd').fadeIn(300);
+                $(conf.dom.VIDEO_THIRD).fadeIn(300);
 
                 setTimeout(function() {
                     connection.getAllParticipants().forEach((p) => {
@@ -216,7 +219,7 @@ $(document).ready(function() {
             console.log('REMOTO COM SCREEN --> ', event.stream.streamid);
 
             // Conexão remota com compartilhamento de tela
-            $('#span-video-preview-2nd').fadeIn(300);
+            $(conf.dom.VIDEO_SECOND).fadeIn(300);
             mediaController.openIncomingVideos(event.stream);
             media.secondVideoPreview.srcObject = event.stream;
             structure.incomingCon = event.stream.streamid;
@@ -234,14 +237,17 @@ $(document).ready(function() {
 
             // Conexão remota sem compartilhamento de tela
             if (structure.mainVideo != conf.structure.WAITING_FOR_VIDEO || event.extra.modifiedValue) {
-                $('#span-video-preview-3rd').fadeIn(300);
-                structure.incomingCon = event.stream.streamid;
-                media.thirdVideoPreview.srcObject = event.stream;
-                structure.userVideo = event.stream;
+                $(conf.dom.VIDEO_THIRD).fadeIn(300);
+                if (structure.incomingCon != event.stream.streamid) {
+                    structure.incomingCon = event.stream.streamid;
+                    media.thirdVideoPreview.srcObject = event.stream;
+                    structure.userVideo = event.stream;
 
-                mediaController.initiateVideo(media.thirdVideoPreview);
-
-                mediaController.openIncomingVideos(event.stream);
+                    mediaController.initiateVideo(media.thirdVideoPreview);
+                    mediaController.openIncomingVideos(event.stream);
+                } else {
+                    return;
+                }
             } else {
                 structure.incomingCon = event.stream.streamid;
                 structure.onParticipation = false;
@@ -251,25 +257,24 @@ $(document).ready(function() {
 
                 mediaController.initiateVideo(media.videoPreview);
             }
-            // Ajusta elementos de exibição (define o menu de áudio e video para espectadores)
-            $('#div-connect').hide();
-            $('#control-pedir-vez').hide();
-            // Desabilita botão de ação para microfone
+
+            // Desabilita botão de ação para câmera/microfone/compartilhamento de tela
             mediaController.disableCam();
-            // Desabilita botão de ação para camera
             mediaController.disableMute();
-            // Desabilita botão de ação para compartilhar tela
             mediaController.disableShare();
-            // Habilita barra de controle de mídia
-            $('#div-controller').fadeIn(300);
+
+            // Ajusta elementos de exibição (define o menu de áudio e video para espectadores)
+            $(conf.dom.DIV_CONNECT).hide();
+            $(conf.dom.CTL_PEDIR).hide();
+            $(conf.dom.DIV_CONTROLLER).fadeIn(300);
+
+            structure.viewers = connection.getAllParticipants().length;
+            roomView.changeCounter(structure.viewers);
 
             // Tratamento de áudio: Botão "Áudio" -> Toggle on/off
             media.vol.onclick = function() {
                 mediaController.controlVolume(currentStream);
             };
-
-            structure.viewers = connection.getAllParticipants().length;
-            roomView.changeCounter(structure.viewers);
 
             // Tratamento do botão de pedir a vez
             media.solPedir.onclick = function() {
@@ -301,13 +306,14 @@ $(document).ready(function() {
                 alerta.initiateMessage(altText);
             };
 
-            // Broadcaster executando uma conexão local =====================================================
+
         } else if (!structure.onParticipation && (event.type === 'local' && !event.stream.isScreen)) {
 
+            // Broadcaster executando uma conexão local =====================================================
             console.log('TRANSMISSÃO LOCAL------', structure.mainVideo);
 
             if (structure.incomingCon == event.stream.streamid) return;
-            // Conexão local sem compartilhamento de tela
+
             structure.onParticipation = true;
             connection.isUpperUserLeft = false;
             structure.mainVideo = event.stream;
@@ -320,19 +326,17 @@ $(document).ready(function() {
 
             mediaController.initiateVideo(media.videoPreview);
 
-            // Trata contador de solicitações
-            $('#div-connect').hide();
-            $('#li-pedir-vez').hide();
             if (structure.solicita <= 0) {
-                $('#count-pedir-vez').hide();
+                $(conf.dom.COUNT_PEDIR).hide();
             }
-            // Desabilita botão de ação para áudio
-            mediaController.disableVolume();
             if (!connection.isInitiator) {
                 mediaController.disablePedir();
             }
-            // Habilita barra de controle de mídia
-            $('#div-controller').fadeIn(300);
+            mediaController.disableVolume();
+
+            $(conf.dom.DIV_CONNECT).hide();
+            $(conf.dom.LI_PERDIR).hide();
+            $(conf.dom.DIV_CONTROLLER).fadeIn(300);
 
             // Tratamento de áudio: Botão "Microfone" -> Toggle on/off
             media.mute.onclick = function() {
@@ -346,7 +350,6 @@ $(document).ready(function() {
             // Tratamento de solicitações: Botão "Solicitações" -> Abra listagem de solicitações e respostas
             media.ctlPedir.onclick = function() {
                 // Tratamento de respostas (permitir / negar)
-                //let response = document.getElementsByClassName('responses');
                 let response = allTags('.responses');
                 for (var j = 0; j < response.length; j++) {
                     response[j].onclick = function() {
@@ -414,7 +417,8 @@ $(document).ready(function() {
                         }
                     });
                 } else {
-                    $('#screen-share-alert').slideUp(300);
+
+                    $(conf.dom.SHARE_ALERT).slideUp(300);
                     mediaController.switchShare();
                     var streamConnection = roomInfo.inScreen.value;
                     var streamToRemove = null;
@@ -436,7 +440,7 @@ $(document).ready(function() {
                             });
                         } catch (e) { console.log(e) }
                     });
-                    // Mensagem de finalização de screen sharing
+
                     let myIdentity = roomInfo.currentRoomId.value;
                     let msgrash = [
                         btoa('@Finaliza-Share'),
@@ -477,7 +481,6 @@ $(document).ready(function() {
                         connection.peers[roomInfo.inRoom.value].addStream({
                             video: true
                         });
-
                     } catch (e) {
                         mediaController.endParticipation();
                         structure.onParticipation = false;
@@ -516,32 +519,31 @@ $(document).ready(function() {
             mediaController.toggleFullSize();
         };
     };
+
     //=======================================================================================================
     // Listener para abertura de conexões
     connection.onopen = (event) => {
 
-        console.log(event);
-        if (event.userid != structure.connectedAt) {
-            connection.getAllParticipants().forEach((p) => {
-                //connection.disconnectWith(event.userid);
-            });
+        if (structure.singleConnection && (!connection.isInitiator && event.extra.modifiedValue)) {
+            connection.disconnectWith(event.userid);
         }
     };
+
     // Listener para finalização de streams
     connection.onstreamended = (event) => {
 
         if (event.stream.isScreen) {
-            $('#span-video-preview-2nd').hide();
-            //mediaController.closeIncomingVideos(event.stream);
+            $(conf.dom.VIDEO_SECOND).hide();
         } else if (event.streamid == structure.userVideo.streamid) {
             console.log('EVENTO: ', event);
-            $('#span-video-preview-3rd').hide();
+            $(conf.dom.VIDEO_THIRD).hide();
             structure.userVideo = conf.structure.WAITING_FOR_VIDEO;
             structure.lockSolicitation = false;
 
         }
         mediaController.closeIncomingVideos(event.stream);
     };
+
     // Listener para fim de conexões
     connection.onleave = (event) => {
         console.log('DEIXANDO CONEXÃO...', event);
@@ -551,19 +553,19 @@ $(document).ready(function() {
     structure.startRoom.onclick = function() {
 
         let room = roomController.initiateRoom();
-
-        let values = $('#cursos-list').val();
+        let values = $(conf.dom.CURSO_LIST).val();
         let strValues = values.join(';');
 
         if (roomController.validade()) {
             structure.usuario = room.name;
             structure.onlobby = false;
-            // Inicializa a tela de apresentação
-            mediaController.initiateStream();
-            // Modela e apresenta cabeçalho do video
-            roomController.setRoomLabel(conf.misc.ICON_FA_VIDEOCAM, room.tema, room.assunto);
 
+            // Inicializa a tela de apresentação
+            // Modela e apresenta cabeçalho do video
+            mediaController.initiateStream();
+            roomController.setRoomLabel(conf.misc.ICON_FA_VIDEOCAM, room.tema, room.assunto);
             structure.startRoom.disabled = true;
+
             // Define inicialização de sessão
             // -> Permite Audio, Video e Dados
             connection.session = {
@@ -573,26 +575,25 @@ $(document).ready(function() {
                 broadcast: true,
                 oneway: true
             };
+
             // Controle da utilização de banda
-            /*
+            /* Definido com o máximo de 400KBps */
             connection.bandwidth = {
                 audio: 100,
-                video: 200
+                video: 300
             };
-            */
-            // Inicializa Socket
-            var socket = connection.getSocket();
-            // Verifica existência do broadcast
+
+            // Inicializa Socket / Verifica existência do broadcast
+            let socket = connection.getSocket();
             socket.emit('check-broadcast-presence', room.hash, (isBroadcastExists) => {
                 if (!isBroadcastExists) {
                     connection.userid = room.hash;
                 }
-                //start-broadcasting
                 socket.emit('join-broadcast', {
                     broadcastId: room.hash,
                     userid: connection.userid,
-                    typeOfStreams: connection.session
-                        //bandwidth: connection.bandwidth
+                    typeOfStreams: connection.session,
+                    bandwidth: connection.bandwidth
                 });
             });
         } else {
@@ -621,6 +622,7 @@ $(document).ready(function() {
             params[d(match[1])] = d(match[2]);
         window.params = params;
     })();
+
     let broadcastId = '';
     if (localStorage.getItem(connection.socketMessageEvent)) {
         broadcastId = localStorage.getItem(connection.socketMessageEvent);
@@ -639,6 +641,7 @@ $(document).ready(function() {
     if (broadcastId && broadcastId.length) {
         roomInfo.currentRoomId.value = broadcastId;
         localStorage.setItem(connection.socketMessageEvent, broadcastId);
+
         // Efetua o join automático na sala em caso de desconexão do espectador
         // ->Verificação a cada 5 segundos
         (function reCheckRoomPresence() {
@@ -651,12 +654,14 @@ $(document).ready(function() {
             });
         })();
     }
+
     // Verifica quantas conexões estão ativas nesse broadcast
     connection.onNumberOfBroadcastViewersUpdated = (event) => {
         if (!connection.isInitiator) return;
         structure.viewers = event.numberOfBroadcastViewers;
         roomView.changeCounter(structure.viewers);
     };
+
     // Verifica listagem de de salas públicas que se enquadrem no perfil do usuário
     // ->A cada 3 segundos
     (function looper() {
@@ -772,7 +777,7 @@ $(document).ready(function() {
         if (e.keyCode != 13) return;
         this.value = this.value.replace(/^\s+|\s+$/g, '');
         if (!this.value.length) return;
-        var texto = "<b class='small'>" + structure.usuario + "</b>:<br>" + this.value;
+        var texto = "<b class='small'>" + structure.usuario + "</b> :<br>" + this.value;
         texto = btoa(texto);
         connection.send(texto);
         appendDIV(texto);
@@ -785,7 +790,7 @@ $(document).ready(function() {
         var texto = media.textMessage.value
         texto = texto.replace(/^\s+|\s+$/g, '');
         if (!texto.length) return;
-        texto = "<b class='small'>" + structure.usuario + "</b>:<br>" + texto;
+        texto = "<b class='small'>" + structure.usuario + "</b> :<br>" + texto;
         texto = btoa(texto);
         connection.send(texto);
         appendDIV(texto);
@@ -794,12 +799,24 @@ $(document).ready(function() {
     // Recebimento de mensagens
     connection.onmessage = (event) => {
         if (event.data.userRemoved === true) {
+
             if (event.data.removedUserId == connection.userid) {
                 connection.close();
                 setTimeout(location.reload.bind(location), 3000);
             }
             return;
+        } else if (structure.singleConnection && (connection.isInitiator && (event.data && !event.data.userRemoved))) {
+
+            if (!Array.isArray(event.data)) {
+                connection.getAllParticipants().forEach((p) => {
+                    if (p != event.userid) {
+                        connection.send(event.data, p);
+                    }
+                });
+            }
+            appendDIV(event);
         } else {
+
             appendDIV(event);
         }
     };
@@ -828,7 +845,7 @@ function appendDIV(event) {
     var text = event.data || event;
     // Verifica a origem da mensagem, se a menssagem é um array e se este array possui mais de 4 índices
     // -> Definição do padrão de solicitação
-    if (remoto && (Array.isArray(text) && text.length > 4)) {
+    if (remoto && (Array.isArray(text) && text.length == 5)) {
         var chkrash = event.data;
         var msgData = [];
         var myRoom = tag('#room-id').value;

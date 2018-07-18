@@ -6,10 +6,11 @@ class ConnectController {
         this._maxRelayLimitPerUser = conf.con.MAX_RELAY;
         this._socketMessageEvent = conf.con.MSG;
         this._isPublic = conf.con.IS_PUBLIC;
+        this._direction = conf.con.DIRECTION;
     }
 
     initiateConnection() {
 
-        return new Connect(this._urlSocket, this._enableScalableBroadcast, this._maxRelayLimitPerUser, this._socketMessageEvent, this._isPublic);
+        return new Connect(this._urlSocket, this._enableScalableBroadcast, this._maxRelayLimitPerUser, this._socketMessageEvent, this._isPublic, this._direction);
     }
 }

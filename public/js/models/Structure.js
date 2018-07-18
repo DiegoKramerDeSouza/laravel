@@ -6,7 +6,8 @@ class Structure {
 
     constructor(
         viewers,
-        usuario, solicita,
+        usuario,
+        solicita,
         broadcastStatus,
         isModerator,
         onlobby,
@@ -36,6 +37,8 @@ class Structure {
         this._publicRoomsList = publicRoomsList;
         this._connectList = connectList;
         this._countRooms = countRooms;
+
+        this._singleConnection;
         this._targetUser;
         this._connections = [];
         this._streamVideos = [];
@@ -198,6 +201,16 @@ class Structure {
     set countRooms(countRooms) {
 
         this._countRooms = countRooms;
+    }
+
+    get singleConnection() {
+
+        return this._singleConnection;
+    }
+
+    set singleConnection(singleConnection) {
+
+        this._singleConnection = singleConnection;
     }
 
     get targetUser() {
