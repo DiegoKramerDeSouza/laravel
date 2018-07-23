@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateEnderecoEscolasTable extends Migration
+class CreateEnderecoEstudiosTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,17 +13,19 @@ class CreateEnderecoEscolasTable extends Migration
      */
     public function up()
     {
-        if(!Schema::hasTable('endereco_escolas')){
-            Schema::create('endereco_escolas', function (Blueprint $table) {
+        if(!Schema::hasTable('endereco_estudios')){
+            Schema::create('endereco_estudios', function (Blueprint $table) {
                 $table->increments('id');
-                $table->integer('school_id');
                 $table->string('postal', 9);
                 $table->string('address');
                 $table->string('city');
                 $table->integer('number');          
                 $table->string('complement')->nullable();
                 $table->string('st');
-                $table->string('coordinates');
+                $table->integer('estudio_id')->unsigned();
+                $table->foreign('estudio_id')
+                    ->references('id')->on('estudios')
+                    ->onDelete('cascade');
                 $table->timestamps();
             });
         }
@@ -36,6 +38,6 @@ class CreateEnderecoEscolasTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('endereco_escolas');
+        Schema::dropIfExists('endereco_estudios');
     }
 }

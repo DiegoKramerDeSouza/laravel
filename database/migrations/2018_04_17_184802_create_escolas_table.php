@@ -13,12 +13,14 @@ class CreateEscolasTable extends Migration
      */
     public function up()
     {
-        Schema::create('escolas', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('name');
-            $table->string('register')->unique();
-            $table->timestamps();
-        });
+        if(!Schema::hasTable('escolas')){
+            Schema::create('escolas', function (Blueprint $table) {
+                $table->increments('id');
+                $table->string('name');
+                $table->string('register')->unique();
+                $table->timestamps();
+            });
+        }
     }
 
     /**

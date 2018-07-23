@@ -4,9 +4,9 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Escola extends Model
-{   
+class Aula extends Model
+{
     protected $fillable = [
-        'id', 'name', 'register',
+        'id', 'hash', 'name', 'theme', 'author', 'quantity', 'estudio_id'
     ];
 }

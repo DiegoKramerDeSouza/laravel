@@ -13,12 +13,14 @@ class CreateUserDadosTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_dados', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('user_id');
-            $table->integer('group');
-            $table->timestamps();
-        });
+        if(!Schema::hasTable('user_dados')){
+            Schema::create('user_dados', function (Blueprint $table) {
+                $table->increments('id');
+                $table->integer('user_id');
+                $table->integer('group');
+                $table->timestamps();
+            });
+        }
     }
 
     /**
