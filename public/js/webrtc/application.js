@@ -124,7 +124,7 @@ $(document).ready(function() {
                 let instance = M.Modal.getInstance(elem);
                 instance.open();
             } else if (error === 'permission-denied') {
-                mediaController.switchShare();
+                $(conf.dom.SHARE).fadeIn(300);
             }
             throw error;
         });
@@ -137,25 +137,15 @@ $(document).ready(function() {
         if (!structure.onParticipation && !event.extra.modifiedValue) {
             roomInfo.inRoom.value = event.userid;
         }
-        /**==================================================================================================
+        /**==============================================================================
          * Tratamento de conexões REMOTAS e LOCAIS
          * -> Identificação de compartilhamentos de tela e ingressos em transmissões
-         * ==================================================================================================
+         * ==============================================================================
          */
         if (event.type === 'remote' && connection.isInitiator) {
 
             // Remove qualquer conexão duplicada
-            if (structure.incomingCon == event.stream.streamid) {
-                connection.getAllParticipants().forEach((p) => {
-                    if (p == event.userid) {
-                        let peer = connection.peers[p].peer;
-                        stream.stop();
-                        peer.removeStream(event.stream);
-                        p.close();
-                    }
-                });
-                return;
-            }
+            connectController.checkDuplicatedCon(structure.incomingCon, event, connection);
 
             // Conexão remota de transmissão com o broadcaster
             if (structure.mainVideo != conf.structure.WAITING_FOR_VIDEO) {
@@ -309,7 +299,7 @@ $(document).ready(function() {
 
         } else if (!structure.onParticipation && (event.type === 'local' && !event.stream.isScreen)) {
 
-            // Broadcaster executando uma conexão local =====================================================
+            // Broadcaster executando uma conexão local =================================
             console.log('TRANSMISSÃO LOCAL------', structure.mainVideo);
 
             if (structure.incomingCon == event.stream.streamid) return;
@@ -397,10 +387,11 @@ $(document).ready(function() {
                     console.log('------------->     LOCAL', targetId, event.userid);
                 }
             };
-            // Tratamento de solicitações: Botão "Compartilhar" -> Compartilha a tela do apresentador: Toggle On/Off
+            // Botão "Compartilhar" -> Compartilha a tela do apresentador: Toggle On/Off
             media.share.onclick = function() {
-                if (!mediaController._controlSharing) {
-                    $('#share-screen').hide();
+
+                if (!mediaController.getControlSharing()) {
+                    $(conf.dom.SHARE).hide();
                     connection.addStream({
                         screen: true,
                         oneway: true,
@@ -417,7 +408,6 @@ $(document).ready(function() {
                         }
                     });
                 } else {
-
                     $(conf.dom.SHARE_ALERT).slideUp(300);
                     mediaController.switchShare();
                     var streamConnection = roomInfo.inScreen.value;
@@ -456,23 +446,22 @@ $(document).ready(function() {
             // Apresenta o número de espectadores conectados
             $(conf.dom.UL_CON_USERS).fadeIn(300);
         }
-        /**==================================================================================================
+        /**==============================================================================
          * Tratamentos e controles complementares
          */
-        // Botão de maximizar o video -> toggle on:off
-        media.screen.onclick = () => mediaController.enterFullScreen();
-        media.exitscreen.onclick = () => mediaController.exitFullScreen();
-
         // Tratamento das funções MUTE e UNMUTE
         connection.onmute = event => event.mediaElement.setAttribute('poster', conf.structure.POSTER_IMG);
         connection.onunmute = event => event.mediaElement.removeAttribute('poster');
 
-        // Tratamento da função de chat da barra de controle de mídia
-        media.toggleChat.onclick = () => media.textMessage.focus();
+        // Botão de maximizar o video -> toggle on:off
+        media.screen.onclick = () => mediaController.enterFullScreen();
+        media.exitscreen.onclick = () => mediaController.exitFullScreen();
 
         // Tratamento da função de ampliar e reduzir vídeo
-        let fullsize = tag(conf.dom.TOGGLE_VIDEO_SIZE);
-        fullsize.onclick = () => mediaController.toggleFullSize();
+        media.fullsize.onclick = () => mediaController.toggleFullSize();
+
+        // Tratamento da função de chat da barra de controle de mídia
+        media.toggleChat.onclick = () => media.textMessage.focus();
 
         // Tratamento de ingresso na transmissão: Botão "Ingressar" -> Ingressa e participa da apresentação
         media.sessionAccess.onclick = function() {
@@ -521,7 +510,7 @@ $(document).ready(function() {
 
     };
 
-    //=======================================================================================================
+    //===================================================================================
     // Listener para abertura de conexões
     connection.onopen = (event) => {
 
@@ -536,7 +525,7 @@ $(document).ready(function() {
         if (event.stream.isScreen) {
             $(conf.dom.VIDEO_SECOND).hide();
         } else if (event.streamid == structure.userVideo.streamid) {
-            console.log('EVENTO: ', event);
+            console.log('EVENTO-END-STREAM: ', event);
             $(conf.dom.VIDEO_THIRD).hide();
             structure.userVideo = conf.structure.WAITING_FOR_VIDEO;
             structure.lockSolicitation = false;
@@ -551,7 +540,7 @@ $(document).ready(function() {
         console.log('DEIXANDO CONEXÃO...', event);
     };
 
-    // Ação de criar uma sala ao clicar em 'btn-join-as-productor' ==========================================
+    // Ação de criar uma sala ao clicar em 'btn-join-as-productor' ======================
     structure.startRoom.onclick = function() {
 
         let room = roomController.initiateRoom();
@@ -602,7 +591,7 @@ $(document).ready(function() {
             alerta.initiateMessage(conf.message.FORM_ALERT);
         }
     };
-    //=======================================================================================================
+    //===================================================================================
 
     // Tratamento do Id da sala e dos links para acesso -> Basea-se no URI
     /**

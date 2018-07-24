@@ -8,14 +8,11 @@
         <div class='white-text'>
 
             @if(Auth::user()->type == 0)
-
                 <div id='opend-rooms' class='col s12 m6'>
                     <h5 class='row'>
                         <span><b>{!! $roomsIcon !!} Salas disponíveis</b></span>
                     </h5>
-
             @else
-
                 <div id='opend-rooms' class='col s12'>
                     <h4 class='row'>
                         <span>{!! $roomsIcon !!} <b>Bem vindo(a) <span class='blue-text'>{{ Auth::user()->name }}</span></b></span>
@@ -23,9 +20,7 @@
                     <h5 class='row'>
                         <span><b>Estas são as salas disponíveis para você:</b></span>
                     </h5>
-
             @endif
-
                 <div class='divider'></div>
                 <div id='public-conference'>
                     <!-- Loading de conteúdo -->
@@ -41,7 +36,6 @@
             </div>
 
             @if(Auth::user()->type == 0)
-
                 <div id='teacher-access' class='card z-depth-5 col s12 m6'>
                     <div class='card-content'>
                         <div class='card-title black-text'>
@@ -76,14 +70,10 @@
                     </div>
                 </div>
                 <input type='hidden' id='target' name='target' disabled readonly />
-
             @else
-
                 <span id='btn-join-as-productor' class='d-none'></span>
                 <input type='hidden' id='target' name='target' readonly disabled value='{{ $turmas->curso_id }}' />
-
             @endif
-
         </div>
     </div>
 
@@ -96,9 +86,6 @@
     <input type='hidden' id='in-room' name='in-room' disabled readonly />
     <input type='hidden' id='in-screen' name='in-screen' disabled readonly />
 
-    <!-- Controles e Mídias -->
-    @include('salas._includes.midia')
-    
     <!-- Sidebar de painel de chat -->
     <ul id="slide-out" class="sidenav grey lighten-4 z-depth-5">
         <div class='row'>
@@ -123,84 +110,27 @@
         </div>
     </ul>
 
+    <!-- Controles e Mídias -->
+    @include('salas._includes.midia')
+    
     @if(isset($streamPage))
-        @if(Auth::user()->type == 0)
+        <!-- Modals -->
+        @include('salas._includes.modals')
 
-            <!-- Modal de solicitação de vez-->
-            <div id='msg-solicita' class='modal'>
-                <div class='modal-content'>
-                    <h5>
-                        {!! $panToolBlueIcon !!} Solicitações:
-                        <span class='right'>
-                            <a class='modal-close'>
-                                {!! $cancelRedIcon !!}
-                            </a>
-                        </span>
-                    </h5>
-                    <div class='divider'></div>
-                    <ul id='solicita-list' class='collection'>
-                        <li align='center' class='red-text text-darken-3 p-40' ><b>{!! $cancelRedIcon !!} Não há solicitações no momento.</b></li>
-                    </ul>
-                    <br>
-                </div>
-            </div>
-            <!-- Modal de extensão compartilhamento de tela -->
-            <div id='msg-share' class='modal'>
-                <div class='modal-content'>
-                    <h5>
-                        <i class='material-icons blue-text'>extension</i> Extensão do Chrome:
-                        <span class='right'>
-                            <a class='modal-close'>
-                                {!! $cancelRedIcon !!}
-                            </a>
-                        </span>
-                    </h5>
-                    <div class='divider'></div>
-                    <div class='red-text text-darken-3'>
-                        <p>Para compartilhar sua tela, seu navegador deve possuir a extensão do {{ $logo }}.</p>
-                        <p><b>Deseja instalar a extensão do {{ $logo }} para o navegador Google Chrome?</b></p>
-                    </div>
-                    <br>
-                </div>
-                <div class='modal-action'>
-                    <a href='{!! $chromeExt !!}' target='_blank' onclick='chrome.webstore.install()' class='right btn-flat blue-text text-darken-2 waves-effect waves-teal'>{!! $applyIcon !!} sim, instalar</a>
-                    <a class='modal-close right btn-flat red-text text-darken-3 waves-effect waves-red'>{!! $cancelIcon !!} não</a>
-                </div>
-            </div>
+        <!-- Controle de acesso de usuários à transmissão -->
+        @if(Auth::user()->type == 0)
             <!-- Botão de desconexão de usuário em transmissão -->
             <div id='div-end' class='fixed-action-btn d-none' title='Finalizar participação'>
                 <a id='end-session' class='btn-floating btn-large waves-effect waves-light red darken-2' data-active='disabled'>
                     {!! $videocamoffLargeIcon !!}
                 </a>
             </div>
-
-        @else
-
-            <div id='msg-informa-espectadores' class='modal'>
-                <div class='modal-content'>
-                    <h5>
-                        {!! $peopleIcon !!} Espectadores:
-                        <span class='right'>
-                            <a class='modal-close'>
-                                {!! $cancelRedIcon !!}
-                            </a>
-                        </span>
-                    </h5>
-                    <div class='divider'></div>
-                    <p>Por favor informe quantas pessoas estão acompanhando esta apresentação:</p>
-
-                    <br>
-                </div>
-            </div>
-            
         @endif
-
         <!-- Botão de ingresso de usuário em transmissão -->
         <div id='div-enter' class='fixed-action-btn d-none' title='Ingressar'>
             <a id='enter-session' class='btn-floating btn-large waves-effect waves-light cyan pulse' data-active='disabled'>
                 {!! $videocamLargeIcon !!}
             </a>
         </div>
-        
     @endif
 @endsection

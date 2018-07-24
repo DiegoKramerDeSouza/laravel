@@ -13,4 +13,19 @@ class ConnectController {
 
         return new Connect(this._urlSocket, this._enableScalableBroadcast, this._maxRelayLimitPerUser, this._socketMessageEvent, this._isPublic, this._direction);
     }
+
+    checkDuplicatedCon(incomingCon, event, connection) {
+
+        if (incomingCon == event.stream.streamid) {
+            connection.getAllParticipants().forEach((p) => {
+                if (p == event.userid) {
+                    let peer = connection.peers[p].peer;
+                    stream.stop();
+                    peer.removeStream(event.stream);
+                    p.close();
+                }
+            });
+        }
+        return;
+    }
 }

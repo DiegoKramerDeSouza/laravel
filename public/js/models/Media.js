@@ -23,7 +23,8 @@ class Media {
         endSessionAccess,
         divEndBtn,
         toggleChat,
-        textMessage
+        textMessage,
+        fullsize
     ) {
 
         this._videoPreview = videoPreview;
@@ -45,6 +46,7 @@ class Media {
         this._divEndBtn = divEndBtn;
         this._toggleChat = toggleChat;
         this._textMessage = textMessage;
+        this._fullsize = fullsize;
         Object.freeze(this);
     }
 
@@ -141,6 +143,11 @@ class Media {
     get textMessage() {
 
         return this._textMessage;
+    }
+
+    get fullsize() {
+
+        return this._fullsize;
     }
 
 }

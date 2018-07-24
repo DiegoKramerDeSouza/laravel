@@ -30,6 +30,7 @@ class MediaController {
         this._toggleChat = tag(conf.dom.TOGGLE_CHAT);
         this._textMessage = tag(conf.dom.TEXT_MESSAGE);
         this._sideNavbar = tag(conf.dom.SIDE_NAVBAR);
+        this._fullsize = tag(conf.dom.TOGGLE_VIDEO_SIZE);
 
         this._controlCam = true;
         this._controlVoice = true;
@@ -70,7 +71,8 @@ class MediaController {
             this._endSessionAccess,
             this._divEndBtn,
             this._toggleChat,
-            this._textMessage
+            this._textMessage,
+            this._fullsize
         ];
         return new Media(...arrMedia);
     }
@@ -91,6 +93,11 @@ class MediaController {
     initiateStream() {
 
         this._mediaView.adjustStreamScreen();
+    }
+
+    getControlSharing() {
+
+        return this._controlSharing;
     }
 
     initiateVideo(targetVideo) {
