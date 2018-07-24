@@ -38,6 +38,7 @@ class ViewsBasicBindingProvider extends ServiceProvider
         view()->share('micIcon',                    "<i class='material-icons'>mic</i>");
         view()->share('panToolBlueIcon',            "<i class='material-icons blue-text'>pan_tool</i>");
         view()->share('panToolIcon',                "<i class='material-icons'>pan_tool</i>");
+        view()->share('peopleIcon',                 "<i class='material-icons'>people_outline</i>");
         view()->share('peopleLargeIcon',            "<i class='material-icons large'>people_outline</i>");
         view()->share('searchIcon',                 "<i class='material-icons'>search</i>");
         view()->share('screenShareIcon',            "<i class='material-icons'>screen_share</i>");

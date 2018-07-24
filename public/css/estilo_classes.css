@@ -151,6 +151,10 @@
     max-width: 100%;
 }
 
+.p-40 {
+    padding: 40px;
+}
+
 .room-enter:hover {
     cursor: pointer;
 }

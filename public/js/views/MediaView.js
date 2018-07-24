@@ -258,7 +258,7 @@ class MediaView {
 
     noSolicitation() {
 
-        this._listContent = "<li align='center' class='red-text text-darken-3' style='padding:40px;' ><b><i class='fa fa-times fa-lg'></i> Não há solicitações no momento.</b></li>";
+        this._listContent = "<li align='center' class='red-text text-darken-3 p-40' ><b><i class='fa fa-times fa-lg'></i> Não há solicitações no momento.</b></li>";
     }
 
     newSolicitation(item) {

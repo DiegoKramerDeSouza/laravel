@@ -112,6 +112,7 @@ const conf = {
         PUBLIC_CONFERENCE: '#public-conference',
         ROOM: '#room-id',
         ROOM_LOBBY: '#initial-access',
+        ROOM_TYPE: '#room-type',
         SCREEN: '#toggle-screen',
         SECOND_VIDEO: '#secondvideo-preview',
         SESSION_ACCESS: '#enter-session',

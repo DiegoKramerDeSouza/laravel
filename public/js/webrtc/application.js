@@ -470,6 +470,10 @@ $(document).ready(function() {
         // Tratamento da função de chat da barra de controle de mídia
         media.toggleChat.onclick = () => media.textMessage.focus();
 
+        // Tratamento da função de ampliar e reduzir vídeo
+        let fullsize = tag(conf.dom.TOGGLE_VIDEO_SIZE);
+        fullsize.onclick = () => mediaController.toggleFullSize();
+
         // Tratamento de ingresso na transmissão: Botão "Ingressar" -> Ingressa e participa da apresentação
         media.sessionAccess.onclick = function() {
 
@@ -514,10 +518,7 @@ $(document).ready(function() {
                 }
             }
         };
-        let fullsize = tag(conf.dom.TOGGLE_VIDEO_SIZE);
-        fullsize.onclick = function() {
-            mediaController.toggleFullSize();
-        };
+
     };
 
     //=======================================================================================================
@@ -539,7 +540,8 @@ $(document).ready(function() {
             $(conf.dom.VIDEO_THIRD).hide();
             structure.userVideo = conf.structure.WAITING_FOR_VIDEO;
             structure.lockSolicitation = false;
-
+        } else {
+            return;
         }
         mediaController.closeIncomingVideos(event.stream);
     };
