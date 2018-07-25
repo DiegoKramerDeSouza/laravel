@@ -10,10 +10,8 @@
  */
 //-------------------------------------------------------------------------------------------------
 
-
-let tag = document.querySelector.bind(document);
-let allTags = document.querySelectorAll.bind(document);
-let addTag = document.createElement.bind(document);
+let cfg = _configure.responseJSON;
+console.log(cfg);
 
 let connectController = new ConnectController();
 let connect = connectController.initiateConnection();
@@ -120,7 +118,7 @@ $(document).ready(function() {
                 return;
             }
             if (error !== 'permission-denied') {
-                let elem = tag('#msg-share');
+                let elem = doc.TAG('#msg-share');
                 let instance = M.Modal.getInstance(elem);
                 instance.open();
             } else if (error === 'permission-denied') {
@@ -340,7 +338,7 @@ $(document).ready(function() {
             // Tratamento de solicitações: Botão "Solicitações" -> Abra listagem de solicitações e respostas
             media.ctlPedir.onclick = function() {
                 // Tratamento de respostas (permitir / negar)
-                let response = allTags('.responses');
+                let response = doc.ALL('.responses');
                 for (var j = 0; j < response.length; j++) {
                     response[j].onclick = function() {
                         let admResponse = this.id.split('_');
@@ -638,7 +636,7 @@ $(document).ready(function() {
         (function reCheckRoomPresence() {
             connection.checkPresence(broadcastId, (isRoomExists) => {
                 if (isRoomExists) {
-                    tag('#' + broadcastId).onclick();
+                    doc.TAG('#' + broadcastId).onclick();
                     return;
                 }
                 setTimeout(reCheckRoomPresence, 5000);
@@ -683,8 +681,8 @@ $(document).ready(function() {
                             structure.countRooms += 1;
                             structure.usuario = roomInfo.currentUser.value;
 
-                            let divOpen = addTag('div');
-                            let button = addTag('a');
+                            let divOpen = doc.ADD('div');
+                            let button = doc.ADD('a');
                             let card = roomController.constructAccessList(roomData.classe, roomData.assunto, roomData.apresentador, structure.viewers, moderatorId);
 
                             roomController.initiateRoomCard(moderatorId, card, divOpen, button);
@@ -740,7 +738,7 @@ $(document).ready(function() {
                     $('#connected-users').fadeIn(300);
                 }
                 let disconnectId;
-                let btnDisconnect = allTags('.disconnect-btn');
+                let btnDisconnect = doc.ALL('.disconnect-btn');
                 for (var j = 0; j < btnDisconnect.length; j++) {
                     btnDisconnect[j].onclick = function() {
                         disconnectId = this.getAttribute('data-announced');
@@ -777,7 +775,7 @@ $(document).ready(function() {
     /**
      *  var texto String
      */
-    tag('#send-message-btn').onclick = function() {
+    doc.TAG('#send-message-btn').onclick = function() {
         var texto = media.textMessage.value
         texto = texto.replace(/^\s+|\s+$/g, '');
         if (!texto.length) return;
@@ -828,8 +826,8 @@ $(document).ready(function() {
  * var message       string
  */
 function appendDIV(event) {
-    let chatContainer = tag('#chat-panel');
-    let accessBtn = tag('#enter-session');
+    let chatContainer = doc.TAG('#chat-panel');
+    let accessBtn = doc.TAG('#enter-session');
     var remoto = false;
     // Recebe mensagens de origem externa ou interna
     if (event.data) remoto = true;
@@ -839,7 +837,7 @@ function appendDIV(event) {
     if (remoto && (Array.isArray(text) && text.length == 5)) {
         var chkrash = event.data;
         var msgData = [];
-        var myRoom = tag('#room-id').value;
+        var myRoom = doc.TAG('#room-id').value;
         // Identifica se a mensagem é uma solicitação de serviço
         if (chkrash[0] === btoa('@PedeAVez')) {
             // Indica que algum usuário solicita a permissão para falar

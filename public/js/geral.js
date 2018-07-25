@@ -4,6 +4,10 @@
  * 
  */
 $(document).ready(function() {
+
+    let cfg = _configure.responseJSON;
+    console.log(cfg);
+
     // Inicializa verificação de eventos de cliques em botões com chamada de loading
     destroyLoading();
     deployLoading();
@@ -12,7 +16,7 @@ $(document).ready(function() {
 // Inicialização do tratamento de click em objetos da classe load para apresentar tela de loading
 // -> Ignora chamada de loading se houver algum campo required :invalid
 function deployLoading() {
-    var load = document.querySelectorAll(init.dom.LOAD_ELEM);
+    var load = document.querySelectorAll(conf.dom.LOAD_ELEM);
     for (var j = 0; j < load.length; j++) {
         var isValid = true;
         load[j].onclick = function() {
@@ -26,7 +30,7 @@ function deployLoading() {
 }
 // Monta e trata apresentações de loading específicos para botões Cancel
 function deployLoadingCancel() {
-    var load = document.querySelectorAll(init.dom.LOAD_CANCEL_ELEM);
+    var load = document.querySelectorAll(conf.dom.LOAD_CANCEL_ELEM);
     for (var j = 0; j < load.length; j++) {
         load[j].onclick = function() {
             callLoading();
@@ -35,9 +39,9 @@ function deployLoadingCancel() {
 }
 // Inicia apresentação de tela de loading
 function callLoading() {
-    let center = document.querySelector(init.dom.LOAD_POSITION_ELEM);
-    $(init.dom.LOAD_LAYER_ELEM).show();
-    $(init.dom.LOAD_POSITION_ELEM).show();
+    let center = document.querySelector(conf.dom.LOAD_POSITION_ELEM);
+    $(conf.dom.LOAD_LAYER_ELEM).show();
+    $(conf.dom.LOAD_POSITION_ELEM).show();
     center.innerHTML = `<h5>
                             <b>Aguarde...</b><br><br>
                             <div class="preloader-wrapper big active">
@@ -57,9 +61,9 @@ function callLoading() {
 }
 // Finaliza apresentação tela de loading
 function destroyLoading() {
-    let center = document.querySelector(init.dom.LOAD_POSITION_ELEM);
-    $(init.dom.LOAD_LAYER_ELEM).fadeOut(300);
-    $(init.dom.LOAD_POSITION_ELEM).fadeOut(300);
+    let center = document.querySelector(conf.dom.LOAD_POSITION_ELEM);
+    $(conf.dom.LOAD_LAYER_ELEM).fadeOut(300);
+    $(conf.dom.LOAD_POSITION_ELEM).fadeOut(300);
     center.innerHTML = '';
 }
 // Retorna a página

@@ -5,6 +5,7 @@
 
 .autocomplete-content {
     color: rgb(33, 150, 243) !important;
+    overflow-y: hidden !important;
 }
 
 .blockquoted {

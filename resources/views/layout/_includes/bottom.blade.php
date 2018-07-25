@@ -29,14 +29,17 @@
         </footer>
 
         <!-- Inicialização de Javascript -->
-        <script type="text/javascript" src="{!! asset('js/conf/conf.js') !!}"></script>
         <script type="text/javascript" src="{!! asset('js/jquery-3.1.1.min.js') !!}"></script>
+        
+        <script type="text/javascript" src="{!! asset('js/conf/conf.js') !!}"></script>
         <script type="text/javascript" src="{!! asset('js/materialize.min.js') !!}"></script>
         <script type="text/javascript" src="{!! asset('js/geral.js') !!}"></script>
 
         @if(isset($isAutocomplete))
             <!-- Elementos das páginas de cadastros para autocomplete -->
             <script type="text/javascript" src="{!! asset('js/formAutocomplete.js') !!}"></script>
+            <script type="text/javascript" src="{!! asset('js/models/Autocomplete.js') !!}"></script>
+            <script type="text/javascript" src="{!! asset('js/controllers/AutocompleteController.js') !!}"></script>
         @endif
         @if(isset($streamPage))
             <!-- Elementos para a formação de uma SALA ==================================================== -->
@@ -62,7 +65,7 @@
                 <script type="text/javascript" src="{!! asset('js/views/MessageView.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/views/RoomView.js') !!}"></script>
 
-                <script type="text/javascript" src="{!! asset('js/helpers/RoomHelper.js') !!}"></script>    
+                <script type="text/javascript" src="{!! asset('js/helpers/RoomHelper.js') !!}"></script>        
   
                 <script type="text/javascript" src="{!! asset('js/webrtc/socket.io.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/webrtc/getHTMLMediaElement.js') !!}"></script>

@@ -19,14 +19,18 @@ class CadastroAutocompleteController extends Controller
         $components = Componente::where('cadastrado', $module)->first();
         $model = 'App\\' . $components->model;
         if($components->model == "User"){
-            $allData = $model::where('type', 0)->get()->toArray();
+            //$allData = $model::where('type', 0)->get()->toArray();
+            $allData = $model::where('type', 0)->get();
         } else {
-            $allData = $model::all()->toArray();
+            //$allData = $model::all()->toArray();
+            $allData = $model::all();
         }
         
         foreach($allData as $value){
-            $data = str_replace("\0", "", $value['name']);
-            $result[$value['name']] = null;
+            //$data = str_replace("\0", "", $value['name']);
+            //$result[$value['name']] = null;
+            $data = str_replace("\0", "", $value->name);
+            $result[$value->name] = null;
         }
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode($result, JSON_UNESCAPED_UNICODE);
@@ -45,10 +49,10 @@ class CadastroAutocompleteController extends Controller
         switch ($module) {
             case 'cursos':
                 $cursos = $searchResult;
-                $allmodulos = Modulo::all()->toArray();
+                $allmodulos = Modulo::all();
                 $modulos = array();
                 foreach($allmodulos as $modulo){
-                    $modulos[$modulo['id']] = $modulo['name'];
+                    $modulos[$modulo->id] = $modulo->name;
                 }
                 return view('admin.cadastro.' . $module . '.index', compact($module, 'modulos', 'isAutocomplete'));
                 break;
@@ -67,10 +71,10 @@ class CadastroAutocompleteController extends Controller
                 break;
             case 'turmas':
                 $turmas = $searchResult;
-                $accounts = User::where('type', 1)->get()->toArray();
+                $accounts = User::where('type', 1)->get();
                 $users = array();
                 foreach($accounts as $account){
-                    $users[$account['id']] = $account['login'];
+                    $users[$account->id] = $account->login;
                 }
                 return view('admin.cadastro.' . $module . '.index', compact($module, 'users', 'isAutocomplete'));
                 break;

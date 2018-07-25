@@ -13,7 +13,7 @@
             <div class='row'>
                 <div class="input-field col s12 m6">
                     {!! $prefixSearchIcon !!}
-                    <input type="text" id="search-input" autofocus class="autocomplete">
+                    <input type="text" id="search-input" class="autocomplete">
                     <label for="search-input">Procurar</label>
                 </div>
                 <div class="input-field col s12 m6" align='right'>

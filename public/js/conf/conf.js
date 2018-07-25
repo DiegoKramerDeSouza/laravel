@@ -1,6 +1,19 @@
 /**
  * Definições de configuração para INICIALIZAÇÃO de componentes JS
+ * const conf: definições de elementos para inicialização e configurações gerais do DOM;
+ * const doc: definições de métodos básicos de manipulação do documento (sem utilização de JQuery)
+ *              ->TAG: querySelector;
+ *              ->ALL: querySelectorAll;
+ *              ->ADD: createElement;
  */
+
+/*Configurações gerais */
+const jFile = `http://localhost/js/conf/config.json`;
+const _configure =
+    $.getJSON(jFile, json => {
+        return json;
+    });
+
 const conf = {
 
     structure: {
@@ -20,6 +33,7 @@ const conf = {
     con: {
         /*Constantes de inicialização de conexão */
         URL: 'https://rtcmulticonnection.herokuapp.com:443/',
+        //URL: '10.255.2.140:443/',
         IS_BROADCAST: true,
         MAX_RELAY: 0,
         MSG: 'Inicia-Apresentacao',
@@ -27,6 +41,7 @@ const conf = {
         DIRECTION: 'one-to-many'
     },
     socket: {
+        /*Constantes de padronização de mensagens socket.io */
         MSG_JOIN: 'join-broadcaster',
         MSG_REJOIN: 'rejoin-broadcast',
         MSG_CHK_PRESENCE: 'check-broadcast-presence',
@@ -43,8 +58,10 @@ const conf = {
         ADMIN_ACCESS: 'ADMIN'
     },
     message: {
+        /*Tempo padrão de exibição das mensagens de toast */
         TIMEOUT: 2000,
-        /*Atributos para formação de mensagens padronizadas: [ícone(html), texto(html), cor de fundo(classes MaterializeCSS)] */
+
+        /*Atributos para formação de mensagens padronizadas: array[ícone(html), texto(html), cor de fundo(classes MaterializeCSS)] */
         CHAT_MESSAGE: ['<div align="right"><i class="fa fa-comment-o blue-text"></i>', '</div>', 'grey darken-4'],
         START_TRANSMITION: ['<i class="fa fa-play-circle fa-lg"></i>', 'Transmissão iniciada!', 'blue darken-1'],
         END_TRANSMITION: ['<i class="fa fa-stop-circle fa-lg"></i>', 'Transmissão finalizada!', 'red darken-4'],
@@ -104,6 +121,10 @@ const conf = {
         LI_PERDIR: '#li-pedir-vez',
         LI_SHARE: '#li-share-screen',
         LI_VOLUME: '#li-toggle-volume',
+        LOAD_ELEM: ".load",
+        LOAD_CANCEL_ELEM: ".load-cancel",
+        LOAD_POSITION_ELEM: "#centralized",
+        LOAD_LAYER_ELEM: "#fglayer",
         MATERIA: '#tema',
         MUTE: '#toggle-mute',
         NAME: '#current-user',
@@ -114,6 +135,7 @@ const conf = {
         ROOM_LOBBY: '#initial-access',
         ROOM_TYPE: '#room-type',
         SCREEN: '#toggle-screen',
+        SEARCH: '#search-input',
         SECOND_VIDEO: '#secondvideo-preview',
         SESSION_ACCESS: '#enter-session',
         SHARE: '#share-screen',
@@ -137,20 +159,23 @@ const conf = {
         VOL: '#toggle-volume'
     },
     misc: {
+        /*Elementos de uso geral: */
+
+        /*Cores */
         DISABLED_COLOR: 'grey',
         ON_COLOR: 'blue',
         OFF_COLOR: 'red',
         HILIGHT_COLOR: 'cyan',
         TURNOFF_COLOR: 'black',
-
+        /*Classes de estilo CSS */
         CLASS_WIDTH_LIMIT: 'width-limit',
         CLASS_MAIN_CONTAINER: 'main-container',
         CLASS_MAIN_CONTAINER_FULL: 'main-container-full',
-
+        /*Atribuição CSS */
         STYLE_HEIGHT_INHERIT: 'inherit',
-
+        /*Atributos de elementos do DOM */
         ATTR_SOLICITATION: 'data-sender',
-
+        /*Ícones */
         ICON_MIC: '<i class="material-icons">mic</i>',
         ICON_MUTE_MIC: '<i class="material-icons">mic_off</i>',
         ICON_CAM_ON: '<i class="material-icons">videocam</i>',
@@ -161,17 +186,15 @@ const conf = {
         ICON_SHARE_OFF: '<i class="material-icons">stop_screen_share</i>',
         ICON_FA_TV: '<i class="fa fa-television blue-text"></i>',
         ICON_FA_VIDEOCAM: '<i class="fa fa-video-camera blue-text"></i>',
-
+        /*Elementos HTML para caixas de mensagens */
         DEFAULT_MSGBOX_OUT: '<p class="chat-in blue">',
         DEFAULT_MSGBOX_IN: '<p class="chat-out grey" align="right">',
     }
 };
 
-const init = {
-    dom: {
-        LOAD_ELEM: ".load",
-        LOAD_CANCEL_ELEM: ".load-cancel",
-        LOAD_POSITION_ELEM: "#centralized",
-        LOAD_LAYER_ELEM: "#fglayer"
-    }
-};
+/*Métodos de Document */
+const doc = {
+    TAG: document.querySelector.bind(document),
+    ALL: document.querySelectorAll.bind(document),
+    ADD: document.createElement.bind(document),
+}
