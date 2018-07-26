@@ -13,18 +13,20 @@ class CreateEnderecoEscolasTable extends Migration
      */
     public function up()
     {
-        Schema::create('endereco_escolas', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('school_id');
-            $table->string('postal', 9);
-            $table->string('address');
-            $table->string('city');
-            $table->integer('number');          
-            $table->string('complement')->nullable();
-            $table->string('st');
-            $table->string('coordinates');
-            $table->timestamps();
-        });
+        if(!Schema::hasTable('endereco_escolas')){
+            Schema::create('endereco_escolas', function (Blueprint $table) {
+                $table->increments('id');
+                $table->integer('school_id');
+                $table->string('postal', 9);
+                $table->string('address');
+                $table->string('city');
+                $table->integer('number');          
+                $table->string('complement')->nullable();
+                $table->string('st');
+                $table->string('coordinates');
+                $table->timestamps();
+            });
+        }
     }
 
     /**

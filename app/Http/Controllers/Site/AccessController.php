@@ -9,6 +9,6 @@ class AccessController extends Controller
 {
     //Padrão para resposta de acesso negado
     public function index(){
-        return view('denied');
+        return view('access.denied');
     }
 }

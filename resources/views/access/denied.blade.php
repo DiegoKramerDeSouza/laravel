@@ -9,19 +9,24 @@
         <div class='card-content'>
             <div class='row center container'>
                 <h2 class='card-title' align='left'>
-                    <b><span class='blue-text'><i class='fa fa-user-circle'></i> {{ Auth::user()->name }}</span></b><br>
+                    <b><span class='blue-text'>{!! $loginIcon !!} {{ Auth::user()->name }}</span></b><br>
                 </h2>
                 <div class='divider'></div>
                 <br>
                 <div class='red-text text-darken-3' align='center'>
                     <h5>
-                    <i class='fa fa-times fa-lg'></i> Você não possui permissão para acessar este recurso!
+                        {!! $closeLargeIcon !!}
+                        <br>
+                        Acesso Negado!
                     </h5>
+                    <h6>
+                    Você não possui permissão para acessar este recurso!
+                    </h6>
                 </div>
                 <br>
                 <div class='divider'></div>
                 <br>
-                <a class='btn-flat blue-text text-darken-1 waves-effect waves-teal' onclick='goback()'><i class='fa fa-arrow-left'></i> Voltar</a>
+            <a class='load btn-flat blue-text text-darken-1 waves-effect waves-teal' href='{{ route('home') }}'>{!! $gobackLink !!}</a>
             </div>
         </div>
     </div>

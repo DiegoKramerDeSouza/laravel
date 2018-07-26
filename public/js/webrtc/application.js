@@ -1,375 +1,604 @@
+/**
+ *  Javascript + JQuery + WebRTC
+ *  Controle de transmissão de mídia com stream;
+ *  Configurações do WebRTC -> Sockets e RTCMulticonnection
+ *                          -> Transmissão escalável em Broadcast
+ *                          -> Controles do Chat
+ *                          -> Controles de envio e recebimento de mensagens;
+ *  Controle e tratamento das funções dos botões da barra de controle de mídia;
+ *  Utilizado EXCLUSIVAMENTE para "salas";
+ */
+//-------------------------------------------------------------------------------------------------
+
+let cfg = _configure.responseJSON;
+console.log(cfg);
+
+let connectController = new ConnectController();
+let connect = connectController.initiateConnection();
+
+let mediaController = new MediaController();
+let media = mediaController.initiateMedia();
+
+let structureController = new StructureController();
+let structure = structureController.initiateStructure();
+
+let roomInfoController = new RoomInfoController();
+let roomInfo = roomInfoController.initiateRoomInfo();
+
+let alerta = new MessageController();
+
+let roomController = new RoomController();
+let roomDataController = new RoomDataController();
+let roomView = new RoomView();
+
+let connection = new RTCMultiConnection();
+
 $(document).ready(function() {
+
+    window.enableAdapter = true;
+    structure.singleConnection = false;
+
     //Application - Inicia a chamada e tratamento de multiconexão
-    /**
-     * Variáveis globais
-     *  var connection RTCMultiConnection
-     *  var status Boolean
-     *  var usuario string
-     *  var cameras integer
-     */
-    var connection = new RTCMultiConnection();
-    var status = false;
-    var usuario = '';
-    var cameras;
+    connection.enableScalableBroadcast = connect.enableScalableBroadcast;
+    connection.maxRelayLimitPerUser = connect.maxRelayLimitPerUser;
+    connection.socketMessageEvent = connect.socketMessageEvent;
+    connection.socketURL = connect.urlSocket;
 
-    //Conexão com serviço de websocket
-    //Servidor  de signaling gratúito https://rtcmulticonnection.herokuapp.com:443/
-    connection.socketURL = 'https://rtcmulticonnection.herokuapp.com:443/';
-    //connection.socketURL = 'https://pinechart.com:3000/';
+    // Listeners de tratamento de tamanho de tela do video (Detecta Fullscreen OFF)
+    mediaController.initListeners();
 
-    //Definição de elementos da conferência; Audio e Video
-    navigator.mediaDevices.enumerateDevices(getCameras);
-    if (cameras) {
-        connection.session = {
-            audio: true,
-            video: true,
-            data: true
-        }
-    } else {
-        connection.session = {
-            audio: true,
-            video: false,
-            data: true
-        }
-    }
-    connection.sdpConstraints.mandatory = {
-        OfferToReceiveAudio: true,
-        OfferToReceiveVideo: true
-    }
-
-    //Controles de envio e recebimento de mensagens
-    document.getElementById('text-message').onkeyup = function(e) {
-        //Se a tecla apertada não for ENTER -> não faça nada
-        if (e.keyCode != 13) return;
-        // Tratando entrada
-        this.value = this.value.replace(/^\s+|\s+$/g, '');
-        if (!this.value.length) return;
-        this.value = usuario + ": " + this.value;
-        connection.send(this.value);
-        appendDIV(this.value);
-        this.value = '';
-    };
-    /**
-     *  var texto string
-     */
-    document.getElementById('send-message-btn').onclick = function() {
-        // Tratando entrada
-        var texto = document.getElementById('text-message').value
-        texto = texto.replace(/^\s+|\s+$/g, '');
-        if (!texto.length) return;
-        texto = usuario + ": " + texto;
-        connection.send(texto);
-        appendDIV(texto);
-        document.getElementById('text-message').value = '';
-    };
-    //Envio de mensagem
-    connection.onmessage = appendDIV;
-
-    document.getElementById('btn-join-as-productor').onclick = function() {
-
-        var values = $('#cursos-list').val();
-        var strValues = '';
-        for ($i = 0; $i < values.length; $i++) {
-            strValues += values[$i];
-            if ($i != (values.length - 1)) {
-                strValues += ';';
-            }
-        }
-        document.getElementById('cursos').value = strValues;
-
-        //Ação de criar uma sala de aula ao clicar em 'btn-join-as-productor'
-        /*
-         *    var isPublicModerator Boolean
-         *    var elem  html elem.
-         *    var materia   string
-         *    var assunto   string
-         *    var escola    string
-         *    var turma     string
-         *    var roomLabel string
-         *    var roomId    integer
-         *    var roomName  string
-         *    var roomEscola    integer
-         *    var roomHash  string
-         */
-        var isPublicModerator = true;
-        var elem = document.getElementById(this.id);
-        var materia = document.querySelector('#materia').value;
-        var assunto = document.querySelector('#assunto').value;
-
-        var turma = document.querySelector('#cursos').value;
-        console.log(turma);
-        //var escola = document.querySelector('#escola').value;
-        //var roomLabel = escola.split('|')[1] + " (" + turma.split('|')[1] + ")" + ": " + materia;
-
-        var roomId = Math.floor((Math.random() * 999999) + 0);
-        var roomName = document.getElementById('current-user').value;
-        var roomEscola = document.getElementById('cursos').value;
-        var roomHash = btoa(materia + "|" + roomName + "|" + assunto + "|" + roomEscola);
-        usuario = roomName;
-        callTeacherStream();
-
-        //Verifica os campos materia e assunto, ambos devem ser informados
-        if (materia && assunto) {
-            this.disabled = true;
-            materia.disabled = true;
-            assunto.disabled = true;
-
-            if (hasClass(elem, "green")) {
-                elem.classList.remove("green");
-                elem.classList.add("grey");
-            }
-            //Elementos do documento apontados
-            connection.teacherVideosContainer = document.getElementById('main-video');
-            connection.classVideosContainer = document.getElementById('class-video');
-
-            //Abertura da sala
-            connection.open(roomHash, isPublicModerator);
-            //Início da transmissão
-            connection.onstream = function(event) {
-                //Verifica se a conexão é local ou remota
-                if (event.type === 'local') {
-                    //Se a criação da sala for uma conexão local: Exibe
-                    connection.teacherVideosContainer.innerHTML = '';
-                    //As definições de conexão local para um usuário do tipo professor são definidas por padrão com alta prioridade
-                    connection.teacherVideosContainer.appendChild(event.mediaElement);
-                    event.mediaElement.play();
-                    setTimeout(function() {
-                        event.mediaElement.play();
-                    }, 5000);
-                    event.mediaElement.muted = true;
-                    event.mediaElement.owner = 'User';
-                    document.getElementById('room-id').value = roomHash;
-
-                    //setStatus('online');
-                    //showRoomURL(roomHash, materia, assunto);
-                    //setRoomLabel(roomLabel);
-
-                    console.log('Created room: ' + roomHash);
-                    var width = parseInt(connection.teacherVideosContainer.clientWidth);
-                    event.mediaElement.width = width;
-                    event.mediaElement.className = 'constructed-videos z-depth-3';
-
-                    console.log('Stream: ' + event.mediaElement.id);
-                    connection.extra.modifiedValue = event.mediaElement.id;
-                    connection.updateExtraData();
-                    document.getElementById('toggle-chat').onclick = function() {
-                        showChat();
-                    }
-                } else {
-                    //Se a criação da sala for de uma conexão remota: Não faça nada.
-                    /*
-                    //Conexões efetuadas a partir de um ponto remoto recebem tratamento de entradas de vídeo comuns
-                    connection.classVideosContainer.innerHTML = '<br><br>';
-                    connection.classVideosContainer.appendChild(event.mediaElement);
-                    event.mediaElement.play();
-                    setTimeout(function() {
-                        event.mediaElement.play();
-                    }, 5000);
-                    //event.mediaElement.elem = roomHash;
-                    document.getElementById('room-id').value = roomHash;
-
-                    setStatus('online');
-                    showRoomURL(roomHash, materia, assunto);
-                    setRoomLabel(roomLabel);
-
-                    var width = parseInt(connection.classVideosContainer.clientWidth);
-                    event.mediaElement.width = width;
-                    event.mediaElement.className = 'constructed-videos z-depth-3';
-                    */
-                }
-
-            }
-        }
-    }
-
-    var publicRoomsDiv = document.getElementById('public-conference');
-    (function looper() {
-        //Verifica a existência de uma sala pública
-        connection.getPublicModerators(function(array) {
-            publicRoomsDiv.innerHTML = '';
-            //Se existir alguma sala pública exetute
-            if (array.length > 0) {
-                array.forEach(function(moderator) {
-                    //Definições de moderador:
-                    /*  moderator.userid
-                     *  moderator.extra
-                     */
-                    //Verifica se quem conecta é o próprio moderador
-                    if (moderator.userid == connection.userid) {
-                        return;
-                    }
-                    //Cria labels para exibição de salas disponíveis
-                    /*
-                     *  var labelRoom   string
-                     *  var labelClasse string
-                     *  var labelNomeEscola string
-                     *  var labelProfessor  string
-                     *  var labelCurso  string
-                     *  var myClass     string
-                     *  var countRoom   integer
-                     */
-                    var labelRoom = moderator.userid;
-                    labelRoom = atob(labelRoom);
-                    var labelClasse = labelRoom.split('|')[0];
-                    var labelProfessor = labelRoom.split('|')[1];
-                    var labelNomeEscola = labelRoom.split('|')[2];
-                    var labelCurso = labelRoom.split('|')[3];
-
-                    var myClass = document.getElementById('target').value;
-                    var countRooms = 0;
-                    console.log(myClass);
-                    var allowed = false;
-                    var classes = myClass.split(';')
-                    for ($i = 0; $i < classes.length; $i++) {
-                        if (labelCurso.indexOf(classes[$i]) > -1) {
-                            allowed = true;
-                        }
-                    }
-
-                    if (allowed) {
-                        countRooms++;
-                        //cria elemento div para exibição de salas disponíveis em bloco
-                        /*
-                         *	var card html elem.
-                         *  var divOpen html elem.
-                         *  var button  html elem.
-                         */
-                        usuario = document.getElementById('myName').value;
-                        var divOpen = document.createElement('ul');
-                        var card = '<li class="collection-item avatar grey-text text-darken-3">' +
-                            '<i class="material-icons circle blue">videocam</i>' +
-                            '<span class="title"><b>' + labelClasse + ' (' + labelNomeEscola + ')' + '</b></span>' +
-                            '<p>' +
-                            '<b class="blue-text">Professor:</b> ' + labelProfessor +
-                            '</p>' +
-                            '<span id=' + moderator.userid + '>' +
-                            '</span>' +
-                            '</li>';
-
-                        divOpen.innerHTML = card;
-                        divOpen.className = "collection";
-
-                        var button = document.createElement('a');
-                        button.id = moderator.userid;
-                        button.title = 'Entrar';
-                        button.className = 'btn-floating blue waves-effect waves-light secondary-content';
-                        //Debug
-                        //console.log(connection.userid + "||" + connection.sessionid);
-                        button.onclick = function() {
-                            this.disabled = true;
-                            var elem = document.getElementById(this.id);
-                            if (hasClass(elem, "blue")) {
-                                elem.classList.remove("blue");
-                                elem.classList.add("grey");
-                            }
-                            //Definições iniciais para acesso à sala
-                            callTeacherStream();
-                            connection.classVideosContainer = document.getElementById('class-video');
-                            connection.classVideosContainer.className = 'center';
-                            connection.teacherVideosContainer = document.getElementById('main-video');
-
-                            console.log('Try to connect: ' + this.id);
-                            connection.join(this.id);
-                            //Definições de vídeo para quem acessa a sala
-                            /*
-                             *   var owner   obj array[]
-                             *   var userVideo   html elem.
-                             *   var divClose   html elem.
-                             *   var divOpen    html elem.
-                             *   var message    string
-                             */
-                            connection.onstream = function(event) {
-                                var owner = event.extra.modifiedValue;
-                                var userVideo = document.createElement('video');
-                                userVideo.controls = false;
-                                //Debug
-                                //console.log(event.extra);
-                                //console.log(event.extra.modifiedValue);
-                                console.log(event.mediaElement.id);
-
-                                //Define se a conexão é local ou remota
-                                if (event.type === 'local') {
-                                    //Se a conexão for local: Não faça nada
-                                    /*
-                                    userVideo.muted = true;
-                                    connection.classVideosContainer.appendChild(event.mediaElement);
-                                    event.mediaElement.play();
-                                    setTimeout(function() {
-                                        event.mediaElement.play();
-                                    }, 5000);
-                                    var width = parseInt(connection.classVideosContainer.clientWidth - 10);
-                                    event.mediaElement.width = width;
-                                    event.mediaElement.className = 'constructed-videos z-depth-3';
-                                    event.mediaElement.title = 'Minha CAM';
-                                    */
-                                } else {
-                                    if (event.extra.modifiedValue == event.mediaElement.id) {
-                                        //Se a conexão for do dono da sala: Exibe
-                                        connection.teacherVideosContainer.innerHTML = '';
-                                        connection.teacherVideosContainer.appendChild(event.mediaElement);
-                                        event.mediaElement.play();
-                                        setTimeout(function() {
-                                            event.mediaElement.play();
-                                        }, 5000);
-                                        var width = parseInt(connection.teacherVideosContainer.clientWidth - 10);
-                                        event.mediaElement.width = width;
-                                        event.mediaElement.className = 'constructed-videos z-depth-3';
-                                        event.mediaElement.title = labelNomeEscola + " (" + "): " + labelClasse;
-                                        document.getElementById('toggle-chat').onclick = function() {
-                                            showChat();
-                                        }
-                                    } else {
-                                        //Se a conexão for de outra sala: Não faça nada.
-                                        /*
-                                        connection.classVideosContainer.appendChild(event.mediaElement);
-                                        event.mediaElement.play();
-                                        setTimeout(function() {
-                                            event.mediaElement.play();
-                                        }, 5000);
-                                        var width = parseInt(connection.classVideosContainer.clientWidth - 10);
-                                        event.mediaElement.width = width;
-                                        event.mediaElement.className = 'constructed-videos z-depth-3';
-                                        event.mediaElement.title = event.mediaElement.id;
-                                        */
-                                    }
-                                }
-                                setRoomLabel(labelNomeEscola + " (" + "): " + labelClasse);
-                            };
-                        };
-                        button.innerHTML = '<i class="material-icons white-text">play_arrow</i>';
-                        if (moderator.userid == connection.sessionid) {
-                            // Se já estiver conectado na sala não faz nada
-                            button.disabled = true;
-                        }
-                        //Append de elementos html
-                        publicRoomsDiv.appendChild(divOpen);
-                        var divClose = document.getElementById(moderator.userid);
-                        divClose.appendChild(button);
-                    }
-                    if (countRooms == 0) {
-                        //Mensagem de retorno para 0 salas encontradas na escola determinada
-                        var divOpen = document.createElement('div');
-                        var message = "<div class='red-text' style='margin-top:20px;' align='center'>" +
-                            "<i class='fa fa-times fa-lg red-text text-darken-3'></i> <b>Não há salas disponíveis.</b>" +
-                            "</div>";
-                        divOpen.innerHTML = message;
-                        publicRoomsDiv.appendChild(divOpen);
-                    }
-                });
-            } else {
-                //Mensagem de retorno para 0 salas encontradas
-                var divOpen = document.createElement('div');
-                var message = "<div class='red-text' style='margin-top:20px;' align='center'>" +
-                    "<i class='fa fa-times fa-lg red-text text-darken-3'></i> <b>Não há salas disponíveis.</b>" +
-                    "</div>";
-                divOpen.innerHTML = message;
-                publicRoomsDiv.appendChild(divOpen);
-            }
-            setTimeout(looper, 3000);
+    // Tratamento de mensagem de emit de sockets
+    connection.connectSocket((socket) => {
+        // Socket - Join: 'join-broadcaster'
+        // connection.direction pode ser many-to-many ou one-to-many
+        socket.on(conf.socket.MSG_JOIN, (hintsToJoinBroadcast) => {
+            structure.broadcastStatus = 1;
+            connection.session = hintsToJoinBroadcast.typeOfStreams;
+            connection.sdpConstraints.mandatory = {
+                OfferToReceiveVideo: false,
+                OfferToReceiveAudio: false
+            };
+            connection.extra.modifiedValue = roomInfo.currentRoomId.value + '-' + roomInfo.currentUser.value;
+            connection.updateExtraData();
+            connection.broadcastId = hintsToJoinBroadcast.broadcastId;
+            connection.direction = connect.direction;
+            connection.join(hintsToJoinBroadcast.userid);
+            alerta.initiateMessage(conf.message.START_TRANSMITION);
+            console.log(connection);
         });
-    })();
+        // Socket - Rejoin: 'rejoin-broadcast'
+        socket.on(conf.socket.MSG_REJOIN, (getBroadcasterId) => {
+            structure.broadcastStatus = 1;
+            connection.attachStreams = [];
+            connection.extra.modifiedValue = roomInfo.currentRoomId.value + '-' + roomInfo.currentUser.value;
+            connection.updateExtraData();
+            // Socket - check presence: 'check-broadcast-presence'
+            socket.emit(conf.socket.MSG_CHK_PRESENCE, getBroadcasterId, (isBroadcastExists) => {
+                if (!isBroadcastExists) {
+                    connection.userid = getBroadcasterId;
+                }
+                // Socket - Join to broadcast: 'join-broadcast'
+                socket.emit(conf.socket.MSG_JOIN_BROADCAST, {
+                    broadcastId: getBroadcasterId,
+                    userid: connection.userid,
+                    typeOfStreams: connection.session
+                });
+            });
+        });
+        // Socket - Parado: 'broadcast-stopped'
+        socket.on(conf.socket.MSG_BROADCAST_STOP, (getBroadcasterId) => {
+            structure.broadcastStatus = 0;
+            alerta.initiateMessage(conf.message.END_TRANSMITION);
+        });
+        // Socket - Iniciando: 'start-broadcasting
+        socket.on(conf.socket.MSG_START_BROADCAST, (typeOfStreams) => {
+            structure.broadcastStatus = 1;
+            connection.sdpConstraints.mandatory = {
+                OfferToReceiveVideo: false,
+                OfferToReceiveAudio: false
+            };
+            connection.session = typeOfStreams;
+            connection.open(connection.userid, connect.isPublicModerator);
+        });
+        // Socket - Saindo: 'leave-the-room'
+        socket.on(conf.socket.MSG_LEAVE_ROOM, (targetconnection) => {
+            if (targetconnection.remoteUserId != connection.userid) return;
+            connection.leave();
+        });
+    });
 
-    //Tratamento de URI para casos de conexão direta
+    // Tratamento de erro para compartilhamento de tela
+    connection.getScreenConstraints = (callback) => {
+        getScreenConstraints((error, screen_constraints) => {
+            if (!error) {
+                screen_constraints = connection.modifyScreenConstraints(screen_constraints);
+                callback(error, screen_constraints);
+                $('#screen-share-alert').slideDown(300);
+                mediaController.switchShare();
+                return;
+            }
+            if (error !== 'permission-denied') {
+                let elem = doc.TAG('#msg-share');
+                let instance = M.Modal.getInstance(elem);
+                instance.open();
+            } else if (error === 'permission-denied') {
+                $(conf.dom.SHARE).fadeIn(300);
+            }
+            throw error;
+        });
+    }
+
+    // Inicia a transmissão
+    connection.onstream = (event) => {
+
+        let currentStream;
+        if (!structure.onParticipation && !event.extra.modifiedValue) {
+            roomInfo.inRoom.value = event.userid;
+        }
+        /**==============================================================================
+         * Tratamento de conexões REMOTAS e LOCAIS
+         * -> Identificação de compartilhamentos de tela e ingressos em transmissões
+         * ==============================================================================
+         */
+        if (event.type === 'remote' && connection.isInitiator) {
+
+            // Remove qualquer conexão duplicada
+            connectController.checkDuplicatedCon(structure.incomingCon, event, connection);
+
+            // Conexão remota de transmissão com o broadcaster
+            if (structure.mainVideo != conf.structure.WAITING_FOR_VIDEO) {
+                structure.incomingCon = event.stream.streamid;
+                media.thirdVideoPreview.srcObject = event.stream;
+                structure.userVideo = event.stream;
+
+                mediaController.initiateVideo(media.thirdVideoPreview);
+                alerta.initiateMessage(conf.message.START_PARTICIPATION);
+
+                $(conf.dom.VIDEO_THIRD).fadeIn(300);
+
+                setTimeout(function() {
+                    connection.getAllParticipants().forEach((p) => {
+                        if (p + '' != event.userid + '') {
+                            let peer = connection.peers[p].peer;
+                            event.stream.getTracks().forEach((track) => {
+                                try {
+                                    peer.addTrack(track, event.stream);
+                                } catch (e) {}
+                            });
+                            connection.dontAttachStream = true;
+                            connection.renegotiate(p);
+                            connection.dontAttachStream = false;
+                        }
+                    });
+                    structure.streamVideos = event.stream;
+                    mediaController.openIncomingVideos(event.stream);
+                }, 500);
+
+                $(conf.dom.DIV_BTN_END).fadeIn(300);
+                media.endSessionAccess.onclick = function() {
+                    console.log('------------->     REMOTO', event.userid, structure.targetUser);
+                    structure.streamVideos.forEach((stream) => {
+                        connection.getAllParticipants().forEach((p) => {
+                            let peer = connection.peers[p].peer;
+                            stream.stop();
+                            peer.removeStream(stream);
+                        });
+                    });
+                    $(conf.dom.DIV_BTN_END).hide();
+                    structure.emptyStreamVideos();
+                    structure.incomingCon = '';
+                    mediaController.closeIncomingVideos(event.stream);
+                    let msgrash = [
+                        btoa('@Finaliza-Participacao'),
+                        roomInfo.currentUser.value,
+                        connection.userid,
+                        roomInfo.inRoom.value,
+                        event.userid
+                    ];
+                    connection.send(msgrash, event.userid);
+                    structure.lockSolicitation = false;
+                }
+            } else {
+                return;
+            }
+
+        } else if (!structure.onParticipation && (event.type === 'remote' && event.stream.isScreen === true)) {
+
+            console.log('REMOTO COM SCREEN --> ', event.stream.streamid);
+
+            // Conexão remota com compartilhamento de tela
+            $(conf.dom.VIDEO_SECOND).fadeIn(300);
+            mediaController.openIncomingVideos(event.stream);
+            media.secondVideoPreview.srcObject = event.stream;
+            structure.incomingCon = event.stream.streamid;
+
+            mediaController.initiateVideo(media.secondVideoPreview);
+
+            // Tratamento de telas: Botão "Swap" -> Toggle Main/Second Video
+            media.swapSecond.onclick = function() {
+                mediaController.controlSwapVideo();
+            }
+
+        } else if (!structure.onParticipation && (event.type === 'remote' && !event.stream.isScreen)) {
+
+            console.log('REMOTO SEM SCREEN --> ' + event.stream.streamid);
+
+            // Conexão remota sem compartilhamento de tela
+            if (structure.mainVideo != conf.structure.WAITING_FOR_VIDEO || event.extra.modifiedValue) {
+                $(conf.dom.VIDEO_THIRD).fadeIn(300);
+                if (structure.incomingCon != event.stream.streamid) {
+                    structure.incomingCon = event.stream.streamid;
+                    media.thirdVideoPreview.srcObject = event.stream;
+                    structure.userVideo = event.stream;
+
+                    mediaController.initiateVideo(media.thirdVideoPreview);
+                    mediaController.openIncomingVideos(event.stream);
+                } else {
+                    return;
+                }
+            } else {
+                structure.incomingCon = event.stream.streamid;
+                structure.onParticipation = false;
+                media.videoPreview.srcObject = event.stream;
+                structure.mainVideo = event.stream;
+                currentStream = [event.stream];
+
+                mediaController.initiateVideo(media.videoPreview);
+            }
+
+            // Desabilita botão de ação para câmera/microfone/compartilhamento de tela
+            mediaController.disableCam();
+            mediaController.disableMute();
+            mediaController.disableShare();
+
+            // Ajusta elementos de exibição (define o menu de áudio e video para espectadores)
+            $(conf.dom.DIV_CONNECT).hide();
+            $(conf.dom.CTL_PEDIR).hide();
+            $(conf.dom.DIV_CONTROLLER).fadeIn(300);
+
+            structure.viewers = connection.getAllParticipants().length;
+            roomView.changeCounter(structure.viewers);
+
+            // Tratamento de áudio: Botão "Áudio" -> Toggle on/off
+            media.vol.onclick = function() {
+                mediaController.controlVolume(currentStream);
+            };
+
+            // Tratamento do botão de pedir a vez
+            media.solPedir.onclick = function() {
+                let altText = [];
+                if (structure.broadcastStatus == 1 && (structure.solicita === 0 && !structure.lockSolicitation)) {
+                    // Constroi e envia mensagem solicitando a vez
+                    let myIdentity = roomInfo.currentRoomId.value;
+                    let msgrash = [
+                        btoa('@PedeAVez'),
+                        roomInfo.currentUser.value,
+                        connection.userid,
+                        roomInfo.inRoom.value,
+                        myIdentity
+                    ];
+                    try {
+                        connection.send(msgrash, roomInfo.inRoom.value);
+                        structure.solicita += 1;
+                        altText = conf.message.SEND_SOLICITATION;
+                    } catch (err) {
+                        altText = conf.message.ERROR_SOLICITATION;
+                    }
+                } else if (structure.solicita > 0) {
+                    altText = conf.message.DUP_SOLICITATION;
+                } else if (structure.lockSolicitation) {
+                    altText = conf.message.ERR_ACP_SOLICITATION;
+                } else {
+                    altText = conf.message.NO_CONNECTION;
+                }
+                alerta.initiateMessage(altText);
+            };
+
+
+        } else if (!structure.onParticipation && (event.type === 'local' && !event.stream.isScreen)) {
+
+            // Broadcaster executando uma conexão local =================================
+            console.log('TRANSMISSÃO LOCAL------', structure.mainVideo);
+
+            if (structure.incomingCon == event.stream.streamid) return;
+
+            structure.onParticipation = true;
+            connection.isUpperUserLeft = false;
+            structure.mainVideo = event.stream;
+            structure.incomingCon = event.stream.streamid;
+            currentStream = [event.stream];
+
+            media.videoPreview.srcObject = event.stream;
+            media.videoPreview.userid = event.userid;
+            media.videoPreview.muted = true;
+
+            mediaController.initiateVideo(media.videoPreview);
+
+            if (structure.solicita <= 0) {
+                $(conf.dom.COUNT_PEDIR).hide();
+            }
+            if (!connection.isInitiator) {
+                mediaController.disablePedir();
+            }
+            mediaController.disableVolume();
+
+            $(conf.dom.DIV_CONNECT).hide();
+            $(conf.dom.LI_PERDIR).hide();
+            $(conf.dom.DIV_CONTROLLER).fadeIn(300);
+
+            // Tratamento de áudio: Botão "Microfone" -> Toggle on/off
+            media.mute.onclick = function() {
+                mediaController.controlVoice(currentStream);
+            };
+            // Tratamento de áudio e video: Botão "Camera" -> Toggle on/off
+            media.cam.onclick = function() {
+                mediaController.controlCam(currentStream);
+            }
+
+            // Tratamento de solicitações: Botão "Solicitações" -> Abra listagem de solicitações e respostas
+            media.ctlPedir.onclick = function() {
+                // Tratamento de respostas (permitir / negar)
+                let response = doc.ALL('.responses');
+                for (var j = 0; j < response.length; j++) {
+                    response[j].onclick = function() {
+                        let admResponse = this.id.split('_');
+                        let myIdentity = roomInfo.currentRoomId.value;
+                        let msgrash = [
+                            btoa('@PedeAVez:' + admResponse[0]),
+                            roomInfo.currentUser.value,
+                            admResponse[1],
+                            roomInfo.inRoom.value,
+                            myIdentity
+                        ];
+                        if (admResponse[0] == 'allow' && structure.lockSolicitation) {
+                            alerta.initiateMessage(conf.message.ACCEPT_SOLICITATION);
+                        } else {
+                            structure.solicita -= 1;
+                            connection.send(msgrash);
+                            mediaController.reconstructList(admResponse[1]);
+                            mediaController.trataSolicitacao(structure.solicita);
+                            if (admResponse[0] == 'allow') {
+                                structure.lockSolicitation = true
+                                structure.targetUser = admResponse[1];
+                                media.divEndBtn.setAttribute('data-target', admResponse[1]);
+                                $(conf.dom.DIV_BTN_END).fadeIn(300);
+                            }
+
+                        }
+                    }
+                }
+                media.endSessionAccess.onclick = function() {
+
+                    $(conf.dom.DIV_BTN_END).hide();
+                    structure.emptyStreamVideos();
+                    structure.incomingCon = '';
+                    let targetId = structure.targetUser;
+                    let msgrash = [
+                        btoa('@Finaliza-Participacao'),
+                        roomInfo.currentUser.value,
+                        connection.userid,
+                        roomInfo.inRoom.value,
+                        targetId
+                    ];
+                    connection.send(msgrash, targetId);
+                    structure.lockSolicitation = false;
+                    console.log('------------->     LOCAL', targetId, event.userid);
+                }
+            };
+            // Botão "Compartilhar" -> Compartilha a tela do apresentador: Toggle On/Off
+            media.share.onclick = function() {
+
+                if (!mediaController.getControlSharing()) {
+                    $(conf.dom.SHARE).hide();
+                    connection.addStream({
+                        screen: true,
+                        oneway: true,
+                        streamCallback: (stream) => {
+                            setTimeout(function() {
+                                connection.getAllParticipants().forEach((p) => {
+                                    connection.renegotiate(p, {
+                                        screen: true,
+                                        oneway: true
+                                    });
+                                });
+                            }, 2000);
+                            roomInfo.inScreen.value = stream.streamid;
+                        }
+                    });
+                } else {
+                    $(conf.dom.SHARE_ALERT).slideUp(300);
+                    mediaController.switchShare();
+                    var streamConnection = roomInfo.inScreen.value;
+                    var streamToRemove = null;
+                    var newArray = [];
+                    connection.attachStreams.forEach((stream) => {
+                        if (stream.id === streamConnection) {
+                            streamToRemove = stream;
+                            stream.stop();
+                        } else newArray.push(stream);
+                    });
+                    connection.attachStreams = newArray;
+                    connection.getAllParticipants().forEach((p) => {
+                        var peer = connection.peers[p].peer;
+                        try {
+                            peer.removeStream(streamToRemove);
+                            connection.renegotiate(p, {
+                                screen: false,
+                                oneway: true
+                            });
+                        } catch (e) { console.log(e) }
+                    });
+
+                    let myIdentity = roomInfo.currentRoomId.value;
+                    let msgrash = [
+                        btoa('@Finaliza-Share'),
+                        roomInfo.currentUser.value,
+                        streamConnection,
+                        roomInfo.inRoom.value,
+                        myIdentity
+                    ];
+                    connection.send(msgrash);
+                }
+            }
+
+            // Apresenta o número de espectadores conectados
+            $(conf.dom.UL_CON_USERS).fadeIn(300);
+        }
+        /**==============================================================================
+         * Tratamentos e controles complementares
+         */
+        // Tratamento das funções MUTE e UNMUTE
+        connection.onmute = event => event.mediaElement.setAttribute('poster', conf.structure.POSTER_IMG);
+        connection.onunmute = event => event.mediaElement.removeAttribute('poster');
+
+        // Botão de maximizar o video -> toggle on:off
+        media.screen.onclick = () => mediaController.enterFullScreen();
+        media.exitscreen.onclick = () => mediaController.exitFullScreen();
+
+        // Tratamento da função de ampliar e reduzir vídeo
+        media.fullsize.onclick = () => mediaController.toggleFullSize();
+
+        // Tratamento da função de chat da barra de controle de mídia
+        media.toggleChat.onclick = () => media.textMessage.focus();
+
+        // Tratamento de ingresso na transmissão: Botão "Ingressar" -> Ingressa e participa da apresentação
+        media.sessionAccess.onclick = function() {
+
+            if (!mediaController._session && !structure.onParticipation) {
+                mediaController.startParticipation();
+                structure.onParticipation = true;
+                setTimeout(function() {
+                    try {
+                        connection.peers[roomInfo.inRoom.value].addStream({
+                            video: true
+                        });
+                    } catch (e) {
+                        mediaController.endParticipation();
+                        structure.onParticipation = false;
+                    }
+                }, 500);
+            } else if (mediaController._session && structure.onParticipation) {
+                mediaController.disableParticipation();
+                structure.onParticipation = false;
+                try {
+                    connection.attachStreams.forEach((stream) => {
+                        connection.getAllParticipants().forEach((p) => {
+                            let peer = connection.peers[p].peer;
+                            stream.stop();
+                            peer.removeStream(stream);
+                        });
+                    });
+                    let myIdentity = roomInfo.currentRoomId.value;
+                    let msgrash = [
+                        btoa('@Finaliza-Participante'),
+                        roomInfo.currentUser.value,
+                        connection.userid,
+                        roomInfo.inRoom.value,
+                        myIdentity
+                    ];
+                    connection.send(msgrash, roomInfo.inRoom.value);
+                    structure.lockSolicitation = false;
+                    alerta.initiateMessage(conf.message.END_PARTICIPATION);
+                } catch (e) {
+                    mediaController.startParticipation();
+                    structure.onParticipation = true;
+                }
+            }
+        };
+
+    };
+
+    //===================================================================================
+    // Listener para abertura de conexões
+    connection.onopen = (event) => {
+
+        if (structure.singleConnection && (!connection.isInitiator && event.extra.modifiedValue)) {
+            connection.disconnectWith(event.userid);
+        }
+    };
+
+    // Listener para finalização de streams
+    connection.onstreamended = (event) => {
+
+        if (event.stream.isScreen) {
+            $(conf.dom.VIDEO_SECOND).hide();
+        } else if (event.streamid == structure.userVideo.streamid) {
+            console.log('EVENTO-END-STREAM: ', event);
+            $(conf.dom.VIDEO_THIRD).hide();
+            structure.userVideo = conf.structure.WAITING_FOR_VIDEO;
+            structure.lockSolicitation = false;
+        } else {
+            return;
+        }
+        mediaController.closeIncomingVideos(event.stream);
+    };
+
+    // Listener para fim de conexões
+    connection.onleave = (event) => {
+        console.log('DEIXANDO CONEXÃO...', event);
+    };
+
+    // Ação de criar uma sala ao clicar em 'btn-join-as-productor' ======================
+    structure.startRoom.onclick = function() {
+
+        let room = roomController.initiateRoom();
+        let values = $(conf.dom.CURSO_LIST).val();
+        let strValues = values.join(';');
+
+        if (roomController.validade()) {
+            structure.usuario = room.name;
+            structure.onlobby = false;
+
+            // Inicializa a tela de apresentação
+            // Modela e apresenta cabeçalho do video
+            mediaController.initiateStream();
+            roomController.setRoomLabel(conf.misc.ICON_FA_VIDEOCAM, room.tema, room.assunto);
+            structure.startRoom.disabled = true;
+
+            // Define inicialização de sessão
+            // -> Permite Audio, Video e Dados
+            connection.session = {
+                audio: true,
+                video: true,
+                data: true,
+                broadcast: true,
+                oneway: true
+            };
+
+            // Controle da utilização de banda
+            /* Definido com o máximo de 400KBps */
+            connection.bandwidth = {
+                audio: 100,
+                video: 300
+            };
+
+            // Inicializa Socket / Verifica existência do broadcast
+            let socket = connection.getSocket();
+            socket.emit('check-broadcast-presence', room.hash, (isBroadcastExists) => {
+                if (!isBroadcastExists) {
+                    connection.userid = room.hash;
+                }
+                socket.emit('join-broadcast', {
+                    broadcastId: room.hash,
+                    userid: connection.userid,
+                    typeOfStreams: connection.session,
+                    bandwidth: connection.bandwidth
+                });
+            });
+        } else {
+            alerta.initiateMessage(conf.message.FORM_ALERT);
+        }
+    };
+    //===================================================================================
+
+    // Tratamento do Id da sala e dos links para acesso -> Basea-se no URI
+    /**
+     *  var params      string
+     *  var match       string
+     *  var broadcastId string
+     *  var hashString  string
+     */
+
     (function() {
         var params = {},
             r = /([^&=]+)=?([^&]*)/g;
@@ -378,39 +607,36 @@ $(document).ready(function() {
             return decodeURIComponent(s.replace(/\+/g, ' '));
         }
         var match, search = window.location.search;
-        while (match = r.exec(search.substring(1))) {
+        while (match = r.exec(search.substring(1)))
             params[d(match[1])] = d(match[2]);
-        }
         window.params = params;
     })();
 
-    //Ciclo de verificação de presença de uma sala aberta nesse servidor
-    var roomid = '';
+    let broadcastId = '';
     if (localStorage.getItem(connection.socketMessageEvent)) {
-        roomid = localStorage.getItem(connection.socketMessageEvent);
+        broadcastId = localStorage.getItem(connection.socketMessageEvent);
     } else {
-        roomid = connection.token();
+        broadcastId = connection.token();
     }
-    document.getElementById('room-id').value = roomid;
-    document.getElementById('room-id').onkeyup = function() {
+
+    roomInfo.currentRoomId.onkeyup = function() {
         localStorage.setItem(connection.socketMessageEvent, this.value);
     };
-    var hashString = location.hash.replace('#', '');
+    let hashString = location.hash.replace('#', '');
     if (hashString.length && hashString.indexOf('comment-') == 0) {
         hashString = '';
     }
-    var roomid = params.roomid;
-    if (!roomid && hashString.length) {
-        roomid = hashString;
-    }
-    if (roomid && roomid.length) {
-        document.getElementById('room-id').value = roomid;
-        localStorage.setItem(connection.socketMessageEvent, roomid);
-        // auto-join-room
+
+    if (broadcastId && broadcastId.length) {
+        roomInfo.currentRoomId.value = broadcastId;
+        localStorage.setItem(connection.socketMessageEvent, broadcastId);
+
+        // Efetua o join automático na sala em caso de desconexão do espectador
+        // ->Verificação a cada 5 segundos
         (function reCheckRoomPresence() {
-            connection.checkPresence(roomid, function(isRoomExists) {
+            connection.checkPresence(broadcastId, (isRoomExists) => {
                 if (isRoomExists) {
-                    connection.join(roomid);
+                    doc.TAG('#' + broadcastId).onclick();
                     return;
                 }
                 setTimeout(reCheckRoomPresence, 5000);
@@ -418,108 +644,271 @@ $(document).ready(function() {
         })();
     }
 
-    //Controle de opções para criação de sala
-    /*
-     *  var matVal string
-     *  var btnRoom html elem.
-     */
-    //Verifica campo select id=turma
+    // Verifica quantas conexões estão ativas nesse broadcast
+    connection.onNumberOfBroadcastViewersUpdated = (event) => {
+        if (!connection.isInitiator) return;
+        structure.viewers = event.numberOfBroadcastViewers;
+        roomView.changeCounter(structure.viewers);
+    };
 
-    /*
-    document.getElementById('turma').onchange = function(evt) {
-        var instance = M.FormSelect.init(this);
-        var selected = instance.getSelectedValues();
-        //console.log(selected);
+    // Verifica listagem de de salas públicas que se enquadrem no perfil do usuário
+    // ->A cada 3 segundos
+    (function looper() {
 
-        
-        var matVal = document.getElementById('materia').value;
-        var btnRoom = document.getElementById('btn-join-as-productor');
-        if (this.value && matVal) {
-            btnRoom.disabled = false;
+        if (structure.onlobby) {
+            //Verifica a existência des salas públicas
+            connection.getPublicModerators((array) => {
+
+                structure.publicRoomsList.innerHTML = '';
+                if (array.length > 0) {
+                    array.forEach((moderator) => {
+                        let moderatorId = moderator.userid;
+
+                        connection.getNumberOfBroadcastViewers(moderatorId, (numberOfBroadcastViewers) => {
+                            structure.viewers = numberOfBroadcastViewers;
+                        });
+
+                        let labelRoom = roomDataController.validateRoomName(moderatorId, array);
+                        if (!labelRoom) return;
+                        if (moderatorId == connection.userid) return;
+
+                        let roomData = roomDataController.initiateRoomData(labelRoom);
+                        roomData.allowed = roomDataController.validateAccess(roomData.curso, roomData.classes);
+
+                        if (roomData.allowed) {
+
+                            // Cria rótulo de sala se o acesso a ela for permitido
+                            structure.countRooms += 1;
+                            structure.usuario = roomInfo.currentUser.value;
+
+                            let divOpen = doc.ADD('div');
+                            let button = doc.ADD('a');
+                            let card = roomController.constructAccessList(roomData.classe, roomData.assunto, roomData.apresentador, structure.viewers, moderatorId);
+
+                            roomController.initiateRoomCard(moderatorId, card, divOpen, button);
+
+                            //Função de entrada na sala a partir do botão ENTRAR
+                            button.onclick = function() {
+                                mediaController.initiateStream();
+                                roomController.setRoomLabel(conf.misc.ICON_FA_TV, roomData.classe, roomData.assunto);
+
+                                structure.onlobby = false;
+                                structure.isModerator = false;
+                                structure.connectedAt = this.id;
+                                roomInfo.broadcaster.value = roomData.whois;
+
+                                connection.session = {
+                                    audio: false,
+                                    video: false
+                                };
+
+                                let socket = connection.getSocket();
+                                socket.emit('join-broadcast', {
+                                    broadcastId: structure.connectedAt,
+                                    userid: connection.userid,
+                                    typeOfStreams: connection.session
+                                });
+                            };
+                        }
+                        if (structure.countRooms == 0) {
+                            roomController.noRooms();
+                        }
+                    });
+                } else {
+                    roomController.noRooms();
+                }
+            });
+        } else {
+            // Tratamento de conexões de espectadores
+            roomController.clearConList();
+            let allParticipants = connection.getAllParticipants();
+            structure.viewers = allParticipants.length;
+            allParticipants.forEach((participantId) => {
+                let myId = roomInfo.currentRoomId.value;
+                let user = connection.peers[participantId];
+
+                user.extra.modifiedValue ?
+                    roomController.constructConnectionList(user.extra.modifiedValue, user.extra.modifiedValue.split('-')[1], user.userid, true) :
+                    roomController.constructConnectionList(myId, roomInfo.currentUser.value + ' (você)', connection.userid, false);
+            });
+            if (structure.viewers > 0) {
+                if (roomInfo.countUsers.getAttribute('data-target') == 0) {
+                    roomController.inputConList();
+                    roomView.changeCounter(structure.viewers);
+                    $('#connected-users').fadeIn(300);
+                }
+                let disconnectId;
+                let btnDisconnect = doc.ALL('.disconnect-btn');
+                for (var j = 0; j < btnDisconnect.length; j++) {
+                    btnDisconnect[j].onclick = function() {
+                        disconnectId = this.getAttribute('data-announced');
+                        connection.send({
+                            userRemoved: true,
+                            removedUserId: disconnectId
+                        });
+                        alerta.initiateMessage(conf.message.DISCONNECT_USER, this.name);
+                    }
+                }
+            }
         }
-        
-    }
-    */
+        setTimeout(looper, 3000);
+    })();
+
+    /**
+     *  CHAT---------------------------------------------------------
+     */
+    // Controles de envio e recebimento de mensagens
+    // -> Efetua tratando entrada de texto
+    /**
+     *  var texto String
+     */
+    media.textMessage.onkeyup = function(e) {
+        if (e.keyCode != 13) return;
+        this.value = this.value.replace(/^\s+|\s+$/g, '');
+        if (!this.value.length) return;
+        var texto = "<b class='small'>" + structure.usuario + "</b> :<br>" + this.value;
+        texto = btoa(texto);
+        connection.send(texto);
+        appendDIV(texto);
+        this.value = '';
+    };
+    /**
+     *  var texto String
+     */
+    doc.TAG('#send-message-btn').onclick = function() {
+        var texto = media.textMessage.value
+        texto = texto.replace(/^\s+|\s+$/g, '');
+        if (!texto.length) return;
+        texto = "<b class='small'>" + structure.usuario + "</b> :<br>" + texto;
+        texto = btoa(texto);
+        connection.send(texto);
+        appendDIV(texto);
+        media.textMessage.value = '';
+    };
+    // Recebimento de mensagens
+    connection.onmessage = (event) => {
+        if (event.data.userRemoved === true) {
+
+            if (event.data.removedUserId == connection.userid) {
+                connection.close();
+                setTimeout(location.reload.bind(location), 3000);
+            }
+            return;
+        } else if (structure.singleConnection && (connection.isInitiator && (event.data && !event.data.userRemoved))) {
+
+            if (!Array.isArray(event.data)) {
+                connection.getAllParticipants().forEach((p) => {
+                    if (p != event.userid) {
+                        connection.send(event.data, p);
+                    }
+                });
+            }
+            appendDIV(event);
+        } else {
+
+            appendDIV(event);
+        }
+    };
 
 });
-
 /**
- * FUNCTIONS-----------------------------------------------------------------
+ * FUNÇÕES-------------------------------------------------------------------
  */
-
-//Verifica a existência de dispositivos de vídeo
-function getCameras(sourceInfos) {
-    if (sourceInfos.length > 0) {
-        cameras = true;
-    }
-}
-//Verificação de classes para elementos html
-function hasClass(element, cls) {
-    return (' ' + element.className + ' ').indexOf(' ' + cls + ' ') > -1;
-}
-//Define status de stream - on/off
-function setStatus(st) {
-    status = st;
-}
-//Exibição de campos de vídeo
-function callTeacherStream() {
-    //$('#teacher-access').slideUp(300);
-    //$('#opend-rooms').slideUp(300);
-    $('#initial-access').slideUp(300);
-    $('#video-panel').slideDown(300);
-}
-//Define label da sala acessada
+//Trata e escreve mensagem de chat e trata solicitações
 /*
- *   var roomtitle  html elem.
- */
-function setRoomLabel(label) {
-    var roomtitle = document.getElementById('class-title');
-    roomtitle.innerHTML = label;
-}
-//Cria elementos com as definições da sala criada
-/*
- *    var roomHashURL   string
- *    var roomQueryStringURL    string
- *    var html  string
- *    var roomURLsDiv   html elem.
- */
-function showRoomURL(roomid, className, classTheme) {
-    var roomHashURL = '#' + roomid;
-    var roomQueryStringURL = '?roomid=' + roomid;
-    var html = '<h6 class="card-title"><i class="fa fa-circle light-green-text text-accent-4"></i> Aula iniciada.</h6>';
-    var roomURLsDiv = document.getElementById('room-urls');
-    roomURLsDiv.innerHTML = html;
-    roomURLsDiv.style.display = 'block';
-}
-//Trata e escreve mensagem de chat
-/*
- *    var chatContainer html elem.
- *    var text  string
- *    var message   string
+ * Param event: Mensagem recebida via connection.send (event || event.data)
+ *       -> mensagens em formato de array[4+] (length > 4) são tratadas como solicitações;
+ *       -> solicitações tem como padrão no array[0] o indicativo da solicitação;
+ *       -> os indicativos sempre iniciam com @, como @PedeAVez.
+ *   
+ * var chatContainer elem. html
+ * var text          string
+ * var message       string
  */
 function appendDIV(event) {
-    var chatContainer = document.getElementById('chat-panel');
+    let chatContainer = doc.TAG('#chat-panel');
+    let accessBtn = doc.TAG('#enter-session');
+    var remoto = false;
+    // Recebe mensagens de origem externa ou interna
+    if (event.data) remoto = true;
     var text = event.data || event;
-    var message = text;
-    if (!$('#div-chat-panel').is(":visible")) {
-        toastContent = '<span class="white-text"><i class="fa fa-comment-o blue-text"></i> ' + message + '</span>';
-        M.toast({ html: toastContent, classes: 'grey darken-4' });
-    }
-    //Versão anterior
-    //chatContainer.value += message + '\n';
-
-    //Versão com adaptação para o Materialize
-    $('#chat-panel').val(chatContainer.value + message + '\n');
-    M.textareaAutoResize($('#chat-panel'));
-    M.updateTextFields();
-
-
-}
-//Controle para exibição do chat
-function showChat() {
-    if ($('#div-chat-panel').is(":visible")) {
-        $('#div-chat-panel').slideUp(500);
+    // Verifica a origem da mensagem, se a menssagem é um array e se este array possui mais de 4 índices
+    // -> Definição do padrão de solicitação
+    if (remoto && (Array.isArray(text) && text.length == 5)) {
+        var chkrash = event.data;
+        var msgData = [];
+        var myRoom = doc.TAG('#room-id').value;
+        // Identifica se a mensagem é uma solicitação de serviço
+        if (chkrash[0] === btoa('@PedeAVez')) {
+            // Indica que algum usuário solicita a permissão para falar
+            msgData[0] = chkrash[1];
+            msgData[1] = (atob(chkrash[3])).split('|')[4];
+            msgData[2] = chkrash[4];
+            structure.solicita = mediaController.listBox(msgData, structure.solicita);
+            return;
+        } else if (chkrash[0] === btoa('@PedeAVez:allow')) {
+            // Indica que o broadcaster atendeu à solicitação do usuário
+            // Verifica se o destinatário é o criador da solicitação para entregar a resposta
+            if (chkrash[2] === myRoom) {
+                structure.solicita -= 1;
+                mediaController.allow();
+                structure.lockSolicitation = true;
+            }
+            return;
+        } else if (chkrash[0] === btoa('@PedeAVez:deny')) {
+            // Indica que o broadcaster negou a solicitação do usuário
+            // Verifica se o destinatário é o criador da solicitação para entregar a resposta
+            if (chkrash[2] === myRoom) {
+                structure.solicita -= 1;
+                mediaController.deny();
+                structure.lockSolicitation = false;
+            }
+            return;
+        } else if (chkrash[0] === btoa('@Finaliza-Share')) {
+            if (mediaController._videoIsMain) {
+                media.swapSecond.click();
+            }
+            setTimeout(function() {
+                $('#span-video-preview-2nd').hide();
+                alerta.initiateMessage(conf.message.STOP_SHARE);
+            }, 1000);
+        } else if (chkrash[0] === btoa('@Finaliza-Participacao')) {
+            if (!structure.onParticipation) {
+                structure.onParticipation = true;
+                mediaController._session = true;
+            }
+            media.sessionAccess.click();
+        } else if (chkrash[0] === btoa('@Finaliza-Participante')) {
+            $(conf.dom.DIV_BTN_END).hide();
+        } else {
+            return;
+        }
     } else {
-        $('#div-chat-panel').slideDown(500);
+        // Tratamento de mensagens comuns (fora do padrão de solicitação)
+        mediaController.writeMessage(text, remoto);
+    }
+}
+
+// Emite alerta de desconexão.
+/**
+ * Param userid: String de dados de quem foi desconectado
+ */
+function alertDisconnection(userid) {
+
+    if (userid === roomInfo.inRoom.value) {
+        alerta.initiateMessage(conf.message.ALERT_DISCONNECTION);
+        setTimeout(location.reload.bind(location), 3000);
+    } else {
+        try {
+            for (var j = 0; j < Object.keys(structure.connections).length; j++) {
+                if (structure.connections[j].split('|')[2] == userid) {
+                    structure.connections.splice(j, 1);
+                }
+            }
+        } catch (e) {
+            return;
+        }
+        roomController.constructConnectionExpList(userid);
+        roomView.changeCounter(Object.keys(structure.connections).length);
     }
 }

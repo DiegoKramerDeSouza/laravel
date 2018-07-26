@@ -13,13 +13,15 @@ class CreateRecursoApisTable extends Migration
      */
     public function up()
     {
-        Schema::create('recurso_apis', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('name');
-            $table->string('key');
-            $table->string('details')->nullable();
-            $table->timestamps();
-        });
+        if(!Schema::hasTable('recurso_apis')){
+            Schema::create('recurso_apis', function (Blueprint $table) {
+                $table->increments('id');
+                $table->string('name');
+                $table->string('key');
+                $table->string('details')->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**

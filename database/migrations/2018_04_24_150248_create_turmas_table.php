@@ -13,16 +13,18 @@ class CreateTurmasTable extends Migration
      */
     public function up()
     {
-        Schema::create('turmas', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('name');
-            $table->integer('user_id');
-            $table->string('school_name');
-            $table->integer('school_id');
-            $table->string('curso_id');
-            $table->string('description')->nullable();
-            $table->timestamps();
-        });
+        if(!Schema::hasTable('turmas')){
+            Schema::create('turmas', function (Blueprint $table) {
+                $table->increments('id');
+                $table->string('name');
+                $table->integer('user_id');
+                $table->string('school_name');
+                $table->integer('school_id');
+                $table->string('curso_id');
+                $table->string('description')->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**

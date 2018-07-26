@@ -13,13 +13,15 @@ class CreatePerfilsTable extends Migration
      */
     public function up()
     {
-        Schema::create('perfils', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('name');
-            $table->string('grant');
-            $table->string('description');
-            $table->timestamps();
-        });
+        if(!Schema::hasTable('perfils')){
+            Schema::create('perfils', function (Blueprint $table) {
+                $table->increments('id');
+                $table->string('name');
+                $table->string('grant');
+                $table->string('description');
+                $table->timestamps();
+            });
+        }
     }
 
     /**

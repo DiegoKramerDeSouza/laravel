@@ -1,7 +1,5 @@
 /*!
- * Materialize v1.0.0-beta (http://materializecss.com)
- * Copyright 2014-2017 Materialize
- * MIT License (https://raw.githubusercontent.com/Dogfalo/materialize/master/LICENSE)
+ * Folha de estilo aplicavel aos elementos do MaterializeCSS
  */
 
 @font-face {
@@ -9,6 +7,22 @@
     font-style: normal;
     font-weight: 400;
     src: url(fonts/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2) format('woff2');
+}
+
+body {
+    font-family: 'Raleway', sans-serif !important;
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+html {
+    font-family: 'Raleway', sans-serif !important;
+    overflow-x: hidden;
+}
+
+main {
+    flex: 1 0 auto;
 }
 
 .material-icons {
@@ -28,80 +42,4 @@
 
 nav {
     box-shadow: 5px 10px 18px transparent !important;
-}
-
-#backgroundLayer {
-    position: fixed;
-    top: 0;
-    left: 0;
-    min-width: 100%;
-    min-height: 100%;
-    opacity: 1;
-    z-index: -1;
-}
-
-#nav-footer {
-    position: fixed;
-    bottom: 0px;
-}
-
-#div-chat-panel {
-    position: fixed;
-    bottom: 49px;
-    width: 100%;
-}
-
-#chat-textarea {
-    min-height: 100px;
-    max-height: 100px;
-    overflow-y: auto;
-}
-
-#toast-container {
-    top: auto !important;
-    left: auto !important;
-    bottom: 10%;
-    right: 10%;
-}
-
-.hoverarchor {
-    -webkit-transition-duration: 0.4s;
-    transition-duration: 0.4s;
-    border-radius: 10px;
-}
-
-.hoverarchor:hover {
-    transform: scale(1.1);
-}
-
-.hoverarchor:hover a {
-    color: rgb(33, 150, 243) !important;
-}
-
-.d-none {
-    display: none;
-}
-
-.incoming-videos {
-    display: block;
-    position: absolute;
-    top: 117px;
-    right: 17%;
-    width: 20%;
-}
-
-.constructed-videos {
-    margin: 5px;
-    border: 1px solid black;
-    border-radius: 4px;
-}
-
-body {
-    display: flex;
-    min-height: 100vh;
-    flex-direction: column;
-}
-
-main {
-    flex: 1 0 auto;
 }

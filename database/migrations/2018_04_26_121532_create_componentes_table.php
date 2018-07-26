@@ -13,11 +13,15 @@ class CreateComponentesTable extends Migration
      */
     public function up()
     {
-        Schema::create('componentes', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('name');
-            $table->timestamps();
-        });
+        if(!Schema::hasTable('componentes')){
+            Schema::create('componentes', function (Blueprint $table) {
+                $table->increments('id');
+                $table->string('name')->unique();
+                $table->string('cadastrado')->unique();
+                $table->string('model');
+                $table->timestamps();
+            });
+        }
     }
 
     /**

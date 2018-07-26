@@ -1,24 +1,25 @@
+@include('admin.cadastro._includes.alert')
 <div class='row'>
     <div class='input-field col s12 m6'>
         <input class='validate' autofocus required type='text' name='name' id='name' value='{{ isset($escolas->name) ? $escolas->name : ''}}'>
-        <label for='name'><i class='fa fa-institution'></i> Nome</label>
+        <label for='name'>{!! $institutionIcon !!} Nome</label>
     </div>
 
     <div class='input-field col s12 m6'>
-        <input class='validate' autofocus required type='text' name='register' id='register' value='{{ isset($escolas->register) ? $escolas->register : ''}}'>
-        <label for='register'><i class='fa fa-graduation-cap'></i> Registro</label>
+        <input class='validate' required type='text' name='register' id='register' value='{{ isset($escolas->register) ? $escolas->register : ''}}'>
+        <label for='register'>{!! $turmasIcon !!} Registro</label>
     </div>
 </div>
 
 <div class='row'>
     <div class='input-field col s12 m4'>
             <input class='validate' required type='text' maxlength='9' name='postal' id='postal' value='{{ isset($endereco->postal) ? $endereco->postal : ''}}'>
-            <label for='postal'><i class='fa fa-envelope-o'></i> CEP</label>
+            <label for='postal'>{!! $envelopeIcon !!} CEP</label>
     </div>
 
     <div class='input-field col s12 m8'>
         <input class='validate' required type='text' name='address' id='address' value='{{ isset($endereco->address) ? $endereco->address : ''}}'>
-        <label class='active' for='address'><i class='fa fa-map-marker'></i> Endereço</label>
+        <label class='active' for='address'>{!! $enderecoIcon !!} Endereço</label>
     </div>
 </div>
 
@@ -36,19 +37,19 @@
                 @endforeach
             @endif
         </select>
-        <label for='st'><i class='fa fa-globe'></i> Estado</label>
+        <label for='st'>{!! $globoIcon !!} Estado</label>
     </div>
     <div class='input-field col s6 m4'>
         <input class='validate' required type='text' name='city' id='city' value='{{ isset($endereco->city) ? $endereco->city : ''}}'>
-        <label class='active' for='city'><i class='fa fa-map-o'></i> Cidade</label>
+        <label class='active' for='city'>{!! $mapIcon !!} Cidade</label>
     </div>
     <div class='input-field col s6 m4'>
             <input class='validate' required type='text' name='number' id='number' value='{{ isset($endereco->number) ? $endereco->number : ''}}'>
-            <label for='number'><i class='fa fa-tag'></i> Número</label>
+            <label for='number'>{!! $numeroIcon !!} Número</label>
         </div>
     <div class='input-field col s6 m12'>
         <input class='validate' required type='text' name='complement' id='complement' value='{{ isset($endereco->complement) ? $endereco->complement : ''}}'>
-        <label for='complement'><i class='fa fa-plus-square-o'></i> Complemento</label>
+        <label for='complement'>{!! $plusIcon !!} Complemento</label>
     </div>
     
     <input required type='hidden' name='location' id='location' value='{{ isset($endereco->coordinates) ? $endereco->coordinates : ''}}'>

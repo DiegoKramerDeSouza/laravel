@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Validator;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Traits\EspecialMethods;
@@ -11,91 +12,124 @@ class CadastroModuloController extends Controller
 {
     use EspecialMethods;
 
-    public function index($page){
-        if($this->validade('2')){
-            //Paginação dos valores coletados na entidade Modulos
-            $modulos = Modulo::paginate(10);
+    /**
+     * Validação de permissão de acesso;
+     * Coleta todos os módulos por nome;
+     * Direciona para a View de Listagem de turmas;
+     */
+    public function index(){
 
-            //Construção da paginação personalizada
-            $prev = $page-1;
-            $next = $page+1;
-            $last = $modulos->lastPage();
-            $paginate = '';
-            if($page == 1){
-                $paginate .= '<li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a></li>';
-            } else {
-                $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/modulos/p' . $prev . '?page=' . $prev . '"><i class="material-icons">chevron_left</i></a></li>';
-            }
-            for($i = 1; $i<=$last; $i++){
-                if($i == $page){
-                    $paginate .= '<li class="active blue white-text"><a>' . $i . '</a></li>';
-                } else {
-                    $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/modulos/p' . $i . '?page=' . $i . '">' . $i . '</a></li>';
-                }
-            }
-            if($page == $last){
-                $paginate .= '<li class="disabled"><a href="#!"><i class="material-icons">chevron_right</i></a></li>';
-            } else {
-                $paginate .= '<li class="waves-effect waves-teal"><a href="http://localhost/admin/cadastro/modulos/p' . $next . '?page=' . $next . '"><i class="material-icons">chevron_right</i></a></li>';
-            }
-
-            return view('admin.cadastro.modulos.index', compact('paginate', 'modulos'));
+        if($this->validade('Modulo')){
+            $modulos = Modulo::orderBy('name', 'asc')->paginate(5);
+            $isAutocomplete = true;
+            return view('admin.cadastro.modulos.index', compact('modulos', 'isAutocomplete'));
         } else {
-            return redirect()->route('denied');
+            return $this->accessDenied();
         }
     }
+
+    /**
+     * Validação de permissão de acesso;
+     * Coleta todas os modulos cadastrado;
+     * Direciona para View de novo Cadastro;
+     */
     public function add(){
-        if($this->validade('2')){
-            //Coleta todas os modulos cadastrados
+
+        if($this->validade('Modulo')){
             $modulos = Modulo::all();
             return view('admin.cadastro.modulos.adicionar', compact('modulos'));
         } else {
-            return redirect()->route('denied');
+            return $this->accessDenied();
         }
     }
+
+    /**
+     * 1. Validação de permissão de acesso;
+     * 2. Validação dos campos a gravar;
+     * 3. Define os campos enviados que devem ser gravados em Modulos;
+     * 4. Insere na base de dados Users;
+     */
     public function save(Request $req){
-        if($this->validade('2')){
-            //Define os campos enviados que devem ser gravados no banco
+
+        if($this->validade('Modulo')){
+            $validator = Validator::make($req->all(), [
+                'name' => 'bail|required|unique:modulos|min:4|max:191'
+            ]);
+            if ($validator->fails()) {
+                return redirect()->route('admin.cadastro.modulos.adiciona')
+                            ->withErrors($validator)
+                            ->withInput();
+            }
+            
             $modulos = [
                 '_token'=>$req->_token,
                 'name'=>$req->name
             ];
-            //Insere dados na base Turma
             Modulo::create($modulos);
+
             return redirect()->route('admin.cadastro.modulos', ['page' => '1']);
         } else {
-            return redirect()->route('denied');
+
+            return $this->accessDenied();
         }
     }
+
+    /**
+     * 1. Validação de permissão de acesso;
+     * 2. Direciona para View de edição;
+     */   
     public function edit($id){
-        if($this->validade('2')){
-            //Direciona para View de edição
+
+        if($this->validade('Modulo')){
             $modulos = Modulo::find($id);
             return view('admin.cadastro.modulos.editar', compact('modulos'));
         } else {
-            return redirect()->route('denied');
+            return $this->accessDenied();
         }
     }
+
+    /**
+     * 1. Validação de permissão de acesso;
+     * 2. Validação dos campos a alterar;
+     * 3. Define os campos enviados que devem ser atualizados em Modulos;
+     * 4. Atualiza base de dados Modulos;
+     */
     public function update(Request $req, $id){
-        if($this->validade('2')){
-            //Define os campos enviados que devem ser atualizados no banco
+
+        if($this->validade('Modulo')){
+            $validator = Validator::make($req->all(), [
+                'name' => 'bail|required|unique:modulos,name,' . $id . '|min:4|max:191'
+            ]);
+            if ($validator->fails()) {
+                return redirect()->route('admin.cadastro.modulos.edita', $id)
+                            ->withErrors($validator)
+                            ->withInput();
+            }
+
             $modulos = [
                 '_token'=>$req->_token,
                 'name'=>$req->name
             ];
-            //Atualiza base de dados Turma
             Modulo::find($id)->update($modulos);
+
             return redirect()->route('admin.cadastro.modulos', ['page' => '1']);
         } else {
-            return redirect()->route('denied');
+
+            return $this->accessDenied();
         }
     }
+
+    /**
+     * Validação de permissão de acesso;
+     * Deleta ID informado na base Modulos;
+     */
     public function delete($id){
-        if($this->validade('2')){
+        if($this->validade('Modulo')){
             Modulo::find($id)->delete();
             return redirect()->route('admin.cadastro.modulos', ['page' => '1']);
         } else {
             return redirect()->route('denied');
         }
     }
+
 }

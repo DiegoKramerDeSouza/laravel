@@ -1,7 +1,8 @@
+@include('admin.cadastro._includes.alert')
 <div class='row'>
     <div class='input-field col s12 m6'>
         <input class='validate' required type='text' name='name' id='name' value='{{ isset($cursos->name) ? $cursos->name : ''}}'>
-        <label for='name'><i class='fa fa-user-circle'></i> Nome</label>
+        <label for='name'>{!! $loginIcon !!} Nome</label>
     </div>
 
     <div class='input-field col s12 m6'>
@@ -17,6 +18,6 @@
                 @endforeach
             @endif
         </select>
-        <label for='school_id'><i class='fa fa-database'></i> Módulo</label>
+        <label for='school_id'>{!! $modulosIcon !!} Módulo</label>
     </div>
 </div>

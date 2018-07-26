@@ -18,22 +18,36 @@ class CadastroController extends Controller
 {
     use EspecialMethods;
 
+    /**
+     * Valida o acesso à função de cadastro;
+     * Encaminha para a View de cadastro caso o acesso seja administrativo;
+     */
     public function index(){
+
         $userid = Auth::user()->id;
-        $cadastro = $this->validadeCadastro($userid);
-        if(Auth::user()->type == 0 && $cadastro){
-            $users = User::where('type', 0)->get();
-            $dados = UserDado::where('user_id', $userid)->first();
-            $granted = Perfil::find($dados->group);
-            $turmas = Turma::all();
-            $escolas = Escola::all();
-            $modulos = Modulo::all();
-            $cursos = Curso::all();
-            $perfis = Perfil::all();
-            return view('admin.cadastro.index', compact('users', 'granted', 'escolas', 'turmas', 'modulos', 'cursos', 'perfis'));
-        } else {
-            return redirect()->route('denied');
+        if(Auth::user()->type == 0){
+            $cadastro = $this->adminAccess($userid);
         }
+        
+        if(isset($cadastro)){
+            if($cadastro != "0"){
+                $users = User::where('type', 0)->get();
+                $dados = UserDado::where('user_id', $userid)->first();
+                $granted = Perfil::find($dados->group);
+                $turmas = Turma::all();
+                $escolas = Escola::all();
+                $modulos = Modulo::all();
+                $cursos = Curso::all();
+                $perfis = Perfil::all();
+                $countModulos = count(explode(';', $granted));
+                $grid = (12/$countModulos);
+                if($grid <= 3){
+                    $grid = (24/$countModulos);
+                }
+                return view('admin.cadastro.index', compact('users', 'granted', 'grid', 'escolas', 'turmas', 'modulos', 'cursos', 'perfis'));
+            }
+        }
+        return $this->accessDenied();
     }
     
 }

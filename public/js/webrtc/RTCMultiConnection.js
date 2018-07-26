@@ -761,6 +761,8 @@
             if (!!connection.enableLogs) {
                 console.warn('Data connection has been closed between you & ', event.userid);
             }
+            console.log(roomid);
+            alertDisconnection(event.userid);
         };
 
         connection.onerror = function(error) {
