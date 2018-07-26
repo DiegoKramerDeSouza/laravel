@@ -1,6 +1,6 @@
 /**
  * MANIPULAÇÃO DE ELEMENTOS APLICÁVEIS À PESQUISA DE CADASTROS
- * Tratamento de elementos para criação de Autocomplete
+ * Inicialização de Autocomplete
  */
 $(document).ready(function() {
 

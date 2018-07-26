@@ -5,19 +5,16 @@ class RoomView {
 
     constructor() {
 
-        let tag = document.querySelector.bind(document);
-        let addTag = document.createElement.bind(document);
-
-        this._countUsers = tag(conf.dom.LABEL_USERS);
-        this._roomLabel = tag(conf.dom.CLASS_TITLE);
+        this._countUsers = doc.TAG(dom.LABEL_USERS);
+        this._roomLabel = doc.TAG(dom.CLASS_TITLE);
         this._label;
-        this._publicRoomsDiv = tag(conf.dom.PUBLIC_CONFERENCE);
-        this._divOpen = addTag('div');
+        this._publicRoomsDiv = doc.TAG(dom.PUBLIC_CONFERENCE);
+        this._divOpen = doc.ADD('div');
         this._divMessage;
         this._roomCard;
-        this._roomList = tag(conf.dom.PUBLIC_CONFERENCE);
-        this._connectionList = tag(conf.dom.CONNECTION_LIST);
-        this._connectList = tag(conf.dom.USERS_LIST);
+        this._roomList = doc.TAG(dom.PUBLIC_CONFERENCE);
+        this._connectionList = doc.TAG(dom.CONNECTION_LIST);
+        this._connectList = doc.TAG(dom.USERS_LIST);
         this._listOfConCards = '';
     }
 

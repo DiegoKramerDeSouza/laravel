@@ -7,30 +7,29 @@ class MediaController {
 
     constructor() {
 
-        let tag = document.querySelector.bind(document);
         this._mediaView = new MediaView();
 
-        this._videoPreview = tag(conf.dom.FIRST_VIDEO);
-        this._secondVideoPreview = tag(conf.dom.SECOND_VIDEO);
-        this._thirdVideoPreview = tag(conf.dom.THIRD_VIDEO);
-        this._mute = tag(conf.dom.MUTE);
-        this._screen = tag(conf.dom.SCREEN);
-        this._exitscreen = tag(conf.dom.EXIT_SCREEN);
-        this._vol = tag(conf.dom.VOL);
-        this._solPedir = tag(conf.dom.SOL_PEDIR);
-        this._cam = tag(conf.dom.CAM);
-        this._pedir = tag(conf.dom.PEDIR);
-        this._ctlPedir = tag(conf.dom.CTL_PEDIR);
-        this._share = tag(conf.dom.SHARE);
-        this._videoSecond = tag(conf.dom.VIDEO_SECOND);
-        this._swapSecond = tag(conf.dom.SWAP_SECOND);
-        this._sessionAccess = tag(conf.dom.SESSION_ACCESS);
-        this._endSessionAccess = tag(conf.dom.END_SESSION_ACCESS);
-        this._divEndBtn = tag(conf.dom.DIV_BTN_END);
-        this._toggleChat = tag(conf.dom.TOGGLE_CHAT);
-        this._textMessage = tag(conf.dom.TEXT_MESSAGE);
-        this._sideNavbar = tag(conf.dom.SIDE_NAVBAR);
-        this._fullsize = tag(conf.dom.TOGGLE_VIDEO_SIZE);
+        this._videoPreview = doc.TAG(dom.FIRST_VIDEO);
+        this._secondVideoPreview = doc.TAG(dom.SECOND_VIDEO);
+        this._thirdVideoPreview = doc.TAG(dom.THIRD_VIDEO);
+        this._mute = doc.TAG(dom.MUTE);
+        this._screen = doc.TAG(dom.SCREEN);
+        this._exitscreen = doc.TAG(dom.EXIT_SCREEN);
+        this._vol = doc.TAG(dom.VOL);
+        this._solPedir = doc.TAG(dom.SOL_PEDIR);
+        this._cam = doc.TAG(dom.CAM);
+        this._pedir = doc.TAG(dom.PEDIR);
+        this._ctlPedir = doc.TAG(dom.CTL_PEDIR);
+        this._share = doc.TAG(dom.SHARE);
+        this._videoSecond = doc.TAG(dom.VIDEO_SECOND);
+        this._swapSecond = doc.TAG(dom.SWAP_SECOND);
+        this._sessionAccess = doc.TAG(dom.SESSION_ACCESS);
+        this._endSessionAccess = doc.TAG(dom.END_SESSION_ACCESS);
+        this._divEndBtn = doc.TAG(dom.DIV_BTN_END);
+        this._toggleChat = doc.TAG(dom.TOGGLE_CHAT);
+        this._textMessage = doc.TAG(dom.TEXT_MESSAGE);
+        this._sideNavbar = doc.TAG(dom.SIDE_NAVBAR);
+        this._fullsize = doc.TAG(dom.TOGGLE_VIDEO_SIZE);
 
         this._controlCam = true;
         this._controlVoice = true;
@@ -39,11 +38,11 @@ class MediaController {
         this._session = false;
         this._videoIsMain = false;
 
-        this._roomId = tag(conf.dom.ROOM);
-        this._divMainVideo = tag(conf.dom.DIV_MAIN_VIDEO);
-        this._spanMainVideo = tag(conf.dom.VIDEO_MAIN);
-        this._pageMainContainer = tag(conf.dom.PAGE_MAIN_CONTENT);
-        this._divIncomingVideo = tag(conf.dom.DIV_INCOMING_VIDEO);
+        this._roomId = doc.TAG(dom.ROOM);
+        this._divMainVideo = doc.TAG(dom.DIV_MAIN_VIDEO);
+        this._spanMainVideo = doc.TAG(dom.VIDEO_MAIN);
+        this._pageMainContainer = doc.TAG(dom.PAGE_MAIN_CONTENT);
+        this._divIncomingVideo = doc.TAG(dom.DIV_INCOMING_VIDEO);
         this._otherVideos = {
             screen: '',
             user: ''
@@ -93,6 +92,7 @@ class MediaController {
     initiateStream() {
 
         this._mediaView.adjustStreamScreen();
+        this._mediaView.adjustChatPanel();
     }
 
     getControlSharing() {
@@ -205,7 +205,7 @@ class MediaController {
         let sVideoP = this._secondVideoPreview;
         let mainVideoSrc;
 
-        this._videoIsMain ? mVideoP.classList.remove(conf.misc.CLASS_WIDTH_LIMIT) : mVideoP.classList.add(conf.misc.CLASS_WIDTH_LIMIT);
+        this._videoIsMain ? mVideoP.classList.remove(misc.CLASS_WIDTH_LIMIT) : mVideoP.classList.add(misc.CLASS_WIDTH_LIMIT);
         this._videoIsMain = this._switchValue(this._videoIsMain);
 
         mainVideoSrc = mVideoP.srcObject;
@@ -336,19 +336,18 @@ class MediaController {
             } else if (document.webkitIsFullScreen) {
                 document.webkitCancelFullScreen();
             }
-            $(conf.dom.DIV_EXIT_FSCREEN).fadeOut(500);
-            let tag = document.querySelector.bind(document);
-            let videoContainer = tag(conf.dom.VIDEO_MAIN);
-            videoContainer.classList.remove(conf.misc.TURNOFF_COLOR);
-            videoContainer.classList.add(conf.misc.CLASS_WIDTH_LIMIT);
-            videoContainer.style.height = conf.misc.STYLE_HEIGHT_INHERIT;
+            $(dom.DIV_EXIT_FSCREEN).fadeOut(500);
+            let videoContainer = doc.TAG(dom.VIDEO_MAIN);
+            videoContainer.classList.remove(misc.TURNOFF_COLOR);
+            videoContainer.classList.add(misc.CLASS_WIDTH_LIMIT);
+            videoContainer.style.height = misc.STYLE_HEIGHT_INHERIT;
         }
         return;
     }
 
     toggleFullSize() {
 
-        if (RoomHelper.hasClass(this._pageMainContainer, conf.misc.CLASS_MAIN_CONTAINER)) {
+        if (RoomHelper.hasClass(this._pageMainContainer, misc.CLASS_MAIN_CONTAINER)) {
             this._mediaView.expandVideoSize();
         } else {
             this._mediaView.shrinkVideoSize();
@@ -361,7 +360,7 @@ class MediaController {
         let message = atob(msg);
         let instance = M.Sidenav.getInstance(this._sideNavbar);
 
-        rmt ? msgbox = conf.misc.DEFAULT_MSGBOX_OUT : msgbox = conf.misc.DEFAULT_MSGBOX_IN;
+        rmt ? msgbox = misc.DEFAULT_MSGBOX_OUT : msgbox = misc.DEFAULT_MSGBOX_IN;
         this._mediaView.writeReceiveMessage(message, msgbox, instance.isOpen);
     }
 
@@ -383,8 +382,7 @@ class MediaController {
 
     reconstructList(exp) {
 
-        let allTags = document.querySelectorAll.bind(document);
-        let responseList = allTags(conf.dom.SOL_RESPONSE);
+        let responseList = doc.ALL(dom.SOL_RESPONSE);
 
         this._mediaView.clearSolicitationLis();
         if (responseList.length <= 1) this._mediaView.noSolicitation();

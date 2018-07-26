@@ -10,9 +10,6 @@
  */
 //-------------------------------------------------------------------------------------------------
 
-let cfg = _configure.responseJSON;
-console.log(cfg);
-
 let connectController = new ConnectController();
 let connect = connectController.initiateConnection();
 
@@ -36,7 +33,6 @@ let connection = new RTCMultiConnection();
 $(document).ready(function() {
 
     window.enableAdapter = true;
-    structure.singleConnection = false;
 
     //Application - Inicia a chamada e tratamento de multiconexão
     connection.enableScalableBroadcast = connect.enableScalableBroadcast;
@@ -122,7 +118,7 @@ $(document).ready(function() {
                 let instance = M.Modal.getInstance(elem);
                 instance.open();
             } else if (error === 'permission-denied') {
-                $(conf.dom.SHARE).fadeIn(300);
+                $(dom.SHARE).fadeIn(300);
             }
             throw error;
         });
@@ -154,7 +150,7 @@ $(document).ready(function() {
                 mediaController.initiateVideo(media.thirdVideoPreview);
                 alerta.initiateMessage(conf.message.START_PARTICIPATION);
 
-                $(conf.dom.VIDEO_THIRD).fadeIn(300);
+                $(dom.VIDEO_THIRD).fadeIn(300);
 
                 setTimeout(function() {
                     connection.getAllParticipants().forEach((p) => {
@@ -174,7 +170,7 @@ $(document).ready(function() {
                     mediaController.openIncomingVideos(event.stream);
                 }, 500);
 
-                $(conf.dom.DIV_BTN_END).fadeIn(300);
+                $(dom.DIV_BTN_END).fadeIn(300);
                 media.endSessionAccess.onclick = function() {
                     console.log('------------->     REMOTO', event.userid, structure.targetUser);
                     structure.streamVideos.forEach((stream) => {
@@ -184,7 +180,7 @@ $(document).ready(function() {
                             peer.removeStream(stream);
                         });
                     });
-                    $(conf.dom.DIV_BTN_END).hide();
+                    $(dom.DIV_BTN_END).hide();
                     structure.emptyStreamVideos();
                     structure.incomingCon = '';
                     mediaController.closeIncomingVideos(event.stream);
@@ -207,7 +203,7 @@ $(document).ready(function() {
             console.log('REMOTO COM SCREEN --> ', event.stream.streamid);
 
             // Conexão remota com compartilhamento de tela
-            $(conf.dom.VIDEO_SECOND).fadeIn(300);
+            $(dom.VIDEO_SECOND).fadeIn(300);
             mediaController.openIncomingVideos(event.stream);
             media.secondVideoPreview.srcObject = event.stream;
             structure.incomingCon = event.stream.streamid;
@@ -225,7 +221,7 @@ $(document).ready(function() {
 
             // Conexão remota sem compartilhamento de tela
             if (structure.mainVideo != conf.structure.WAITING_FOR_VIDEO || event.extra.modifiedValue) {
-                $(conf.dom.VIDEO_THIRD).fadeIn(300);
+                $(dom.VIDEO_THIRD).fadeIn(300);
                 if (structure.incomingCon != event.stream.streamid) {
                     structure.incomingCon = event.stream.streamid;
                     media.thirdVideoPreview.srcObject = event.stream;
@@ -252,9 +248,9 @@ $(document).ready(function() {
             mediaController.disableShare();
 
             // Ajusta elementos de exibição (define o menu de áudio e video para espectadores)
-            $(conf.dom.DIV_CONNECT).hide();
-            $(conf.dom.CTL_PEDIR).hide();
-            $(conf.dom.DIV_CONTROLLER).fadeIn(300);
+            $(dom.DIV_CONNECT).hide();
+            $(dom.CTL_PEDIR).hide();
+            $(dom.DIV_CONTROLLER).fadeIn(300);
 
             structure.viewers = connection.getAllParticipants().length;
             roomView.changeCounter(structure.viewers);
@@ -315,16 +311,16 @@ $(document).ready(function() {
             mediaController.initiateVideo(media.videoPreview);
 
             if (structure.solicita <= 0) {
-                $(conf.dom.COUNT_PEDIR).hide();
+                $(dom.COUNT_PEDIR).hide();
             }
             if (!connection.isInitiator) {
                 mediaController.disablePedir();
             }
             mediaController.disableVolume();
 
-            $(conf.dom.DIV_CONNECT).hide();
-            $(conf.dom.LI_PERDIR).hide();
-            $(conf.dom.DIV_CONTROLLER).fadeIn(300);
+            $(dom.DIV_CONNECT).hide();
+            $(dom.LI_PERDIR).hide();
+            $(dom.DIV_CONTROLLER).fadeIn(300);
 
             // Tratamento de áudio: Botão "Microfone" -> Toggle on/off
             media.mute.onclick = function() {
@@ -361,7 +357,7 @@ $(document).ready(function() {
                                 structure.lockSolicitation = true
                                 structure.targetUser = admResponse[1];
                                 media.divEndBtn.setAttribute('data-target', admResponse[1]);
-                                $(conf.dom.DIV_BTN_END).fadeIn(300);
+                                $(dom.DIV_BTN_END).fadeIn(300);
                             }
 
                         }
@@ -369,7 +365,7 @@ $(document).ready(function() {
                 }
                 media.endSessionAccess.onclick = function() {
 
-                    $(conf.dom.DIV_BTN_END).hide();
+                    $(dom.DIV_BTN_END).hide();
                     structure.emptyStreamVideos();
                     structure.incomingCon = '';
                     let targetId = structure.targetUser;
@@ -389,7 +385,7 @@ $(document).ready(function() {
             media.share.onclick = function() {
 
                 if (!mediaController.getControlSharing()) {
-                    $(conf.dom.SHARE).hide();
+                    $(dom.SHARE).hide();
                     connection.addStream({
                         screen: true,
                         oneway: true,
@@ -406,7 +402,7 @@ $(document).ready(function() {
                         }
                     });
                 } else {
-                    $(conf.dom.SHARE_ALERT).slideUp(300);
+                    $(dom.SHARE_ALERT).slideUp(300);
                     mediaController.switchShare();
                     var streamConnection = roomInfo.inScreen.value;
                     var streamToRemove = null;
@@ -442,7 +438,7 @@ $(document).ready(function() {
             }
 
             // Apresenta o número de espectadores conectados
-            $(conf.dom.UL_CON_USERS).fadeIn(300);
+            $(dom.UL_CON_USERS).fadeIn(300);
         }
         /**==============================================================================
          * Tratamentos e controles complementares
@@ -521,10 +517,10 @@ $(document).ready(function() {
     connection.onstreamended = (event) => {
 
         if (event.stream.isScreen) {
-            $(conf.dom.VIDEO_SECOND).hide();
+            $(dom.VIDEO_SECOND).hide();
         } else if (event.streamid == structure.userVideo.streamid) {
             console.log('EVENTO-END-STREAM: ', event);
-            $(conf.dom.VIDEO_THIRD).hide();
+            $(dom.VIDEO_THIRD).hide();
             structure.userVideo = conf.structure.WAITING_FOR_VIDEO;
             structure.lockSolicitation = false;
         } else {
@@ -542,7 +538,7 @@ $(document).ready(function() {
     structure.startRoom.onclick = function() {
 
         let room = roomController.initiateRoom();
-        let values = $(conf.dom.CURSO_LIST).val();
+        let values = $(dom.CURSO_LIST).val();
         let strValues = values.join(';');
 
         if (roomController.validade()) {
@@ -552,7 +548,8 @@ $(document).ready(function() {
             // Inicializa a tela de apresentação
             // Modela e apresenta cabeçalho do video
             mediaController.initiateStream();
-            roomController.setRoomLabel(conf.misc.ICON_FA_VIDEOCAM, room.tema, room.assunto);
+
+            roomController.setRoomLabel(misc.ICON_FA_VIDEOCAM, room.tema, room.assunto);
             structure.startRoom.disabled = true;
 
             // Define inicialização de sessão
@@ -690,7 +687,7 @@ $(document).ready(function() {
                             //Função de entrada na sala a partir do botão ENTRAR
                             button.onclick = function() {
                                 mediaController.initiateStream();
-                                roomController.setRoomLabel(conf.misc.ICON_FA_TV, roomData.classe, roomData.assunto);
+                                roomController.setRoomLabel(misc.ICON_FA_TV, roomData.classe, roomData.assunto);
 
                                 structure.onlobby = false;
                                 structure.isModerator = false;
@@ -879,7 +876,7 @@ function appendDIV(event) {
             }
             media.sessionAccess.click();
         } else if (chkrash[0] === btoa('@Finaliza-Participante')) {
-            $(conf.dom.DIV_BTN_END).hide();
+            $(dom.DIV_BTN_END).hide();
         } else {
             return;
         }

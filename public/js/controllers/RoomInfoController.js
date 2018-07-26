@@ -2,14 +2,13 @@ class RoomInfoController {
 
     constructor() {
 
-        let tag = document.querySelector.bind(document);
-        this._currentRoomId = tag(conf.dom.ROOM);
-        this._broadcaster = tag(conf.dom.BROADCASTER);
-        this._inRoom = tag(conf.dom.IN_ROOM);
-        this._inScreen = tag(conf.dom.IN_SCREEN);
-        this._currentUser = tag(conf.dom.NAME);
-        this._myClass = tag(conf.dom.TARGET);
-        this._countUsers = tag(conf.dom.LABEL_USERS);
+        this._currentRoomId = doc.TAG(dom.ROOM);
+        this._broadcaster = doc.TAG(dom.BROADCASTER);
+        this._inRoom = doc.TAG(dom.IN_ROOM);
+        this._inScreen = doc.TAG(dom.IN_SCREEN);
+        this._currentUser = doc.TAG(dom.NAME);
+        this._myClass = doc.TAG(dom.TARGET);
+        this._countUsers = doc.TAG(dom.LABEL_USERS);
         Object.freeze(this);
     }
 

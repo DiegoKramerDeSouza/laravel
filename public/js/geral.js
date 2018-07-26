@@ -1,14 +1,10 @@
 /**
  * MANIPULAÇÃO DE ELEMENTOS VISUAIS APLICÁVEIS A TODA APLICAÇÃO
  * Tratamento de elementos visuais de uso geral
- * 
  */
 $(document).ready(function() {
 
-    let cfg = _configure.responseJSON;
-    console.log(cfg);
-
-    // Inicializa verificação de eventos de cliques em botões com chamada de loading
+    // Inicializa de chamada de loading
     destroyLoading();
     deployLoading();
     deployLoadingCancel();
@@ -16,7 +12,7 @@ $(document).ready(function() {
 // Inicialização do tratamento de click em objetos da classe load para apresentar tela de loading
 // -> Ignora chamada de loading se houver algum campo required :invalid
 function deployLoading() {
-    var load = document.querySelectorAll(conf.dom.LOAD_ELEM);
+    var load = document.querySelectorAll(dom.LOAD_ELEM);
     for (var j = 0; j < load.length; j++) {
         var isValid = true;
         load[j].onclick = function() {
@@ -30,7 +26,7 @@ function deployLoading() {
 }
 // Monta e trata apresentações de loading específicos para botões Cancel
 function deployLoadingCancel() {
-    var load = document.querySelectorAll(conf.dom.LOAD_CANCEL_ELEM);
+    var load = document.querySelectorAll(dom.LOAD_CANCEL_ELEM);
     for (var j = 0; j < load.length; j++) {
         load[j].onclick = function() {
             callLoading();
@@ -39,9 +35,9 @@ function deployLoadingCancel() {
 }
 // Inicia apresentação de tela de loading
 function callLoading() {
-    let center = document.querySelector(conf.dom.LOAD_POSITION_ELEM);
-    $(conf.dom.LOAD_LAYER_ELEM).show();
-    $(conf.dom.LOAD_POSITION_ELEM).show();
+    let center = document.querySelector(dom.LOAD_POSITION_ELEM);
+    $(dom.LOAD_LAYER_ELEM).show();
+    $(dom.LOAD_POSITION_ELEM).show();
     center.innerHTML = `<h5>
                             <b>Aguarde...</b><br><br>
                             <div class="preloader-wrapper big active">
@@ -61,12 +57,8 @@ function callLoading() {
 }
 // Finaliza apresentação tela de loading
 function destroyLoading() {
-    let center = document.querySelector(conf.dom.LOAD_POSITION_ELEM);
-    $(conf.dom.LOAD_LAYER_ELEM).fadeOut(300);
-    $(conf.dom.LOAD_POSITION_ELEM).fadeOut(300);
+    let center = document.querySelector(dom.LOAD_POSITION_ELEM);
+    $(dom.LOAD_LAYER_ELEM).fadeOut(300);
+    $(dom.LOAD_POSITION_ELEM).fadeOut(300);
     center.innerHTML = '';
-}
-// Retorna a página
-function goBack() {
-    window.history.back();
 }

@@ -1,18 +1,21 @@
 /**
  * Definições de configuração para INICIALIZAÇÃO de componentes JS
- * const conf: definições de elementos para inicialização e configurações gerais do DOM;
- * const doc: definições de métodos básicos de manipulação do documento (sem utilização de JQuery)
- *              ->TAG: querySelector;
- *              ->ALL: querySelectorAll;
- *              ->ADD: createElement;
+ * const doc: definições de métodos básicos de manipulação do documento (sem utilização de JQuery);
+ * const conf: definições de elementos para inicialização;
+ * const dom: elementos gerais do DOM;
+ * const misc: elementos visuais de uso geral;
  */
 
-/*Configurações gerais */
-const jFile = `http://localhost/js/conf/config.json`;
-const _configure =
-    $.getJSON(jFile, json => {
-        return json;
-    });
+/*Configurações gerais carregadas via JSON */
+//const jFile = `http://localhost/js/conf/config.json`;
+//const cfg = $.getJSON(jFile);
+
+const doc = {
+
+    TAG: document.querySelector.bind(document),
+    ALL: document.querySelectorAll.bind(document),
+    ADD: document.createElement.bind(document),
+}
 
 const conf = {
 
@@ -26,6 +29,7 @@ const conf = {
         ON_LOBBY: true,
         ON_PARTICIPATION: false,
         LOCK_SOLICITATION: false,
+        SINGLE_CON: false,
         WAITING_FOR_VIDEO: 'waiting',
         NUMBER_OF_ROOMS: 0,
         POSTER_IMG: '/img/bg.jpg'
@@ -49,7 +53,6 @@ const conf = {
         MSG_BROADCAST_STOP: 'broadcast-stopped',
         MSG_START_BROADCAST: 'start-broadcasting',
         MSG_LEAVE_ROOM: 'leave-the-room'
-
     },
     roomdata: {
         /*Atributos de inicialização por espectadores */
@@ -88,113 +91,107 @@ const conf = {
         VOL_UP: ['<i class="material-icons left">volume_up</i>', 'Áudio Habilitado.', 'blue darken-1'],
         STOP_SHARE: ['<i class="material-icons left">stop_screen_share</i>', 'Compartilhamento de tela finalizado.', 'red darken-4'],
         START_SHARE: ['<i class="material-icons left">screen_share</i>', 'Tela compartilhada.', 'blue darken-1']
-    },
-    dom: {
-        /* Elementos do DOM */
-        ASSUNTO: '#assunto',
-        BROADCASTER: '#broadcaster',
-        BTN_START_ROOM: '#btn-join-as-productor',
-        CAM: '#toggle-camera',
-        CHAT_PANEL: '#chat-panel',
-        CHAT_TEXTAREA: '#chat-textarea',
-        CLASS_TITLE: '#class-title',
-        CONNECTION_LIST: '#connection-list',
-        COUNT_PEDIR: '#count-pedir-vez',
-        CTL_PEDIR: '#control-pedir-vez',
-        CURSO_LIST: '#cursos-list',
-        DISCONNECT_BTN: '.disconnect-btn',
-        DIV_BTN_END: '#div-end',
-        DIV_CONNECT: '#div-connect',
-        DIV_CONTROLLER: '#div-controller',
-        DIV_ENTER: '#div-enter',
-        DIV_EXIT_FSCREEN: '#div-exit-fullscreen',
-        DIV_INCOMING_VIDEO: '#div-incoming-videos',
-        DIV_MAIN_VIDEO: '#div-main-video',
-        END_SESSION_ACCESS: '#end-session',
-        EXIT_SCREEN: '#exit-fullscreen',
-        FIRST_VIDEO: '#video-preview',
-        IN_ROOM: '#in-room',
-        IN_SCREEN: '#in-screen',
-        LABEL_USERS: '#users-counter',
-        LI_CAM: '#li-toggle-camera',
-        LI_MUTE: '#li-toggle-mute',
-        LI_PERDIR: '#li-pedir-vez',
-        LI_SHARE: '#li-share-screen',
-        LI_VOLUME: '#li-toggle-volume',
-        LOAD_ELEM: ".load",
-        LOAD_CANCEL_ELEM: ".load-cancel",
-        LOAD_POSITION_ELEM: "#centralized",
-        LOAD_LAYER_ELEM: "#fglayer",
-        MATERIA: '#tema',
-        MUTE: '#toggle-mute',
-        NAME: '#current-user',
-        PAGE_MAIN_CONTENT: '#main-content',
-        PEDIR: '#pedir-vez',
-        PUBLIC_CONFERENCE: '#public-conference',
-        ROOM: '#room-id',
-        ROOM_LOBBY: '#initial-access',
-        ROOM_TYPE: '#room-type',
-        SCREEN: '#toggle-screen',
-        SEARCH: '#search-input',
-        SECOND_VIDEO: '#secondvideo-preview',
-        SESSION_ACCESS: '#enter-session',
-        SHARE: '#share-screen',
-        SHARE_ALERT: '#screen-share-alert',
-        SIDE_NAVBAR: '#slide-out',
-        SOL_LIST: '#solicita-list',
-        SOL_PEDIR: '#sol-pedir',
-        SOL_RESPONSE: '.sol-response',
-        SWAP_SECOND: '#swap-video',
-        TARGET: '#target',
-        TEXT_MESSAGE: '#text-message',
-        THIRD_VIDEO: '#thirdvideo-preview',
-        TOGGLE_CHAT: '#toggle-chat',
-        TOGGLE_VIDEO_SIZE: '#toggle-size',
-        UL_CON_USERS: '#connected-users',
-        USERS_LIST: '#connected-users-list',
-        VIDEO_MAIN: '#span-video-preview',
-        VIDEO_SECOND: '#span-video-preview-2nd',
-        VIDEO_THIRD: '#span-video-preview-3rd',
-        VIDEOS_PANEL: '#video-panel',
-        VOL: '#toggle-volume'
-    },
-    misc: {
-        /*Elementos de uso geral: */
-
-        /*Cores */
-        DISABLED_COLOR: 'grey',
-        ON_COLOR: 'blue',
-        OFF_COLOR: 'red',
-        HILIGHT_COLOR: 'cyan',
-        TURNOFF_COLOR: 'black',
-        /*Classes de estilo CSS */
-        CLASS_WIDTH_LIMIT: 'width-limit',
-        CLASS_MAIN_CONTAINER: 'main-container',
-        CLASS_MAIN_CONTAINER_FULL: 'main-container-full',
-        /*Atribuição CSS */
-        STYLE_HEIGHT_INHERIT: 'inherit',
-        /*Atributos de elementos do DOM */
-        ATTR_SOLICITATION: 'data-sender',
-        /*Ícones */
-        ICON_MIC: '<i class="material-icons">mic</i>',
-        ICON_MUTE_MIC: '<i class="material-icons">mic_off</i>',
-        ICON_CAM_ON: '<i class="material-icons">videocam</i>',
-        ICON_CAM_OFF: '<i class="material-icons">videocam_off</i>',
-        ICON_VOL_ON: '<i class="material-icons">volume_up</i>',
-        ICON_VOL_OFF: '<i class="material-icons">volume_off</i>',
-        ICON_SHARE_ON: '<i class="material-icons">screen_share</i>',
-        ICON_SHARE_OFF: '<i class="material-icons">stop_screen_share</i>',
-        ICON_FA_TV: '<i class="fa fa-television blue-text"></i>',
-        ICON_FA_VIDEOCAM: '<i class="fa fa-video-camera blue-text"></i>',
-        /*Elementos HTML para caixas de mensagens */
-        DEFAULT_MSGBOX_OUT: '<p class="chat-in blue">',
-        DEFAULT_MSGBOX_IN: '<p class="chat-out grey" align="right">',
     }
-};
+}
 
-/*Métodos de Document */
-const doc = {
-    TAG: document.querySelector.bind(document),
-    ALL: document.querySelectorAll.bind(document),
-    ADD: document.createElement.bind(document),
+const dom = {
+    /* Elementos do DOM */
+    ASSUNTO: '#assunto',
+    BROADCASTER: '#broadcaster',
+    BTN_START_ROOM: '#btn-join-as-productor',
+    CAM: '#toggle-camera',
+    CHAT_PANEL: '#chat-panel',
+    CHAT_TEXTAREA: '#chat-textarea',
+    CLASS_TITLE: '#class-title',
+    CONNECTION_LIST: '#connection-list',
+    COUNT_PEDIR: '#count-pedir-vez',
+    CTL_PEDIR: '#control-pedir-vez',
+    CURSO_LIST: '#cursos-list',
+    DISCONNECT_BTN: '.disconnect-btn',
+    DIV_BTN_END: '#div-end',
+    DIV_CONNECT: '#div-connect',
+    DIV_CONTROLLER: '#div-controller',
+    DIV_ENTER: '#div-enter',
+    DIV_EXIT_FSCREEN: '#div-exit-fullscreen',
+    DIV_INCOMING_VIDEO: '#div-incoming-videos',
+    DIV_MAIN_VIDEO: '#div-main-video',
+    END_SESSION_ACCESS: '#end-session',
+    EXIT_SCREEN: '#exit-fullscreen',
+    FIRST_VIDEO: '#video-preview',
+    IN_ROOM: '#in-room',
+    IN_SCREEN: '#in-screen',
+    LABEL_USERS: '#users-counter',
+    LI_CAM: '#li-toggle-camera',
+    LI_MUTE: '#li-toggle-mute',
+    LI_PERDIR: '#li-pedir-vez',
+    LI_SHARE: '#li-share-screen',
+    LI_VOLUME: '#li-toggle-volume',
+    LOAD_ELEM: ".load",
+    LOAD_CANCEL_ELEM: ".load-cancel",
+    LOAD_POSITION_ELEM: "#centralized",
+    LOAD_LAYER_ELEM: "#fglayer",
+    MATERIA: '#tema',
+    MUTE: '#toggle-mute',
+    NAME: '#current-user',
+    PAGE_MAIN_CONTENT: '#main-content',
+    PEDIR: '#pedir-vez',
+    PUBLIC_CONFERENCE: '#public-conference',
+    REQUIRED: '[required]',
+    ROOM: '#room-id',
+    ROOM_LOBBY: '#initial-access',
+    ROOM_TYPE: '#room-type',
+    SCREEN: '#toggle-screen',
+    SEARCH: '#search-input',
+    SECOND_VIDEO: '#secondvideo-preview',
+    SESSION_ACCESS: '#enter-session',
+    SHARE: '#share-screen',
+    SHARE_ALERT: '#screen-share-alert',
+    SIDE_NAVBAR: '#slide-out',
+    SOL_LIST: '#solicita-list',
+    SOL_PEDIR: '#sol-pedir',
+    SOL_RESPONSE: '.sol-response',
+    SWAP_SECOND: '#swap-video',
+    TARGET: '#target',
+    TEXT_MESSAGE: '#text-message',
+    THIRD_VIDEO: '#thirdvideo-preview',
+    TOGGLE_CHAT: '#toggle-chat',
+    TOGGLE_VIDEO_SIZE: '#toggle-size',
+    UL_CON_USERS: '#connected-users',
+    USERS_LIST: '#connected-users-list',
+    VIDEO_MAIN: '#span-video-preview',
+    VIDEO_SECOND: '#span-video-preview-2nd',
+    VIDEO_THIRD: '#span-video-preview-3rd',
+    VIDEOS_PANEL: '#video-panel',
+    VOL: '#toggle-volume'
+}
+
+const misc = {
+    /*Cores */
+    DISABLED_COLOR: 'grey',
+    ON_COLOR: 'blue',
+    OFF_COLOR: 'red',
+    HILIGHT_COLOR: 'cyan',
+    TURNOFF_COLOR: 'black',
+    /*Classes de estilo CSS */
+    CLASS_WIDTH_LIMIT: 'width-limit',
+    CLASS_MAIN_CONTAINER: 'main-container',
+    CLASS_MAIN_CONTAINER_FULL: 'main-container-full',
+    /*Atribuição CSS */
+    STYLE_HEIGHT_INHERIT: 'inherit',
+    /*Atributos de elementos do DOM */
+    ATTR_SOLICITATION: 'data-sender',
+    /*Ícones */
+    ICON_MIC: '<i class="material-icons">mic</i>',
+    ICON_MUTE_MIC: '<i class="material-icons">mic_off</i>',
+    ICON_CAM_ON: '<i class="material-icons">videocam</i>',
+    ICON_CAM_OFF: '<i class="material-icons">videocam_off</i>',
+    ICON_VOL_ON: '<i class="material-icons">volume_up</i>',
+    ICON_VOL_OFF: '<i class="material-icons">volume_off</i>',
+    ICON_SHARE_ON: '<i class="material-icons">screen_share</i>',
+    ICON_SHARE_OFF: '<i class="material-icons">stop_screen_share</i>',
+    ICON_FA_TV: '<i class="fa fa-television blue-text"></i>',
+    ICON_FA_VIDEOCAM: '<i class="fa fa-video-camera blue-text"></i>',
+    /*Elementos HTML para caixas de mensagens */
+    DEFAULT_MSGBOX_OUT: '<p class="chat-in blue">',
+    DEFAULT_MSGBOX_IN: '<p class="chat-out grey" align="right">',
 }

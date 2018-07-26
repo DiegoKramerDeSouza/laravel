@@ -18,7 +18,8 @@ class Structure {
         startRoom,
         publicRoomsList,
         connectList,
-        countRooms
+        countRooms,
+        singlecon
     ) {
 
         this._viewers = viewers;
@@ -37,8 +38,8 @@ class Structure {
         this._publicRoomsList = publicRoomsList;
         this._connectList = connectList;
         this._countRooms = countRooms;
+        this._singleConnection = singlecon;
 
-        this._singleConnection;
         this._targetUser;
         this._connections = [];
         this._streamVideos = [];

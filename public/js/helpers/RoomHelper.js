@@ -1,9 +1,7 @@
-/**
- * Criação de métodos estáticos com finalidades específicas
- */
 class RoomHelper {
 
     constructor() {
+
         throw new Error('RoomHelper apresenta apenas métodos estáticos.');
     }
 

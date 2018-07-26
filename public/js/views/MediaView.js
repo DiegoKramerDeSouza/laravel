@@ -5,90 +5,89 @@ class MediaView {
 
     constructor() {
 
-        let tag = document.querySelector.bind(document);
         let alerta = new MessageController();
 
-        this._mute = tag(conf.dom.MUTE);
-        this._cam = tag(conf.dom.CAM);
-        this._vol = tag(conf.dom.VOL);
-        this._share = tag(conf.dom.SHARE);
-        this._pedir = tag(conf.dom.PEDIR);
-        this._participation = tag(conf.dom.SESSION_ACCESS);
-        this._divParticipation = tag(conf.dom.DIV_ENTER);
-        this._divMainVideo = tag(conf.dom.DIV_MAIN_VIDEO);
-        this._divIncomingVideo = tag(conf.dom.DIV_INCOMING_VIDEO);
-        this._spanMainVideo = tag(conf.dom.VIDEO_MAIN);
-        this._mainVideo = tag(conf.dom.FIRST_VIDEO);
-        this._pageMainContainer = tag(conf.dom.PAGE_MAIN_CONTENT);
-        this._chatPanel = tag(conf.dom.CHAT_PANEL);
-        this._sideNavbar = tag(conf.dom.SIDE_NAVBAR);
-        this._chatTextArea = tag(conf.dom.CHAT_TEXTAREA);
-        this._countPedirVez = tag(conf.dom.COUNT_PEDIR);
-        this._solicitationList = tag(conf.dom.SOL_LIST);
+        this._mute = doc.TAG(dom.MUTE);
+        this._cam = doc.TAG(dom.CAM);
+        this._vol = doc.TAG(dom.VOL);
+        this._share = doc.TAG(dom.SHARE);
+        this._pedir = doc.TAG(dom.PEDIR);
+        this._participation = doc.TAG(dom.SESSION_ACCESS);
+        this._divParticipation = doc.TAG(dom.DIV_ENTER);
+        this._divMainVideo = doc.TAG(dom.DIV_MAIN_VIDEO);
+        this._divIncomingVideo = doc.TAG(dom.DIV_INCOMING_VIDEO);
+        this._spanMainVideo = doc.TAG(dom.VIDEO_MAIN);
+        this._mainVideo = doc.TAG(dom.FIRST_VIDEO);
+        this._pageMainContainer = doc.TAG(dom.PAGE_MAIN_CONTENT);
+        this._chatPanel = doc.TAG(dom.CHAT_PANEL);
+        this._sideNavbar = doc.TAG(dom.SIDE_NAVBAR);
+        this._chatTextArea = doc.TAG(dom.CHAT_TEXTAREA);
+        this._countPedirVez = doc.TAG(dom.COUNT_PEDIR);
+        this._solicitationList = doc.TAG(dom.SOL_LIST);
         this._listContent = '';
     }
 
     setVoiceOn() {
 
-        this._mute.classList.remove(conf.misc.OFF_COLOR);
-        this._mute.innerHTML = conf.misc.ICON_MIC;
+        this._mute.classList.remove(misc.OFF_COLOR);
+        this._mute.innerHTML = misc.ICON_MIC;
         alerta.initiateMessage(conf.message.MIC_ON);
     }
 
     setVoiceOff() {
 
-        this._mute.classList.add(conf.misc.OFF_COLOR);
-        this._mute.innerHTML = conf.misc.ICON_MUTE_MIC;
+        this._mute.classList.add(misc.OFF_COLOR);
+        this._mute.innerHTML = misc.ICON_MUTE_MIC;
         alerta.initiateMessage(conf.message.MIC_OFF);
     }
 
     voiceOff() {
 
-        this._mute.classList.add(conf.misc.DISABLED_COLOR);
-        this._mute.innerHTML = conf.misc.ICON_MUTE_MIC;
-        $(conf.dom.LI_MUTE).hide();
+        this._mute.classList.add(misc.DISABLED_COLOR);
+        this._mute.innerHTML = misc.ICON_MUTE_MIC;
+        $(dom.LI_MUTE).hide();
     }
 
     setVolumeOn() {
 
-        this._vol.classList.remove(conf.misc.OFF_COLOR);
-        this._vol.innerHTML = conf.misc.ICON_VOL_ON;
+        this._vol.classList.remove(misc.OFF_COLOR);
+        this._vol.innerHTML = misc.ICON_VOL_ON;
         alerta.initiateMessage(conf.message.VOL_UP);
     }
 
     setVolumeOff() {
 
-        this._vol.classList.add(conf.misc.OFF_COLOR);
-        this._vol.innerHTML = conf.misc.ICON_VOL_OFF;
+        this._vol.classList.add(misc.OFF_COLOR);
+        this._vol.innerHTML = misc.ICON_VOL_OFF;
         alerta.initiateMessage(conf.message.VOL_DOWN);
     }
 
     volumeOff() {
 
-        this._vol.classList.add(conf.misc.DISABLED_COLOR);
-        this._vol.innerHTML = conf.misc.ICON_VOL_OFF;
-        $(conf.dom.LI_VOLUME).hide();
+        this._vol.classList.add(misc.DISABLED_COLOR);
+        this._vol.innerHTML = misc.ICON_VOL_OFF;
+        $(dom.LI_VOLUME).hide();
     }
 
     setCamOn() {
 
-        this._cam.classList.remove(conf.misc.OFF_COLOR);
-        this._cam.innerHTML = conf.misc.ICON_CAM_ON;
+        this._cam.classList.remove(misc.OFF_COLOR);
+        this._cam.innerHTML = misc.ICON_CAM_ON;
         alerta.initiateMessage(conf.message.CAM_ON);
     }
 
     setCamOff() {
 
-        this._cam.classList.add(conf.misc.OFF_COLOR);
-        this._cam.innerHTML = conf.misc.ICON_CAM_OFF;
+        this._cam.classList.add(misc.OFF_COLOR);
+        this._cam.innerHTML = misc.ICON_CAM_OFF;
         alerta.initiateMessage(conf.message.CAM_OFF);
     }
 
     camOff() {
 
-        this._cam.classList.add(conf.misc.DISABLED_COLOR);
-        this._cam.innerHTML = conf.misc.ICON_CAM_OFF;
-        $(conf.dom.LI_CAM).hide();
+        this._cam.classList.add(misc.DISABLED_COLOR);
+        this._cam.innerHTML = misc.ICON_CAM_OFF;
+        $(dom.LI_CAM).hide();
     }
 
     openIncomingVideos(mainVideo, inVideo) {
@@ -97,13 +96,13 @@ class MediaView {
         mainVideo.classList.add("s6", "m8");
         inVideo.classList.add("s6", "m4");
         setTimeout(() => {
-            $(conf.dom.DIV_INCOMING_VIDEO).fadeIn(300);
+            $(dom.DIV_INCOMING_VIDEO).fadeIn(300);
         }, 500);
     }
 
     closeIncomingVideos(mainVideo, inVideo) {
 
-        $(conf.dom.DIV_INCOMING_VIDEO).fadeOut(300);
+        $(dom.DIV_INCOMING_VIDEO).fadeOut(300);
         inVideo.classList.remove("s6", "m4");
         mainVideo.classList.add("s12");
         mainVideo.classList.remove("s6", "m8");
@@ -111,17 +110,17 @@ class MediaView {
 
     startShare() {
 
-        $(conf.dom.SHARE).show();
-        this._share.classList.add(conf.misc.OFF_COLOR);
-        this._share.innerHTML = conf.misc.ICON_SHARE_OFF;
+        $(dom.SHARE).show();
+        this._share.classList.add(misc.OFF_COLOR);
+        this._share.innerHTML = misc.ICON_SHARE_OFF;
         alerta.initiateMessage(conf.message.START_SHARE);
     }
 
     exitShare() {
 
-        $(conf.dom.SHARE).show();
-        this._share.classList.remove(conf.misc.OFF_COLOR);
-        this._share.innerHTML = conf.misc.ICON_SHARE_ON;
+        $(dom.SHARE).show();
+        this._share.classList.remove(misc.OFF_COLOR);
+        this._share.innerHTML = misc.ICON_SHARE_ON;
         alerta.initiateMessage(conf.message.STOP_SHARE);
     }
 
@@ -129,41 +128,41 @@ class MediaView {
     shareOff() {
 
         this._share.disabled = true;
-        this._share.classList.add(conf.misc.DISABLED_COLOR);
-        this._share.innerHTML = conf.misc.ICON_SHARE_ON;
-        $(conf.dom.LI_SHARE).hide();
+        this._share.classList.add(misc.DISABLED_COLOR);
+        this._share.innerHTML = misc.ICON_SHARE_ON;
+        $(dom.LI_SHARE).hide();
     }
 
     startParticipation() {
 
-        $(conf.dom.DIV_ENTER).show();
+        $(dom.DIV_ENTER).show();
         this._divParticipation.title = 'Finalizar participação';
-        this._participation.classList.remove(conf.misc.HILIGHT_COLOR);
-        this._participation.classList.add(conf.misc.OFF_COLOR);
-        this._participation.innerHTML = conf.misc.ICON_CAM_OFF;
+        this._participation.classList.remove(misc.HILIGHT_COLOR);
+        this._participation.classList.add(misc.OFF_COLOR);
+        this._participation.innerHTML = misc.ICON_CAM_OFF;
     }
 
     endParticipation() {
 
-        $(conf.dom.DIV_ENTER).show();
+        $(dom.DIV_ENTER).show();
         this._divParticipation.title = 'Ingressar';
-        this._participation.classList.remove(conf.misc.OFF_COLOR);
-        this._participation.classList.add(conf.misc.HILIGHT_COLOR);
-        this._participation.innerHTML = conf.misc.ICON_CAM_ON;
+        this._participation.classList.remove(misc.OFF_COLOR);
+        this._participation.classList.add(misc.HILIGHT_COLOR);
+        this._participation.innerHTML = misc.ICON_CAM_ON;
     }
 
     participationOff() {
 
-        this._participation.classList.remove(conf.misc.HILIGHT_COLOR);
-        this._participation.classList.add(conf.misc.OFF_COLOR);
-        this._participation.innerHTML = conf.misc.ICON_CAM_OFF;
-        $(conf.dom.DIV_ENTER).hide();
+        this._participation.classList.remove(misc.HILIGHT_COLOR);
+        this._participation.classList.add(misc.OFF_COLOR);
+        this._participation.innerHTML = misc.ICON_CAM_OFF;
+        $(dom.DIV_ENTER).hide();
     }
 
     allowSolicitation() {
 
         alerta.initiateMessage(conf.message.SEND_ACP_SOLICITATION);
-        $(conf.dom.DIV_ENTER).fadeIn(300);
+        $(dom.DIV_ENTER).fadeIn(300);
         this.endParticipation();
     }
 
@@ -175,46 +174,52 @@ class MediaView {
 
     pedirOff() {
 
-        this._pedir.classList.add(conf.misc.OFF_COLOR);
-        $(conf.dom.PEDIR).hide();
+        this._pedir.classList.add(misc.OFF_COLOR);
+        $(dom.PEDIR).hide();
     }
 
     exitFullscreen() {
 
-        $(conf.dom.DIV_EXIT_FSCREEN).fadeOut(500);
-        this._spanMainVideo.classList.remove(conf.misc.TURNOFF_COLOR);
-        this._spanMainVideo.classList.add(conf.misc.CLASS_WIDTH_LIMIT);
-        this._spanMainVideo.style.height = conf.misc.STYLE_HEIGHT_INHERIT;
+        $(dom.DIV_EXIT_FSCREEN).fadeOut(500);
+        this._spanMainVideo.classList.remove(misc.TURNOFF_COLOR);
+        this._spanMainVideo.classList.add(misc.CLASS_WIDTH_LIMIT);
+        this._spanMainVideo.style.height = misc.STYLE_HEIGHT_INHERIT;
         this.shrinkVideoSize();
     }
 
     enterFullscreen() {
 
-        $(conf.dom.DIV_EXIT_FSCREEN).fadeIn(500);
-        this._spanMainVideo.classList.add(conf.misc.TURNOFF_COLOR);
-        this._spanMainVideo.classList.remove(conf.misc.CLASS_WIDTH_LIMIT);
+        $(dom.DIV_EXIT_FSCREEN).fadeIn(500);
+        this._spanMainVideo.classList.add(misc.TURNOFF_COLOR);
+        this._spanMainVideo.classList.remove(misc.CLASS_WIDTH_LIMIT);
         this._spanMainVideo.style.height = (window.innerHeight) + 'px';
     }
 
     expandVideoSize() {
 
-        this._pageMainContainer.classList.remove(conf.misc.CLASS_MAIN_CONTAINER);
-        this._pageMainContainer.classList.add(conf.misc.CLASS_MAIN_CONTAINER_FULL);
-        this._spanMainVideo.classList.remove(conf.misc.CLASS_WIDTH_LIMIT);
+        this._pageMainContainer.classList.remove(misc.CLASS_MAIN_CONTAINER);
+        this._pageMainContainer.classList.add(misc.CLASS_MAIN_CONTAINER_FULL);
+        this._spanMainVideo.classList.remove(misc.CLASS_WIDTH_LIMIT);
         this._spanMainVideo.classList.add('col', 's12');
     }
 
     shrinkVideoSize() {
 
-        this._pageMainContainer.classList.remove(conf.misc.CLASS_MAIN_CONTAINER_FULL);
-        this._pageMainContainer.classList.add(conf.misc.CLASS_MAIN_CONTAINER);
-        this._spanMainVideo.classList.add(conf.misc.CLASS_WIDTH_LIMIT);
+        this._pageMainContainer.classList.remove(misc.CLASS_MAIN_CONTAINER_FULL);
+        this._pageMainContainer.classList.add(misc.CLASS_MAIN_CONTAINER);
+        this._spanMainVideo.classList.add(misc.CLASS_WIDTH_LIMIT);
         this._spanMainVideo.classList.remove('col', 's12');
     }
 
     adjustStreamScreen() {
-        $(conf.dom.ROOM_LOBBY).slideUp(500);
-        $(conf.dom.VIDEOS_PANEL).slideDown(500);
+        $(dom.ROOM_LOBBY).slideUp(500);
+        $(dom.VIDEOS_PANEL).slideDown(500);
+    }
+
+    adjustChatPanel() {
+        let chatHeight = window.screen.height;
+        this._chatPanel.style.height = (chatHeight - 250) + 'px';
+        this._chatPanel.style.maxHeight = (chatHeight - 250) + 'px';
     }
 
     writeReceiveMessage(message, pContainer, isOpen) {
@@ -227,12 +232,12 @@ class MediaView {
     showSolicitation(val) {
 
         this._countPedirVez.innerHTML = val;
-        $(conf.dom.COUNT_PEDIR).fadeIn(300);
+        $(dom.COUNT_PEDIR).fadeIn(300);
     }
 
     hideSolicitation() {
 
-        $(conf.dom.COUNT_PEDIR).fadeOut(300);
+        $(dom.COUNT_PEDIR).fadeOut(300);
     }
 
     listSolicitation(count, username, userid) {
@@ -263,7 +268,7 @@ class MediaView {
 
     newSolicitation(item) {
 
-        let sender = item.getAttribute(conf.misc.ATTR_SOLICITATION);
+        let sender = item.getAttribute(misc.ATTR_SOLICITATION);
         this._listContent += `
             <li id="${ item.id }" data-sender="${ sender }" class="sol-response collection-item avatar li-hover">
                 <i class="material-icons blue lighten-2 circle">tv</i>

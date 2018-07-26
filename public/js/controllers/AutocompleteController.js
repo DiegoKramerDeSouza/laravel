@@ -6,12 +6,11 @@ class AutocompleteController {
 
     constructor() {
 
-        let tag = document.querySelector.bind(document);
         this._origin = location.origin;
         this._admModule = location.pathname.split('/')[3];
         this._searched = false;
 
-        this._search = doc.TAG(conf.dom.SEARCH);
+        this._search = doc.TAG(dom.SEARCH);
     }
 
     initiateAutocomplete() {
@@ -32,7 +31,7 @@ class AutocompleteController {
             type: 'get',
             dataType: 'json',
             success: data => {
-                $(conf.dom.SEARCH).autocomplete({
+                $(dom.SEARCH).autocomplete({
                     data: data,
                     limit: 10,
                     minLength: 1,

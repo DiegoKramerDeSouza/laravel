@@ -2,8 +2,7 @@ class RoomDataController {
 
     constructor() {
 
-        let tag = document.querySelector.bind(document);
-        this._myClass = tag(conf.dom.TARGET);
+        this._myClass = doc.TAG(dom.TARGET);
         this._countRooms = conf.roomdata.COUNT_ROOMS;
         this._allowed = conf.roomdata.ALLOWED;
     }

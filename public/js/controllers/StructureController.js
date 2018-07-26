@@ -2,7 +2,6 @@ class StructureController {
 
     constructor() {
 
-        let tag = document.querySelector.bind(document);
         this._viewer = conf.structure.VIEWER;
         this._user = conf.structure.USER;
         this._solicita = conf.structure.SOLICITA;
@@ -13,10 +12,11 @@ class StructureController {
         this._lockSolicitation = conf.structure.LOCK_SOLICITATION;
         this._mainVideo = conf.structure.WAITING_FOR_VIDEO;
         this._userVideo = conf.structure.WAITING_FOR_VIDEO;
-        this._startRoom = tag(conf.dom.BTN_START_ROOM);
-        this._publicRoomsList = tag(conf.dom.PUBLIC_CONFERENCE);
-        this._connectList = tag(conf.dom.USERS_LIST);
+        this._startRoom = doc.TAG(dom.BTN_START_ROOM);
+        this._publicRoomsList = doc.TAG(dom.PUBLIC_CONFERENCE);
+        this._connectList = doc.TAG(dom.USERS_LIST);
         this._countRooms = conf.structure.NUMBER_OF_ROOMS;
+        this._singlecon = conf.structure.SINGLE_CON;
     }
 
     initiateStructure() {
@@ -35,7 +35,8 @@ class StructureController {
             this._startRoom,
             this._publicRoomsList,
             this._connectList,
-            this._countRooms
+            this._countRooms,
+            this._singlecon
         ];
         return new Structure(...arrDocument);
     }

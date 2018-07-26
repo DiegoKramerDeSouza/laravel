@@ -29,23 +29,24 @@
         </footer>
 
         <!-- Inicialização de Javascript -->
-        <script type="text/javascript" src="{!! asset('js/jquery-3.1.1.min.js') !!}"></script>
-        
         <script type="text/javascript" src="{!! asset('js/conf/conf.js') !!}"></script>
+        <script type="text/javascript" src="{!! asset('js/jquery-3.1.1.min.js') !!}"></script>
         <script type="text/javascript" src="{!! asset('js/materialize.min.js') !!}"></script>
-        <script type="text/javascript" src="{!! asset('js/geral.js') !!}"></script>
+        
+        <script type="text/javascript" src="{!! asset('js/views/LoadingView.js') !!}"></script>
+        <script type="text/javascript" src="{!! asset('js/controllers/LoadingController.js') !!}"></script>
+        <script type="text/javascript" src="{!! asset('js/loaders/GeneralLoader.js') !!}"></script>
 
         @if(isset($isAutocomplete))
             <!-- Elementos das páginas de cadastros para autocomplete -->
-            <script type="text/javascript" src="{!! asset('js/formAutocomplete.js') !!}"></script>
+            <script type="text/javascript" src="{!! asset('js/loaders/AutocompleteLoader.js') !!}"></script>
             <script type="text/javascript" src="{!! asset('js/models/Autocomplete.js') !!}"></script>
             <script type="text/javascript" src="{!! asset('js/controllers/AutocompleteController.js') !!}"></script>
         @endif
         @if(isset($streamPage))
-            <!-- Elementos para a formação de uma SALA ==================================================== -->
+            <!-- Formação de SALAS -->
             @if(! Auth::guest())
-                <!-- Adição dos scripts de utilização do WEBRTC-->
-                
+                <!-- Models e Controllers -->
                 <script type="text/javascript" src="{!! asset('js/models/Structure.js') !!}"></script>  
                 <script type="text/javascript" src="{!! asset('js/controllers/StructureController.js') !!}"></script>  
                 <script type="text/javascript" src="{!! asset('js/models/Room.js') !!}"></script>  
@@ -60,23 +61,20 @@
                 <script type="text/javascript" src="{!! asset('js/controllers/MediaController.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/models/Message.js') !!}"></script> 
                 <script type="text/javascript" src="{!! asset('js/controllers/MessageController.js') !!}"></script>
- 
+                <!-- Views -->
                 <script type="text/javascript" src="{!! asset('js/views/MediaView.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/views/MessageView.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/views/RoomView.js') !!}"></script>
-
+                <!-- Helpers -->
                 <script type="text/javascript" src="{!! asset('js/helpers/RoomHelper.js') !!}"></script>        
-  
+                <!-- WebRTC -->
                 <script type="text/javascript" src="{!! asset('js/webrtc/socket.io.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/webrtc/getHTMLMediaElement.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/webrtc/adapter.js') !!}"></script>                      
                 <script type="text/javascript" src="{!! asset('js/webrtc/RTCMultiConnectionNew.min.js') !!}"></script>
-                <script type="text/javascript" src="{!! asset('js/webrtc/MultiStreamsMixer.min.js') !!}"></script>
-                <script type="text/javascript" src="{!! asset('js/webrtc/application.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/webrtc/getScreenId.js') !!}"></script>
-                <script type="text/javascript" src="{!! asset('js/chat.bottom.js') !!}"></script>
+                <script type="text/javascript" src="{!! asset('js/webrtc/application.js') !!}"></script>
             @endif
-            <!-- ========================================================================================== -->
         @endif
         @if(isset($grant))
             <!-- Elemento para cadastro de perfis de usuários-->

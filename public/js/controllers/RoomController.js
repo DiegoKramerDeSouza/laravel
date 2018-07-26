@@ -2,19 +2,17 @@ class RoomController {
 
     constructor() {
 
-        let tag = document.querySelector.bind(document);
-        this._getTags = document.querySelectorAll.bind(document);
         this._roomView = new RoomView();
 
-        this._roomId = tag(conf.dom.ROOM);
-        this._inputMateria = tag(conf.dom.MATERIA);
-        this._inputAssunto = tag(conf.dom.ASSUNTO);
-        this._inputName = tag(conf.dom.NAME);
+        this._roomId = doc.TAG(dom.ROOM);
+        this._inputMateria = doc.TAG(dom.MATERIA);
+        this._inputAssunto = doc.TAG(dom.ASSUNTO);
+        this._inputName = doc.TAG(dom.NAME);
     }
 
     _createList() {
 
-        this._inputCursos = $(conf.dom.CURSO_LIST).val();
+        this._inputCursos = $(dom.CURSO_LIST).val();
         return this._inputCursos.join(';');
     }
 
@@ -76,7 +74,7 @@ class RoomController {
 
         let announce;
         let removeBtn;
-        let liList = this._getTags(conf.dom.DISCONNECT_BTN);
+        let liList = doc.ALL(dom.DISCONNECT_BTN);
         this._roomView.clearLabelCon();
 
         liList.forEach(elem => {
