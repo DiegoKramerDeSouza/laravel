@@ -1,4 +1,5 @@
 // Tratamento de listagem de permissões
+/*
 document.querySelector('button').onclick = function(evt) {
     let values = $('#grantList').val();
     let strValues = '';
@@ -13,3 +14,4 @@ document.querySelector('button').onclick = function(evt) {
     }
     document.getElementById('grant').value = strValues;
 }
+*/

@@ -36,6 +36,7 @@
         <script type="text/javascript" src="{!! asset('js/views/LoadingView.js') !!}"></script>
         <script type="text/javascript" src="{!! asset('js/controllers/LoadingController.js') !!}"></script>
         <script type="text/javascript" src="{!! asset('js/loaders/GeneralLoader.js') !!}"></script>
+        <script type="text/javascript" src="{!! asset('js/helpers/GeneralHelper.js') !!}"></script>
 
         @if(isset($isAutocomplete))
             <!-- Elementos das páginas de cadastros para autocomplete -->
@@ -85,6 +86,7 @@
             <script type="text/javascript" src="{!! asset('js/turmas.bottom.js') !!}"></script>
         @endif
         <!-- Inicialização de elementos MaterializeCSS -->
-        <script type="text/javascript" src="{!! asset('js/materialize.bottom.js') !!}"></script>
+        <script type="text/javascript" src="{!! asset('js/controllers/MaterializeController.js') !!}"></script>
+        <script type="text/javascript" src="{!! asset('js/loaders/MaterializeLoader.js') !!}"></script>
     </body>
 </html>

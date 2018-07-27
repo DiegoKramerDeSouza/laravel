@@ -8,4 +8,10 @@ class GeneralHelper {
     static goBack() {
         window.history.back();
     }
+
+    static loading() {
+
+        let load = new LoadingController();
+        load.callLoading();
+    }
 }

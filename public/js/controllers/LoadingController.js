@@ -32,4 +32,9 @@ class LoadingController {
 
         this._loading.destroyLoading();
     }
+
+    callLoading() {
+
+        this._loading.callLoading();
+    }
 }

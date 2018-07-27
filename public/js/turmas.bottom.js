@@ -1,4 +1,5 @@
 // Tratamento de listagem de cursos
+/*
 document.querySelector('button').onclick = function(evt) {
     let values = $('#curso_id_list').val();
     let strValues = '';
@@ -13,3 +14,4 @@ document.querySelector('button').onclick = function(evt) {
     }
     document.getElementById('curso_id').value = strValues;
 }
+*/

@@ -36,7 +36,7 @@ class AutocompleteController {
                     limit: 10,
                     minLength: 1,
                     onAutocomplete: evt => {
-                        callLoading();
+                        GeneralHelper.loading();
                         this._emitData(origin, admModule, evt);
                     }
                 });

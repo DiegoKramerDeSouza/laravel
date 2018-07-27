@@ -94,15 +94,12 @@ class CadastroPerfilController extends Controller
         if($this->validade('Perfil')){
             $grant = true;
             $perfis = Perfil::find($id);
+            $componentes = Componente::all();
             if($perfis->grant != '0'){
-                $componentes = Componente::all();
                 $granted = explode(';', $perfis->grant);
                 $html = $this->constructGrantList($componentes, $granted);
-
-                return view('admin.cadastro.perfis.editar', compact('perfis', 'grant', 'html'));
-                
+                return view('admin.cadastro.perfis.editar', compact('perfis', 'grant', 'html')); 
             } else {
-                $componentes = Componente::all();
                 return view('admin.cadastro.perfis.editar', compact('perfis', 'grant', 'componentes'));
             }
         } else {
