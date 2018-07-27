@@ -347,7 +347,7 @@ class MediaController {
 
     toggleFullSize() {
 
-        if (RoomHelper.hasClass(this._pageMainContainer, misc.CLASS_MAIN_CONTAINER)) {
+        if (GeneralHelper.hasClass(this._pageMainContainer, misc.CLASS_MAIN_CONTAINER)) {
             this._mediaView.expandVideoSize();
         } else {
             this._mediaView.shrinkVideoSize();

@@ -6,6 +6,7 @@ class GeneralHelper {
     }
 
     static goBack() {
+
         window.history.back();
     }
 
@@ -13,5 +14,10 @@ class GeneralHelper {
 
         let load = new LoadingController();
         load.callLoading();
+    }
+
+    static hasClass(element, cls) {
+
+        return (` ${element.className} `).indexOf(` ${cls} `) > -1;
     }
 }
