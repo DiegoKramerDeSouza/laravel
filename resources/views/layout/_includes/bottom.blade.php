@@ -49,6 +49,10 @@
             <!-- Formação de SALAS -->
             @if(! Auth::guest())
                 <!-- Models e Controllers -->
+
+                <script type="text/javascript" src="{!! asset('js/controllers/DevicesController.js') !!}"></script>  
+                <script type="text/javascript" src="{!! asset('js/views/DevicesView.js') !!}"></script>
+
                 <script type="text/javascript" src="{!! asset('js/models/Structure.js') !!}"></script>  
                 <script type="text/javascript" src="{!! asset('js/controllers/StructureController.js') !!}"></script>  
                 <script type="text/javascript" src="{!! asset('js/models/Room.js') !!}"></script>  

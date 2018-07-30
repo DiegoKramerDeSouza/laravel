@@ -19,7 +19,7 @@ class CreateTurmasHasAulasTable extends Migration
                 $table->integer('turma_id')->unsigned();
                 $table->integer('aula_id')->unsigned();
                 $table->foreign('turma_id')
-                    ->references('id')->on('aulas')
+                    ->references('id')->on('turmas')
                     ->onDelete('cascade');
                 $table->foreign('aula_id')
                     ->references('id')->on('aulas')

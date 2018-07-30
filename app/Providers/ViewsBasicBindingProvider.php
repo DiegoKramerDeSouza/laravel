@@ -67,6 +67,7 @@ class ViewsBasicBindingProvider extends ServiceProvider
         view()->share('closeLargeIcon',         "<i class='fa fa-times-circle fa-3x'></i>");
         view()->share('copyRightIcon',          "<i class='fa fa-copyright'></i>");
         view()->share('configBlueIcon',         "<i class='fa fa-cog blue-text'></i>");
+        view()->share('configIcon',             "<i class='fa fa-cog'></i>");
         view()->share('cursosIcon',             "<i class='fa fa-cubes fa-lg'></i>");
         view()->share('cursosLargeIcon',        "<i class='fa fa-cubes fa-2x'></i>");
         view()->share('deleteIcon',             "<i class='fa fa-trash-o'></i>");
@@ -101,6 +102,7 @@ class ViewsBasicBindingProvider extends ServiceProvider
         view()->share('turmasLargeIcon',        "<i class='fa fa-graduation-cap fa-2x'></i>");
         view()->share('timeIcon',               "<i class='fa fa-clock-o fa-lg'></i>");
         view()->share('usuariosIcon',           "<i class='fa fa-users fa-lg'></i>");
+        view()->share('usuariosBlueIcon',       "<i class='fa fa-users fa-lg blue-text'></i>");
         view()->share('usuariosLargeIcon',      "<i class='fa fa-users fa-2x'></i>");
         view()->share('userIcon',               "<i class='fa fa-user fa-lg'></i>");
         view()->share('userOIcon',              "<i class='fa fa-user-o fa-lg'></i>");

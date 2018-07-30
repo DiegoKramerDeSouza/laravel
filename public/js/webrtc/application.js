@@ -40,11 +40,11 @@ $(document).ready(function() {
     connection.socketMessageEvent = connect.socketMessageEvent;
     connection.socketURL = connect.urlSocket;
 
-    //Detecta inputs de áudio e vídeo
-    DetectRTC.load(function() {
-        console.log(DetectRTC.videoInputDevices);
-        console.log(DetectRTC.audioInputDevices);
-    });
+    //Detecta inputs de áudio e vídeo para configuração
+    let devices = new DevicesController();
+    console.log(devices);
+
+
 
     // Listeners de tratamento de tamanho de tela do video (Detecta Fullscreen OFF)
     mediaController.initListeners();

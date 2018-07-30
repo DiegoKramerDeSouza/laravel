@@ -36,16 +36,38 @@
             </div>
             <br>
         </div>
-        <div class='modal-action'>
+        <div class='modal-action grey lighten-3'>
             <a href='{!! $chromeExt !!}' target='_blank' onclick='chrome.webstore.install()' class='right btn-flat blue-text text-darken-2 waves-effect waves-teal'>{!! $applyIcon !!} sim, instalar</a>
             <a class='modal-close right btn-flat red-text text-darken-3 waves-effect waves-red'>{!! $cancelIcon !!} não</a>
+        </div>
+    </div>
+    <!-- Modal de seleção de dispositívos de áudio e vídeo -->
+    <div id='choose-devices' class='modal'>
+        <div class='modal-content'>
+            <h5>
+                {!! $configBlueIcon !!} Dispositivos:
+                <span class='right'>
+                    <a class='modal-close'>
+                        {!! $cancelRedIcon !!}
+                    </a>
+                </span>
+            </h5>
+            <div class='divider'></div>
+            <p>Selecione os dispositivos de áudio e vídeo.</p>
+            <div id='device-list' class='input-field col s12 m6 offset-m3'>
+                <!-- Insersão AJAX -->
+            </div>
+            <br>
+        </div>
+        <div class='modal-footer grey lighten-3'>
+            <button id='informDevices' type='submit' class='btn-flat blue-text text-darken-2 waves-effect waves-teal'> {!! $applyIcon !!} Ok </button>
         </div>
     </div>
 @else
     <div id='msg-informa-espectadores' class='modal'>
         <div class='modal-content'>
             <h5>
-                {!! $peopleIcon !!} Espectadores:
+                {!! $usuariosBlueIcon !!} Espectadores:
                 <span class='right'>
                     <a class='modal-close'>
                         {!! $cancelRedIcon !!}
@@ -60,8 +82,8 @@
             </div>
             <br>
         </div>
-        <div class='modal-footer'>
-            <input type='submit' class='right btn-flat blue-text text-darken-2 waves-effect waves-teal' value='OK' />
+        <div class='modal-footer grey lighten-3'>
+            <button id='informUsers' type='submit' class='btn-flat blue-text text-darken-2 waves-effect waves-teal'> {!! $applyIcon !!} Ok </button>
         </div>
     </div>
 @endif
