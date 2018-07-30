@@ -10,4 +10,7 @@ $(document).ready(function() {
     load.deployLoading();
     load.deployLoadingCancel();
     //====================================
+    // Inicializa verificação de sessão===
+    IdleHelper.idleTimer();
+    //====================================
 });

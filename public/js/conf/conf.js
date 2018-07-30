@@ -32,7 +32,8 @@ const conf = {
         SINGLE_CON: false,
         WAITING_FOR_VIDEO: 'waiting',
         NUMBER_OF_ROOMS: 0,
-        POSTER_IMG: '/img/bg.jpg'
+        POSTER_IMG: '/img/bg.jpg',
+        IDLE_TIME: 120
     },
     con: {
         /*Constantes de inicialização de conexão */
