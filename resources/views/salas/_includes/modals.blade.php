@@ -53,15 +53,28 @@
                 </span>
             </h5>
             <div class='divider'></div>
-            <p>Selecione os dispositivos de áudio e vídeo.</p>
-            <div id='device-list' class='input-field col s12 m6 offset-m3'>
-                <!-- Insersão AJAX -->
+            <p><b>Selecione os dispositivos de entrada de áudio e vídeo</b></p>
+            <br/>
+            <form class='' action='{{ route('salas.dispositivos.registra') }}' method='post' enctype="multipart/form-data">
+                {{ csrf_field() }}
+                <div id='audio-device-list' class='input-field col s12 m6 offset-m3'>
+                    <select id='audio_list' class='' required name='audio_list'>
+                        <!-- AJAX input -->
+                    </select>
+                    <label for='audio_list'>{!! $micIcon !!} Dispositivo de input áudio:</label>
+                </div>
+                <div id='video-device-list' class='input-field col s12 m6 offset-m3'>
+                    <select id='video_list' class='' required name='video_list'>
+                        <!-- AJAX input -->
+                    </select>
+                    <label for='video_list'>{!! $camIcon !!} Dispositivo de input vídeo:</label>
+                </div>
+                <br>
             </div>
-            <br>
-        </div>
-        <div class='modal-footer grey lighten-3'>
-            <button id='informDevices' type='submit' class='btn-flat blue-text text-darken-2 waves-effect waves-teal'> {!! $applyIcon !!} Ok </button>
-        </div>
+            <div class='modal-footer grey lighten-3'>
+                <button id='confirmDevices' type='submit' class='btn-flat blue-text text-darken-2 waves-effect waves-teal modal-close'> {!! $applyIcon !!} Ok </button>
+            </div>
+            </form>
     </div>
 @else
     <div id='msg-informa-espectadores' class='modal'>

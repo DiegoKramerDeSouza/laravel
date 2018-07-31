@@ -48,11 +48,10 @@
         @if(isset($streamPage))
             <!-- Formação de SALAS -->
             @if(! Auth::guest())
-                <!-- Models e Controllers -->
-
+                <!-- Inicializa o controle de dispositivos -->
                 <script type="text/javascript" src="{!! asset('js/controllers/DevicesController.js') !!}"></script>  
                 <script type="text/javascript" src="{!! asset('js/views/DevicesView.js') !!}"></script>
-
+                <!-- Models e Controllers -->
                 <script type="text/javascript" src="{!! asset('js/models/Structure.js') !!}"></script>  
                 <script type="text/javascript" src="{!! asset('js/controllers/StructureController.js') !!}"></script>  
                 <script type="text/javascript" src="{!! asset('js/models/Room.js') !!}"></script>  
@@ -67,6 +66,8 @@
                 <script type="text/javascript" src="{!! asset('js/controllers/MediaController.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/models/Message.js') !!}"></script> 
                 <script type="text/javascript" src="{!! asset('js/controllers/MessageController.js') !!}"></script>
+                <!-- Loader específico para controle de dispositivos -->
+                <script type="text/javascript" src="{!! asset('js/loaders/DeviceLoader.js') !!}"></script>
                 <!-- Views -->
                 <script type="text/javascript" src="{!! asset('js/views/MediaView.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/views/MessageView.js') !!}"></script>

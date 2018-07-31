@@ -2,30 +2,37 @@ class DevicesView {
 
     constructor() {
 
+        this._audioOption = `<option value="" disabled selected>Selecione um dispositivo</option>`;
+        this._videoOption = `<option value="" disabled selected>Selecione um dispositivo</option>`;
+        this._audioSelect = doc.TAG(dom.LIST_AUDIO);
+        this._videoSelect = doc.TAG(dom.LIST_VIDEO);
+        this._value;
     }
 
     createSelector() {
 
-        console.log('Working on it!');
+        this._audioSelect.innerHTML += this._audioOption;
+        this._videoSelect.innerHTML += this._videoOption;
+        let materialize = new MaterializeController();
+        materialize.initiateSelect();
     }
 
-    selectedAudio(id, label, group) {
+    selectedAudio(id, label, group, selected) {
 
-        console.log('criando select de Áudio já selecionado!', id, label, group);
+        selected ?
+            this._audioOption += `<option value="${ this._convertValue(id, label, group) }" selected>${ label }</option>` :
+            this._audioOption += `<option value="${ this._convertValue(id, label, group) }">${ label }</option>`;
     }
 
-    unselectedAudio(id, label, group) {
+    selectedVideo(id, label, group, selected) {
 
-        console.log('criando select de Áudio NÃO selecionado!', id, label, group);
+        selected ?
+            this._videoOption += `<option value="${ this._convertValue(id, label, group) }" selected>${ label }</option>` :
+            this._videoOption += `<option value="${ this._convertValue(id, label, group) }">${ label }</option>`;
     }
 
-    selectedVideo(id, label, group) {
+    _convertValue(id, label, group) {
 
-        console.log('criando select de Vídeo já selecionado!', id, label, group);
-    }
-
-    unselectedVideo(id, label, group) {
-
-        console.log('criando select de Vídeo NÃO selecionado!', id, label, group);
+        return btoa(`${ id }|${ label }|${ group }`);
     }
 }

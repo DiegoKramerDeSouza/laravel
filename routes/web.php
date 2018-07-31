@@ -110,5 +110,4 @@ Route::group(['middleware' => 'auth'], function(){
     //Rota para registro de dispositídvos
     Route::get('/salas/dispositivos/', ['as' => 'salas.dispositivos.coleta', 'uses' => 'Site\DeviceController@index']);
     Route::post('/salas/dispositivos/registra', ['as' => 'salas.dispositivos.registra', 'uses' => 'Site\DeviceController@save']);
-    Route::put('/salas/dispositivos/atualiza/{id}', ['as' => 'salas.dispositivos.atualiza', 'uses' => 'Site\DeviceController@update']);
 });

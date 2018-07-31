@@ -13,6 +13,7 @@ class StructureController {
         this._mainVideo = conf.structure.WAITING_FOR_VIDEO;
         this._userVideo = conf.structure.WAITING_FOR_VIDEO;
         this._startRoom = doc.TAG(dom.BTN_START_ROOM);
+        this._configDev = doc.TAG(dom.BTN_CONF_DEVICES);
         this._publicRoomsList = doc.TAG(dom.PUBLIC_CONFERENCE);
         this._connectList = doc.TAG(dom.USERS_LIST);
         this._countRooms = conf.structure.NUMBER_OF_ROOMS;
@@ -33,6 +34,7 @@ class StructureController {
             this._mainVideo,
             this._userVideo,
             this._startRoom,
+            this._configDev,
             this._publicRoomsList,
             this._connectList,
             this._countRooms,

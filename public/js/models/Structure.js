@@ -16,6 +16,7 @@ class Structure {
         mainVideo,
         userVideo,
         startRoom,
+        configDev,
         publicRoomsList,
         connectList,
         countRooms,
@@ -35,6 +36,7 @@ class Structure {
         this._mainVideo = mainVideo;
         this._userVideo = userVideo;
         this._startRoom = startRoom;
+        this._configDev = configDev;
         this._publicRoomsList = publicRoomsList;
         this._connectList = connectList;
         this._countRooms = countRooms;
@@ -180,6 +182,11 @@ class Structure {
     get startRoom() {
 
         return this._startRoom;
+    }
+
+    get configDev() {
+
+        return this._configDev;
     }
 
     get publicRoomsList() {

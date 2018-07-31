@@ -4,14 +4,12 @@ class DevicesController {
 
         this._origin = location.origin;
         this._devices = [];
-
-        this._setDevicesData();
-        this._collectDBDevices();
     }
 
     initiateDevices() {
 
-        return this._devices;
+        this._setDevicesData();
+        this._collectDBDevices();
     }
 
     _setDevicesData() {
@@ -48,17 +46,19 @@ class DevicesController {
 
     _updateSelector(data) {
 
-        let view = new DevicesView(this._devices);
+        let deviceView = new DevicesView();
         this._devices.forEach((device) => {
-            if (device.kind == 'audioinput') {
-                device.label == data.label && device.id == data.id ?
-                    view.selectedAudio(device.id, device.label, device.group) :
-                    view.unselectedAudio(device.id, device.label, device.group);
+            if (device.kind === 'audioinput') {
+                device.label == data.audio_label && device.id == data.audio_id ?
+                    deviceView.selectedAudio(device.id, device.label, device.group, true) :
+                    deviceView.selectedAudio(device.id, device.label, device.group);
             } else {
-                device.label == data.label && device.id == data.id ?
-                    view.selectedVideo(device.id, device.label, device.group) :
-                    view.unselectedVideo(device.id, device.label, device.group);
+                device.label == data.video_label && device.id == data.video_id ?
+                    deviceView.selectedVideo(device.id, device.label, device.group, true) :
+                    deviceView.selectedVideo(device.id, device.label, device.group);
             }
         });
+
+        deviceView.createSelector();
     }
 }

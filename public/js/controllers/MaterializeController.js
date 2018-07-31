@@ -31,6 +31,11 @@ class MaterializeController {
         this._initTextarea();
     }
 
+    initiateSelect() {
+
+        this._initSelect();
+    }
+
     _initDropdown() {
 
         this._dropdownInstance = M.Dropdown.init(this._dropdown);

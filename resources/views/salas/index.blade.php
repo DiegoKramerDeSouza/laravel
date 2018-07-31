@@ -64,7 +64,8 @@
                             </div>
                             <div class='divider'></div>
                             <div align='right'>
-                                <button type='submit' id='btn-join-as-productor' class='btn blue white-text waves-effect waves-light modal-trigger' href='#choose-devices'>{!! $playButtomIcon !!} Iniciar</button>
+                                <button id='btn-conf-devices' class='btn teal white-text waves-effect waves-light modal-trigger' href='#choose-devices'>{!! $configIcon !!} Dispositivos</button>
+                                <button type='submit' id='btn-join-as-productor' class='btn blue white-text waves-effect waves-light'>{!! $playButtomIcon !!} Iniciar</button>
                             </div>
                         </div> 
                     </div>

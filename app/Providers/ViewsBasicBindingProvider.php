@@ -60,6 +60,7 @@ class ViewsBasicBindingProvider extends ServiceProvider
         view()->share('bookBlueIcon',           "<i class='fa fa-book blue-text'></i>");
         view()->share('bookIcon',               "<i class='fa fa-book'></i>");
         view()->share('bookmarkIcon',           "<i class='fa fa-bookmark'></i>");
+        view()->share('camIcon',                "<i class='fa fa-video-camera fa-lg'></i>");
         view()->share('cancelIcon',             "<i class='fa fa-times'></i>");
         view()->share('cancelRedIcon',          "<i class='fa fa-times red-text text-darken-3'></i>");
         view()->share('chromeIcon',             "<i class='fa fa-chrome'></i>");
@@ -85,6 +86,7 @@ class ViewsBasicBindingProvider extends ServiceProvider
         view()->share('loginIcon',              "<i class='fa fa-user-circle fa-lg'></i>");
         view()->share('loginBlueIcon',          "<i class='fa fa-user-circle fa-lg blue-text'></i>");
         view()->share('mapIcon',                "<i class='fa fa-map-o fa-lg'></i>");
+        view()->share('micIcon',                "<i class='fa fa-microphone fa-lg'></i>");
         view()->share('menuIcon',               "<i class='fa fa-bars fa-2x'></i>");
         view()->share('modulosIcon',            "<i class='fa fa-database fa-lg'></i>");
         view()->share('modulosLargeIcon',       "<i class='fa fa-database fa-2x'></i>");

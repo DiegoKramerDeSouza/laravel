@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 
 use Auth;
 use App\Device;
+use App\UserDado;
 
 class DeviceController extends Controller
 {
@@ -32,10 +33,42 @@ class DeviceController extends Controller
     }
 
     public function save(Request $req){
-        
-    }
 
-    public function update(Request $req, $id){
+        $userid = Auth::user()->id;
+        $userdata = UserDado::where('user_id', $userid)->first();
+        $devicedata = Device::where('user_dados_users_id', $userid)->get();
         
+        $audioDevice = base64_decode($req->audio_list);
+        $videoDevice = base64_decode($req->video_list);
+        
+        $audioDevice = explode('|', $audioDevice);
+        $videoDevice = explode('|', $videoDevice);
+        
+        if($devicedata->count() <= 0){
+            $newDevices = [
+                'aud_label'=>utf8_encode($audioDevice[1]),
+                'aud_id'=>utf8_encode($audioDevice[0]),
+                'aud_group_id'=>utf8_encode($audioDevice[2]),
+                'vid_label'=>utf8_encode($videoDevice[1]),
+                'vid_id'=>utf8_encode($videoDevice[0]),
+                'vid_group_id'=>utf8_encode($videoDevice[2]),
+                'user_dados_id'=>$userdata->id,
+                'user_dados_users_id'=>$userdata->user_id,
+                'user_dados_perfils_id'=>$userdata->perfils_id
+            ];
+            Device::create($newDevices);
+        } else{
+            $newDevices = [
+                'aud_label'=>utf8_encode($audioDevice[1]),
+                'aud_id'=>utf8_encode($audioDevice[0]),
+                'aud_group_id'=>utf8_encode($audioDevice[2]),
+                'vid_label'=>utf8_encode($videoDevice[1]),
+                'vid_id'=>utf8_encode($videoDevice[0]),
+                'vid_group_id'=>utf8_encode($videoDevice[2]),
+            ];
+            Device::where('user_dados_id', $userdata->id)->first()->update($newDevices);
+        }
+
+        return redirect()->route('salas', ['devices' => 'success']);
     }
 }

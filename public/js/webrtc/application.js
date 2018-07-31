@@ -42,9 +42,7 @@ $(document).ready(function() {
 
     //Detecta inputs de áudio e vídeo para configuração
     let devices = new DevicesController();
-    console.log(devices);
-
-
+    devices.initiateDevices();
 
     // Listeners de tratamento de tamanho de tela do video (Detecta Fullscreen OFF)
     mediaController.initListeners();
@@ -546,8 +544,15 @@ $(document).ready(function() {
     structure.startRoom.onclick = function() {
 
         let room = roomController.initiateRoom();
+        /*
         let values = $(dom.CURSO_LIST).val();
         let strValues = values.join(';');
+        */
+        if (!roomController.checkDevices()) {
+            alerta.initiateMessage(conf.message.DEVICE_ALERT);
+            structure.configDev.click();
+            return;
+        }
 
         if (roomController.validade()) {
             structure.usuario = room.name;
