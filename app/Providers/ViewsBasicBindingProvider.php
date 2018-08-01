@@ -86,7 +86,7 @@ class ViewsBasicBindingProvider extends ServiceProvider
         view()->share('loginIcon',              "<i class='fa fa-user-circle fa-lg'></i>");
         view()->share('loginBlueIcon',          "<i class='fa fa-user-circle fa-lg blue-text'></i>");
         view()->share('mapIcon',                "<i class='fa fa-map-o fa-lg'></i>");
-        view()->share('micIcon',                "<i class='fa fa-microphone fa-lg'></i>");
+        view()->share('microphoneIcon',         "<i class='fa fa-microphone fa-lg'></i>");
         view()->share('menuIcon',               "<i class='fa fa-bars fa-2x'></i>");
         view()->share('modulosIcon',            "<i class='fa fa-database fa-lg'></i>");
         view()->share('modulosLargeIcon',       "<i class='fa fa-database fa-2x'></i>");

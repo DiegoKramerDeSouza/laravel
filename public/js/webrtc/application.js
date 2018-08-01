@@ -41,7 +41,7 @@ $(document).ready(function() {
     connection.socketURL = connect.urlSocket;
 
     //Detecta inputs de áudio e vídeo para configuração
-    if (structure.roomType == 0) {
+    if (structure.roomType.value == 0) {
         let devices = new DevicesController();
         devices.initiateDevices();
     }
@@ -556,7 +556,7 @@ $(document).ready(function() {
             structure.onlobby = false;
 
             // Verificação de dispositivos de entrada de áudio e vídeo
-            if (!GeneralHelper.detectmob() && structure.roomType == 0) {
+            if (!GeneralHelper.detectmob() && structure.roomType.value == 0) {
 
                 let videoConstraints;
                 let audioConstraints;

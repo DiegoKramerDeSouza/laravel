@@ -60,7 +60,7 @@
                 <select id='audio_list' class='' required name='audio_list'>
                     <!-- AJAX input -->
                 </select>
-                <label for='audio_list'>{!! $micIcon !!} Dispositivo de input áudio:</label>
+                <label for='audio_list'>{!! $microphoneIcon !!} Dispositivo de input áudio:</label>
             </div>
             <div id='video-device-list' class='input-field col s12 m6 offset-m3'>
                 <select id='video_list' class='' required name='video_list'>
