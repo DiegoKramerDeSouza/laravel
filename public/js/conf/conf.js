@@ -15,7 +15,8 @@ const doc = {
     TAG: document.querySelector.bind(document),
     ALL: document.querySelectorAll.bind(document),
     ADD: document.createElement.bind(document),
-    COOKIE_LIFETIME: 365
+    COOKIE_LIFETIME: 365,
+    IDLE_TIME: 120
 }
 
 const conf = {
@@ -33,8 +34,7 @@ const conf = {
         SINGLE_CON: false,
         WAITING_FOR_VIDEO: 'waiting',
         NUMBER_OF_ROOMS: 0,
-        POSTER_IMG: '/img/bg.jpg',
-        IDLE_TIME: 120
+        POSTER_IMG: '/img/bg.jpg'
     },
     con: {
         /*Constantes de inicialização de conexão */
@@ -82,7 +82,7 @@ const conf = {
         ACCEPT_SOLICITATION: ['<i class="fa fa-times"></i>', 'Já existe uma solicitação aceita!<br>Finalize-a para aceitar outra.', 'red darken-4'],
         FORM_ALERT: ['<i class="fa fa-exclamation-triangle fa-lg"></i>', 'Por favor informe todos os campos indicados!', 'red darken-4'],
         DEVICE_ALERT: ['<i class="fa fa-exclamation-triangle fa-lg"></i>', 'Por favor selecione os dispositívos a serem utilizados antes de iniciar a sala!', 'red darken-4'],
-        DEVICE_CONFIGURED: ['<i class="fa fa-check fa-lg"></i>', 'Dispositivos configurados com sucesso!', 'light-green darken-1'],
+        DEVICE_CONFIGURED: ['<i class="fa fa-check fa-lg"></i>', 'Dispositivos configurados com sucesso!', 'blue darken-1'],
         DISCONNECT_USER: ['<i class="fa fa-times"></i>', 'foi desconectado!', 'red darken-4'],
         CANCEL_SOLICITATION: ['<i class="fa fa-times"></i>', 'Solicitação cancelada.', 'red darken-4'],
         NEW_SOLICITATION: ['<i class="material-icons">pan_tool</i>', 'solicita a vez!', 'blue darken-1'],

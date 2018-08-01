@@ -10,7 +10,7 @@ class DevicesController {
 
         this._setDevicesData();
         setTimeout(() => {
-            this._collectDBDevices();
+            this._collectCookiesDevices();
         }, 500);
 
     }
@@ -60,7 +60,7 @@ class DevicesController {
         return result;
     }
 
-    _collectDBDevices() {
+    _collectCookiesDevices() {
 
         let deviceView = new DevicesView();
         let audDev = this._getCookies("audioDevice");

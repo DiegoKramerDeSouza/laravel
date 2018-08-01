@@ -16,6 +16,7 @@ class StructureController {
         this._configDev = doc.TAG(dom.BTN_CONF_DEVICES);
         this._publicRoomsList = doc.TAG(dom.PUBLIC_CONFERENCE);
         this._connectList = doc.TAG(dom.USERS_LIST);
+        this._roomType = doc.TAG(dom.ROOM_TYPE);
         this._countRooms = conf.structure.NUMBER_OF_ROOMS;
         this._singlecon = conf.structure.SINGLE_CON;
     }
@@ -37,6 +38,7 @@ class StructureController {
             this._configDev,
             this._publicRoomsList,
             this._connectList,
+            this._roomType,
             this._countRooms,
             this._singlecon
         ];

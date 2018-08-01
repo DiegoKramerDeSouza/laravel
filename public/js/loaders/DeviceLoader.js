@@ -5,22 +5,26 @@
 $(document).ready(function() {
 
     let loadDeviceSelector = doc.TAG(dom.CONFIRM_DEVICES);
-    let roomController = new RoomController();
+    if (loadDeviceSelector) {
+        let roomController = new RoomController();
 
-    if (GeneralHelper.detectmob()) doc.TAG(dom.BTN_CONF_DEVICES).disabled = true;
+        console.log(GeneralHelper.detectmob());
+        if (!GeneralHelper.detectmob()) $(dom.BTN_CONF_DEVICES).fadeIn(300);
+        else doc.TAG(dom.BTN_CONF_DEVICES).disabled = true;
 
-    loadDeviceSelector.onclick = () => {
+        loadDeviceSelector.onclick = () => {
 
-        if (!roomController.checkDevices()) {
-            alerta.initiateMessage(conf.message.DEVICE_ALERT);
-            return;
-        } else {
-            let audio = doc.TAG(dom.LIST_AUDIO);
-            let video = doc.TAG(dom.LIST_VIDEO);
-            let deviceController = new DevicesController();
-            deviceController.setCookies("audioDevice", audio.value, doc.COOKIE_LIFETIME);
-            deviceController.setCookies("videoDevice", video.value, doc.COOKIE_LIFETIME);
-            alerta.initiateMessage(conf.message.DEVICE_CONFIGURED);
-        }
-    };
+            if (!roomController.checkDevices()) {
+                alerta.initiateMessage(conf.message.DEVICE_ALERT);
+                return;
+            } else {
+                let audio = doc.TAG(dom.LIST_AUDIO);
+                let video = doc.TAG(dom.LIST_VIDEO);
+                let deviceController = new DevicesController();
+                deviceController.setCookies("audioDevice", audio.value, doc.COOKIE_LIFETIME);
+                deviceController.setCookies("videoDevice", video.value, doc.COOKIE_LIFETIME);
+                alerta.initiateMessage(conf.message.DEVICE_CONFIGURED);
+            }
+        };
+    }
 });

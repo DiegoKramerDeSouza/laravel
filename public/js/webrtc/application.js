@@ -41,8 +41,10 @@ $(document).ready(function() {
     connection.socketURL = connect.urlSocket;
 
     //Detecta inputs de áudio e vídeo para configuração
-    let devices = new DevicesController();
-    devices.initiateDevices();
+    if (structure.roomType == 0) {
+        let devices = new DevicesController();
+        devices.initiateDevices();
+    }
 
     // Listeners de tratamento de tamanho de tela do video (Detecta Fullscreen OFF)
     mediaController.initListeners();
@@ -554,9 +556,11 @@ $(document).ready(function() {
             structure.onlobby = false;
 
             // Verificação de dispositivos de entrada de áudio e vídeo
-            let videoConstraints;
-            let audioConstraints;
-            if (!GeneralHelper.detectmob()) {
+            if (!GeneralHelper.detectmob() && structure.roomType == 0) {
+
+                let videoConstraints;
+                let audioConstraints;
+
                 if (!roomController.checkDevices()) {
                     alerta.initiateMessage(conf.message.DEVICE_ALERT);
                     structure.configDev.click();
@@ -585,6 +589,11 @@ $(document).ready(function() {
                         };
                     }
                 }
+                // Aplica dispositivos selecionados à sala criada
+                connection.mediaConstraints = {
+                    video: videoConstraints,
+                    audio: audioConstraints
+                };
             }
 
             // Inicializa a tela de apresentação
@@ -605,11 +614,7 @@ $(document).ready(function() {
                 audio: 100,
                 video: 300
             };
-            // Aplica dispositivos selecionados à sala criada
-            connection.mediaConstraints = {
-                video: videoConstraints,
-                audio: audioConstraints
-            };
+
             // Inicializa Socket / Verifica existência do broadcast
             let socket = connection.getSocket();
             socket.emit('check-broadcast-presence', room.hash, (isBroadcastExists) => {

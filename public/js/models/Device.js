@@ -1,3 +1,7 @@
+/**
+ * Módulo de definição de dispositivos de input de áudio e vídeo
+ *  -> Suporta os elementos coletados via DetectRTC e seus atributos
+ */
 class Device {
 
     constructor(audioId, audioLabel, audioGroup, videoId, videoLabel, videoGroup) {

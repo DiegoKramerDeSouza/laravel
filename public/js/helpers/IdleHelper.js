@@ -12,7 +12,7 @@ class IdleHelper {
     static idleTimer() {
 
         let _interval;
-        let _timer = ((60 * 1000) * conf.structure.IDLE_TIME);
+        let _timer = ((60 * 1000) * doc.IDLE_TIME);
 
         window.onload = _resetTimer;
         window.onmousemove = _resetTimer;

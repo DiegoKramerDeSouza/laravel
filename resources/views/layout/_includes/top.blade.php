@@ -52,12 +52,16 @@
                             </li>
                         @endif
                     </ul>
-                </div>		
-                <ul id='myProfile' class='dropdown-content'>
-                    <li class='white'><a href='#' class=''>{!! $configBlueIcon !!} Configurações</a></li>
-                    <li class='white'><a href='#' class=''>{!! $bookBlueIcon !!} Aulas</a></li>
-                    <li class='white'><a href='{{ route('login.destroy')}}' class='load-cancel red-text text-darken-2'>{!! $signOutRedIcon !!} Sair</a></li>
-                </ul>
+                </div>
+                @if(! Auth::guest())		
+                    <ul id='myProfile' class='dropdown-content'>
+                        @if(Auth::user()->type == 0)
+                            <li class='white'><a href='#' class=''>{!! $configBlueIcon !!} Configurações</a></li>
+                        @endif
+                        <li class='white'><a href='#' class=''>{!! $bookBlueIcon !!} Aulas</a></li>
+                        <li class='white'><a href='{{ route('login.destroy')}}' class='load-cancel red-text text-darken-2'>{!! $signOutRedIcon !!} Sair</a></li>
+                    </ul>
+                @endif
             </nav>
             <div id='side-bar' class='sidenav z-depth-5'>
                 <h4 class='blue-text' style='margin:10px;'><b>Web<span class='grey-text text-darken-3'>Tv</span></b></h4>
@@ -95,11 +99,15 @@
                 <ul id='side-dropGer' class='dropdown-content'>
                     <li class='grey darken-4'><a href='{{ route('login.destroy')}}' class='load-cancel red-text text-darken-3'>{!! $signOutRedIcon !!} <b>Sair</b></a></li>
                 </ul>
-                <ul id='side-myProfile' class='dropdown-content'>
-                    <li><a href='#' class='grey-text text-darken-3'>{!! $configBlueIcon !!} Configurações</a></li>
-                    <li><a href='#' class='grey-text text-darken-3'>{!! $bookBlueIcon !!} Aulas</a></li>
-                    <li><a href='{{ route('login.destroy')}}' class='load-cancel red-text text-darken-3'>{!! $signOutRedIcon !!} Sair</a></li>
-                </ul>
+                @if(! Auth::guest())
+                    <ul id='side-myProfile' class='dropdown-content'>
+                        @if(Auth::user()->type == 0)
+                            <li><a href='#' class='grey-text text-darken-3'>{!! $configBlueIcon !!} Configurações</a></li>
+                        @endif
+                        <li><a href='#' class='grey-text text-darken-3'>{!! $bookBlueIcon !!} Aulas</a></li>
+                        <li><a href='{{ route('login.destroy')}}' class='load-cancel red-text text-darken-3'>{!! $signOutRedIcon !!} Sair</a></li>
+                    </ul>
+                @endif
             </div>
         </header>
         <main>
