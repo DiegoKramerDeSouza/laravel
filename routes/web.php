@@ -107,7 +107,4 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/admin/cadastro/{module}/autocomplete/', ['as' => 'admin.cadastro.autocomplete', 'uses' => 'Admin\CadastroAutocompleteController@autocomplete']);
     Route::get('/admin/cadastro/{module}/result/{name}', ['as' => 'admin.cadastro.autocomplete.result', 'uses' => 'Admin\CadastroAutocompleteController@resultAutocomplete']);
 
-    //Rota para registro de dispositídvos
-    Route::get('/salas/dispositivos/', ['as' => 'salas.dispositivos.coleta', 'uses' => 'Site\DeviceController@index']);
-    Route::post('/salas/dispositivos/registra', ['as' => 'salas.dispositivos.registra', 'uses' => 'Site\DeviceController@save']);
 });

@@ -9,10 +9,18 @@ class DevicesView {
         this._value;
     }
 
-    createSelector() {
+    createAudioSelector() {
 
         this._audioSelect.innerHTML += this._audioOption;
+    }
+
+    createVideoSelector() {
+
         this._videoSelect.innerHTML += this._videoOption;
+    }
+
+    startMaterializeSelect() {
+
         let materialize = new MaterializeController();
         materialize.initiateSelect();
     }
@@ -20,15 +28,15 @@ class DevicesView {
     selectedAudio(id, label, group, selected) {
 
         selected ?
-            this._audioOption += `<option value="${ this._convertValue(id, label, group) }" selected>${ label }</option>` :
-            this._audioOption += `<option value="${ this._convertValue(id, label, group) }">${ label }</option>`;
+            this._audioOption += `<option value="${ id }" selected>${ label }</option>` :
+            this._audioOption += `<option value="${ id }">${ label }</option>`;
     }
 
     selectedVideo(id, label, group, selected) {
 
         selected ?
-            this._videoOption += `<option value="${ this._convertValue(id, label, group) }" selected>${ label }</option>` :
-            this._videoOption += `<option value="${ this._convertValue(id, label, group) }">${ label }</option>`;
+            this._videoOption += `<option value="${ id }" selected>${ label }</option>` :
+            this._videoOption += `<option value="${ id }">${ label }</option>`;
     }
 
     _convertValue(id, label, group) {

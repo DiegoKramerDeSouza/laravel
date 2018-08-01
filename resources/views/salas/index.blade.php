@@ -116,7 +116,7 @@
     
     @if(isset($streamPage))
         <!-- Modals -->
-        @include('salas._includes.modals')
+        @include('salas._includes.elements.modals')
 
         <!-- Controle de acesso de usuários à transmissão -->
         @if(Auth::user()->type == 0)

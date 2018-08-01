@@ -548,25 +548,51 @@ $(document).ready(function() {
         let values = $(dom.CURSO_LIST).val();
         let strValues = values.join(';');
         */
-        if (!roomController.checkDevices()) {
-            alerta.initiateMessage(conf.message.DEVICE_ALERT);
-            structure.configDev.click();
-            return;
-        }
 
         if (roomController.validade()) {
             structure.usuario = room.name;
             structure.onlobby = false;
 
-            // Inicializa a tela de apresentação
-            // Modela e apresenta cabeçalho do video
-            mediaController.initiateStream();
+            // Verificação de dispositivos de entrada de áudio e vídeo
+            let videoConstraints;
+            let audioConstraints;
+            if (!GeneralHelper.detectmob()) {
+                if (!roomController.checkDevices()) {
+                    alerta.initiateMessage(conf.message.DEVICE_ALERT);
+                    structure.configDev.click();
+                    return;
+                } else {
+                    // Identifica navegador
+                    if (connection.DetectRTC.browser.name === 'Firefox') {
+                        videoConstraints = {
+                            deviceId: roomController._videoList.value
+                        };
+                        audioConstraints = {
+                            deviceId: roomController._audioList.value
+                        };
+                    } else {
+                        videoConstraints = {
+                            mandatory: {},
+                            optional: [{
+                                sourceId: roomController._videoList.value
+                            }]
+                        };
+                        audioConstraints = {
+                            mandatory: {},
+                            optional: [{
+                                sourceId: roomController._audioList.value
+                            }]
+                        };
+                    }
+                }
+            }
 
+            // Inicializa a tela de apresentação
+            mediaController.initiateStream();
+            // Modela e apresenta cabeçalho do video
             roomController.setRoomLabel(misc.ICON_FA_VIDEOCAM, room.tema, room.assunto);
             structure.startRoom.disabled = true;
-
-            // Define inicialização de sessão
-            // -> Permite Audio, Video e Dados
+            // Define elementos de inicialização da sessão criada
             connection.session = {
                 audio: true,
                 video: true,
@@ -574,14 +600,16 @@ $(document).ready(function() {
                 broadcast: true,
                 oneway: true
             };
-
             // Controle da utilização de banda
-            /* Definido com o máximo de 400KBps */
             connection.bandwidth = {
                 audio: 100,
                 video: 300
             };
-
+            // Aplica dispositivos selecionados à sala criada
+            connection.mediaConstraints = {
+                video: videoConstraints,
+                audio: audioConstraints
+            };
             // Inicializa Socket / Verifica existência do broadcast
             let socket = connection.getSocket();
             socket.emit('check-broadcast-presence', room.hash, (isBroadcastExists) => {
