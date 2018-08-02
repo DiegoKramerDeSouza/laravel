@@ -59,4 +59,4 @@
     <input required type='hidden' name='lockcep' id='lockcep' value='{{ $apicep->key}}'>
     
 </div>
-<script type="text/javascript" src="{!! asset('js/formEscola.js') !!}"></script>
+

@@ -110,7 +110,7 @@ function waitResponse() {
 /*
  *   Alimenta os campos de endereço, cidade e estado a partir do resultado da consulta
  */
-function meu_callback(conteudo) {
+function via_cep_callback(conteudo) {
     if (!("erro" in conteudo)) {
         document.getElementById('address').value = (conteudo.logradouro);
         document.getElementById('city').value = (conteudo.localidade);

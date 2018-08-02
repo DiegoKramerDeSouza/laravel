@@ -5,7 +5,7 @@ class MediaView {
 
     constructor() {
 
-        let alerta = new MessageController();
+        this._alerta = new MessageController();
 
         this._mute = doc.TAG(dom.MUTE);
         this._cam = doc.TAG(dom.CAM);
@@ -31,14 +31,14 @@ class MediaView {
 
         this._mute.classList.remove(misc.OFF_COLOR);
         this._mute.innerHTML = misc.ICON_MIC;
-        alerta.initiateMessage(conf.message.MIC_ON);
+        this._alerta.initiateMessage(conf.message.MIC_ON);
     }
 
     setVoiceOff() {
 
         this._mute.classList.add(misc.OFF_COLOR);
         this._mute.innerHTML = misc.ICON_MUTE_MIC;
-        alerta.initiateMessage(conf.message.MIC_OFF);
+        this._alerta.initiateMessage(conf.message.MIC_OFF);
     }
 
     voiceOff() {
@@ -52,14 +52,14 @@ class MediaView {
 
         this._vol.classList.remove(misc.OFF_COLOR);
         this._vol.innerHTML = misc.ICON_VOL_ON;
-        alerta.initiateMessage(conf.message.VOL_UP);
+        this._alerta.initiateMessage(conf.message.VOL_UP);
     }
 
     setVolumeOff() {
 
         this._vol.classList.add(misc.OFF_COLOR);
         this._vol.innerHTML = misc.ICON_VOL_OFF;
-        alerta.initiateMessage(conf.message.VOL_DOWN);
+        this._alerta.initiateMessage(conf.message.VOL_DOWN);
     }
 
     volumeOff() {
@@ -73,14 +73,14 @@ class MediaView {
 
         this._cam.classList.remove(misc.OFF_COLOR);
         this._cam.innerHTML = misc.ICON_CAM_ON;
-        alerta.initiateMessage(conf.message.CAM_ON);
+        this._alerta.initiateMessage(conf.message.CAM_ON);
     }
 
     setCamOff() {
 
         this._cam.classList.add(misc.OFF_COLOR);
         this._cam.innerHTML = misc.ICON_CAM_OFF;
-        alerta.initiateMessage(conf.message.CAM_OFF);
+        this._alerta.initiateMessage(conf.message.CAM_OFF);
     }
 
     camOff() {
@@ -113,7 +113,7 @@ class MediaView {
         $(dom.SHARE).show();
         this._share.classList.add(misc.OFF_COLOR);
         this._share.innerHTML = misc.ICON_SHARE_OFF;
-        alerta.initiateMessage(conf.message.START_SHARE);
+        this._alerta.initiateMessage(conf.message.START_SHARE);
     }
 
     exitShare() {
@@ -121,7 +121,7 @@ class MediaView {
         $(dom.SHARE).show();
         this._share.classList.remove(misc.OFF_COLOR);
         this._share.innerHTML = misc.ICON_SHARE_ON;
-        alerta.initiateMessage(conf.message.STOP_SHARE);
+        this._alerta.initiateMessage(conf.message.STOP_SHARE);
     }
 
 
@@ -161,7 +161,7 @@ class MediaView {
 
     allowSolicitation() {
 
-        alerta.initiateMessage(conf.message.SEND_ACP_SOLICITATION);
+        this._alerta.initiateMessage(conf.message.SEND_ACP_SOLICITATION);
         $(dom.DIV_ENTER).fadeIn(300);
         this.endParticipation();
     }
@@ -169,7 +169,7 @@ class MediaView {
     denySolicitation() {
 
         this.participationOff();
-        alerta.initiateMessage(conf.message.NOT_ACP_SOLICITATION);
+        this._alerta.initiateMessage(conf.message.NOT_ACP_SOLICITATION);
     }
 
     pedirOff() {
@@ -224,7 +224,7 @@ class MediaView {
 
     writeReceiveMessage(message, pContainer, isOpen) {
 
-        isOpen ? null : alerta.initiateMessage(conf.message.CHAT_MESSAGE, message);
+        isOpen ? null : this._alerta.initiateMessage(conf.message.CHAT_MESSAGE, message);
         this._chatPanel.innerHTML = `${this._chatPanel.innerHTML}${pContainer}${message}</p>`;
         this._chatTextArea.style.height = (window.innerHeight - 100) + 'px';
     }
@@ -253,7 +253,7 @@ class MediaView {
                     </div>
                 </li>`;
         this._solicitationList.innerHTML = this._listContent;
-        alerta.initiateMessage(conf.message.NEW_SOLICITATION, username);
+        this._alerta.initiateMessage(conf.message.NEW_SOLICITATION, username);
     }
 
     clearSolicitationLis() {

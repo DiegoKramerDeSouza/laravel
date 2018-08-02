@@ -36,6 +36,9 @@
         <script type="text/javascript" src="{!! asset('js/views/LoadingView.js') !!}"></script>
         <script type="text/javascript" src="{!! asset('js/controllers/LoadingController.js') !!}"></script>
         <script type="text/javascript" src="{!! asset('js/helpers/IdleHelper.js') !!}"></script>
+        <script type="text/javascript" src="{!! asset('js/models/Message.js') !!}"></script>
+        <script type="text/javascript" src="{!! asset('js/views/MessageView.js') !!}"></script>
+        <script type="text/javascript" src="{!! asset('js/controllers/MessageController.js') !!}"></script>
         <script type="text/javascript" src="{!! asset('js/helpers/GeneralHelper.js') !!}"></script>
         <script type="text/javascript" src="{!! asset('js/loaders/GeneralLoader.js') !!}"></script>
 
@@ -44,6 +47,12 @@
             <script type="text/javascript" src="{!! asset('js/loaders/AutocompleteLoader.js') !!}"></script>
             <script type="text/javascript" src="{!! asset('js/models/Autocomplete.js') !!}"></script>
             <script type="text/javascript" src="{!! asset('js/controllers/AutocompleteController.js') !!}"></script>
+        @endif
+        @if(isset($apicep))
+            <!-- Elementos de coleta de dados nas API's google maps e via cep -->
+            <script type="text/javascript" src="{!! asset('js/views/FormInstitutionView.js') !!}"></script>
+            <script type="text/javascript" src="{!! asset('js/controllers/FormInstitutionController.js') !!}"></script>
+            <script type="text/javascript" src="{!! asset('js/loaders/FormInstitutionLoader.js') !!}"></script>
         @endif
         @if(isset($streamPage))
             <!-- Formação de SALAS -->
@@ -64,13 +73,10 @@
                 <script type="text/javascript" src="{!! asset('js/controllers/ConnectController.js') !!}"></script>  
                 <script type="text/javascript" src="{!! asset('js/models/Media.js') !!}"></script>  
                 <script type="text/javascript" src="{!! asset('js/controllers/MediaController.js') !!}"></script>
-                <script type="text/javascript" src="{!! asset('js/models/Message.js') !!}"></script> 
-                <script type="text/javascript" src="{!! asset('js/controllers/MessageController.js') !!}"></script>
                 <!-- Loader específico para controle de dispositivos -->
                 <script type="text/javascript" src="{!! asset('js/loaders/DeviceLoader.js') !!}"></script>
                 <!-- Views -->
                 <script type="text/javascript" src="{!! asset('js/views/MediaView.js') !!}"></script>
-                <script type="text/javascript" src="{!! asset('js/views/MessageView.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/views/RoomView.js') !!}"></script>
                 <!-- Helpers -->
                 <script type="text/javascript" src="{!! asset('js/helpers/RoomHelper.js') !!}"></script>        
