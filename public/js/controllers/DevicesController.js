@@ -8,18 +8,13 @@ class DevicesController {
 
     initiateDevices() {
 
-        this._setDevicesData();
-        setTimeout(() => {
-            this._collectCookiesDevices();
-        }, 500);
-
-    }
-
-    _setDevicesData() {
-
         DetectRTC.load(() => {
+
             DetectRTC.audioInputDevices.forEach(device => this._devices.push(this._collectDevice(device)));
             DetectRTC.videoInputDevices.forEach(device => this._devices.push(this._collectDevice(device)));
+            setTimeout(() => {
+                this._collectCookiesDevices();
+            }, 500);
         });
     }
 
@@ -34,18 +29,18 @@ class DevicesController {
         return input;
     }
 
-    setCookies(cname, cvalue, days) {
+    setCookies(cookiename, cookievalue, days) {
 
         let date = new Date();
         let expires;
         date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
         expires = `expires=${date.toUTCString()}`;
-        document.cookie = `${cname}=${cvalue};${expires};`;
+        document.cookie = `${cookiename}=${cookievalue};${expires};`;
     }
 
-    _getCookies(cname) {
+    _getCookies(cookiename) {
 
-        let name = cname + "=";
+        let name = cookiename + "=";
         let result = "";
         let decodedCookie = decodeURIComponent(document.cookie);
         let dc = decodedCookie.split(';');
