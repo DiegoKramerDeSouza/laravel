@@ -2,8 +2,8 @@ class DevicesView {
 
     constructor() {
 
-        this._audioOption = `<option value="" disabled selected>Selecione um dispositivo</option>`;
-        this._videoOption = `<option value="" disabled selected>Selecione um dispositivo</option>`;
+        this._audioOption = misc.DEFAULT_SELECT_DEVICE;
+        this._videoOption = misc.DEFAULT_SELECT_DEVICE;
         this._audioSelect = doc.TAG(dom.LIST_AUDIO);
         this._videoSelect = doc.TAG(dom.LIST_VIDEO);
         this._value;
@@ -25,14 +25,14 @@ class DevicesView {
         materialize.initiateSelect();
     }
 
-    selectedAudio(id, label, group, selected) {
+    selectedAudio(id, label, selected) {
 
         selected ?
             this._audioOption += `<option value="${ id }" selected>${ label }</option>` :
             this._audioOption += `<option value="${ id }">${ label }</option>`;
     }
 
-    selectedVideo(id, label, group, selected) {
+    selectedVideo(id, label, selected) {
 
         selected ?
             this._videoOption += `<option value="${ id }" selected>${ label }</option>` :

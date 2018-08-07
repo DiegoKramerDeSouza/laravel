@@ -15,8 +15,10 @@ const doc = {
     TAG: document.querySelector.bind(document),
     ALL: document.querySelectorAll.bind(document),
     ADD: document.createElement.bind(document),
+    IDLE_TIME: 120,
     COOKIE_LIFETIME: 365,
-    IDLE_TIME: 120
+    COOKIE_VIDEO_DEVICE: "videoDevice",
+    COOKIE_AUDIO_DEVICE: "audioDevice"
 }
 
 const conf = {
@@ -227,4 +229,6 @@ const misc = {
     /*Elementos HTML para caixas de mensagens */
     DEFAULT_MSGBOX_OUT: '<p class="chat-in blue">',
     DEFAULT_MSGBOX_IN: '<p class="chat-out grey" align="right">',
+    /* Elementos vizuais padrões */
+    DEFAULT_SELECT_DEVICE: '<option value="" disabled selected>Selecione um dispositivo</option>'
 }

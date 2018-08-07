@@ -18,6 +18,21 @@ class DevicesController {
         });
     }
 
+    setDevices() {
+
+        let roomController = new RoomController();
+        if (!roomController.checkDevices()) {
+            alerta.initiateMessage(conf.message.DEVICE_ALERT);
+            return;
+        } else {
+            let audio = doc.TAG(dom.LIST_AUDIO);
+            let video = doc.TAG(dom.LIST_VIDEO);
+            this.setCookies(doc.COOKIE_AUDIO_DEVICE, audio.value, doc.COOKIE_LIFETIME);
+            this.setCookies(doc.COOKIE_VIDEO_DEVICE, video.value, doc.COOKIE_LIFETIME);
+            alerta.initiateMessage(conf.message.DEVICE_CONFIGURED);
+        }
+    }
+
     _collectDevice(device) {
 
         let input = {
@@ -73,8 +88,8 @@ class DevicesController {
         this._devices.forEach(device => {
             if (device.kind === 'audioinput') {
                 device.id == data ?
-                    view.selectedAudio(device.id, device.label, device.group, true) :
-                    view.selectedAudio(device.id, device.label, device.group);
+                    view.selectedAudio(device.id, device.label, true) :
+                    view.selectedAudio(device.id, device.label);
             }
         });
         view.createAudioSelector();
@@ -85,8 +100,8 @@ class DevicesController {
         this._devices.forEach(device => {
             if (device.kind === 'videoinput') {
                 device.id == data ?
-                    view.selectedVideo(device.id, device.label, device.group, true) :
-                    view.selectedVideo(device.id, device.label, device.group);
+                    view.selectedVideo(device.id, device.label, true) :
+                    view.selectedVideo(device.id, device.label);
             }
         });
         view.createVideoSelector();

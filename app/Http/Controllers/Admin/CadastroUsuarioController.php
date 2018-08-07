@@ -86,6 +86,7 @@ class CadastroUsuarioController extends Controller
             $userdata = [
                 '_token'=>$req->_token,
                 'user_id'=>$created->id,
+                'perfils_id'=>4,
                 'group'=>$req->group
             ];
             UserDado::create($userdata);

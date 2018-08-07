@@ -12,22 +12,17 @@
 
 let connectController = new ConnectController();
 let connect = connectController.initiateConnection();
-
 let mediaController = new MediaController();
 let media = mediaController.initiateMedia();
-
 let structureController = new StructureController();
 let structure = structureController.initiateStructure();
-
 let roomInfoController = new RoomInfoController();
 let roomInfo = roomInfoController.initiateRoomInfo();
 
 let alerta = new MessageController();
-
 let roomController = new RoomController();
 let roomDataController = new RoomDataController();
 let roomView = new RoomView();
-
 let connection = new RTCMultiConnection();
 
 $(document).ready(function() {
@@ -39,12 +34,6 @@ $(document).ready(function() {
     connection.maxRelayLimitPerUser = connect.maxRelayLimitPerUser;
     connection.socketMessageEvent = connect.socketMessageEvent;
     connection.socketURL = connect.urlSocket;
-
-    //Detecta inputs de áudio e vídeo para configuração
-    if (structure.roomType.value == 0) {
-        let devices = new DevicesController();
-        devices.initiateDevices();
-    }
 
     // Listeners de tratamento de tamanho de tela do video (Detecta Fullscreen OFF)
     mediaController.initListeners();
