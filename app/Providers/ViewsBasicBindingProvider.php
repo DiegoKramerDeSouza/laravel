@@ -66,10 +66,13 @@ class ViewsBasicBindingProvider extends ServiceProvider
         view()->share('chromeIcon',             "<i class='fa fa-chrome'></i>");
         view()->share('closeIcon',              "<i class='fa fa-times-circle'></i>");
         view()->share('closeLargeIcon',         "<i class='fa fa-times-circle fa-3x'></i>");
+        view()->share('manageBlueIcon',         "<span class='fa fa-cogs fa-lg blue-text'></span>");
+        view()->share('manageIcon',             "<span class='fa fa-cogs'></span>");
+        view()->share('manageWhiteIcon',        "<span class='fa fa-cogs white-text'></span>");
         view()->share('copyRightIcon',          "<i class='fa fa-copyright'></i>");
         view()->share('configBlueIcon',         "<i class='fa fa-cog blue-text'></i>");
         view()->share('configIcon',             "<i class='fa fa-cog'></i>");
-        view()->share('cursosIcon',             "<i class='fa fa-cubes fa-lg'></i>");
+        view()->share('cursosIcon',             "<i class='fa fa-cubes'></i>");
         view()->share('cursosLargeIcon',        "<i class='fa fa-cubes fa-2x'></i>");
         view()->share('deleteIcon',             "<i class='fa fa-trash-o'></i>");
         view()->share('descricaoIcon',          "<i class='fa fa-commenting-o fa-lg'></i>");
@@ -80,7 +83,7 @@ class ViewsBasicBindingProvider extends ServiceProvider
         view()->share('globoIcon',              "<i class='fa fa-globe fa-lg'></i>");
         view()->share('homeBlueIcon',           "<span class='fa fa-home fa-lg blue-text'></span>");
         view()->share('homeIcon',               "<i class='fa fa-home fa-lg'></i>");
-        view()->share('institutionIcon',        "<i class='fa fa-institution fa-lg'></i>");
+        view()->share('institutionIcon',        "<i class='fa fa-institution'></i>");
         view()->share('institutionLargeIcon',   "<i class='fa fa-institution fa-2x'></i>");
         view()->share('lockIcon',               "<i class='fa fa-lock fa-lg'></i>");
         view()->share('loginIcon',              "<i class='fa fa-user-circle fa-lg'></i>");
@@ -88,23 +91,24 @@ class ViewsBasicBindingProvider extends ServiceProvider
         view()->share('mapIcon',                "<i class='fa fa-map-o fa-lg'></i>");
         view()->share('microphoneIcon',         "<i class='fa fa-microphone fa-lg'></i>");
         view()->share('menuIcon',               "<i class='fa fa-bars fa-2x'></i>");
-        view()->share('modulosIcon',            "<i class='fa fa-database fa-lg'></i>");
+        view()->share('modulosIcon',            "<i class='fa fa-database'></i>");
         view()->share('modulosLargeIcon',       "<i class='fa fa-database fa-2x'></i>");
         view()->share('novoIcon',               "<i class='fa fa-plus-circle fa-lg'></i>");
         view()->share('numeroIcon',             "<i class='fa fa-tag fa-lg'></i>");
-        view()->share('perfisIcon',             "<i class='fa fa-vcard-o fa-lg'></i>");
+        view()->share('perfisIcon',             "<i class='fa fa-vcard-o'></i>");
         view()->share('perfisLargeIcon',        "<i class='fa fa-vcard-o fa-2x'></i>");
         view()->share('playButtomIcon',         "<i class='fa fa-play-circle'></i>");
         view()->share('plusIcon',               "<i class='fa fa-plus-square-o fa-lg'></i>");
         view()->share('roomsBlueIcon',          "<span class='fa fa-television fa-lg blue-text'></span>");
-        view()->share('roomsIcon',              "<span class='fa fa-television fa-lg'></span>");
+        view()->share('roomsIcon',              "<span class='fa fa-television'></span>");
         view()->share('signInIcon',             "<i class='fa fa-sign-in fa-lg'></i>");
         view()->share('signOutRedIcon',         "<i class='fa fa-sign-out fa-lg red-text'></i>");
-        view()->share('turmasIcon',             "<i class='fa fa-graduation-cap fa-lg'></i>");
+        view()->share('turmasIcon',             "<i class='fa fa-graduation-cap'></i>");
         view()->share('turmasLargeIcon',        "<i class='fa fa-graduation-cap fa-2x'></i>");
         view()->share('timeIcon',               "<i class='fa fa-clock-o fa-lg'></i>");
         view()->share('usuariosIcon',           "<i class='fa fa-users fa-lg'></i>");
         view()->share('usuariosBlueIcon',       "<i class='fa fa-users fa-lg blue-text'></i>");
+        view()->share('usuariosDefaultIcon',    "<i class='fa fa-users'></i>");
         view()->share('usuariosLargeIcon',      "<i class='fa fa-users fa-2x'></i>");
         view()->share('userIcon',               "<i class='fa fa-user fa-lg'></i>");
         view()->share('userOIcon',              "<i class='fa fa-user-o fa-lg'></i>");
@@ -114,7 +118,8 @@ class ViewsBasicBindingProvider extends ServiceProvider
         view()->share('prefixCommentingIcon',   "<i class='fa fa-commenting-o fa-1x prefix'></i>");
         view()->share('prefixSearchIcon',       "<i class='material-icons prefix'>search</i>");
         // Ícone + texto para links
-        view()->share('gobackLink', "<i class='fa fa-arrow-left'></i> voltar");
+        view()->share('gobackLink', "<i class='material-icons left'>keyboard_backspace</i>voltar");
+        view()->share('homeLink', "<i class='material-icons left'>undo</i>desfazer");
 
         // Definição de UFs em array
         view()->share('ufs', ['AC'=>'Acre','AL'=>'Alagoas','AP'=>'Amapá','AM'=>'Amazonas','BA'=>'Bahia','CE'=>'Ceará',

@@ -16,7 +16,7 @@
         <link href="{!! asset('css/materialize.min.css') !!}" media="all" rel="stylesheet" type="text/css" />
         @if(! Auth::guest() && Auth::user()->type == 0)
             <!--Instalação inline de extensão do chrome para compartilhamento de tela-->
-            <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/screen-capturing/ajhifddimkapgcifgcodmmfdlknahffk">
+            <!--<link rel="chrome-webstore-item" href="path $chromeExt">-->
         @endif        
     </head>
 
@@ -39,7 +39,7 @@
                                 </li>
                                 <li class='hover-footer-btn'>
                                     <a id='gerDrop' class='load-cancel' href='{{ route('admin.cadastro') }}'>
-                                        <b><span class='white-text'>{!! $userPlusBlueIcon !!} Cadastro</span></b>
+                                        <span class='white-text'>{!! $manageBlueIcon !!} <b>Gerenciar</b></span>
                                     </a>
                                 </li>
                             @endif
@@ -83,7 +83,7 @@
                             </li>
                             <li>
                                 <a class='load-cancel' id='gerDrop' href='{{ route('admin.cadastro') }}'>
-                                    <b><span class='grey-text text-darken-3'>{!! $userPlusBlueIcon !!} Cadastro</span></b>
+                                    <b><span class='grey-text text-darken-3'>{!! $manageBlueIcon !!} 123</span></b>
                                 </a>
                             </li>
                         @endif					

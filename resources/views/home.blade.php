@@ -34,6 +34,7 @@
                         </form>
                     </div>
                 </div>
+            </div>
             @else
                 <div class='row center'>
                     <h2 class='card-title' align='left'>
@@ -46,30 +47,41 @@
                             <div class='blue-text center'>
                                 <a href="{{ route('salas') }}" title='Transmita'>{!! $transmitLargeIcon !!}</a>
                             </div>
-                            <h5>Crie uma sala e inicie sua transmissão</h5>
-                            <p>Com a função de salas você pode iniciar sua transmissão para um ou vários espectadores simultâneos.</p>
-                            <p>Clique <a href="{{ route('salas') }}" class='load'><u>aqui</u></a> para começar!</p>
+                            <h5>Crie uma sala e inicie sua transmissão em poucos passos</h5>
+                            <p>Com a função de salas você pode selecionar o publico alvo, criar e iniciar sua transmissão para um ou vários espectadores simultâneos.</p>
+                            <div class='divider'></div>
+                            <br/>
+                            <p>Clique <a href="{{ route('salas') }}" class='load'><u>aqui</u></a> e inicie sua transmissão em poucos passos!</p>
                         </div>
                         <div class='col s12 m4'>
                             <div class='blue-text center'>
                                 <a href="{{ route('salas') }}" title='Compartilhe'>{!! $shareLargeIcon !!}</a>
                             </div>
-                            <h5>Amplie a interação com os espectadores</h5>
+                            <h5>Transmita, compartilhe e interaja com os espectadores</h5>
                             <p>Todas as salas contam com transmissão de áudio e vídeo, além de suporte a envio de mensagens de texto e compartilhamento de tela simultaneamente.</p>
-                            <p>Clique <a href="{{ route('salas') }}" class='load'><u>aqui</u></a> para começar!</p>
+                            <div class='divider'></div>
+                            <br/>
+                            <p>Clique <a href="{{ route('salas') }}" class='load'><u>aqui</u></a>, inicie uma transmissão e compartilhe conteúdo!</p>
                         </div>
                         <div class='col s12 m4'>
                             <div class='blue-text center'>
                                 <a href="{{ route('admin.cadastro') }}" title='Configure'>{!! $peopleLargeIcon !!}</a>
                             </div>
-                            <h5>Personalize perfis e usuários</h5>
-                            <p>Com a função de cadastros você pode configurar e gerenciar cursos, instituições e usuário como desejar.</p>
-                            <p>Clique <a href="{{ route('admin.cadastro') }}" class='load'><u>aqui</u></a> para começar!</p>
+                            <h5>Gerencie grupos, perfis e usuários em poucos cliques</h5>
+                            <p>Acesse a função de gerenciamento e encontre o que precisa para configurar e cadastrar grupos, instituições, usuário e perfis de acesso como desejar.</p>
+                            <div class='divider'></div>
+                            <br/>
+                            <p>Clique <a href="{{ route('admin.cadastro') }}" class='load'><u>aqui</u></a> e gerencie o acesso às suas transmissões!</p>
                         </div>
                     </div>
                 </div>
-            @endif 
-        </div>
+            </div>
+            <div class='card-action grey lighten-5'>
+                <div class='row'>
+                    
+                </div>
+            </div>
+        @endif 
     </div>
     
 @endsection

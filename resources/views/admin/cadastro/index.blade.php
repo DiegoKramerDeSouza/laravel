@@ -5,6 +5,10 @@
 
 <!--Define yield('content') em layout.site-->
 @section('content')
+    <h4 class='row white-text'>
+        <span><b>{!! $manageWhiteIcon !!} Gerenciar</b></span>
+        <div class='divider'></div>
+    </h4>
     <div class='card z-depth-5'>
         <div class='card-content'>
             <div class='row center'>

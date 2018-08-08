@@ -45,6 +45,7 @@ class CadastroAutocompleteController extends Controller
         $components = Componente::where('cadastrado', $module)->first();
         $model = 'App\\' . $components->model;
         $searchResult = $model::where('name', '=', $data)->orderBy('name', 'asc')->paginate(5);
+        $linkHome = true;
 
         switch ($module) {
             case 'cursos':
@@ -54,20 +55,20 @@ class CadastroAutocompleteController extends Controller
                 foreach($allmodulos as $modulo){
                     $modulos[$modulo->id] = $modulo->name;
                 }
-                return view('admin.cadastro.' . $module . '.index', compact($module, 'modulos', 'isAutocomplete'));
+                return view('admin.cadastro.' . $module . '.index', compact($module, 'modulos', 'isAutocomplete', 'linkHome'));
                 break;
 
             case 'escolas':
                 $escolas = $searchResult;
-                return view('admin.cadastro.' . $module . '.index', compact($module, 'isAutocomplete'));
+                return view('admin.cadastro.' . $module . '.index', compact($module, 'isAutocomplete', 'linkHome'));
                 break;
             case 'modulos':
                 $modulos = $searchResult;
-                return view('admin.cadastro.' . $module . '.index', compact($module, 'isAutocomplete'));
+                return view('admin.cadastro.' . $module . '.index', compact($module, 'isAutocomplete', 'linkHome'));
                 break;
             case 'perfis':
                 $perfis = $searchResult;
-                return view('admin.cadastro.' . $module . '.index', compact($module, 'isAutocomplete'));
+                return view('admin.cadastro.' . $module . '.index', compact($module, 'isAutocomplete', 'linkHome'));
                 break;
             case 'turmas':
                 $turmas = $searchResult;
@@ -76,11 +77,11 @@ class CadastroAutocompleteController extends Controller
                 foreach($accounts as $account){
                     $users[$account->id] = $account->login;
                 }
-                return view('admin.cadastro.' . $module . '.index', compact($module, 'users', 'isAutocomplete'));
+                return view('admin.cadastro.' . $module . '.index', compact($module, 'users', 'isAutocomplete', 'linkHome'));
                 break;
             case 'usuarios':
                 $users = $searchResult;
-                return view('admin.cadastro.' . $module . '.index', compact('users', 'isAutocomplete'));
+                return view('admin.cadastro.' . $module . '.index', compact('users', 'isAutocomplete', 'linkHome'));
                 break;          
         }
         

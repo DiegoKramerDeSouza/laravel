@@ -5,11 +5,12 @@
 
 <!--Define yield('content') em layout.site-->
 @section('content')
+    <h4 class='row white-text'>
+        <span>{!! $perfisIcon !!}<b> Gerenciar Perfis</b></span>
+        <div class='divider'></div>
+    </h4>
     <div class='card z-depth-5'>
         <div class='card-content'>
-            <div class='card-title'>
-                <b class='grey-text text-darken-2'>{!! $perfisIcon !!} Cadastro de Perfis</b>
-            </div>
             <div class='row'>
                 <div class="input-field col s12 m6">
                     {!! $prefixSearchIcon !!}
@@ -56,12 +57,13 @@
                     </div>
                 @endif
             </div>
-            <div class='divider'></div>
-            <div align='center'>
-                <br>
-                <a href="{{ route('admin.cadastro') }}" class='load btn-flat waves-effect waves-teal blue-text text-darken-2'>{!! $gobackLink !!}</a>
-            </div>
-            <br>
+        </div>
+        <div class='card-action grey lighten-5' align='center'>
+            @if(isset($linkHome))
+                <a href='{{ route('admin.cadastro.perfis') }}' class='load btn waves-effect waves-light blue'>{!! $gobackLink !!}</a>
+            @else
+                <a href="{{ route('admin.cadastro') }}" class='load btn waves-effect waves-light blue'>{!! $gobackLink !!}</a>
+            @endif
         </div>
     </div>
     @foreach($perfis as $perfil)

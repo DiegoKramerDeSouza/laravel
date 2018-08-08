@@ -9,9 +9,9 @@
 
             @if(Auth::user()->type == 0)
                 <div id='opend-rooms' class='col s12 m6'>
-                    <h5 class='row'>
+                    <h4 class='row'>
                         <span><b>{!! $roomsIcon !!} Salas disponíveis</b></span>
-                    </h5>
+                    </h4>
             @else
                 <div id='opend-rooms' class='col s12'>
                     <h4 class='row'>
