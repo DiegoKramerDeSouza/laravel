@@ -122,8 +122,6 @@ $(document).ready(function() {
     // Inicia a transmissão
     connection.onstream = (event) => {
 
-
-
         let currentStream;
         if (!structure.onParticipation && !event.extra.modifiedValue) {
             roomInfo.inRoom.value = event.userid;
@@ -200,14 +198,19 @@ $(document).ready(function() {
             console.log('REMOTO COM SCREEN --> ', event.stream.streamid);
 
             // Conexão remota com compartilhamento de tela
-            $(dom.VIDEO_SECOND).fadeIn(300);
             mediaController.openIncomingVideos(event.stream);
             media.secondVideoPreview.srcObject = event.stream;
             structure.incomingCon = event.stream.streamid;
-
             mediaController.initiateVideo(media.secondVideoPreview);
+            $(dom.VIDEO_SECOND).fadeIn(300);
 
-            // Tratamento de telas: Botão "Swap" -> Toggle Main/Second Video
+            // Tratamento Botão "Swap" -> Toggle Main/Second Video
+            media.spanSecondVideo.onmouseenter = function() {
+                mediaController.toggleVisibility(media.swapSecond);
+            }
+            media.spanSecondVideo.onmouseleave = function() {
+                mediaController.toggleVisibility(media.swapSecond);
+            }
             media.swapSecond.onclick = function() {
                 mediaController.controlSwapVideo();
             }
@@ -238,30 +241,24 @@ $(document).ready(function() {
 
                 mediaController.initiateVideo(media.videoPreview);
             }
-
-            // Desabilita botão de ação para câmera/microfone/compartilhamento de tela
-            mediaController.disableCam();
-            mediaController.disableMute();
-            mediaController.disableShare();
-
-            // Ajusta elementos de exibição (define o menu de áudio e video para espectadores)
-            $(dom.DIV_CONNECT).hide();
-            $(dom.CTL_PEDIR).hide();
-            $(dom.DIV_CONTROLLER).fadeIn(300);
+            /**
+             * Ajusta elementos de exibição (define o menu de áudio e video para espectadores)
+             * Desabilita botão de ação para câmera/microfone/compartilhamento de tela
+             */
+            mediaController.adjustMediaMenu(event.type);
 
             structure.viewers = connection.getAllParticipants().length;
             roomView.changeCounter(structure.viewers);
 
-            // Tratamento de áudio: Botão "Áudio" -> Toggle on/off
+            /**
+             * Tratamento de ação de controles de mídia==================================
+             */
             media.vol.onclick = function() {
                 mediaController.controlVolume(currentStream);
             };
-
-            // Tratamento do botão de pedir a vez
             media.solPedir.onclick = function() {
                 let altText = [];
                 if (structure.broadcastStatus == 1 && (structure.solicita === 0 && !structure.lockSolicitation)) {
-                    // Constroi e envia mensagem solicitando a vez
                     let myIdentity = roomInfo.currentRoomId.value;
                     let msgrash = [
                         btoa('@PedeAVez'),
@@ -286,11 +283,11 @@ $(document).ready(function() {
                 }
                 alerta.initiateMessage(altText);
             };
-
+            //===========================================================================
 
         } else if (!structure.onParticipation && (event.type === 'local' && !event.stream.isScreen)) {
 
-            // Broadcaster executando uma conexão local =================================
+            // Broadcaster executando uma conexão local
             console.log('TRANSMISSÃO LOCAL------', structure.mainVideo);
 
             if (structure.incomingCon == event.stream.streamid) return;
@@ -307,28 +304,26 @@ $(document).ready(function() {
 
             mediaController.initiateVideo(media.videoPreview);
 
-            if (structure.solicita <= 0) {
-                $(dom.COUNT_PEDIR).hide();
-            }
-            if (!connection.isInitiator) {
-                mediaController.disablePedir();
-            }
-            mediaController.disableVolume();
+            if (structure.solicita <= 0) $(dom.COUNT_PEDIR).hide();
+            if (!connection.isInitiator) mediaController.disablePedir();
 
-            $(dom.DIV_CONNECT).hide();
-            $(dom.LI_PERDIR).hide();
-            $(dom.DIV_CONTROLLER).fadeIn(300);
+            /**
+             * Ajusta elementos de exibição (define o menu de áudio e video para broadcaster)
+             */
+            mediaController.adjustMediaMenu(event.type);
 
-            // Tratamento de áudio: Botão "Microfone" -> Toggle on/off
+            // Apresenta o número de espectadores conectados
+            $(dom.UL_CON_USERS).fadeIn(300);
+
+            /**
+             * Tratamento de ação de controles de mídia==================================
+             */
             media.mute.onclick = function() {
                 mediaController.controlVoice(currentStream);
             };
-            // Tratamento de áudio e video: Botão "Camera" -> Toggle on/off
             media.cam.onclick = function() {
                 mediaController.controlCam(currentStream);
             }
-
-            // Tratamento de solicitações: Botão "Solicitações" -> Abra listagem de solicitações e respostas
             media.ctlPedir.onclick = function() {
                 // Tratamento de respostas (permitir / negar)
                 let response = doc.ALL('.responses');
@@ -378,9 +373,7 @@ $(document).ready(function() {
                     console.log('------------->     LOCAL', targetId, event.userid);
                 }
             };
-            // Botão "Compartilhar" -> Compartilha a tela do apresentador: Toggle On/Off
             media.share.onclick = function() {
-
                 if (!mediaController.getControlSharing()) {
                     $(dom.SHARE).hide();
                     connection.addStream({
@@ -432,11 +425,10 @@ $(document).ready(function() {
                     ];
                     connection.send(msgrash);
                 }
-            }
-
-            // Apresenta o número de espectadores conectados
-            $(dom.UL_CON_USERS).fadeIn(300);
+            };
+            //===========================================================================
         }
+
         /**==============================================================================
          * Tratamentos e controles complementares
          */
@@ -820,14 +812,12 @@ $(document).ready(function() {
     // Recebimento de mensagens
     connection.onmessage = (event) => {
         if (event.data.userRemoved === true) {
-
             if (event.data.removedUserId == connection.userid) {
                 connection.close();
                 setTimeout(location.reload.bind(location), 3000);
             }
             return;
         } else if (structure.singleConnection && (connection.isInitiator && (event.data && !event.data.userRemoved))) {
-
             if (!Array.isArray(event.data)) {
                 connection.getAllParticipants().forEach((p) => {
                     if (p != event.userid) {

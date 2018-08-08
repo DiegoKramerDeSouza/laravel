@@ -22,7 +22,11 @@ class StructureController {
     }
 
     initiateStructure() {
-
+        /*
+        let userType = doc.TAG(dom.ROOM_TYPE).value;
+        if (userType == 1) this._singlecon = true;
+        else this._singlecon = false;
+        */
         let arrDocument = [
             this._viewer,
             this._user,

@@ -66,10 +66,10 @@
                             </div>
                             <!--SEGUNDO VÍDEO-->
                             <div id='span-video-preview-2nd' align='right' data-status='disabled' data-position='second' class='col s12 d-none'>
-                                <a id='swap-video' class='btn-floating blue darken-2 waves-effect waves-light'>
+                                <a id='swap-video' title='Passar para vídeo principal' class='btn-floating blue darken-2 waves-effect waves-light obj-invisible'>
                                     {!! $swapIcon !!}
                                 </a>
-                                <video id="secondvideo-preview" preload="none" loop class='min-video responsive-video'></video>
+                                <video id="secondvideo-preview" draggable="false" preload="none" loop class='min-video responsive-video'></video>
                             </div>
                         </div>
                         <div class='col s12'>

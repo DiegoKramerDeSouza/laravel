@@ -24,7 +24,8 @@ class Media {
         divEndBtn,
         toggleChat,
         textMessage,
-        fullsize
+        fullsize,
+        spanSecondVideo
     ) {
 
         this._videoPreview = videoPreview;
@@ -47,6 +48,7 @@ class Media {
         this._toggleChat = toggleChat;
         this._textMessage = textMessage;
         this._fullsize = fullsize;
+        this._spanSecondVideo = spanSecondVideo;
         Object.freeze(this);
     }
 
@@ -148,6 +150,11 @@ class Media {
     get fullsize() {
 
         return this._fullsize;
+    }
+
+    get spanSecondVideo() {
+
+        return this._spanSecondVideo;
     }
 
 }

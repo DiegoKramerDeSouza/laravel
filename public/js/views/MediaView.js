@@ -27,6 +27,16 @@ class MediaView {
         this._listContent = '';
     }
 
+    setInvisible(elem) {
+
+        elem.classList.add(misc.CLASS_INVISIBLE);
+    }
+
+    setVisible(elem) {
+
+        elem.classList.remove(misc.CLASS_INVISIBLE);
+    }
+
     setVoiceOn() {
 
         this._mute.classList.remove(misc.OFF_COLOR);
@@ -283,6 +293,25 @@ class MediaView {
     constructSolicitationList() {
 
         this._solicitationList.innerHTML = this._listContent;
+    }
+
+    _adjustMediaMenu() {
+
+        $(dom.DIV_CONNECT).hide();
+        $(dom.DIV_CONTROLLER).fadeIn(300);
+
+    }
+
+    adjustBroadCaster() {
+
+        this._adjustMediaMenu();
+        $(dom.LI_PERDIR).hide();
+    }
+
+    adjustEspect() {
+
+        this._adjustMediaMenu();
+        $(dom.CTL_PEDIR).hide();
     }
 
 }

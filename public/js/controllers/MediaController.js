@@ -30,6 +30,7 @@ class MediaController {
         this._textMessage = doc.TAG(dom.TEXT_MESSAGE);
         this._sideNavbar = doc.TAG(dom.SIDE_NAVBAR);
         this._fullsize = doc.TAG(dom.TOGGLE_VIDEO_SIZE);
+        this._spanSecondVideo = doc.TAG(dom.VIDEO_SECOND);
 
         this._controlCam = true;
         this._controlVoice = true;
@@ -71,7 +72,8 @@ class MediaController {
             this._divEndBtn,
             this._toggleChat,
             this._textMessage,
-            this._fullsize
+            this._fullsize,
+            this._spanSecondVideo
         ];
         return new Media(...arrMedia);
     }
@@ -354,6 +356,15 @@ class MediaController {
         }
     }
 
+    toggleVisibility(elem) {
+
+        if (GeneralHelper.hasClass(elem, misc.CLASS_INVISIBLE)) {
+            this._mediaView.setVisible(elem);
+        } else {
+            this._mediaView.setInvisible(elem);
+        }
+    }
+
     writeMessage(msg, rmt) {
 
         let msgbox;
@@ -395,6 +406,19 @@ class MediaController {
             });
         }
         this._mediaView.constructSolicitationList();
+    }
+
+    adjustMediaMenu(type) {
+
+        if (type === 'local') {
+            this.disableVolume();
+            this._mediaView.adjustBroadCaster();
+        } else {
+            this.disableCam();
+            this.disableMute();
+            this.disableShare();
+            this._mediaView.adjustEspect();
+        }
     }
 
 }

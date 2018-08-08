@@ -152,6 +152,14 @@
     max-width: 100%;
 }
 
+.obj-invisible {
+    opacity: 0;
+}
+
+.obj-visible {
+    opacity: 1;
+}
+
 .p-40 {
     padding: 40px;
 }

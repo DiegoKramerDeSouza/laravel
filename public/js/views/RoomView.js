@@ -49,7 +49,7 @@ class RoomView {
 
         this._roomCard = `<div class="row valign-wrapper li-hover grey-text text-darken-3">
                             <div id="_${moderador}" align="center" class="col s3 m2">
-                                    <span class="blue-text">Entrar</span><br>
+                                    <span class="blue-text"><b>Entrar</b></span><br>
                                 </div>
                                 <div class="col s9 m10 l11">
                                     <span class="card-title">
@@ -77,7 +77,7 @@ class RoomView {
         obj.id = moderatorId;
         obj.title = 'Acessar sala';
         obj.className = 'btn-floating room-enter blue darken-1';
-        obj.innerHTML = '<i class="material-icons large">play_arrow</i>';
+        obj.innerHTML = misc.ICON_PLAY;
 
         this._roomList.appendChild(container);
         getId('_' + moderatorId).appendChild(obj);

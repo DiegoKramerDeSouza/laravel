@@ -41,13 +41,13 @@ const conf = {
     },
     con: {
         /*Constantes de inicialização de conexão */
-        URL: 'https://rtcmulticonnection.herokuapp.com:443/',
-        //URL: '10.255.2.140:443/',
+        DIRECTION: 'one-to-many',
         IS_BROADCAST: true,
+        IS_PUBLIC: true,
         MAX_RELAY: 0,
         MSG: 'Inicia-Apresentacao',
-        IS_PUBLIC: true,
-        DIRECTION: 'one-to-many'
+        URL: 'https://rtcmulticonnection.herokuapp.com:443/'
+            //URL: '10.255.2.140:80/',
     },
     socket: {
         /*Constantes de padronização de mensagens socket.io */
@@ -61,14 +61,13 @@ const conf = {
     },
     roomdata: {
         /*Atributos de inicialização por espectadores */
-        COUNT_ROOMS: 0,
+        ADMIN_ACCESS: 'ADMIN',
         ALLOWED: false,
-        ADMIN_ACCESS: 'ADMIN'
+        COUNT_ROOMS: 0
     },
     message: {
         /*Tempo padrão de exibição das mensagens de toast */
         TIMEOUT: 2000,
-
         /*Atributos para formação de mensagens padronizadas: array[ícone(html), texto(html), cor de fundo(classes MaterializeCSS)] */
         CHAT_MESSAGE: ['<div align="right"><i class="fa fa-comment-o blue-text"></i>', '</div>', 'grey darken-4'],
         START_TRANSMITION: ['<i class="fa fa-play-circle fa-lg"></i>', 'Transmissão iniciada!', 'blue darken-1'],
@@ -103,7 +102,6 @@ const conf = {
         INVALID_CEP: ['<i class="fa fa-times fa-lg"></i>', 'CEP inválido!', 'red darken-4'],
         NOTFOUND_CEP_LOCATION: ['<i class="fa fa-times fa-lg"></i>', 'CEP não localizado!', 'red darken-4'],
         SUCCESS_CEP_LOCATION: ['<i class="fa fa-check fa-lg"></i>', 'CEP localizado com sucesso!', 'green darken-1'],
-
     }
 }
 
@@ -208,6 +206,8 @@ const misc = {
     HILIGHT_COLOR: 'cyan',
     TURNOFF_COLOR: 'black',
     /*Classes de estilo CSS */
+    CLASS_INVISIBLE: 'obj-invisible',
+    CLASS_VISIBLE: 'obj-visible',
     CLASS_WIDTH_LIMIT: 'width-limit',
     CLASS_MAIN_CONTAINER: 'main-container',
     CLASS_MAIN_CONTAINER_FULL: 'main-container-full',
@@ -216,16 +216,18 @@ const misc = {
     /*Atributos de elementos do DOM */
     ATTR_SOLICITATION: 'data-sender',
     /*Ícones */
-    ICON_MIC: '<i class="material-icons">mic</i>',
-    ICON_MUTE_MIC: '<i class="material-icons">mic_off</i>',
     ICON_CAM_ON: '<i class="material-icons">videocam</i>',
     ICON_CAM_OFF: '<i class="material-icons">videocam_off</i>',
-    ICON_VOL_ON: '<i class="material-icons">volume_up</i>',
-    ICON_VOL_OFF: '<i class="material-icons">volume_off</i>',
-    ICON_SHARE_ON: '<i class="material-icons">screen_share</i>',
-    ICON_SHARE_OFF: '<i class="material-icons">stop_screen_share</i>',
     ICON_FA_TV: '<i class="fa fa-television blue-text"></i>',
     ICON_FA_VIDEOCAM: '<i class="fa fa-video-camera blue-text"></i>',
+    ICON_MIC: '<i class="material-icons">mic</i>',
+    ICON_MUTE_MIC: '<i class="material-icons">mic_off</i>',
+    ICON_PLAY: '<i class="material-icons large">play_arrow</i>',
+    ICON_PLAY_CIRCLE: '<i class="material-icons medium">play_circle_outline</i>',
+    ICON_SHARE_ON: '<i class="material-icons">screen_share</i>',
+    ICON_SHARE_OFF: '<i class="material-icons">stop_screen_share</i>',
+    ICON_VOL_ON: '<i class="material-icons">volume_up</i>',
+    ICON_VOL_OFF: '<i class="material-icons">volume_off</i>',
     /*Elementos HTML para caixas de mensagens */
     DEFAULT_MSGBOX_OUT: '<p class="chat-in blue">',
     DEFAULT_MSGBOX_IN: '<p class="chat-out grey" align="right">',
