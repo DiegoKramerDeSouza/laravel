@@ -19,7 +19,7 @@ class FormInstitutionView {
 
     waitResponse() {
 
-        this._address.value = conf.structure.FORM;
-        this._city.value = conf.structure.FORM;
+        this._address.value = conf.str.FORM;
+        this._city.value = conf.str.FORM;
     }
 }

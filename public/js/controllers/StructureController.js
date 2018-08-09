@@ -2,23 +2,23 @@ class StructureController {
 
     constructor() {
 
-        this._viewer = conf.structure.VIEWER;
-        this._user = conf.structure.USER;
-        this._solicita = conf.structure.SOLICITA;
-        this._broadcastStatus = conf.structure.BROADCAST_STATUS;
-        this._isModerator = conf.structure.BROADCAST_STATUS;
-        this._onlobby = conf.structure.ON_LOBBY;
-        this._onParticipation = conf.structure.ON_PARTICIPATION;
-        this._lockSolicitation = conf.structure.LOCK_SOLICITATION;
-        this._mainVideo = conf.structure.WAITING_FOR_VIDEO;
-        this._userVideo = conf.structure.WAITING_FOR_VIDEO;
+        this._viewer = conf.str.VIEWER;
+        this._user = conf.str.USER;
+        this._solicita = conf.str.SOLICITA;
+        this._broadcastStatus = conf.str.BROADCAST_STATUS;
+        this._isModerator = conf.str.BROADCAST_STATUS;
+        this._onlobby = conf.str.ON_LOBBY;
+        this._onParticipation = conf.str.ON_PARTICIPATION;
+        this._lockSolicitation = conf.str.LOCK_SOLICITATION;
+        this._mainVideo = conf.str.WAITING_FOR_VIDEO;
+        this._userVideo = conf.str.WAITING_FOR_VIDEO;
         this._startRoom = doc.TAG(dom.BTN_START_ROOM);
         this._configDev = doc.TAG(dom.BTN_CONF_DEVICES);
         this._publicRoomsList = doc.TAG(dom.PUBLIC_CONFERENCE);
         this._connectList = doc.TAG(dom.USERS_LIST);
         this._roomType = doc.TAG(dom.ROOM_TYPE);
-        this._countRooms = conf.structure.NUMBER_OF_ROOMS;
-        this._singlecon = conf.structure.SINGLE_CON;
+        this._countRooms = conf.str.NUMBER_OF_ROOMS;
+        this._singlecon = conf.str.SINGLE_CON;
     }
 
     initiateStructure() {

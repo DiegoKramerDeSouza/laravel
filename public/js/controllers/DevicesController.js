@@ -4,6 +4,7 @@ class DevicesController {
 
         this._origin = location.origin;
         this._devices = [];
+        this._alerta = new MessageController();
     }
 
     initiateDevices() {
@@ -22,14 +23,14 @@ class DevicesController {
 
         let roomController = new RoomController();
         if (!roomController.checkDevices()) {
-            alerta.initiateMessage(conf.message.DEVICE_ALERT);
+            this._alerta.initiateMessage(conf.message.DEVICE_ALERT);
             return;
         } else {
             let audio = doc.TAG(dom.LIST_AUDIO);
             let video = doc.TAG(dom.LIST_VIDEO);
             this.setCookies(doc.COOKIE_AUDIO_DEVICE, audio.value, doc.COOKIE_LIFETIME);
             this.setCookies(doc.COOKIE_VIDEO_DEVICE, video.value, doc.COOKIE_LIFETIME);
-            alerta.initiateMessage(conf.message.DEVICE_CONFIGURED);
+            this._alerta.initiateMessage(conf.message.DEVICE_CONFIGURED);
         }
     }
 
@@ -73,8 +74,8 @@ class DevicesController {
     _collectCookiesDevices() {
 
         let deviceView = new DevicesView();
-        let audDev = this._getCookies("audioDevice");
-        let vidDev = this._getCookies("videoDevice");
+        let audDev = this._getCookies(doc.COOKIE_AUDIO_DEVICE);
+        let vidDev = this._getCookies(doc.COOKIE_VIDEO_DEVICE);
 
         this._updateSelectorAud(audDev, deviceView);
         this._updateSelectorVid(vidDev, deviceView);

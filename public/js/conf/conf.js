@@ -1,6 +1,6 @@
 /**
  * Definições de configuração para INICIALIZAÇÃO de componentes JS
- * const doc: definições de métodos básicos de manipulação do documento (sem utilização de JQuery);
+ * const doc: definições de métodos e atributos básicos de manipulação do documento;
  * const conf: definições de elementos para inicialização;
  * const dom: elementos gerais do DOM;
  * const misc: elementos visuais de uso geral;
@@ -17,14 +17,14 @@ const doc = {
     ADD: document.createElement.bind(document),
     IDLE_TIME: 120,
     COOKIE_LIFETIME: 365,
-    COOKIE_VIDEO_DEVICE: "videoDevice",
-    COOKIE_AUDIO_DEVICE: "audioDevice"
+    COOKIE_AUDIO_DEVICE: "audioDevice",
+    COOKIE_VIDEO_DEVICE: "videoDevice"
 }
 
 const conf = {
 
-    structure: {
-        /*Atributos de inicialização da estrutura do documento de salas */
+    str: {
+        /*Constantes de configuração de inicialização da ESTRUTURA do documento de salas */
         VIEWER: 'Calculando...',
         FORM: 'Verificando...',
         USER: '',
@@ -40,35 +40,50 @@ const conf = {
         POSTER_IMG: '/img/bg.jpg'
     },
     con: {
-        /*Constantes de inicialização de conexão */
+        /*Constantes de configuração de inicialização de CONEXÃO */
+        BAND_AUDIO: 100,
+        BAND_VIDEO: 300,
         DIRECTION: 'one-to-many',
         IS_BROADCAST: true,
         IS_PUBLIC: true,
         MAX_RELAY: 0,
         MSG: 'Inicia-Apresentacao',
+        SESSION_AUDIO: true,
+        SESSION_VIDEO: true,
+        SESSION_DATA: true,
+        SESSION_BROADCAST: true,
+        SESSION_ONEWAY: true,
+        SHARE_DENIED: 'permission-denied',
         URL: 'https://rtcmulticonnection.herokuapp.com:443/'
-            //URL: '10.255.2.140:80/',
     },
     socket: {
-        /*Constantes de padronização de mensagens socket.io */
+        /*Constantes de padronização de mensagens SOCKET.IO */
         MSG_JOIN: 'join-broadcaster',
         MSG_REJOIN: 'rejoin-broadcast',
         MSG_CHK_PRESENCE: 'check-broadcast-presence',
         MSG_JOIN_BROADCAST: 'join-broadcast',
         MSG_BROADCAST_STOP: 'broadcast-stopped',
-        MSG_START_BROADCAST: 'start-broadcasting',
+        MSG_BROADCAST_START: 'start-broadcasting',
         MSG_LEAVE_ROOM: 'leave-the-room'
     },
-    roomdata: {
-        /*Atributos de inicialização por espectadores */
+    datacls: {
+        /*Atributos de inicialização de SALAS para espectadores */
         ADMIN_ACCESS: 'ADMIN',
         ALLOWED: false,
         COUNT_ROOMS: 0
     },
+    req: {
+        /*Padrão de mensagens de chat com REQUISIÇÕES/RESPOSTAS a ações */
+        PEDE_VEZ: '@PedeAVez',
+        RESP_PEDE_VEZ: '@PedeAVez:',
+        END_SHARE: '@Finaliza-Share',
+        END_PARTICIPATION: '@Finaliza-Participacao',
+        END_PARTICIPANT: '@Finaliza-Participante',
+    },
     message: {
-        /*Tempo padrão de exibição das mensagens de toast */
+        /*Tempo padrão de exibição das MENSAGENS de toast */
         TIMEOUT: 2000,
-        /*Atributos para formação de mensagens padronizadas: array[ícone(html), texto(html), cor de fundo(classes MaterializeCSS)] */
+        /*Atributos para formação de MENSAGENS padronizadas: array[ícone(html), texto(html), cor de fundo(classes MaterializeCSS)] */
         CHAT_MESSAGE: ['<div align="right"><i class="fa fa-comment-o blue-text"></i>', '</div>', 'grey darken-4'],
         START_TRANSMITION: ['<i class="fa fa-play-circle fa-lg"></i>', 'Transmissão iniciada!', 'blue darken-1'],
         END_TRANSMITION: ['<i class="fa fa-stop-circle fa-lg"></i>', 'Transmissão finalizada!', 'red darken-4'],
@@ -106,17 +121,19 @@ const conf = {
 }
 
 const dom = {
-    /* Elementos do DOM */
+    /* Elementos do DOM mais utilizados */
     ADDRESS: '#address',
     ASSUNTO: '#assunto',
     BROADCASTER: '#broadcaster',
     BTN_CONF_DEVICES: '#btn-conf-devices',
+    BTN_SEND_MSG: '#send-message-btn',
     BTN_SUBMIT: 'button[type="submit"]',
     BTN_START_ROOM: '#btn-join-as-productor',
     CAM: '#toggle-camera',
     CITY: '#city',
     CHAT_PANEL: '#chat-panel',
     CHAT_TEXTAREA: '#chat-textarea',
+    CLASS_RESPONSES: '.responses',
     CLASS_TITLE: '#class-title',
     COLLAPSIBLE: '.collapsible',
     CONFIRM_DEVICES: '#confirmDevices',
@@ -154,6 +171,7 @@ const dom = {
     LOCK: '#lock',
     LOCK_CEP: '#lockcep',
     MATERIA: '#tema',
+    MSG_SHARE: '#msg-share',
     MODAL: '.modal',
     MUTE: '#toggle-mute',
     NAME: '#current-user',
@@ -199,6 +217,7 @@ const dom = {
 }
 
 const misc = {
+    /* Atributos gerais muito utilizados com funcionalidades variádas (MISCELÂNEA) */
     /*Cores */
     DISABLED_COLOR: 'grey',
     ON_COLOR: 'blue',
@@ -215,6 +234,9 @@ const misc = {
     STYLE_HEIGHT_INHERIT: 'inherit',
     /*Atributos de elementos do DOM */
     ATTR_SOLICITATION: 'data-sender',
+    ATTR_USER_TYPE: 'data-target',
+    ATTR_USER_ANNOUNCE: 'data-announced',
+    ATTR_POSTER: 'poster',
     /*Ícones */
     ICON_CAM_ON: '<i class="material-icons">videocam</i>',
     ICON_CAM_OFF: '<i class="material-icons">videocam_off</i>',

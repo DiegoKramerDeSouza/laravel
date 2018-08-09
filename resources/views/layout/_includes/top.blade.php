@@ -83,7 +83,7 @@
                             </li>
                             <li>
                                 <a class='load-cancel' id='gerDrop' href='{{ route('admin.cadastro') }}'>
-                                    <b><span class='grey-text text-darken-3'>{!! $manageBlueIcon !!} 123</span></b>
+                                    <b><span class='grey-text text-darken-3'>{!! $manageBlueIcon !!} Gerenciar</span></b>
                                 </a>
                             </li>
                         @endif					

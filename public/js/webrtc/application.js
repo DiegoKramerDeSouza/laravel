@@ -82,7 +82,7 @@ $(document).ready(function() {
             alerta.initiateMessage(conf.message.END_TRANSMITION);
         });
         // Socket - Iniciando: 'start-broadcasting
-        socket.on(conf.socket.MSG_START_BROADCAST, (typeOfStreams) => {
+        socket.on(conf.socket.MSG_BROADCAST_START, (typeOfStreams) => {
             structure.broadcastStatus = 1;
             connection.sdpConstraints.mandatory = {
                 OfferToReceiveVideo: false,
@@ -137,7 +137,7 @@ $(document).ready(function() {
             connectController.checkDuplicatedCon(structure.incomingCon, event, connection);
 
             // Conexão remota de transmissão com o broadcaster
-            if (structure.mainVideo != conf.structure.WAITING_FOR_VIDEO) {
+            if (structure.mainVideo != conf.str.WAITING_FOR_VIDEO) {
                 structure.incomingCon = event.stream.streamid;
                 media.thirdVideoPreview.srcObject = event.stream;
                 structure.userVideo = event.stream;
@@ -220,7 +220,7 @@ $(document).ready(function() {
             console.log('REMOTO SEM SCREEN --> ' + event.stream.streamid);
 
             // Conexão remota sem compartilhamento de tela
-            if (structure.mainVideo != conf.structure.WAITING_FOR_VIDEO || event.extra.modifiedValue) {
+            if (structure.mainVideo != conf.str.WAITING_FOR_VIDEO || event.extra.modifiedValue) {
                 $(dom.VIDEO_THIRD).fadeIn(300);
                 if (structure.incomingCon != event.stream.streamid) {
                     structure.incomingCon = event.stream.streamid;
@@ -433,7 +433,7 @@ $(document).ready(function() {
          * Tratamentos e controles complementares
          */
         // Tratamento das funções MUTE e UNMUTE
-        connection.onmute = event => event.mediaElement.setAttribute('poster', conf.structure.POSTER_IMG);
+        connection.onmute = event => event.mediaElement.setAttribute('poster', conf.str.POSTER_IMG);
         connection.onunmute = event => event.mediaElement.removeAttribute('poster');
 
         // Botão de maximizar o video -> toggle on:off
@@ -510,7 +510,7 @@ $(document).ready(function() {
         } else if (event.streamid == structure.userVideo.streamid) {
             console.log('EVENTO-END-STREAM: ', event);
             $(dom.VIDEO_THIRD).hide();
-            structure.userVideo = conf.structure.WAITING_FOR_VIDEO;
+            structure.userVideo = conf.str.WAITING_FOR_VIDEO;
             structure.lockSolicitation = false;
         } else {
             return;
@@ -550,22 +550,22 @@ $(document).ready(function() {
                     // Identifica navegador
                     if (connection.DetectRTC.browser.name === 'Firefox') {
                         videoConstraints = {
-                            deviceId: roomController._videoList.value
+                            deviceId: roomController.videoList.value
                         };
                         audioConstraints = {
-                            deviceId: roomController._audioList.value
+                            deviceId: roomController.audioList.value
                         };
                     } else {
                         videoConstraints = {
                             mandatory: {},
                             optional: [{
-                                sourceId: roomController._videoList.value
+                                sourceId: roomController.videoList.value
                             }]
                         };
                         audioConstraints = {
                             mandatory: {},
                             optional: [{
-                                sourceId: roomController._audioList.value
+                                sourceId: roomController.audioList.value
                             }]
                         };
                     }
@@ -787,19 +787,20 @@ $(document).ready(function() {
      *  var texto String
      */
     media.textMessage.onkeyup = function(e) {
+        let value = media.textMessage.value;
         if (e.keyCode != 13) return;
-        this.value = this.value.replace(/^\s+|\s+$/g, '');
-        if (!this.value.length) return;
-        var texto = "<b class='small'>" + structure.usuario + "</b> :<br>" + this.value;
+        value = value.replace(/^\s+|\s+$/g, '');
+        if (!value.length) return;
+        var texto = "<b class='small'>" + structure.usuario + "</b> :<br>" + value;
         texto = btoa(texto);
         connection.send(texto);
         appendDIV(texto);
-        this.value = '';
+        media.textMessage.value = '';
     };
     /**
      *  var texto String
      */
-    doc.TAG('#send-message-btn').onclick = function() {
+    doc.TAG(dom.BTN_SEND_MSG).onclick = function() {
         var texto = media.textMessage.value
         texto = texto.replace(/^\s+|\s+$/g, '');
         if (!texto.length) return;

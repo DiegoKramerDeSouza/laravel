@@ -8,8 +8,8 @@ class RoomController {
         this._inputMateria = doc.TAG(dom.MATERIA);
         this._inputAssunto = doc.TAG(dom.ASSUNTO);
         this._inputName = doc.TAG(dom.NAME);
-        this._audioList = doc.TAG(dom.LIST_AUDIO);
-        this._videoList = doc.TAG(dom.LIST_VIDEO);
+        this.audioList = doc.TAG(dom.LIST_AUDIO);
+        this.videoList = doc.TAG(dom.LIST_VIDEO);
     }
 
     _createList() {
@@ -30,7 +30,7 @@ class RoomController {
 
     checkDevices() {
 
-        return (this._audioList.value != '' && this._videoList.value != '');
+        return (this.audioList.value != '' && this.videoList.value != '');
     }
 
     validade() {
