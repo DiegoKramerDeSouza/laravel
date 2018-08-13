@@ -15,7 +15,6 @@ class webrtcController {
         this._media = this._mediaController.initiateMedia();
         this._structure = this._structureController.initiateStructure();
         this._roomInfo = this._roomInfoController.initiateRoomInfo();
-        this._isScreenShared = false;
     }
 
     configureDefaults() {
@@ -241,7 +240,6 @@ class webrtcController {
                 this._structure.incomingCon = event.stream.streamid;
                 this._mediaController.initiateVideo(this._media.secondVideoPreview);
                 $(dom.VIDEO_SECOND).fadeIn(300);
-
                 // Tratamento Botão "Swap" -> Toggle Main/Second Video
                 this._media.spanSecondVideo.onmouseenter = () => this._mediaController.toggleVisibility(this._media.swapSecond);
                 this._media.spanSecondVideo.onmouseleave = () => this._mediaController.toggleVisibility(this._media.swapSecond);
@@ -527,7 +525,6 @@ class webrtcController {
 
             if (event.stream.isScreen) {
                 $(dom.VIDEO_SECOND).hide();
-                this._isScreenShared = false;
             } else if (event.streamid == this._structure.userVideo.streamid) {
                 console.log('Stream ended: ', event);
                 $(dom.VIDEO_THIRD).hide();
@@ -545,92 +542,6 @@ class webrtcController {
         this._connection.onleave = (event) => {
             console.log('DEIXANDO CONEXÃO...', event);
         };
-    }
-
-    createRoom() {
-
-        this._structure.startRoom.onclick = () => {
-            let room = this._roomController.initiateRoom();
-            if (this._roomController.validade()) {
-                this._structure.usuario = room.name;
-                this._structure.onlobby = false;
-
-                // Verificação de dispositivos de entrada de áudio e vídeo
-                if (!GeneralHelper.detectmob() && this._structure.roomType.value == 0) {
-
-                    let videoConstraints;
-                    let audioConstraints;
-
-                    if (!this._roomController.checkDevices()) {
-                        this._alerta.initiateMessage(conf.message.DEVICE_ALERT);
-                        this._structure.configDev.click();
-                        return;
-                    } else {
-                        // Identifica navegador
-                        if (this._connection.DetectRTC.browser.name === 'Firefox') {
-                            videoConstraints = {
-                                deviceId: this._roomController.videoList.value
-                            };
-                            audioConstraints = {
-                                deviceId: this._roomController.audioList.value
-                            };
-                        } else {
-                            videoConstraints = {
-                                mandatory: {},
-                                optional: [{
-                                    sourceId: this._roomController.videoList.value
-                                }]
-                            };
-                            audioConstraints = {
-                                mandatory: {},
-                                optional: [{
-                                    sourceId: this._roomController.audioList.value
-                                }]
-                            };
-                        }
-                    }
-                    // Aplica dispositivos selecionados à sala criada
-                    this._connection.mediaConstraints = {
-                        video: videoConstraints,
-                        audio: audioConstraints
-                    };
-                }
-
-                // Inicializa a tela de apresentação
-                this._mediaController.initiateStream();
-                // Modela e apresenta cabeçalho do video
-                this._roomController.setRoomLabel(misc.ICON_FA_VIDEOCAM, room.tema, room.assunto);
-                this._structure.startRoom.disabled = true;
-                // Define elementos de inicialização da sessão criada
-                this._connection.session = {
-                    audio: conf.con.SESSION_AUDIO,
-                    video: conf.con.SESSION_VIDEO,
-                    data: conf.con.SESSION_DATA,
-                    broadcast: conf.con.SESSION_BROADCAST,
-                    oneway: conf.con.SESSION_ONEWAY
-                }
-
-                // Controle da utilização de banda
-                this._connection.bandwidth = {
-                    audio: conf.con.BAND_AUDIO,
-                    video: conf.con.BAND_VIDEO
-                }
-
-                // Inicializa Socket / Verifica existência do broadcast
-                let socket = this._connection.getSocket();
-                socket.emit(conf.socket.MSG_CHK_PRESENCE, room.hash, (isBroadcastExists) => {
-                    if (!isBroadcastExists) this._connection.userid = room.hash;
-                    socket.emit(conf.socket.MSG_JOIN_BROADCAST, {
-                        broadcastId: room.hash,
-                        userid: this._connection.userid,
-                        typeOfStreams: this._connection.session,
-                        bandwidth: this._connection.bandwidth
-                    });
-                });
-            } else {
-                this._alerta.initiateMessage(conf.message.FORM_ALERT);
-            }
-        }
     }
 
     _decodeURI(s) {
@@ -676,6 +587,192 @@ class webrtcController {
             this._structure.viewers = event.numberOfBroadcastViewers;
             this._roomView.changeCounter(this._structure.viewers);
         };
+    }
+
+    _onMessage() {
+
+        // Recebimento de mensagens
+        this._connection.onmessage = (event) => {
+            if (event.data.userRemoved === true) {
+                if (event.data.removedUserId == this._connection.userid) {
+                    this._connection.close();
+                    setTimeout(location.reload.bind(location), 3000);
+                }
+                return;
+            } else if (this._structure.singleConnection && (this._connection.isInitiator && (event.data && !event.data.userRemoved))) {
+                if (!Array.isArray(event.data)) {
+                    this._connection.getAllParticipants().forEach((p) => {
+                        if (p != event.userid) {
+                            this._connection.send(event.data, p);
+                        }
+                    });
+                }
+                this._appendDIV(event);
+            } else {
+                this._appendDIV(event);
+            }
+        };
+    }
+
+    _chatSendMessage() {
+
+        this._media.textMessage.onkeyup = event => this._formatChatMessage(event);
+        doc.TAG(dom.BTN_SEND_MSG).onclick = () => this._formatChatMessage();
+    }
+
+    _formatChatMessage(event) {
+
+        let value = this._media.textMessage.value;
+        let texto;
+        if (event)
+            if (event.keyCode != 13) return;
+        value = value.replace(/^\s+|\s+$/g, '');
+        if (!value.length) return;
+        texto = `<b class='small'>${this._structure.usuario}</b> :<br>${value}`;
+        texto = btoa(texto);
+        this._connection.send(texto);
+        this._appendDIV(texto);
+        this._media.textMessage.value = '';
+    }
+
+    _appendDIV(event) {
+
+        let remoto;
+        event.data ? remoto = true : remoto = false;
+        var text = event.data || event;
+        // Definição do padrão de mensagens com solicitação (array de 5 índices)
+        if (remoto && (Array.isArray(text) && text.length == 5)) {
+            let chkrash = event.data;
+            let msgData = [];
+            let myRoom = doc.TAG(dom.ROOM).value;
+            if (chkrash[0] === btoa(conf.req.PEDE_VEZ)) {
+                msgData[0] = chkrash[1];
+                msgData[1] = (atob(chkrash[3])).split('|')[4];
+                msgData[2] = chkrash[4];
+                this._structure.solicita = this._mediaController.listBox(msgData, this._structure.solicita);
+                return;
+            } else if (chkrash[0] === btoa(conf.req.RESP_PEDE_VEZ + 'allow')) {
+                if (chkrash[2] === myRoom) {
+                    this._structure.solicita -= 1;
+                    this._mediaController.allow();
+                    this._structure.lockSolicitation = true;
+                }
+                return;
+            } else if (chkrash[0] === btoa(conf.req.RESP_PEDE_VEZ + 'deny')) {
+                if (chkrash[2] === myRoom) {
+                    this._structure.solicita -= 1;
+                    this._mediaController.deny();
+                    this._structure.lockSolicitation = false;
+                }
+                return;
+            } else if (chkrash[0] === btoa(conf.req.END_SHARE)) {
+                if (this._mediaController._videoIsMain) {
+                    this._media.swapSecond.click();
+                }
+                setTimeout(() => {
+                    $(dom.VIDEO_SECOND).hide();
+                    this._alerta.initiateMessage(conf.message.STOP_SHARE);
+                }, 1000);
+            } else if (chkrash[0] === btoa(conf.req.END_PARTICIPATION)) {
+                if (!this._structure.onParticipation) {
+                    this._structure.onParticipation = true;
+                    this._mediaController._session = true;
+                }
+                this._media.sessionAccess.click();
+            } else if (chkrash[0] === btoa(conf.req.END_PARTICIPANT)) {
+                $(dom.DIV_BTN_END).hide();
+            } else {
+                return;
+            }
+        } else {
+            // Tratamento de mensagens comuns (fora do padrão de mensagem com solicitação)
+            this._mediaController.writeMessage(text, remoto);
+        }
+    }
+
+    createRoom() {
+
+        this._structure.startRoom.onclick = () => {
+            let room = this._roomController.initiateRoom();
+            if (this._roomController.validade()) {
+                this._structure.usuario = room.name;
+                this._structure.onlobby = false;
+
+                // Verificação de dispositivos de entrada de áudio e vídeo
+                if (!GeneralHelper.detectmob() && this._structure.roomType.value == 0) {
+
+                    let videoConstraints;
+                    let audioConstraints;
+                    if (!this._roomController.checkDevices()) {
+                        this._alerta.initiateMessage(conf.message.DEVICE_ALERT);
+                        this._structure.configDev.click();
+                        return;
+                    } else {
+                        // Identifica navegador
+                        if (this._connection.DetectRTC.browser.name === 'Firefox') {
+                            videoConstraints = {
+                                deviceId: this._roomController.videoList.value
+                            };
+                            audioConstraints = {
+                                deviceId: this._roomController.audioList.value
+                            };
+                        } else {
+                            videoConstraints = {
+                                mandatory: {},
+                                optional: [{
+                                    sourceId: this._roomController.videoList.value
+                                }]
+                            }
+                            audioConstraints = {
+                                mandatory: {},
+                                optional: [{
+                                    sourceId: this._roomController.audioList.value
+                                }]
+                            }
+                        }
+                    }
+                    // Aplica dispositivos selecionados à sala criada
+                    this._connection.mediaConstraints = {
+                        video: videoConstraints,
+                        audio: audioConstraints
+                    }
+                }
+
+                // Inicializa a tela de apresentação
+                this._mediaController.initiateStream();
+                // Modela e apresenta cabeçalho do video
+                this._roomController.setRoomLabel(misc.ICON_FA_VIDEOCAM, room.tema, room.assunto);
+                this._structure.startRoom.disabled = true;
+                // Define elementos de inicialização da sessão criada
+                this._connection.session = {
+                    audio: conf.con.SESSION_AUDIO,
+                    video: conf.con.SESSION_VIDEO,
+                    data: conf.con.SESSION_DATA,
+                    broadcast: conf.con.SESSION_BROADCAST,
+                    oneway: conf.con.SESSION_ONEWAY
+                }
+
+                // Controle da utilização de banda
+                this._connection.bandwidth = {
+                    audio: conf.con.BAND_AUDIO,
+                    video: conf.con.BAND_VIDEO
+                }
+
+                // Inicializa Socket / Verifica existência do broadcast
+                let socket = this._connection.getSocket();
+                socket.emit(conf.socket.MSG_CHK_PRESENCE, room.hash, (isBroadcastExists) => {
+                    if (!isBroadcastExists) this._connection.userid = room.hash;
+                    socket.emit(conf.socket.MSG_JOIN_BROADCAST, {
+                        broadcastId: room.hash,
+                        userid: this._connection.userid,
+                        typeOfStreams: this._connection.session,
+                        bandwidth: this._connection.bandwidth
+                    });
+                });
+            } else {
+                this._alerta.initiateMessage(conf.message.FORM_ALERT);
+            }
+        }
     }
 
     checkRooms() {
@@ -770,111 +867,6 @@ class webrtcController {
             }
         }
         return this._structure.onlobby;
-    }
-
-    _onMessage() {
-
-        // Recebimento de mensagens
-        this._connection.onmessage = (event) => {
-            if (event.data.userRemoved === true) {
-                if (event.data.removedUserId == this._connection.userid) {
-                    this._connection.close();
-                    setTimeout(location.reload.bind(location), 3000);
-                }
-                return;
-            } else if (this._structure.singleConnection && (this._connection.isInitiator && (event.data && !event.data.userRemoved))) {
-                if (!Array.isArray(event.data)) {
-                    this._connection.getAllParticipants().forEach((p) => {
-                        if (p != event.userid) {
-                            this._connection.send(event.data, p);
-                        }
-                    });
-                }
-                this._appendDIV(event);
-            } else {
-                this._appendDIV(event);
-            }
-        };
-    }
-
-    _chatSendMessage() {
-
-        this._media.textMessage.onkeyup = event => this._formatChatMessage(event);
-        doc.TAG(dom.BTN_SEND_MSG).onclick = () => this._formatChatMessage();
-    }
-
-    _formatChatMessage(event) {
-
-        let value = this._media.textMessage.value;
-        let texto;
-        if (event)
-            if (event.keyCode != 13) return;
-        value = value.replace(/^\s+|\s+$/g, '');
-        if (!value.length) return;
-        texto = `<b class='small'>${this._structure.usuario}</b> :<br>${value}`;
-        texto = btoa(texto);
-        this._connection.send(texto);
-        this._appendDIV(texto);
-        this._media.textMessage.value = '';
-    }
-
-    _appendDIV(event) {
-
-        let remoto;
-        event.data ? remoto = true : remoto = false;
-        var text = event.data || event;
-        // Definição do padrão de mensagens com solicitação (array de 5 índices)
-        if (remoto && (Array.isArray(text) && text.length == 5)) {
-            let chkrash = event.data;
-            let msgData = [];
-            let myRoom = doc.TAG(dom.ROOM).value;
-            // Identifica se a mensagem é uma solicitação de serviço
-            if (chkrash[0] === btoa(conf.req.PEDE_VEZ)) {
-                // Indica que algum usuário solicita a permissão para falar
-                msgData[0] = chkrash[1];
-                msgData[1] = (atob(chkrash[3])).split('|')[4];
-                msgData[2] = chkrash[4];
-                this._structure.solicita = this._mediaController.listBox(msgData, this._structure.solicita);
-                return;
-            } else if (chkrash[0] === btoa(conf.req.RESP_PEDE_VEZ + 'allow')) {
-                // Indica que o broadcaster atendeu à solicitação do usuário
-                if (chkrash[2] === myRoom) {
-                    this._structure.solicita -= 1;
-                    this._mediaController.allow();
-                    this._structure.lockSolicitation = true;
-                }
-                return;
-            } else if (chkrash[0] === btoa(conf.req.RESP_PEDE_VEZ + 'deny')) {
-                // Indica que o broadcaster negou a solicitação do usuário
-                if (chkrash[2] === myRoom) {
-                    this._structure.solicita -= 1;
-                    this._mediaController.deny();
-                    this._structure.lockSolicitation = false;
-                }
-                return;
-            } else if (chkrash[0] === btoa(conf.req.END_SHARE)) {
-                if (this._mediaController._videoIsMain) {
-                    this._media.swapSecond.click();
-                }
-                setTimeout(() => {
-                    $(dom.VIDEO_SECOND).hide();
-                    this._alerta.initiateMessage(conf.message.STOP_SHARE);
-                }, 1000);
-            } else if (chkrash[0] === btoa(conf.req.END_PARTICIPATION)) {
-                if (!this._structure.onParticipation) {
-                    this._structure.onParticipation = true;
-                    this._mediaController._session = true;
-                }
-                this._media.sessionAccess.click();
-            } else if (chkrash[0] === btoa(conf.req.END_PARTICIPANT)) {
-                $(dom.DIV_BTN_END).hide();
-            } else {
-                return;
-            }
-        } else {
-            // Tratamento de mensagens comuns (fora do padrão de mensagem com solicitação)
-            this._mediaController.writeMessage(text, remoto);
-        }
     }
 
     alertDisconnection(userid) {

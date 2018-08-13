@@ -22,12 +22,8 @@ class StructureController {
     }
 
     initiateStructure() {
-        /*
-        let userType = doc.TAG(dom.ROOM_TYPE).value;
-        if (userType == 1) this._singlecon = true;
-        else this._singlecon = false;
-        */
-        let arrDocument = [
+
+        return new Structure(
             this._viewer,
             this._user,
             this._solicita,
@@ -45,7 +41,6 @@ class StructureController {
             this._roomType,
             this._countRooms,
             this._singlecon
-        ];
-        return new Structure(...arrDocument);
+        );
     }
 }

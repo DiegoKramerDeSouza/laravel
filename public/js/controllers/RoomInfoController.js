@@ -9,12 +9,19 @@ class RoomInfoController {
         this._currentUser = doc.TAG(dom.NAME);
         this._myClass = doc.TAG(dom.TARGET);
         this._countUsers = doc.TAG(dom.LABEL_USERS);
-        Object.freeze(this);
     }
 
     initiateRoomInfo() {
 
-        return new RoomInfo(this._currentRoomId, this._broadcaster, this._inRoom, this._inScreen, this._currentUser, this._myClass, this._countUsers);
+        return new RoomInfo(
+            this._currentRoomId,
+            this._broadcaster,
+            this._inRoom,
+            this._inScreen,
+            this._currentUser,
+            this._myClass,
+            this._countUsers
+        );
     }
 
 }

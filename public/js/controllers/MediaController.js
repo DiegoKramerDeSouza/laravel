@@ -52,7 +52,7 @@ class MediaController {
 
     initiateMedia() {
 
-        let arrMedia = [
+        return new Media(
             this._videoPreview,
             this._secondVideoPreview,
             this._thirdVideoPreview,
@@ -74,8 +74,7 @@ class MediaController {
             this._textMessage,
             this._fullsize,
             this._spanSecondVideo
-        ];
-        return new Media(...arrMedia);
+        );
     }
 
     initListeners() {
