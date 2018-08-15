@@ -32,6 +32,8 @@ class ViewsBasicBindingProvider extends ServiceProvider
         // -> Ícones utilizados: FontAwesome e MaterializeCSS
         // MaterializeCSS Icons:
         view()->share('controlLargeIcon',           "<i class='material-icons large'>more_horiz</i>");
+        view()->share('blueExtension',              "<i class='material-icons blue-text'>extension</i>");
+        view()->share('blueFile',                   "<i class='material-icons blue-text'>insert_drive_file</i>");
         view()->share('forumIcon',                  "<i class='material-icons'>forum</i>");
         view()->share('fullscreenExitLargeIcon',    "<i class='material-icons large'>fullscreen_exit</i>");
         view()->share('fullscreenIcon',             "<i class='material-icons'>fullscreen</i>");
@@ -43,6 +45,7 @@ class ViewsBasicBindingProvider extends ServiceProvider
         view()->share('searchIcon',                 "<i class='material-icons'>search</i>");
         view()->share('screenShareIcon',            "<i class='material-icons'>screen_share</i>");
         view()->share('sendIcon',                   "<i class='material-icons'>send</i>");
+        view()->share('shareIcon',                  "<i class='material-icons'>share</i>");
         view()->share('shareLargeIcon',             "<i class='material-icons large'>share</i>");
         view()->share('sizeIcon',                   "<i class='material-icons'>zoom_out_map</i>");
         view()->share('swapIcon',                   "<i class='material-icons'>swap_horiz</i>");

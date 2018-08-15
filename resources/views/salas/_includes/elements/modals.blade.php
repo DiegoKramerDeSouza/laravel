@@ -22,7 +22,7 @@
     <div id='msg-share' class='modal'>
         <div class='modal-content'>
             <h5>
-                <i class='material-icons blue-text'>extension</i> Extensão do Chrome:
+                {!! $blueExtension !!} Extensão do Chrome:
                 <span class='right'>
                     <a class='modal-close'>
                         {!! $cancelRedIcon !!}
@@ -30,7 +30,7 @@
                 </span>
             </h5>
             <div class='divider'></div>
-            <div class='red-text text-darken-3'>
+            <div class='red-text text-darken-4'>
                 <p>Para compartilhar sua tela, seu navegador deve possuir a extensão do {{ $logo }}.</p>
                 <p><b>Deseja instalar a extensão do {{ $logo }} para o navegador Google Chrome?</b></p>
             </div>
@@ -62,6 +62,7 @@
                 </select>
                 <label for='audio_list'>{!! $microphoneIcon !!} Dispositivo de input áudio:</label>
             </div>
+            <br />
             <div id='video-device-list' class='input-field col s12 m6 offset-m3'>
                 <select id='video_list' class='' required name='video_list'>
                     <!-- AJAX input -->
@@ -70,10 +71,9 @@
             </div>
             <br>
         </div>
-        <div class='modal-footer grey lighten-3'>
+        <div class='modal-footer grey lighten-4'>
             <button id='confirmDevices' type='submit' class='btn-flat blue-text text-darken-2 waves-effect waves-teal modal-close'> {!! $applyIcon !!} Ok </button>
         </div>
-            
     </div>
 @else
     <div id='msg-informa-espectadores' class='modal'>

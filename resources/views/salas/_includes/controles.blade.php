@@ -44,6 +44,13 @@
                             {!! $panToolIcon !!} 
                         </a>
                     </span>
+                    @if(Auth::user()->type == 0)
+                        <span id='li-sharing-file'>
+                            <a id='file-sharing' data-active='enabled' class='media-control btn-floating btn-large' title='Compartilhar arquivos'>
+                                {!! $shareIcon !!} 
+                            </a>
+                        </span>
+                    @endif
                     <span id='control-pedir-vez' class=''>
                         <a id='lista-pedir-vez' data-active='enabled' class='media-control btn-floating btn-large modal-trigger' data-position='top' title='Solicitações' href='#msg-solicita'>
                             {!! $panToolIcon !!} 
@@ -51,6 +58,16 @@
                         <span id='count-pedir-vez' href='#msg-solicita' class='btn-floating btn-small red darken-4 pulse modal-trigger'>0</span>
                     </span>
                     <input id='pedir-vez' type='hidden' disabled readonly value='0' />
+                </div>
+            </div>
+            <div id='receive-files' class='container blue-text' align='left'>
+                <div class=''>
+                    <h6><span class='left'>{!! $blueFile !!}</span> Arquivos Recebidos:</h6>
+                    <div class='divider'></div>
+                </div>
+                <br/>
+                <div id='div-file-sharing' class='container'>
+                    <!-- Lista de arquivos compartilhados -->
                 </div>
             </div>
         </div>

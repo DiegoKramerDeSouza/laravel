@@ -30,6 +30,7 @@ class MediaController {
         this._textMessage = doc.TAG(dom.TEXT_MESSAGE);
         this._sideNavbar = doc.TAG(dom.SIDE_NAVBAR);
         this._fullsize = doc.TAG(dom.TOGGLE_VIDEO_SIZE);
+        this._sharedFile = doc.TAG(dom.BTN_FILE_SHARING);
         this._spanSecondVideo = doc.TAG(dom.VIDEO_SECOND);
 
         this._controlCam = true;
@@ -73,6 +74,7 @@ class MediaController {
             this._toggleChat,
             this._textMessage,
             this._fullsize,
+            this._sharedFile,
             this._spanSecondVideo
         );
     }
@@ -374,6 +376,23 @@ class MediaController {
         this._mediaView.writeReceiveMessage(message, msgbox, instance.isOpen);
     }
 
+    disableFileSharing() {
+
+        this._mediaView.fileSharingOff();
+    }
+
+    fileSharing(connection, count) {
+
+        if (count > 0) {
+            let fileSelector = new FileSelector();
+            fileSelector.selectSingleFile(function(file) {
+                connection.send(file);
+            });
+        } else {
+            this._mediaView.noFileSharing();
+        }
+    }
+
     trataSolicitacao(value) {
 
         if (value > 0) this._mediaView.showSolicitation(value);
@@ -416,6 +435,7 @@ class MediaController {
             this.disableCam();
             this.disableMute();
             this.disableShare();
+            this.disableFileSharing();
             this._mediaView.adjustEspect();
         }
     }

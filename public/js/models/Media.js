@@ -25,6 +25,7 @@ class Media {
         toggleChat,
         textMessage,
         fullsize,
+        sharedFile,
         spanSecondVideo
     ) {
 
@@ -48,6 +49,7 @@ class Media {
         this._toggleChat = toggleChat;
         this._textMessage = textMessage;
         this._fullsize = fullsize;
+        this._sharedFile = sharedFile;
         this._spanSecondVideo = spanSecondVideo;
         Object.freeze(this);
     }
@@ -150,6 +152,11 @@ class Media {
     get fullsize() {
 
         return this._fullsize;
+    }
+
+    get sharedFile() {
+
+        return this._sharedFile;
     }
 
     get spanSecondVideo() {

@@ -65,6 +65,7 @@ class webrtcController {
         this._connection.maxRelayLimitPerUser = this._connect.maxRelayLimitPerUser;
         this._connection.socketMessageEvent = this._connect.socketMessageEvent;
         this._connection.socketURL = this._connect.urlSocket;
+        this._connection.enableFileSharing = this._connect.fileSharing;
     }
 
     _initiateListeners() {
@@ -163,6 +164,9 @@ class webrtcController {
             if (!this._structure.onParticipation && !event.extra.modifiedValue) {
                 this._roomInfo.inRoom.value = event.userid;
             }
+            // Marca container onde serão exibidos os arquivos enviados e recebidos
+            this._connection.filesContainer = doc.TAG(dom.DIV_FILE_SHARING);
+
             /**==============================================================================
              * Tratamento de conexões REMOTAS e LOCAIS
              * -> Identificação de compartilhamentos de tela e ingressos em transmissões
@@ -328,6 +332,9 @@ class webrtcController {
                 this._media.videoPreview.muted = true;
                 this._mediaController.initiateVideo(this._media.videoPreview);
 
+                /**
+                 * Ajusta elementos de exibição (define contadores de solicitações e remove 'pedir vez')
+                 */
                 if (this._structure.solicita <= 0) $(dom.COUNT_PEDIR).hide();
                 if (!this._connection.isInitiator) this._mediaController.disablePedir();
 
@@ -344,6 +351,8 @@ class webrtcController {
                  */
                 this._media.mute.onclick = () => this._mediaController.controlVoice(currentStream);
                 this._media.cam.onclick = () => this._mediaController.controlCam(currentStream);
+                this._media.sharedFile.onclick = () => this._mediaController.fileSharing(this._connection, this._structure.viewers);
+
 
                 this._media.ctlPedir.onclick = () => {
                     // Tratamento de respostas (permitir / negar)
@@ -396,6 +405,7 @@ class webrtcController {
                     }
                 };
                 this._media.share.onclick = () => {
+
                     if (!this._mediaController.getControlSharing()) {
                         $(dom.SHARE).hide();
                         this._connection.addStream({
@@ -408,14 +418,13 @@ class webrtcController {
                                             screen: true,
                                             oneway: true
                                         });
+                                        console.log("Renegociando com " + p);
                                     });
                                 }, 2000);
                                 this._roomInfo.inScreen.value = stream.streamid;
                             }
                         });
                     } else {
-                        $(dom.SHARE_ALERT).slideUp(300);
-                        this._mediaController.switchShare();
                         let streamConnection = this._roomInfo.inScreen.value;
                         let streamToRemove = null;
                         let newArray = [];
@@ -525,8 +534,9 @@ class webrtcController {
 
             if (event.stream.isScreen) {
                 $(dom.VIDEO_SECOND).hide();
+                this._mediaController.switchShare();
+                $(dom.SHARE_ALERT).slideUp(300);
             } else if (event.streamid == this._structure.userVideo.streamid) {
-                console.log('Stream ended: ', event);
                 $(dom.VIDEO_THIRD).hide();
                 this._structure.userVideo = conf.str.WAITING_FOR_VIDEO;
                 this._structure.lockSolicitation = false;
@@ -671,7 +681,7 @@ class webrtcController {
                 }
                 setTimeout(() => {
                     $(dom.VIDEO_SECOND).hide();
-                    this._alerta.initiateMessage(conf.message.STOP_SHARE);
+                    //this._alerta.initiateMessage(conf.message.STOP_SHARE);
                 }, 1000);
             } else if (chkrash[0] === btoa(conf.req.END_PARTICIPATION)) {
                 if (!this._structure.onParticipation) {
@@ -744,9 +754,11 @@ class webrtcController {
                 this._roomController.setRoomLabel(misc.ICON_FA_VIDEOCAM, room.tema, room.assunto);
                 this._structure.startRoom.disabled = true;
                 // Define elementos de inicialização da sessão criada
+                let audioConf = conf.con.SESSION_AUDIO;
+                let videoConf = conf.con.SESSION_VIDEO;
                 this._connection.session = {
-                    audio: conf.con.SESSION_AUDIO,
-                    video: conf.con.SESSION_VIDEO,
+                    audio: audioConf,
+                    video: videoConf,
                     data: conf.con.SESSION_DATA,
                     broadcast: conf.con.SESSION_BROADCAST,
                     oneway: conf.con.SESSION_ONEWAY

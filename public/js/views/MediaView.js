@@ -12,6 +12,7 @@ class MediaView {
         this._vol = doc.TAG(dom.VOL);
         this._share = doc.TAG(dom.SHARE);
         this._pedir = doc.TAG(dom.PEDIR);
+        this._sharedFile = doc.TAG(dom.BTN_FILE_SHARING);
         this._participation = doc.TAG(dom.SESSION_ACCESS);
         this._divParticipation = doc.TAG(dom.DIV_ENTER);
         this._divMainVideo = doc.TAG(dom.DIV_MAIN_VIDEO);
@@ -123,7 +124,6 @@ class MediaView {
         $(dom.SHARE).show();
         this._share.classList.add(misc.OFF_COLOR);
         this._share.innerHTML = misc.ICON_SHARE_OFF;
-        this._alerta.initiateMessage(conf.message.START_SHARE);
     }
 
     exitShare() {
@@ -131,7 +131,6 @@ class MediaView {
         $(dom.SHARE).show();
         this._share.classList.remove(misc.OFF_COLOR);
         this._share.innerHTML = misc.ICON_SHARE_ON;
-        this._alerta.initiateMessage(conf.message.STOP_SHARE);
     }
 
 
@@ -186,6 +185,18 @@ class MediaView {
 
         this._pedir.classList.add(misc.OFF_COLOR);
         $(dom.PEDIR).hide();
+    }
+
+    fileSharingOff() {
+
+        this._sharedFile.classList.remove(misc.HILIGHT_COLOR);
+        this._sharedFile.classList.add(misc.OFF_COLOR);
+        $(dom.BTN_FILE_SHARING).hide();
+    }
+
+    noFileSharing() {
+
+        this._alerta.initiateMessage(conf.message.NO_PARTICIPANTS);
     }
 
     exitFullscreen() {
@@ -306,6 +317,7 @@ class MediaView {
 
         this._adjustMediaMenu();
         $(dom.LI_PERDIR).hide();
+        $(dom.DIV_RECEIVE_FILES).hide();
     }
 
     adjustEspect() {

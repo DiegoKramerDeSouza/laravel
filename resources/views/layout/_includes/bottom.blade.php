@@ -86,6 +86,7 @@
                 <script type="text/javascript" src="{!! asset('js/webrtc/adapter.js') !!}"></script>                      
                 <script type="text/javascript" src="{!! asset('js/webrtc/RTCMultiConnection.min.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/webrtc/getScreenId.js') !!}"></script>
+                <script type="text/javascript" src="{!! asset('js/webrtc/FileBufferReader.js') !!}"></script>
                 
                 <script type="text/javascript" src="{!! asset('js/controllers/webrtcController.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/loaders/webrtcLoader.js') !!}"></script>

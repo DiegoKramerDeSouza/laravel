@@ -3,7 +3,7 @@
  */
 class Connect {
 
-    constructor(urlSocket, enableScalableBroadcast, maxRelayLimitPerUser, socketMessageEvent, isPublicModerator, direction) {
+    constructor(urlSocket, enableScalableBroadcast, maxRelayLimitPerUser, socketMessageEvent, isPublicModerator, direction, fileSharing) {
 
         this._urlSocket = urlSocket;
         this._enableScalableBroadcast = enableScalableBroadcast;
@@ -11,6 +11,7 @@ class Connect {
         this._socketMessageEvent = socketMessageEvent;
         this._isPublicModerator = isPublicModerator;
         this._direction = direction;
+        this._fileSharing = fileSharing;
         Object.freeze(this);
     }
 
@@ -42,5 +43,10 @@ class Connect {
     get direction() {
 
         return this._direction;
+    }
+
+    get fileSharing() {
+
+        return this._fileSharing;
     }
 }
