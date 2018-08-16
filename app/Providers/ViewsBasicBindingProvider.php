@@ -33,7 +33,6 @@ class ViewsBasicBindingProvider extends ServiceProvider
         // MaterializeCSS Icons:
         view()->share('controlLargeIcon',           "<i class='material-icons large'>more_horiz</i>");
         view()->share('blueExtension',              "<i class='material-icons blue-text'>extension</i>");
-        view()->share('blueFile',                   "<i class='material-icons blue-text'>insert_drive_file</i>");
         view()->share('forumIcon',                  "<i class='material-icons'>forum</i>");
         view()->share('fullscreenExitLargeIcon',    "<i class='material-icons large'>fullscreen_exit</i>");
         view()->share('fullscreenIcon',             "<i class='material-icons'>fullscreen</i>");
@@ -60,6 +59,8 @@ class ViewsBasicBindingProvider extends ServiceProvider
         // FontAwesome Icons:
         view()->share('acessosIcon',            "<i class='fa fa-shield fa-lg'></i>");
         view()->share('applyIcon',              "<i class='fa fa-check'></i>");
+        view()->share('blueCloudDownload',      "<i class='fa fa-cloud-download'></i>");
+        view()->share('blueCloudUpload',        "<i class='fa fa-cloud-upload'></i>");
         view()->share('bookBlueIcon',           "<i class='fa fa-book blue-text'></i>");
         view()->share('bookIcon',               "<i class='fa fa-book'></i>");
         view()->share('bookmarkIcon',           "<i class='fa fa-bookmark'></i>");

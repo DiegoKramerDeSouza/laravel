@@ -457,6 +457,7 @@ class webrtcController {
                 };
                 //===========================================================================
             }
+
             /**==============================================================================
              * Tratamentos e controles complementares
              */
@@ -603,25 +604,34 @@ class webrtcController {
 
         // Recebimento de mensagens
         this._connection.onmessage = (event) => {
-            if (event.data.userRemoved === true) {
-                if (event.data.removedUserId == this._connection.userid) {
-                    this._connection.close();
-                    setTimeout(location.reload.bind(location), 3000);
-                }
-                return;
-            } else if (this._structure.singleConnection && (this._connection.isInitiator && (event.data && !event.data.userRemoved))) {
-                if (!Array.isArray(event.data)) {
-                    this._connection.getAllParticipants().forEach((p) => {
-                        if (p != event.userid) {
-                            this._connection.send(event.data, p);
-                        }
-                    });
-                }
-                this._appendDIV(event);
+            if (event.data.fileName) {
+                this._mediaController.incomingFile(event, this._connection);
             } else {
-                this._appendDIV(event);
+                this._incomingMessage(event);
             }
-        };
+        }
+    }
+
+    _incomingMessage(event) {
+
+        if (event.data.userRemoved === true) {
+            if (event.data.removedUserId == this._connection.userid) {
+                this._connection.close();
+                setTimeout(location.reload.bind(location), 3000);
+            }
+            return;
+        } else if (this._structure.singleConnection && (this._connection.isInitiator && (event.data && !event.data.userRemoved))) {
+            if (!Array.isArray(event.data)) {
+                this._connection.getAllParticipants().forEach((p) => {
+                    if (p != event.userid) {
+                        this._connection.send(event.data, p);
+                    }
+                });
+            }
+            this._appendDIV(event);
+        } else {
+            this._appendDIV(event);
+        }
     }
 
     _chatSendMessage() {
@@ -681,7 +691,6 @@ class webrtcController {
                 }
                 setTimeout(() => {
                     $(dom.VIDEO_SECOND).hide();
-                    //this._alerta.initiateMessage(conf.message.STOP_SHARE);
                 }, 1000);
             } else if (chkrash[0] === btoa(conf.req.END_PARTICIPATION)) {
                 if (!this._structure.onParticipation) {
@@ -691,6 +700,8 @@ class webrtcController {
                 this._media.sessionAccess.click();
             } else if (chkrash[0] === btoa(conf.req.END_PARTICIPANT)) {
                 $(dom.DIV_BTN_END).hide();
+            } else if (chkrash[0] === btoa(conf.req.RECEIVE_FILE)) {
+                this._mediaController.createProgressBar(chkrash[1]);
             } else {
                 return;
             }

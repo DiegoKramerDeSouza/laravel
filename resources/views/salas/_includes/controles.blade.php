@@ -60,14 +60,29 @@
                     <input id='pedir-vez' type='hidden' disabled readonly value='0' />
                 </div>
             </div>
-            <div id='receive-files' class='container blue-text' align='left'>
+            <div id='send-files' class='container blue-text' align='left'>
                 <div class=''>
-                    <h6><span class='left'>{!! $blueFile !!}</span> Arquivos Recebidos:</h6>
+                    <h6>{!! $blueCloudUpload !!} Arquivos Enviados:</h6>
                     <div class='divider'></div>
                 </div>
                 <br/>
-                <div id='div-file-sharing' class='container'>
-                    <!-- Lista de arquivos compartilhados -->
+                <div class="files-pool">
+                    <div id='div-sended-files' class='container'>
+                        <!-- Lista de arquivos enviados -->
+                    </div>
+                </div>
+            </div>
+            <div id='receive-files' class='container blue-text' align='left'>
+                <div class=''>
+                    <h6>{!! $blueCloudDownload !!} Arquivos Recebidos:</h6>
+                    <div class='divider'></div>
+                </div>
+                <br/>
+                <div class="files-pool">
+                    <div id='file-transfering' class='blue-text container'></div>
+                    <div id='div-file-sharing' class='container'>
+                        <!-- Lista de arquivos compartilhados -->
+                    </div>
                 </div>
             </div>
         </div>

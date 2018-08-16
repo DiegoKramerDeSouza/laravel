@@ -55,6 +55,7 @@ const conf = {
         SESSION_BROADCAST: true,
         SESSION_ONEWAY: true,
         SHARE_DENIED: 'permission-denied',
+        //URL: 'https://webrtcweb.com:9559/',
         URL: 'https://rtcmulticonnection.herokuapp.com:443/'
     },
     socket: {
@@ -80,6 +81,7 @@ const conf = {
         END_SHARE: '@Finaliza-Share',
         END_PARTICIPATION: '@Finaliza-Participacao',
         END_PARTICIPANT: '@Finaliza-Participante',
+        RECEIVE_FILE: '@Receive-File',
     },
     message: {
         /*Tempo padrão de exibição das MENSAGENS de toast */
@@ -94,7 +96,8 @@ const conf = {
         ERROR_SOLICITATION: ['<i class="fa fa-times"></i>', 'Não foi possível solicitar a vez.', 'red darken-4'],
         DUP_SOLICITATION: ['<i class="fa fa-exclamation-triangle"></i>', 'Você já encaminhou uma solicitação.<br>Aguarde a resposta.', 'amber darken-4'],
         ERR_ACP_SOLICITATION: ['<i class="fa fa-exclamation-triangle"></i>', 'Sua solicitação já foi aceita.<br>Você não pode efetuar uma nova solicitação até finalizar esta.', 'amber darken-4'],
-        SEND_ACP_SOLICITATION: ['<i class="fa fa-check"></i>', 'Sua solicitação foi atendida.<br>Clique no botão ao lado para participar.', 'blue darken-1'],
+        SEND_ACP_SOLICITATION: ['<i class="fa fa-check"></i>', 'Sua solicitação foi atendida.<br>Dentro de instantes você iniciará sua participação.', 'blue darken-1'],
+        SEND_START_SOLICITATION: ['<i class="fa fa-check"></i>', 'Participação iniciada!<br>Você está transmitindo!', 'green darken-1'],
         NOT_ACP_SOLICITATION: ['<i class="fa fa-times"></i>', 'Sua solicitação foi negada!', 'red darken-4'],
         NO_CONNECTION: ['<i class="fa fa-times"></i>', 'Não há conexão com a sala!', 'red darken-4'],
         NO_PARTICIPANTS: ['<i class="fa fa-times"></i>', 'Não há participantes para compartilhar arquivos!', 'red darken-4'],
@@ -154,9 +157,12 @@ const dom = {
     DIV_INCOMING_VIDEO: '#div-incoming-videos',
     DIV_MAIN_VIDEO: '#div-main-video',
     DIV_RECEIVE_FILES: '#receive-files',
+    DIV_SEND_FILES: '#div-sended-files',
+    DIV_UPLOADED_FILES: '#send-files',
     DROPDOWN_TRG: '.dropdown-trigger',
     END_SESSION_ACCESS: '#end-session',
     EXIT_SCREEN: '#exit-fullscreen',
+    FILE_TRANSFERING: '#file-transfering',
     FIRST_VIDEO: '#video-preview',
     IN_ROOM: '#in-room',
     IN_SCREEN: '#in-screen',
@@ -246,6 +252,7 @@ const misc = {
     /*Ícones */
     ICON_CAM_ON: '<i class="material-icons">videocam</i>',
     ICON_CAM_OFF: '<i class="material-icons">videocam_off</i>',
+    ICON_CLOUD_UPLOAD: '<i class="fa fa-cloud-upload"></i>',
     ICON_FA_TV: '<i class="fa fa-television blue-text"></i>',
     ICON_FA_VIDEOCAM: '<i class="fa fa-video-camera blue-text"></i>',
     ICON_MIC: '<i class="material-icons">mic</i>',

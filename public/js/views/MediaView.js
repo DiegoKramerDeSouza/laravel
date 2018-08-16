@@ -25,6 +25,7 @@ class MediaView {
         this._chatTextArea = doc.TAG(dom.CHAT_TEXTAREA);
         this._countPedirVez = doc.TAG(dom.COUNT_PEDIR);
         this._solicitationList = doc.TAG(dom.SOL_LIST);
+        this._fileTransfering = doc.TAG(dom.FILE_TRANSFERING);
         this._listContent = '';
     }
 
@@ -173,6 +174,10 @@ class MediaView {
         this._alerta.initiateMessage(conf.message.SEND_ACP_SOLICITATION);
         $(dom.DIV_ENTER).fadeIn(300);
         this.endParticipation();
+        setTimeout(() => {
+            $(dom.SESSION_ACCESS).click();
+            this._alerta.initiateMessage(conf.message.SEND_START_SOLICITATION);
+        }, 2000);
     }
 
     denySolicitation() {
@@ -324,6 +329,43 @@ class MediaView {
 
         this._adjustMediaMenu();
         $(dom.CTL_PEDIR).hide();
+        $(dom.DIV_UPLOADED_FILES).hide();
     }
+
+    createProgressBar(file) {
+
+        this._fileTransfering.innerHTML += `<b>Recebendo:</b> ${ file }<br/>
+                                            <div class="progress">
+                                                <div class="indeterminate"></div>
+                                            </div>`;
+    }
+
+    transferCompleted() {
+
+        this._fileTransfering.innerHTML = '';
+    }
+
+    createSendedFiles(name, size) {
+
+        let filesSended = doc.TAG(dom.DIV_SEND_FILES);
+        let div = document.createElement('div');
+        div.innerHTML = `<span class="fa fa-cloud text-darken-1"></span> <b>${name}</b> (${this._convertSize(size)})<br/>`;
+        filesSended.insertBefore(div, filesSended.firstChild);
+    }
+
+    createDownloadLink(file, connection) {
+
+        file.url = URL.createObjectURL(file);
+        let div = document.createElement('div');
+        div.innerHTML = `<a class="shared-file blue-text" href="${file.url}" download="${file.name}"><span class="fa fa-download text-darken-1"></span> <b>${file.name}</b> (${this._convertSize(file.size)})</a><br/>`;
+        connection.filesContainer.insertBefore(div, connection.filesContainer.firstChild);
+    }
+
+    _convertSize(bytes) {
+        let sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        if (bytes == 0) return '0 Byte';
+        let i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+        return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+    };
 
 }

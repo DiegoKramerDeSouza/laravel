@@ -385,12 +385,67 @@ class MediaController {
 
         if (count > 0) {
             let fileSelector = new FileSelector();
-            fileSelector.selectSingleFile(function(file) {
-                connection.send(file);
+            fileSelector.selectSingleFile(file => {
+                this._getDataURL(file, dataURL => {
+                    connection.send([
+                        btoa(conf.req.RECEIVE_FILE),
+                        file.name,
+                        file.type,
+                        file.size,
+                        file.lastModified
+                    ]);
+                    setTimeout(() => {
+                        connection.send({
+                            fileName: file.name,
+                            fileType: file.type,
+                            dataURL: dataURL
+                        });
+                        this._mediaView.createSendedFiles(file.name, file.size);
+                    }, 500);
+                });
             });
         } else {
             this._mediaView.noFileSharing();
         }
+    }
+
+    incomingFile(event, connection) {
+
+        let blob = this._dataURItoBlob(event.data.dataURL);
+        let file = new File([blob], event.data.fileName, {
+            type: event.data.fileType
+        });
+        this._mediaView.transferCompleted();
+        this._mediaView.createDownloadLink(file, connection);
+        return;
+    }
+
+    createProgressBar(file) {
+
+        this._mediaView.createProgressBar(file);
+    }
+
+    _dataURItoBlob(dataURI) {
+
+        let byteString = atob(dataURI.split(',')[1]);
+        let mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+
+        let ab = new ArrayBuffer(byteString.length);
+        let ia = new Uint8Array(ab);
+        for (var i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+        }
+        let blob = new Blob([ab], {
+            type: mimeString
+        });
+        return blob;
+    }
+
+    _getDataURL(file, callback) {
+
+        let reader = new FileReader();
+        reader.onload = event => callback(event.target.result);
+        reader.readAsDataURL(file);
     }
 
     trataSolicitacao(value) {

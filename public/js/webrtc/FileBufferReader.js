@@ -390,6 +390,8 @@
             };
 
             file.onchange = function() {
+
+                let progress = new MediaView();
                 if (multiple) {
                     if (!file.files.length) {
                         console.error('No file selected.');
@@ -400,6 +402,7 @@
                     Array.from(file.files).forEach(function(file) {
                         file.url = file.webkitRelativePath;
                         arr.push(file);
+                        progress.createProgressBar(file.name);
                     });
                     callback(arr);
                     return;
@@ -410,6 +413,7 @@
                     return;
                 }
 
+                progress.createProgressBar(file.files[0].name);
                 callback(file.files[0]);
 
                 file.parentNode.removeChild(file);
@@ -433,6 +437,7 @@
         }
 
         function fireClickEvent(element) {
+
             if (typeof element.click === 'function') {
                 element.click();
                 return;
@@ -873,6 +878,8 @@
      * @return {Object}
      */
     var unpack = function(view, cursor) {
+
+        console.log(view, cursor);
         var i = 0,
             endianness = BIG_ENDIAN,
             start = cursor;
@@ -1208,6 +1215,7 @@
 
     var binarize = {
         pack: function(obj, callback) {
+            console.log('Binarize....');
             try {
                 if (debug) console.info('%cPacking Start', 'font-weight: bold; color: red;', obj);
                 serialize(obj, function(array) {
