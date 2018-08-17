@@ -87,6 +87,17 @@ class MediaController {
         document.addEventListener('MSFullscreenChange', this.escFullScreen);
     }
 
+    createSolicitationArray(command, firstData, secondData, thirdData, fourthData) {
+
+        return [
+            command,
+            firstData,
+            secondData,
+            thirdData,
+            fourthData
+        ];
+    }
+
     _switchValue(value) {
 
         return value ? false : true;

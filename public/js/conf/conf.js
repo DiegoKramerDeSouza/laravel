@@ -97,7 +97,7 @@ const conf = {
         DUP_SOLICITATION: ['<i class="fa fa-exclamation-triangle"></i>', 'Você já encaminhou uma solicitação.<br>Aguarde a resposta.', 'amber darken-4'],
         ERR_ACP_SOLICITATION: ['<i class="fa fa-exclamation-triangle"></i>', 'Sua solicitação já foi aceita.<br>Você não pode efetuar uma nova solicitação até finalizar esta.', 'amber darken-4'],
         SEND_ACP_SOLICITATION: ['<i class="fa fa-check"></i>', 'Sua solicitação foi atendida.<br>Dentro de instantes você iniciará sua participação.', 'blue darken-1'],
-        SEND_START_SOLICITATION: ['<i class="fa fa-check"></i>', 'Participação iniciada!<br>Você está transmitindo!', 'green darken-1'],
+        SEND_START_SOLICITATION: ['<i class="fa fa-check"></i>', 'Participação iniciada!<br>Você está transmitindo!', 'light-green'],
         NOT_ACP_SOLICITATION: ['<i class="fa fa-times"></i>', 'Sua solicitação foi negada!', 'red darken-4'],
         NO_CONNECTION: ['<i class="fa fa-times"></i>', 'Não há conexão com a sala!', 'red darken-4'],
         NO_PARTICIPANTS: ['<i class="fa fa-times"></i>', 'Não há participantes para compartilhar arquivos!', 'red darken-4'],
@@ -117,11 +117,11 @@ const conf = {
         VOL_UP: ['<i class="material-icons left">volume_up</i>', 'Áudio Habilitado.', 'blue darken-1'],
         STOP_SHARE: ['<i class="material-icons left">stop_screen_share</i>', 'Compartilhamento de tela finalizado.', 'red darken-4'],
         START_SHARE: ['<i class="material-icons left">screen_share</i>', 'Tela compartilhada.', 'blue darken-1'],
-        SUCCESS_LOCATION: ['<i class="fa fa-check fa-lg"></i>', 'Localização determinada com sucesso!', 'green darken-1'],
+        SUCCESS_LOCATION: ['<i class="fa fa-check fa-lg"></i>', 'Localização determinada com sucesso!', 'light-green'],
         NOTFOUND_LOCATION: ['<i class="fa fa-times fa-lg"></i>', 'Localização não determinada!', 'red darken-4'],
         INVALID_CEP: ['<i class="fa fa-times fa-lg"></i>', 'CEP inválido!', 'red darken-4'],
         NOTFOUND_CEP_LOCATION: ['<i class="fa fa-times fa-lg"></i>', 'CEP não localizado!', 'red darken-4'],
-        SUCCESS_CEP_LOCATION: ['<i class="fa fa-check fa-lg"></i>', 'CEP localizado com sucesso!', 'green darken-1'],
+        SUCCESS_CEP_LOCATION: ['<i class="fa fa-check fa-lg"></i>', 'CEP localizado com sucesso!', 'light-green'],
     }
 }
 

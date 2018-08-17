@@ -19,17 +19,15 @@ class CadastroAutocompleteController extends Controller
         $components = Componente::where('cadastrado', $module)->first();
         $model = 'App\\' . $components->model;
         if($components->model == "User"){
-            //$allData = $model::where('type', 0)->get()->toArray();
             $allData = $model::where('type', 0)->get();
         } else {
-            //$allData = $model::all()->toArray();
             $allData = $model::all();
         }
         
         foreach($allData as $value){
-            //$data = str_replace("\0", "", $value['name']);
-            //$result[$value['name']] = null;
             $data = str_replace("\0", "", $value->name);
+            // Formação de atributo para o modal o Materializecss
+            // -> JSON{<Nome do objeto>: <imagem opcional>}
             $result[$value->name] = null;
         }
         header('Content-Type: application/json; charset=utf-8');

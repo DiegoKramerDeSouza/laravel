@@ -172,9 +172,9 @@ class MediaView {
     allowSolicitation() {
 
         this._alerta.initiateMessage(conf.message.SEND_ACP_SOLICITATION);
-        $(dom.DIV_ENTER).fadeIn(300);
-        this.endParticipation();
         setTimeout(() => {
+            $(dom.DIV_ENTER).fadeIn(300);
+            this.endParticipation();
             $(dom.SESSION_ACCESS).click();
             this._alerta.initiateMessage(conf.message.SEND_START_SOLICITATION);
         }, 2000);

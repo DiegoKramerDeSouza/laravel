@@ -220,14 +220,16 @@ class webrtcController {
                         this._structure.emptyStreamVideos();
                         this._structure.incomingCon = '';
                         this._mediaController.closeIncomingVideos(event.stream);
-                        let msgrash = [
+
+                        let msgrash = this._mediaController.createSolicitationArray(
                             btoa(conf.req.END_PARTICIPATION),
                             this._roomInfo.currentUser.value,
                             this._connection.userid,
                             this._roomInfo.inRoom.value,
                             event.userid
-                        ];
+                        );
                         this._connection.send(msgrash, event.userid);
+                        msgrash = [];
                         this._structure.lockSolicitation = false;
                     }
                 } else {
@@ -290,13 +292,13 @@ class webrtcController {
                 this._media.solPedir.onclick = () => {
                     let altText = [];
                     if (this._structure.broadcastStatus == 1 && (this._structure.solicita === 0 && !this._structure.lockSolicitation)) {
-                        let msgrash = [
+                        let msgrash = this._mediaController.createSolicitationArray(
                             btoa(conf.req.PEDE_VEZ),
                             this._roomInfo.currentUser.value,
                             this._connection.userid,
                             this._roomInfo.inRoom.value,
                             this._roomInfo.currentRoomId.value
-                        ];
+                        );
                         try {
                             this._connection.send(msgrash, this._roomInfo.inRoom.value);
                             this._structure.solicita += 1;
@@ -304,6 +306,7 @@ class webrtcController {
                         } catch (err) {
                             altText = conf.message.ERROR_SOLICITATION;
                         }
+                        msgrash = [];
                     } else if (this._structure.solicita > 0) {
                         altText = conf.message.DUP_SOLICITATION;
                     } else if (this._structure.lockSolicitation) {
@@ -362,13 +365,13 @@ class webrtcController {
                         response[j].onclick = () => {
                             console.log(thisId);
                             let admResponse = thisId.split('_');
-                            let msgrash = [
+                            let msgrash = this._mediaController.createSolicitationArray(
                                 btoa(conf.req.RESP_PEDE_VEZ + admResponse[0]),
                                 this._roomInfo.currentUser.value,
                                 admResponse[1],
                                 this._roomInfo.inRoom.value,
                                 this._roomInfo.currentRoomId.value
-                            ];
+                            );
                             if (admResponse[0] == 'allow' && this._structure.lockSolicitation) {
                                 this._alerta.initiateMessage(conf.message.ACCEPT_SOLICITATION);
                             } else {
@@ -384,6 +387,7 @@ class webrtcController {
                                 }
 
                             }
+                            msgrash = [];
                         }
                     }
                     this._media.endSessionAccess.onclick = () => {
@@ -392,15 +396,16 @@ class webrtcController {
                         this._structure.emptyStreamVideos();
                         this._structure.incomingCon = '';
                         let targetId = this._structure.targetUser;
-                        let msgrash = [
+                        let msgrash = this._mediaController.createSolicitationArray(
                             btoa(conf.req.END_PARTICIPATION),
                             this._roomInfo.currentUser.value,
                             this._connection.userid,
                             this._roomInfo.inRoom.value,
                             targetId
-                        ];
+                        );
                         this._connection.send(msgrash, targetId);
                         this._structure.lockSolicitation = false;
+                        msgrash = [];
                         console.log('------------->     LOCAL', targetId, event.userid);
                     }
                 };
@@ -422,6 +427,9 @@ class webrtcController {
                                     });
                                 }, 2000);
                                 this._roomInfo.inScreen.value = stream.streamid;
+                                /**
+                                 * Adiciona tela local aqui para compartilhamento de tela!
+                                 */
                             }
                         });
                     } else {
@@ -445,14 +453,16 @@ class webrtcController {
                                 });
                             } catch (e) { console.log(e) }
                         });
-                        let msgrash = [
+
+                        let msgrash = this._mediaController.createSolicitationArray(
                             btoa(conf.req.END_SHARE),
                             this._roomInfo.currentUser.value,
                             streamConnection,
                             this._roomInfo.inRoom.value,
                             this._roomInfo.currentRoomId.value
-                        ];
+                        );
                         this._connection.send(msgrash);
+                        msgrash = [];
                     }
                 };
                 //===========================================================================
@@ -502,15 +512,16 @@ class webrtcController {
                                 peer.removeStream(stream);
                             });
                         });
-                        let msgrash = [
+                        let msgrash = this._mediaController.createSolicitationArray(
                             btoa(conf.req.END_PARTICIPANT),
                             this._roomInfo.currentUser.value,
                             this._connection.userid,
                             this._roomInfo.inRoom.value,
                             this._roomInfo.currentRoomId.value
-                        ];
+                        );
                         this._connection.send(msgrash, this._roomInfo.inRoom.value);
                         this._structure.lockSolicitation = false;
+                        msgrash = [];
                         this._alerta.initiateMessage(conf.message.END_PARTICIPATION);
                     } catch (e) {
                         this._mediaController.startParticipation();
