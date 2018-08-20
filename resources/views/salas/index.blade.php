@@ -10,12 +10,12 @@
             @if(Auth::user()->type == 0)
                 <div id='opend-rooms' class='col s12 m6'>
                     <h4 class='row'>
-                        <span><b>{!! $roomsIcon !!} Salas disponíveis</b></span>
+                        <span><b>{!! $default->roomsIcon !!} Salas disponíveis</b></span>
                     </h4>
             @else
                 <div id='opend-rooms' class='col s12'>
                     <h4 class='row'>
-                        <span>{!! $roomsIcon !!} <b>Bem vindo(a) <span class='blue-text'>{{ Auth::user()->name }}</span></b></span>
+                        <span>{!! $default->roomsIcon !!} <b>Bem vindo(a) <span class='blue-text'>{{ Auth::user()->name }}</span></b></span>
                     </h4>
                     <h5 class='row'>
                         <span><b>Estas são as salas disponíveis para você:</b></span>
@@ -26,7 +26,7 @@
                     <!-- Loading de conteúdo -->
                     <div class="center blue-text text-darken-2" align='center'>
                         <h5>Encontrando salas...</h5>
-                        <a class="btn-floating btn-large blue pulse">{!! $searchIcon !!}</a>
+                        <a class="btn-floating btn-large blue pulse">{!! $default->searchIcon !!}</a>
                         <br>
                         <br>
                         <br>                                                
@@ -39,17 +39,17 @@
                 <div id='teacher-access' class='card z-depth-5 col s12 m6'>
                     <div class='card-content'>
                         <div class='card-title black-text'>
-                            <h5>{!! $tvBlueIcon !!} Iniciar nova sala</h5>
+                            <h5>{!! $default->tvBlueIcon !!} Iniciar nova sala</h5>
                         </div>
                         <div class='row'>
                             <!--Tema e Assunto da sala-->
                             <div class='input-field col s12'>
                                 <input type='text' class='validate' id='tema' name='tema' required autofocus>
-                                <label for='tema'>{!! $bookIcon !!} Tema:</label>
+                                <label for='tema'>{!! $default->bookIcon !!} Tema:</label>
                             </div>
                             <div class='input-field col s12'>
                                 <input type='text' class='validate' id='assunto' name='assunto' required>
-                                <label for='assunto'>{!! $bookmarkIcon !!} Assunto:</label>
+                                <label for='assunto'>{!! $default->bookmarkIcon !!} Assunto:</label>
                             </div>
                             <div class='input-field col s12'>
                                 <select multiple id='cursos-list' required name='cursos-list' title='Selecione ao menos um curso'>
@@ -60,12 +60,12 @@
                                         @endforeach
                                     @endif
                                 </select>
-                                <label for='cursos-list'>{!! $cursosIcon !!} Seleção de Cursos</label>
+                                <label for='cursos-list'>{!! $default->cursosIcon !!} Seleção de Cursos</label>
                             </div>
                             <div class='divider'></div>
                             <div align='right'>
-                                <button id='btn-conf-devices' class='btn teal white-text waves-effect waves-light modal-trigger' style='display:none;' href='#choose-devices'>{!! $configIcon !!} Dispositivos</button>
-                                <button type='submit' id='btn-join-as-productor' class='btn blue white-text waves-effect waves-light'>{!! $playButtomIcon !!} Iniciar</button>
+                                <button id='btn-conf-devices' class='btn teal white-text waves-effect waves-light modal-trigger' style='display:none;' href='#choose-devices'>{!! $default->configIcon !!} Dispositivos</button>
+                                <button type='submit' id='btn-join-as-productor' class='btn blue white-text waves-effect waves-light'>{!! $default->playButtomIcon !!} Iniciar</button>
                             </div>
                         </div> 
                     </div>
@@ -99,11 +99,11 @@
                 <div class='divider'></div>
                 <div class='file-field input-field' style=''>
                     <a id='send-message-btn' class='btn-floating waves-effect waves-light blue right'>
-                        {!! $sendIcon !!}
+                        {!! $default->sendIcon !!}
                     </a>
                     <div class='file-path-wrapper'>
                         <!-- Input de mensagem -->
-                        {!! $prefixCommentingIcon !!}
+                        {!! $default->prefixCommentingIcon !!}
                         <input type='text' class='' id='text-message' placeholder='Chat'>
                     </div>
                 </div>
@@ -123,14 +123,14 @@
             <!-- Botão de desconexão de usuário em transmissão -->
             <div id='div-end' class='fixed-action-btn d-none' title='Finalizar participação'>
                 <a id='end-session' class='btn-floating btn-large waves-effect waves-light red darken-2' data-active='disabled'>
-                    {!! $videocamoffLargeIcon !!}
+                    {!! $default->videocamoffLargeIcon !!}
                 </a>
             </div>
         @endif
         <!-- Botão de ingresso de usuário em transmissão -->
         <div id='div-enter' class='fixed-action-btn d-none' title='Ingressar'>
             <a id='enter-session' class='btn-floating btn-large waves-effect waves-light cyan pulse' data-active='disabled'>
-                {!! $videocamLargeIcon !!}
+                {!! $default->videocamLargeIcon !!}
             </a>
         </div>
     @endif

@@ -7,15 +7,15 @@
             <div class="container">
                 <div class="row">
                     <div class="col s12">
-                    <h5 class="white-text">{{ $logo }}</h5>
+                    <h5 class="white-text">{{ $default->logo }}</h5>
                         <p class="grey-text text-lighten-1">
                             Protótipo de aplicação voltado à comunicação via webconference utilizando WebRTC e compatível com os navegadores Google Chrome e Mozilla Firefox. 
                             <br>
                             <br>
-                            {!! $bookmarkIcon !!} Versão 1.0.1.1
+                            {!! $default->bookmarkIcon !!} Versão 1.0.1.1
                             <br>
                             <span class='grey-text right'>
-                                 {!! $chromeIcon !!} &nbsp; {!! $firefoxIcon !!} 
+                                 {!! $default->chromeIcon !!} &nbsp; {!! $default->firefoxIcon !!} 
                             </span>
                         </p>
                     </div>
@@ -23,7 +23,7 @@
             </div>
             <div class="footer-copyright black">
                 <div class='container'>
-                    {!! $copyRightIcon !!} 2018 Smart Group SA
+                    {!! $default->copyRightIcon !!} 2018 Smart Group SA
                 </div>
             </div>
         </footer>

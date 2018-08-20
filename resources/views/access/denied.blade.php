@@ -9,13 +9,13 @@
         <div class='card-content'>
             <div class='row center container'>
                 <h2 class='card-title' align='left'>
-                    <b><span class='blue-text'>{!! $loginIcon !!} {{ Auth::user()->name }}</span></b><br>
+                    <b><span class='blue-text'>{!! $default->loginIcon !!} {{ Auth::user()->name }}</span></b><br>
                 </h2>
                 <div class='divider'></div>
                 <br>
                 <div class='red-text text-darken-3' align='center'>
                     <h5>
-                        {!! $closeLargeIcon !!}
+                        {!! $default->closeLargeIcon !!}
                         <br>
                         Acesso Negado!
                     </h5>
@@ -26,7 +26,7 @@
                 <br>
                 <div class='divider'></div>
                 <br>
-            <a class='load btn-flat blue-text text-darken-1 waves-effect waves-teal' href='{{ route('home') }}'>{!! $gobackLink !!}</a>
+            <a class='load btn-flat blue-text text-darken-1 waves-effect waves-teal' href='{{ route('home') }}'>{!! $default->gobackLink !!}</a>
             </div>
         </div>
     </div>

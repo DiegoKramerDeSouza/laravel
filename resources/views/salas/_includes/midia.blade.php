@@ -30,7 +30,7 @@
                                     <div class='card-panel grey lighten-5 z-depth-1'>
                                         <div class="row valign-wrapper">
                                             <div class="col s2 m1">
-                                                <span class='btn-floating red darken-2 pulse'>{!! $tvIcon !!}</span>
+                                                <span class='btn-floating red darken-2 pulse'>{!! $default->tvIcon !!}</span>
                                             </div>
                                             <div class="col s10 m11">
                                                 <span class="grey-text text-darken-2">
@@ -52,7 +52,7 @@
                                         <video id="video-preview" class="responsive-video" preload="none" loop ></video>
                                         <div id='div-exit-fullscreen' class='fixed-action-btn d-none'>
                                             <a id='exit-fullscreen' class='btn-floating btn-large blue darken-2'>
-                                                {!! $fullscreenExitLargeIcon !!}
+                                                {!! $default->fullscreenExitLargeIcon !!}
                                             </a>
                                         </div>
                                     </div> 
@@ -67,7 +67,7 @@
                             <!--SEGUNDO VÍDEO-->
                             <div id='span-video-preview-2nd' align='right' data-status='disabled' data-position='second' class='col s12 d-none'>
                                 <a id='swap-video' title='Passar para vídeo principal' class='btn-floating blue darken-2 waves-effect waves-light obj-invisible'>
-                                    {!! $swapIcon !!}
+                                    {!! $default->swapIcon !!}
                                 </a>
                                 <video id="secondvideo-preview" draggable="false" preload="none" loop class='min-video responsive-video'></video>
                             </div>
