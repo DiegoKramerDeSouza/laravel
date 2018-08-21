@@ -368,4 +368,24 @@ class MediaView {
         return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
     };
 
+    displayElem(elem){
+
+        $(elem).show();
+    }
+
+    fadeInElem(elem, delay){
+
+        $(elem).fadeIn(delay);
+    }
+
+    hideElem(elem){
+
+        $(elem).hide();
+    }
+
+    fadeOutElem(elem, delay){
+
+        $(elem).fadeOut(delay);
+    }
+
 }

@@ -272,6 +272,11 @@ class MediaController {
         }
     }
 
+    getSharedValue(){
+
+        return this._videoIsMain;
+    }
+
     switchShare() {
 
         this._controlSharing = this._switchValue(this._controlSharing);
@@ -504,6 +509,16 @@ class MediaController {
             this.disableFileSharing();
             this._mediaView.adjustEspect();
         }
+    }
+
+    displayElem(elem, delay, fade){
+
+        fade ? this._mediaView.fadeInElem(elem, delay) : this._mediaView.displayElem(elem);
+    }
+
+    hideElem(elem, delay, fade){
+
+        fade ? this._mediaView.fadeOutElem(elem, delay) : this._mediaView.hideElem(elem);
     }
 
 }
