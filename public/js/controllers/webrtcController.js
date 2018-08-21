@@ -150,7 +150,7 @@ class webrtcController {
                     let instance = M.Modal.getInstance(elem);
                     instance.open();
                 } else if (error === conf.con.SHARE_DENIED) {
-                    this._mediaController.displayElem(dom.SHARE, 300, true);
+                    this._mediaController.displayElem(dom.SHARE, 300);
                 }
                 throw error;
             });
@@ -174,10 +174,12 @@ class webrtcController {
              */
             if (event.type === 'remote' && this._connection.isInitiator) {
 
+                console.log("Recebe transmissão............");
                 // Remove qualquer conexão duplicada
                 this._connectController.checkDuplicatedCon(this._structure.incomingCon, event, this._connection);
 
                 // Conexão remota de transmissão com o broadcaster
+                console.log("Retransmite............");
                 if (this._structure.mainVideo != conf.str.WAITING_FOR_VIDEO) {
                     this._structure.incomingCon = event.stream.streamid;
                     this._media.thirdVideoPreview.srcObject = event.stream;
@@ -185,7 +187,7 @@ class webrtcController {
 
                     this._mediaController.initiateVideo(this._media.thirdVideoPreview);
                     this._alerta.initiateMessage(conf.message.START_PARTICIPATION);
-                    this._mediaController.displayElem(dom.VIDEO_THIRD, 300, true);
+                    this._mediaController.displayElem(dom.VIDEO_THIRD, 300);
 
                     setTimeout(() => {
                         this._connection.getAllParticipants().forEach((p) => {
@@ -205,7 +207,7 @@ class webrtcController {
                         this._mediaController.openIncomingVideos(event.stream);
                     }, 500);
 
-                    this._mediaController.displayElem(dom.DIV_BTN_END, 300, true);
+                    this._mediaController.displayElem(dom.DIV_BTN_END, 300);
                     this._media.endSessionAccess.onclick = () => {
                         console.log('------------->     REMOTO', event.userid, this._structure.targetUser);
                         this._structure.streamVideos.forEach((stream) => {
@@ -244,16 +246,7 @@ class webrtcController {
 
                 console.log('REMOTO SEM SCREEN --> ' + event.stream.streamid);
                 if (this._structure.mainVideo != conf.str.WAITING_FOR_VIDEO || event.extra.modifiedValue) {
-                    this._mediaController.displayElem(dom.VIDEO_THIRD, 300, true);
-                    if (this._structure.incomingCon != event.stream.streamid) {
-                        this._structure.incomingCon = event.stream.streamid;
-                        this._media.thirdVideoPreview.srcObject = event.stream;
-                        this._structure.userVideo = event.stream;
-                        this._mediaController.initiateVideo(this._media.thirdVideoPreview);
-                        this._mediaController.openIncomingVideos(event.stream);
-                    } else {
-                        return;
-                    }
+                    this._participateScreen(event.stream);
                 } else {
                     this._structure.incomingCon = event.stream.streamid;
                     this._structure.onParticipation = false;
@@ -330,7 +323,7 @@ class webrtcController {
                 /**
                  * Apresenta o número de espectadores conectados
                  */
-                this._mediaController.displayElem(dom.UL_CON_USERS, 300, true);
+                this._mediaController.displayElem(dom.UL_CON_USERS, 300);
                 /**
                  * Tratamento de ação de controles de mídia==================================
                  */
@@ -364,7 +357,7 @@ class webrtcController {
                                     this._structure.lockSolicitation = true
                                     this._structure.targetUser = admResponse[1];
                                     this._media.divEndBtn.setAttribute('data-target', admResponse[1]);
-                                    this._mediaController.displayElem(dom.DIV_BTN_END, 300, true);
+                                    this._mediaController.displayElem(dom.DIV_BTN_END, 300);
                                 }
                             }
                             msgrash = [];
@@ -468,7 +461,10 @@ class webrtcController {
                     setTimeout(() => {
                         try {
                             this._connection.peers[this._roomInfo.inRoom.value].addStream({
-                                video: true
+                                video: true,
+                                streamCallback: (stream) => {
+                                    this._participateScreen(stream);
+                                }
                             });
                         } catch (e) {
                             this._mediaController.endParticipation();
@@ -513,14 +509,25 @@ class webrtcController {
         this._media.secondVideoPreview.srcObject = stream;
         this._structure.incomingCon = stream.streamid;
         this._mediaController.initiateVideo(this._media.secondVideoPreview);
-        this._mediaController.displayElem(dom.VIDEO_SECOND, 300, true);
+        this._mediaController.displayElem(dom.VIDEO_SECOND, 300);
         // Tratamento Botão "Swap" -> Toggle Main/Second Video
         this._media.spanSecondVideo.onmouseenter = () => this._mediaController.toggleVisibility(this._media.swapSecond);
         this._media.spanSecondVideo.onmouseleave = () => this._mediaController.toggleVisibility(this._media.swapSecond);
-        this._media.swapSecond.onclick = () => {
-            this._mediaController.controlSwapVideo()
-            console.log(this._mediaController.getSharedValue());
-        };
+        this._media.swapSecond.onclick = () => this._mediaController.controlSwapVideo();
+    }
+
+    _participateScreen(stream){
+
+        this._mediaController.displayElem(dom.VIDEO_THIRD, 300);
+        if (this._structure.incomingCon != stream.streamid) {
+            this._structure.incomingCon = stream.streamid;
+            this._media.thirdVideoPreview.srcObject = stream;
+            this._structure.userVideo = stream;
+            this._mediaController.initiateVideo(this._media.thirdVideoPreview);
+            this._mediaController.openIncomingVideos(stream);
+        } else {
+            return;
+        }
     }
 
     _onOpen() {
@@ -534,7 +541,6 @@ class webrtcController {
     _onStreamEnded() {
 
         this._connection.onstreamended = (event) => {
-                  
             if (event.stream.isScreen) {
                 if(this._mediaController.getSharedValue()) this._media.swapSecond.click();
                 this._mediaController.hideElem(dom.VIDEO_SECOND);
@@ -723,13 +729,16 @@ class webrtcController {
                 this._structure.onlobby = false;
                 // Verificação de dispositivos de entrada de áudio e vídeo
                 if (!GeneralHelper.detectmob() && this._structure.roomType.value == 0) {
-                    let videoConstraints;
-                    let audioConstraints;
+                    /*
                     if (!this._roomController.checkDevices()) {
                         this._alerta.initiateMessage(conf.message.DEVICE_ALERT);
                         this._structure.configDev.click();
                         return;
-                    } else {
+                    }
+                    */
+                    if(this._roomController.checkDevices()) {
+                        let videoConstraints;
+                        let audioConstraints;
                         // Identifica navegador
                         if (this._connection.DetectRTC.browser.name === 'Firefox') {
                             videoConstraints = {
@@ -752,14 +761,13 @@ class webrtcController {
                                 }]
                             }
                         }
-                    }
-                    // Aplica dispositivos selecionados à sala criada
-                    this._connection.mediaConstraints = {
-                        video: videoConstraints,
-                        audio: audioConstraints
+                        // Aplica dispositivos selecionados à sala criada
+                        this._connection.mediaConstraints = {
+                            video: videoConstraints,
+                            audio: audioConstraints
+                        }
                     }
                 }
-
                 // Inicializa a tela de apresentação
                 this._mediaController.initiateStream();
                 // Modela e apresenta cabeçalho do video
@@ -775,13 +783,11 @@ class webrtcController {
                     broadcast: conf.con.SESSION_BROADCAST,
                     oneway: conf.con.SESSION_ONEWAY
                 }
-
                 // Controle da utilização de banda
                 this._connection.bandwidth = {
                     audio: conf.con.BAND_AUDIO,
                     video: conf.con.BAND_VIDEO
                 }
-
                 // Inicializa Socket / Verifica existência do broadcast
                 let socket = this._connection.getSocket();
                 socket.emit(conf.socket.MSG_CHK_PRESENCE, room.hash, (isBroadcastExists) => {
@@ -848,7 +854,6 @@ class webrtcController {
                                 });
                             };
                         }
-
                         if (this._structure.countRooms == 0) this._roomController.noRooms();
 
                     });
@@ -872,7 +877,7 @@ class webrtcController {
                 if (this._roomInfo.countUsers.getAttribute(misc.ATTR_USER_TYPE) == 0) {
                     this._roomController.inputConList();
                     this._roomView.changeCounter(this._structure.viewers);
-                    this._mediaController.displayElem(dom.UL_CON_USERS, 300, true);
+                    this._mediaController.displayElem(dom.UL_CON_USERS, 300);
                 }
                 let disconnectId;
                 let btnDisconnect = doc.ALL(dom.DISCONNECT_BTN);

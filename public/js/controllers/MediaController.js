@@ -511,14 +511,16 @@ class MediaController {
         }
     }
 
-    displayElem(elem, delay, fade){
+    displayElem(elem, delay){
 
-        fade ? this._mediaView.fadeInElem(elem, delay) : this._mediaView.displayElem(elem);
+        this._mediaView.fadeInElem(elem, delay);
+        //delay != undefined ? this._mediaView.fadeInElem(elem, delay) : this._mediaView.displayElem(elem);
     }
 
-    hideElem(elem, delay, fade){
+    hideElem(elem, delay){
 
-        fade ? this._mediaView.fadeOutElem(elem, delay) : this._mediaView.hideElem(elem);
+        this._mediaView.fadeOutElem(elem, delay)
+        //delay != undefined ? this._mediaView.fadeOutElem(elem, delay) : this._mediaView.hideElem(elem);
     }
 
 }
