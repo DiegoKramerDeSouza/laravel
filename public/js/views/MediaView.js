@@ -177,7 +177,7 @@ class MediaView {
             this.endParticipation();
             $(dom.SESSION_ACCESS).click();
             this._alerta.initiateMessage(conf.message.SEND_START_SOLICITATION);
-        }, 2000);
+        }, 2500);
     }
 
     denySolicitation() {
@@ -368,22 +368,22 @@ class MediaView {
         return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
     };
 
-    displayElem(elem){
+    displayElem(elem) {
 
         $(elem).show();
     }
 
-    fadeInElem(elem, delay){
+    fadeInElem(elem, delay) {
 
         $(elem).fadeIn(delay);
     }
 
-    hideElem(elem){
+    hideElem(elem) {
 
         $(elem).hide();
     }
 
-    fadeOutElem(elem, delay){
+    fadeOutElem(elem, delay) {
 
         $(elem).fadeOut(delay);
     }

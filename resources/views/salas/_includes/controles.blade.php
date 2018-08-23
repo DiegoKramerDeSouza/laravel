@@ -44,13 +44,11 @@
                             {!! $default->panToolIcon !!} 
                         </a>
                     </span>
-                    @if(Auth::user()->type == 0)
-                        <span id='li-sharing-file'>
-                            <a id='file-sharing' data-active='enabled' class='media-control btn-floating btn-large' title='Compartilhar arquivos'>
-                                {!! $default->shareIcon !!} 
-                            </a>
-                        </span>
-                    @endif
+                    <span id='li-sharing-file'>
+                        <a id='file-sharing' data-active='enabled' class='media-control btn-floating btn-large' title='Compartilhar arquivos'>
+                            {!! $default->shareIcon !!} 
+                        </a>
+                    </span>
                     <span id='control-pedir-vez' class=''>
                         <a id='lista-pedir-vez' data-active='enabled' class='media-control btn-floating btn-large modal-trigger' data-position='top' title='Solicitações' href='#msg-solicita'>
                             {!! $default->panToolIcon !!} 
@@ -86,4 +84,19 @@
                 </div>
             </div>
         </div>
+    </div>
+    <!-- Controle de acesso de usuários à transmissão -->
+    @if(Auth::user()->type == 0)
+        <!-- Botão de desconexão de usuário em transmissão -->
+        <div id='div-end' class='fixed-action-btn d-none' title='Finalizar participação'>
+            <a id='end-session' class='btn-floating btn-large waves-effect waves-light red darken-2' data-active='disabled'>
+                {!! $default->videocamoffLargeIcon !!}
+            </a>
+        </div>
+    @endif
+    <!-- Botão de ingresso de usuário em transmissão -->
+    <div id='div-enter' class='fixed-action-btn d-none' title='Ingressar'>
+        <a id='enter-session' class='btn-floating btn-large waves-effect waves-light cyan pulse' data-active='disabled'>
+            {!! $default->videocamLargeIcon !!}
+        </a>
     </div>

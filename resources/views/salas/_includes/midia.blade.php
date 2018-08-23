@@ -73,7 +73,6 @@
                             </div>
                         </div>
                         <div class='col s12'>
-                            
                             <!-- Controles de mídia -->
                             @include('salas._includes.controles')
 
@@ -96,3 +95,28 @@
             </div>
         </div>
     </div>
+
+    <!-- Sidebar de painel de chat -->
+    <ul id="slide-out" class="sidenav grey lighten-4 z-depth-5">
+        <div class='row'>
+            <div id='chat-textarea' class=''>
+                <div id='chat-panel' class='white-text'>
+                    <!-- Output de mensagens -->
+                </div>
+            </div>
+            <div id='message-writer-content' class='grey lighten-4'>
+                <div class='divider'></div>
+                <div class='file-field input-field' style=''>
+                    <a id='send-message-btn' class='btn-floating waves-effect waves-light blue right'>
+                        {!! $default->sendIcon !!}
+                    </a>
+                    <div class='file-path-wrapper'>
+                        <!-- Input de mensagem -->
+                        {!! $default->prefixCommentingIcon !!}
+                        <input type='text' class='' id='text-message' placeholder='Chat'>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ul>
+    

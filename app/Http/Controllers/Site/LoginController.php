@@ -9,6 +9,9 @@ use Auth;
 class LoginController extends Controller
 {
     public function index(){
+        if(!Auth::guest()){
+            return redirect()->route('home');
+        }
         return view('access.index');
     }
     public function access(Request $req){

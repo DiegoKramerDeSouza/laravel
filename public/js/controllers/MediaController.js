@@ -272,7 +272,7 @@ class MediaController {
         }
     }
 
-    getSharedValue(){
+    getSharedValue() {
 
         return this._videoIsMain;
     }
@@ -483,7 +483,6 @@ class MediaController {
     reconstructList(exp) {
 
         let responseList = doc.ALL(dom.SOL_RESPONSE);
-
         this._mediaView.clearSolicitationLis();
         if (responseList.length <= 1) this._mediaView.noSolicitation();
         else {
@@ -511,16 +510,16 @@ class MediaController {
         }
     }
 
-    displayElem(elem, delay){
+    displayElem(elem, delay) {
 
         this._mediaView.fadeInElem(elem, delay);
         //delay != undefined ? this._mediaView.fadeInElem(elem, delay) : this._mediaView.displayElem(elem);
     }
 
-    hideElem(elem, delay){
+    hideElem(elem, delay) {
 
         this._mediaView.fadeOutElem(elem, delay)
-        //delay != undefined ? this._mediaView.fadeOutElem(elem, delay) : this._mediaView.hideElem(elem);
+            //delay != undefined ? this._mediaView.fadeOutElem(elem, delay) : this._mediaView.hideElem(elem);
     }
 
 }

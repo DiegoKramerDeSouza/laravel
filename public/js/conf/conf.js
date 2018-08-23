@@ -168,6 +168,7 @@ const dom = {
     IN_SCREEN: '#in-screen',
     LABEL_USERS: '#users-counter',
     LI_CAM: '#li-toggle-camera',
+    LI_FILE_SHARE: '#li-sharing-file',
     LI_MUTE: '#li-toggle-mute',
     LI_PERDIR: '#li-pedir-vez',
     LI_SHARE: '#li-share-screen',

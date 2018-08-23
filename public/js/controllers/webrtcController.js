@@ -392,12 +392,12 @@ class webrtcController {
                             streamCallback: (stream) => {
                                 setTimeout(() => {
                                     this._connection.getAllParticipants().forEach((p) => {
-                                        
+
                                         this._connection.renegotiate(p, {
                                             screen: true,
                                             oneway: true
                                         });
-                                       console.log("Renegociando com " + p);
+                                        console.log("Renegociando com " + p);
                                     });
                                     this._screenStream(stream);
                                 }, 2000);
@@ -502,7 +502,7 @@ class webrtcController {
         }
     }
 
-    _screenStream(stream){
+    _screenStream(stream) {
 
         // Conexão remota com compartilhamento de tela
         this._mediaController.openIncomingVideos(stream);
@@ -516,7 +516,7 @@ class webrtcController {
         this._media.swapSecond.onclick = () => this._mediaController.controlSwapVideo();
     }
 
-    _participateScreen(stream){
+    _participateScreen(stream) {
 
         this._mediaController.displayElem(dom.VIDEO_THIRD, 300);
         if (this._structure.incomingCon != stream.streamid) {
@@ -542,11 +542,12 @@ class webrtcController {
 
         this._connection.onstreamended = (event) => {
             if (event.stream.isScreen) {
-                if(this._mediaController.getSharedValue()) this._media.swapSecond.click();
+                if (this._mediaController.getSharedValue()) this._media.swapSecond.click();
                 this._mediaController.hideElem(dom.VIDEO_SECOND);
                 this._mediaController.switchShare();
                 $(dom.SHARE_ALERT).slideUp(300);
             } else if (event.streamid == this._structure.userVideo.streamid) {
+                if (this._connection.isInitiator) this._mediaController.hideElem(dom.DIV_BTN_END, 300);
                 this._mediaController.hideElem(dom.VIDEO_THIRD);
                 this._structure.userVideo = conf.str.WAITING_FOR_VIDEO;
                 this._structure.lockSolicitation = false;
@@ -736,7 +737,7 @@ class webrtcController {
                         return;
                     }
                     */
-                    if(this._roomController.checkDevices()) {
+                    if (this._roomController.checkDevices()) {
                         let videoConstraints;
                         let audioConstraints;
                         // Identifica navegador
@@ -777,18 +778,18 @@ class webrtcController {
                 let audioConf = conf.con.SESSION_AUDIO;
                 let videoConf = conf.con.SESSION_VIDEO;
                 this._connection.session = {
-                    audio: audioConf,
-                    video: videoConf,
-                    data: conf.con.SESSION_DATA,
-                    broadcast: conf.con.SESSION_BROADCAST,
-                    oneway: conf.con.SESSION_ONEWAY
-                }
-                // Controle da utilização de banda
+                        audio: audioConf,
+                        video: videoConf,
+                        data: conf.con.SESSION_DATA,
+                        broadcast: conf.con.SESSION_BROADCAST,
+                        oneway: conf.con.SESSION_ONEWAY
+                    }
+                    // Controle da utilização de banda
                 this._connection.bandwidth = {
-                    audio: conf.con.BAND_AUDIO,
-                    video: conf.con.BAND_VIDEO
-                }
-                // Inicializa Socket / Verifica existência do broadcast
+                        audio: conf.con.BAND_AUDIO,
+                        video: conf.con.BAND_VIDEO
+                    }
+                    // Inicializa Socket / Verifica existência do broadcast
                 let socket = this._connection.getSocket();
                 socket.emit(conf.socket.MSG_CHK_PRESENCE, room.hash, (isBroadcastExists) => {
                     if (!isBroadcastExists) this._connection.userid = room.hash;
