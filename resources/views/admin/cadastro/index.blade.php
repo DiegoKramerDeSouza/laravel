@@ -14,7 +14,7 @@
             <div class='row center'>
                 @if(strpos($granted->grant, '4') !== false)
                     <div class='col s12 m{{ $grid }} hoverarchor'>
-                        <a class='load grey-text' href='{{ route('admin.cadastro.escolas') }}' style='padding:40px;'>
+                        <a class='load grey-text p-40' href='{{ route('admin.cadastro.escolas') }}'>
                             <h2>{!! $default->institutionLargeIcon !!}</h2>
                             <h5>Instituições</h5>
                             <p>Cadastradas: <b>{{ count($escolas) }}</b></p>
@@ -23,7 +23,7 @@
                 @endif
                 @if(strpos($granted->grant, '2') !== false)
                     <div class='col s12 m{{ $grid }} hoverarchor'>
-                        <a class='load grey-text' href='{{ route('admin.cadastro.modulos') }}' style='padding:40px;'>
+                        <a class='load grey-text p-40' href='{{ route('admin.cadastro.modulos') }}'>
                             <h2>{!! $default->modulosLargeIcon !!}</h2>
                             <h5>Módulos</h5>
                             <p>Cadastrados: <b>{{ count($modulos) }}</b></p>
@@ -32,7 +32,7 @@
                 @endif
                 @if(strpos($granted->grant, '3') !== false)
                     <div class='col s12 m{{ $grid }} hoverarchor'>
-                        <a class='load grey-text' href='{{ route('admin.cadastro.cursos') }}' style='padding:40px;'>
+                        <a class='load grey-text p-40' href='{{ route('admin.cadastro.cursos') }}'>
                             <h2>{!! $default->cursosLargeIcon !!}</h2>
                             <h5>Cursos</h5>
                             <p>Cadastrados: <b>{{ count($cursos) }}</b></p>
@@ -41,7 +41,7 @@
                 @endif
                 @if(strpos($granted->grant, '1') !== false)
                     <div class='col s12 m{{ $grid }} hoverarchor'>
-                        <a class='load grey-text' href='{{ route('admin.cadastro.turmas') }}' style='padding:40px;'>
+                        <a class='load grey-text p-40' href='{{ route('admin.cadastro.turmas') }}'>
                             <h2>{!! $default->turmasLargeIcon !!}</h2>
                             <h5>Turmas</h5>
                             <p>Cadastradas: <b>{{ count($turmas) }}</b></p>
@@ -50,7 +50,7 @@
                 @endif
                 @if(strpos($granted->grant, '6') !== false)
                     <div class='col s12 m{{ $grid }} hoverarchor'>
-                        <a class='load grey-text' href='{{ route('admin.cadastro.perfis') }}' style='padding:40px;'>
+                        <a class='load grey-text p-40' href='{{ route('admin.cadastro.perfis') }}'>
                             <h2>{!! $default->perfisLargeIcon !!}</h2>
                             <h5>Perfis</h5>
                             <p>Cadastrados: <b>{{ count($perfis) }}</b></p>
@@ -59,7 +59,7 @@
                 @endif
                 @if(strpos($granted->grant, '5') !== false)
                     <div class='col s12 m{{ $grid }} hoverarchor'>
-                        <a class='load grey-text' href='{{ route('admin.cadastro.usuarios') }}' style='padding:40px;'>
+                        <a class='load grey-text p-40' href='{{ route('admin.cadastro.usuarios') }}'>
                             <h2>{!! $default->usuariosLargeIcon !!}</h2>
                             <h5>Usuários</h5>
                             <p>Cadastrados: <b>{{ count($users) }}</b></p>

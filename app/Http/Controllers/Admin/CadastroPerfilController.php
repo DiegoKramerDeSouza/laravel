@@ -12,17 +12,27 @@ use App\Componente;
 class CadastroPerfilController extends Controller
 {
     use EspecialMethods;
+    
+    public function __construct()
+    {
+        $this->pagination = $this->setDefaults()->pagination;
+        $this->module = 'Perfil';
+    }
 
     /**
      * Validação de permissão de acesso;
      * Coleta todos os perfis cadastrados;
      * Direciona para a View de Listagem de perfis;
      */
-    public function index(){
+    public function index(Request $req){
 
-        if($this->validade('Perfil')){
-            $perfis = Perfil::orderBy('name', 'asc')->paginate(5);
+        if($this->validade($this->module)){
+            $perfis = Perfil::orderBy('name', 'asc')->paginate($this->pagination);
             $isAutocomplete = true;
+            if(isset($req->success)) {
+                $success = $this->returnMessages($req, $this->module);
+                return view('admin.cadastro.perfis.index', compact('perfis', 'isAutocomplete', 'success'));
+            }
             return view('admin.cadastro.perfis.index', compact('perfis', 'isAutocomplete'));
         } else {
             return $this->accessDenied();
@@ -36,7 +46,7 @@ class CadastroPerfilController extends Controller
      */
     public function add(){
 
-        if($this->validade('Perfil')){
+        if($this->validade($this->module)){
             $grant = true;
             $perfis = Perfil::all();
             $componentes = Componente::all();
@@ -54,7 +64,7 @@ class CadastroPerfilController extends Controller
      */
     public function save(Request $req){
 
-        if($this->validade('Perfil')){
+        if($this->validade($this->module)){
             $validator = Validator::make($req->all(), [
                 'name' => 'bail|required|unique:perfils|min:4|max:191'
             ]);
@@ -77,7 +87,7 @@ class CadastroPerfilController extends Controller
             ];
             
             Perfil::create($perfis);
-            return redirect()->route('admin.cadastro.perfis', ['page' => '1']);
+            return redirect()->route('admin.cadastro.perfis', ['success' => '1']);
         } else {
 
             return $this->accessDenied();
@@ -91,7 +101,7 @@ class CadastroPerfilController extends Controller
      */    
     public function edit($id){
 
-        if($this->validade('Perfil')){
+        if($this->validade($this->module)){
             $grant = true;
             $perfis = Perfil::find($id);
             $componentes = Componente::all();
@@ -116,7 +126,7 @@ class CadastroPerfilController extends Controller
      * 5. Atualiza base de dados Perfis;
      */
     public function update(Request $req, $id){
-        if($this->validade('Perfil')){
+        if($this->validade($this->module)){
             $validator = Validator::make($req->all(), [
                 'name' => 'bail|required|unique:perfils,name,' . $id . '|min:4|max:191'
             ]);
@@ -140,7 +150,7 @@ class CadastroPerfilController extends Controller
             ];
             Perfil::find($id)->update($perfis);
 
-            return redirect()->route('admin.cadastro.perfis', ['page' => '1']);
+            return redirect()->route('admin.cadastro.perfis', ['success' => '2']);
         } else {
 
             return $this->accessDenied();
@@ -153,9 +163,9 @@ class CadastroPerfilController extends Controller
      */
     public function delete($id){
 
-        if($this->validade('Perfil')){
+        if($this->validade($this->module)){
             Perfil::find($id)->delete();
-            return redirect()->route('admin.cadastro.perfis', ['page' => '1']);
+            return redirect()->route('admin.cadastro.perfis', ['success' => '3']);
         } else {
             return $this->accessDenied();
         }

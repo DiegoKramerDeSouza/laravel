@@ -14,17 +14,27 @@ use App\Perfil;
 class CadastroUsuarioController extends Controller
 {
     use EspecialMethods;
+    
+    public function __construct()
+    {
+        $this->pagination = $this->setDefaults()->pagination;
+        $this->module = 'User';
+    }
 
     /**
      * Validação de permissão de acesso;
      * Coleta todos os usuários de type = 0;
      * Direciona para a View de Listagem de usuários;
      */
-    public function index(){
+    public function index(Request $req){
         
-        if($this->validade('User')){
-            $users = User::where('type', 0)->orderBy('name', 'asc')->paginate(5);
+        if($this->validade($this->module)){
+            $users = User::where('type', 0)->orderBy('name', 'asc')->paginate($this->pagination);
             $isAutocomplete = true;
+            if(isset($req->success)) {
+                $success = $this->returnMessages($req, $this->module);
+                return view('admin.cadastro.usuarios.index', compact('users', 'isAutocomplete', 'success'));
+            }
             return view('admin.cadastro.usuarios.index', compact('users', 'isAutocomplete'));
         } else {
             return $this->accessDenied();
@@ -38,7 +48,7 @@ class CadastroUsuarioController extends Controller
      */
     public function add(){
 
-        if($this->validade('User')){
+        if($this->validade($this->module)){
             $escolas = Escola::all();
             $perfis = Perfil::all();
             return view('admin.cadastro.usuarios.adicionar', compact('escolas', 'perfis'));
@@ -58,7 +68,7 @@ class CadastroUsuarioController extends Controller
      */
     public function save(Request $req){
 
-        if($this->validade('User')){
+        if($this->validade($this->module)){
             $validator = Validator::make($req->all(), [
                 'name' => 'bail|required|min:4|max:191',
                 'login' => 'bail|required|unique:users|min:4|max:191',
@@ -91,7 +101,7 @@ class CadastroUsuarioController extends Controller
             ];
             UserDado::create($userdata);
 
-            return redirect()->route('admin.cadastro.usuarios', ['page' => '1']);
+            return redirect()->route('admin.cadastro.usuarios', ['success' => '1']);
         } else {
 
             return $this->accessDenied();
@@ -105,7 +115,7 @@ class CadastroUsuarioController extends Controller
      */
     public function edit($id){
 
-        if($this->validade('User')){
+        if($this->validade($this->module)){
             $user = User::find($id);
             $userdata = UserDado::where('user_id', $id)->first();
             $escolas = Escola::all();
@@ -127,7 +137,7 @@ class CadastroUsuarioController extends Controller
      */
     public function update(Request $req, $id){
 
-        if($this->validade('User')){
+        if($this->validade($this->module)){
             $validator = Validator::make($req->all(), [
                 'name' => 'bail|required|min:4|max:191',
                 'login' => 'bail|required|unique:users,login,' . $id . '|min:4|max:191',
@@ -155,7 +165,7 @@ class CadastroUsuarioController extends Controller
             ];
             UserDado::where('user_id', $id)->first()->update($userdata);
 
-            return redirect()->route('admin.cadastro.usuarios', ['page' => '1']);
+            return redirect()->route('admin.cadastro.usuarios', ['success' => '2']);
         } else {
 
             return $this->accessDenied();
@@ -168,10 +178,10 @@ class CadastroUsuarioController extends Controller
      */
     public function delete($id){
 
-        if($this->validade('User')){
+        if($this->validade($this->module)){
             User::find($id)->delete();
             UserDado::where('user_id', $id)->first()->delete();
-            return redirect()->route('admin.cadastro.usuarios', ['page' => '1']);
+            return redirect()->route('admin.cadastro.usuarios', ['success' => '3']);
         } else {
 
             return $this->accessDenied();

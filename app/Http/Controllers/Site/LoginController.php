@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Site;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Auth;
+use App\DefaultMessages;
 
 class LoginController extends Controller
 {
@@ -23,7 +24,9 @@ class LoginController extends Controller
                 return redirect()->route('salas');
             }
         };
-        return redirect()->route('login');
+        $message = new DefaultMessages();
+        $error = $message->userPasswordIncorrect;
+        return view('access.index', compact('error'));
     }
     public function logout(){
         Auth::logout();

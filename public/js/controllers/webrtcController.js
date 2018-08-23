@@ -778,18 +778,20 @@ class webrtcController {
                 let audioConf = conf.con.SESSION_AUDIO;
                 let videoConf = conf.con.SESSION_VIDEO;
                 this._connection.session = {
-                        audio: audioConf,
-                        video: videoConf,
-                        data: conf.con.SESSION_DATA,
-                        broadcast: conf.con.SESSION_BROADCAST,
-                        oneway: conf.con.SESSION_ONEWAY
-                    }
-                    // Controle da utilização de banda
+                    audio: audioConf,
+                    video: videoConf,
+                    data: conf.con.SESSION_DATA,
+                    broadcast: conf.con.SESSION_BROADCAST,
+                    oneway: conf.con.SESSION_ONEWAY
+                }
+
+                // Controle da utilização de banda
                 this._connection.bandwidth = {
-                        audio: conf.con.BAND_AUDIO,
-                        video: conf.con.BAND_VIDEO
-                    }
-                    // Inicializa Socket / Verifica existência do broadcast
+                    audio: conf.con.BAND_AUDIO,
+                    video: conf.con.BAND_VIDEO
+                }
+
+                // Inicializa Socket / Verifica existência do broadcast
                 let socket = this._connection.getSocket();
                 socket.emit(conf.socket.MSG_CHK_PRESENCE, room.hash, (isBroadcastExists) => {
                     if (!isBroadcastExists) this._connection.userid = room.hash;

@@ -17,16 +17,26 @@ class CadastroEscolaController extends Controller
 {
     use EspecialMethods;
     
+    public function __construct()
+    {
+        $this->pagination = $this->setDefaults()->pagination;
+        $this->module = 'Escola';
+    }
+    
     /**
      * Validação de permissão de acesso;
      * Coleta todas as escolas por nome;
      * Direciona para a View de Listagem de turmas;
      */
-    public function index(){
+    public function index(Request $req){
 
-        if($this->validade('Escola')){
-            $escolas = Escola::orderBy('name', 'asc')->paginate(5);
+        if($this->validade($this->module)){
+            $escolas = Escola::orderBy('name', 'asc')->paginate($this->pagination);
             $isAutocomplete = true;
+            if(isset($req->success)) {
+                $success = $this->returnMessages($req, $this->module);
+                return view('admin.cadastro.escolas.index', compact('escolas', 'isAutocomplete', 'success'));
+            }
             return view('admin.cadastro.escolas.index', compact('escolas', 'isAutocomplete'));
         } else {
             return $this->accessDenied();
@@ -40,7 +50,7 @@ class CadastroEscolaController extends Controller
      */
     public function add(){
 
-        if($this->validade('Escola')){
+        if($this->validade($this->module)){
             $api = RecursoApi::where('name', 'Google Maps Geolocation')->first();
             $apicep = RecursoApi::where('name', 'ViaCEP Consulta')->first();
             return view('admin.cadastro.escolas.adicionar', compact('api', 'apicep'));
@@ -60,7 +70,7 @@ class CadastroEscolaController extends Controller
      */
     public function save(Request $req){
 
-        if($this->validade('Escola')){
+        if($this->validade($this->module)){
             $validator = Validator::make($req->all(), [
                 'name' => 'bail|required|min:4|max:191',
                 'register' => 'bail|required|unique:escolas|min:4|max:191',
@@ -97,7 +107,7 @@ class CadastroEscolaController extends Controller
                 ];
                 EnderecoEscola::create($enderecoescola);
 
-                return redirect()->route('admin.cadastro.escolas', ['page' => '1']);
+                return redirect()->route('admin.cadastro.escolas', ['success' => '1']);
             }
         } else {
 
@@ -112,7 +122,7 @@ class CadastroEscolaController extends Controller
      */  
     public function edit($id){
 
-        if($this->validade('Escola')){
+        if($this->validade($this->module)){
             $api = RecursoApi::where('name', 'Google Maps Geolocation')->first();
             $apicep = RecursoApi::where('name', 'ViaCEP Consulta')->first();
             $escolas = Escola::find($id);
@@ -135,7 +145,7 @@ class CadastroEscolaController extends Controller
      */
     public function update(Request $req, $id){
 
-        if($this->validade('Escola')){
+        if($this->validade($this->module)){
             $validator = Validator::make($req->all(), [
                 'name' => 'bail|required|min:4|max:191',
                 'register' => 'bail|required|unique:escolas,register,' . $id . '|min:4|max:191',
@@ -178,7 +188,7 @@ class CadastroEscolaController extends Controller
                 $updateTurma->update($turmas);
             }
 
-            return redirect()->route('admin.cadastro.escolas', ['page' => '1']);
+            return redirect()->route('admin.cadastro.escolas', ['success' => '2']);
         } else {
 
             return $this->accessDenied();
@@ -200,7 +210,7 @@ class CadastroEscolaController extends Controller
             }
             Escola::find($id)->delete();
             EnderecoEscola::where('school_id', $id)->first()->delete();
-            return redirect()->route('admin.cadastro.escolas', ['page' => '1']);
+            return redirect()->route('admin.cadastro.escolas', ['success' => '3']);
         } else {
             return redirect()->route('denied');
         }

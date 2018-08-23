@@ -12,6 +12,12 @@ use App\Modulo;
 class CadastroCursoController extends Controller
 {
     use EspecialMethods;
+    
+    public function __construct()
+    {
+        $this->pagination = $this->setDefaults()->pagination;
+        $this->module = 'Curso';
+    }
 
     /**
      * Validação de permissão de acesso;
@@ -19,16 +25,19 @@ class CadastroCursoController extends Controller
      * Coleta todos os modulos por nome;
      * Direciona para a View de Listagem de turmas;
      */
-    public function index(){
+    public function index(Request $req){
 
-        if($this->validade('Curso')){
-            $cursos = Curso::orderBy('name', 'asc')->paginate(5);
+        if($this->validade($this->module)){
+            
+            $cursos = Curso::orderBy('name', 'asc')->paginate($this->pagination);
             $allmodulos = Modulo::all()->toArray();
             $modulos = array();
-            foreach($allmodulos as $modulo){
-                $modulos[$modulo['id']] = $modulo['name'];
-            }
+            foreach($allmodulos as $modulo) $modulos[$modulo['id']] = $modulo['name'];
             $isAutocomplete = true;
+            if(isset($req->success)) {
+                $success = $this->returnMessages($req, $this->module);
+                return view('admin.cadastro.cursos.index', compact('cursos', 'modulos', 'isAutocomplete', 'success'));
+            }
             return view('admin.cadastro.cursos.index', compact('cursos', 'modulos', 'isAutocomplete'));
         } else {
 
@@ -43,7 +52,7 @@ class CadastroCursoController extends Controller
      */
     public function add(){
 
-        if($this->validade('Curso')){
+        if($this->validade($this->module)){
             $cursos = Curso::all();
             $modulos = Modulo::all();
             return view('admin.cadastro.cursos.adicionar', compact('cursos', 'modulos'));
@@ -60,7 +69,7 @@ class CadastroCursoController extends Controller
      */
     public function save(Request $req){
 
-        if($this->validade('Curso')){
+        if($this->validade($this->module)){
             $validator = Validator::make($req->all(), [
                 'name' => 'bail|required|unique:cursos|min:4|max:191',
                 'modulo_id' => 'required'
@@ -78,7 +87,7 @@ class CadastroCursoController extends Controller
             ];
             Curso::create($cursos);
 
-            return redirect()->route('admin.cadastro.cursos', ['page' => '1']);
+            return redirect()->route('admin.cadastro.cursos', ['success' => '1']);
         } else {
 
             return $this->accessDenied();
@@ -92,7 +101,7 @@ class CadastroCursoController extends Controller
      */ 
     public function edit($id){
 
-        if($this->validade('Curso')){
+        if($this->validade($this->module)){
             $cursos = Curso::find($id);
             $modulos = Modulo::all();
             return view('admin.cadastro.cursos.editar', compact('cursos', 'modulos'));
@@ -110,7 +119,7 @@ class CadastroCursoController extends Controller
      */
     public function update(Request $req, $id){
 
-        if($this->validade('Curso')){
+        if($this->validade($this->module)){
             $validator = Validator::make($req->all(), [
                 'name' => 'bail|required|unique:cursos,name,' . $id . '|min:4|max:191',
                 'modulo_id' => 'required'
@@ -128,7 +137,7 @@ class CadastroCursoController extends Controller
             ];
             Curso::find($id)->update($cursos);
 
-            return redirect()->route('admin.cadastro.cursos', ['page' => '1']);
+            return redirect()->route('admin.cadastro.cursos', ['success' => '2']);
         } else {
 
             return $this->accessDenied();
@@ -141,9 +150,9 @@ class CadastroCursoController extends Controller
      */
     public function delete($id){
 
-        if($this->validade('Curso')){
+        if($this->validade($this->module)){
             Curso::find($id)->delete();
-            return redirect()->route('admin.cadastro.cursos', ['page' => '1']);
+            return redirect()->route('admin.cadastro.cursos', ['success' => '3']);
         } else {
             return $this->accessDenied();
         }

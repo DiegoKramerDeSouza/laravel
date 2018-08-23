@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Traits\EspecialMethods;
 use App\Curso;
 use App\Escola;
 use App\Modulo;
@@ -14,6 +15,13 @@ use App\Componente;
 
 class CadastroAutocompleteController extends Controller
 {
+    use EspecialMethods;
+    
+    public function __construct()
+    {
+        $this->pagination = $this->setDefaults()->pagination;
+    }
+    
     public function autocomplete($module){
 
         $components = Componente::where('cadastrado', $module)->first();
@@ -42,7 +50,7 @@ class CadastroAutocompleteController extends Controller
         }
         $components = Componente::where('cadastrado', $module)->first();
         $model = 'App\\' . $components->model;
-        $searchResult = $model::where('name', '=', $data)->orderBy('name', 'asc')->paginate(5);
+        $searchResult = $model::where('name', '=', $data)->orderBy('name', 'asc')->paginate($this->pagination);
         $linkHome = true;
 
         switch ($module) {

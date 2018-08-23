@@ -66,6 +66,7 @@ class RoomController {
     constructConnectionList(userid, username, announce, deletable) {
 
         let deleteButton;
+        userid = userid.split('-')[0];
         deletable ?
             deleteButton = this._roomView.setRemoveConBtn(userid, username, announce) :
             deleteButton = this._roomView.setDisabledConBtn(userid, username, announce);

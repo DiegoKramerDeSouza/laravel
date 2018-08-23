@@ -1,6 +1,5 @@
             
             <!-- Fim do corpo de página -->
-
             </div>
         </main>
         <footer id="main-footer" class="page-footer grey darken-4">
@@ -91,6 +90,13 @@
                 <script type="text/javascript" src="{!! asset('js/controllers/webrtcController.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/loaders/webrtcLoader.js') !!}"></script>
             @endif
+        @endif
+
+        @if(isset($error) || isset($success))
+            <input type='hidden' name='error_level' id='error_level' value='{{ isset($error) ? $error : '' }}' />
+            <input type='hidden' name='success_level' id='success_level' value='{{ isset($success) ? $success : '' }}' />
+            <script type="text/javascript" src="{!! asset('js/controllers/PageMessageController.js') !!}"></script>
+            <script type="text/javascript" src="{!! asset('js/loaders/PageMessageLoader.js') !!}"></script>
         @endif
         
         <!-- Inicialização de elementos MaterializeCSS -->

@@ -15,22 +15,30 @@ use App\Modulo;
 class CadastroTurmaController extends Controller
 {
     use EspecialMethods;
+    
+    public function __construct()
+    {
+        $this->pagination = $this->setDefaults()->pagination;
+        $this->module = 'Turma';
+    }
 
     /**
      * Validação de permissão de acesso;
      * Coleta todos os usuários de type = 1;
      * Direciona para a View de Listagem de turmas;
      */
-    public function index(){
+    public function index(Request $req){
 
-        if($this->validade('Turma')){
-            $turmas = Turma::orderBy('name', 'asc')->paginate(5);
+        if($this->validade($this->module)){
+            $turmas = Turma::orderBy('name', 'asc')->paginate($this->pagination);
             $accounts = User::where('type', 1)->get()->toArray();
             $users = array();
-            foreach($accounts as $account){
-                $users[$account['id']] = $account['login'];
-            }
+            foreach($accounts as $account) $users[$account['id']] = $account['login'];
             $isAutocomplete = true;
+            if(isset($req->success)) {
+                $success = $this->returnMessages($req, $this->module);
+                return view('admin.cadastro.turmas.index', compact('turmas', 'users', 'isAutocomplete', 'success'));
+            }
             return view('admin.cadastro.turmas.index', compact('turmas', 'users', 'isAutocomplete'));
         } else {
             return $this->accessDenied();
@@ -44,7 +52,7 @@ class CadastroTurmaController extends Controller
      */
     public function add(){
 
-        if($this->validade('Turma')){
+        if($this->validade($this->module)){
             $classroom = true;
             $escolas = Escola::all();
             $cursos = Curso::all();
@@ -71,7 +79,7 @@ class CadastroTurmaController extends Controller
      */
     public function save(Request $req){
 
-        if($this->validade('Turma')){
+        if($this->validade($this->module)){
             $validator = Validator::make($req->all(), [
                 'name' => 'bail|required|min:4|max:191',
                 'login' => 'bail|required|unique:users|min:4|max:191',
@@ -111,7 +119,7 @@ class CadastroTurmaController extends Controller
             ];
             Turma::create($turmas);
 
-            return redirect()->route('admin.cadastro.turmas', ['page' => '1']);
+            return redirect()->route('admin.cadastro.turmas', ['success' => '1']);
         } else {
 
             return $this->accessDenied();
@@ -128,7 +136,7 @@ class CadastroTurmaController extends Controller
      */    
     public function edit($id){
 
-        if($this->validade('Turma')){
+        if($this->validade($this->module)){
             $classroom = true;
             $turmas = Turma::find($id);
             $users = User::find($turmas->user_id);
@@ -159,7 +167,7 @@ class CadastroTurmaController extends Controller
      */
     public function update(Request $req, $id){
 
-        if($this->validade('Turma')){
+        if($this->validade($this->module)){
             $userId = Turma::where('user_id', $id)->first();
             $validator = Validator::make($req->all(), [
                 'name' => 'bail|required|min:4|max:191',
@@ -195,7 +203,7 @@ class CadastroTurmaController extends Controller
             ];
             Turma::where('user_id', $id)->first()->update($turma);
 
-            return redirect()->route('admin.cadastro.turmas', ['page' => '1']);
+            return redirect()->route('admin.cadastro.turmas', ['success' => '2']);
         } else {
 
             return $this->accessDenied();
@@ -208,11 +216,11 @@ class CadastroTurmaController extends Controller
      */
     public function delete($id){
 
-        if($this->validade('Turma')){
+        if($this->validade($this->module)){
             $turmas = Turma::find($id);
             User::find($turmas->user_id)->delete();
             $turmas->delete();
-            return redirect()->route('admin.cadastro.turmas', ['page' => '1']);
+            return redirect()->route('admin.cadastro.turmas', ['success' => '3']);
         } else {
 
             return $this->accessDenied();

@@ -161,6 +161,7 @@ const dom = {
     DIV_UPLOADED_FILES: '#send-files',
     DROPDOWN_TRG: '.dropdown-trigger',
     END_SESSION_ACCESS: '#end-session',
+    ERROR_LEVEL: '#error_level',
     EXIT_SCREEN: '#exit-fullscreen',
     FILE_TRANSFERING: '#file-transfering',
     FIRST_VIDEO: '#video-preview',
@@ -211,6 +212,7 @@ const dom = {
     SOL_PEDIR: '#sol-pedir',
     SOL_RESPONSE: '.sol-response',
     STREET: '#st',
+    SUCCESS_LEVEL: '#success_level',
     SWAP_SECOND: '#swap-video',
     TARGET: '#target',
     TEXT_MESSAGE: '#text-message',
@@ -238,11 +240,13 @@ const misc = {
     HILIGHT_COLOR: 'cyan',
     TURNOFF_COLOR: 'black',
     /*Classes de estilo CSS */
+    CLASS_ERROR_COLOR: 'red darken-4',
     CLASS_INVISIBLE: 'obj-invisible',
     CLASS_VISIBLE: 'obj-visible',
     CLASS_WIDTH_LIMIT: 'width-limit',
     CLASS_MAIN_CONTAINER: 'main-container',
     CLASS_MAIN_CONTAINER_FULL: 'main-container-full',
+    CLASS_SUCCESS_COLOR: 'light-green',
     /*Atribuição CSS */
     STYLE_HEIGHT_INHERIT: 'inherit',
     /*Atributos de elementos do DOM */
@@ -254,6 +258,7 @@ const misc = {
     ICON_CAM_ON: '<i class="material-icons">videocam</i>',
     ICON_CAM_OFF: '<i class="material-icons">videocam_off</i>',
     ICON_CLOUD_UPLOAD: '<i class="fa fa-cloud-upload"></i>',
+    ICON_ERROR: '<i class="fa fa-times fa-lg"></i>',
     ICON_FA_TV: '<i class="fa fa-television blue-text"></i>',
     ICON_FA_VIDEOCAM: '<i class="fa fa-video-camera blue-text"></i>',
     ICON_MIC: '<i class="material-icons">mic</i>',
@@ -262,6 +267,7 @@ const misc = {
     ICON_PLAY_CIRCLE: '<i class="material-icons medium">play_circle_outline</i>',
     ICON_SHARE_ON: '<i class="material-icons">screen_share</i>',
     ICON_SHARE_OFF: '<i class="material-icons">stop_screen_share</i>',
+    ICON_SUCCESS: '<i class="fa fa-check fa-lg"></i>',
     ICON_VOL_ON: '<i class="material-icons">volume_up</i>',
     ICON_VOL_OFF: '<i class="material-icons">volume_off</i>',
     /*Elementos HTML para caixas de mensagens */
