@@ -10,6 +10,7 @@ class DefaultElements extends Model
     public function __construct()
     {
         $this->bgImage = 'img/bg.jpg';
+        $this->version = '1.1.0.56';
         // Definição do nome da aplicação
         $this->logo = 'WebTV';
         // Extensão de navegador para compartilhamento de tela

@@ -55,7 +55,9 @@ const conf = {
         SESSION_BROADCAST: true,
         SESSION_ONEWAY: true,
         SHARE_DENIED: 'permission-denied',
-        //URL: 'https://webrtcweb.com:9559/',
+        //URL: 'https://sig.lrbtecnologia.com:443/',
+        //URL: 'http://sig.lrbtecnologia.com:80/',
+        //URL: 'http://10.255.2.140:9001/',
         URL: 'https://rtcmulticonnection.herokuapp.com:443/'
     },
     socket: {

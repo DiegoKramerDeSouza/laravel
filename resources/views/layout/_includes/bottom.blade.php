@@ -11,7 +11,7 @@
                             Protótipo de aplicação voltado à comunicação via webconference utilizando WebRTC e compatível com os navegadores Google Chrome e Mozilla Firefox. 
                             <br>
                             <br>
-                            {!! $default->bookmarkIcon !!} Versão 1.0.1.1
+                            {!! $default->bookmarkIcon !!} Versão {!! $default->version !!}
                             <br>
                             <span class='grey-text right'>
                                  {!! $default->chromeIcon !!} &nbsp; {!! $default->firefoxIcon !!} 
