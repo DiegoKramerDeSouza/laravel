@@ -22,7 +22,7 @@
             </div>
             <div class="footer-copyright black">
                 <div class='container'>
-                    {!! $default->copyRightIcon !!} 2018 Smart Group SA
+                    {!! $default->copyRightIcon !!} 2018 LRB Tecnologia
                 </div>
             </div>
         </footer>

@@ -27,7 +27,7 @@ class AutocompleteController {
     _collectDataBase(origin, admModule) {
 
         $.ajax({
-            url: `${ origin }/admin/cadastro/${ admModule }/autocomplete/`,
+            url: `${ origin }/admin/cadastro/${ admModule }/autocomplete`,
             type: 'get',
             dataType: 'json',
             success: data => {
