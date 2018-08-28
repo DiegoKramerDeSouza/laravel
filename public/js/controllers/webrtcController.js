@@ -15,6 +15,7 @@ class webrtcController {
         this._media = this._mediaController.initiateMedia();
         this._structure = this._structureController.initiateStructure();
         this._roomInfo = this._roomInfoController.initiateRoomInfo();
+        this._origin = location.origin;
     }
 
     configureDefaults() {
@@ -57,6 +58,27 @@ class webrtcController {
         this._treatURI();
         // Inicia definições de abertura de sala
         this._setRoomBroadcastId();
+    }
+
+    _saveRoom(autor, tema, assunto, hash) {
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('#token').attr('data-content')
+            }
+        });
+        $.ajax({
+            url: `${ this._origin }/salas/salvar`,
+            type: 'POST',
+            data: { hash: hash, name: tema, theme: assunto, author: autor },
+            dataType: 'json',
+            success: () => {
+                this._alerta.initiateMessage(conf.message.SUCCESS_SAVE_CLASS);
+            },
+            error: () => {
+                this._alerta.initiateMessage(conf.message.FAIL_SAVE_CLASS);
+            }
+        });
     }
 
     _initiateConnection() {
@@ -169,17 +191,14 @@ class webrtcController {
 
             /**==============================================================================
              * Tratamento de conexões REMOTAS e LOCAIS
-             * -> Identificação de compartilhamentos de tela e ingressos em transmissões
              * ==============================================================================
              */
             if (event.type === 'remote' && this._connection.isInitiator) {
 
-                console.log("Recebe transmissão............");
                 // Remove qualquer conexão duplicada
                 this._connectController.checkDuplicatedCon(this._structure.incomingCon, event, this._connection);
 
                 // Conexão remota de transmissão com o broadcaster
-                console.log("Retransmite............");
                 if (this._structure.mainVideo != conf.str.WAITING_FOR_VIDEO) {
                     this._structure.incomingCon = event.stream.streamid;
                     this._media.thirdVideoPreview.srcObject = event.stream;
@@ -439,9 +458,6 @@ class webrtcController {
                 //===========================================================================
             }
 
-            /**==============================================================================
-             * Tratamentos e controles complementares
-             */
             // Tratamento das funções MUTE e UNMUTE
             this._connection.onmute = event => event.mediaElement.setAttribute(misc.ATTR_POSTER, conf.str.POSTER_IMG);
             this._connection.onunmute = event => event.mediaElement.removeAttribute(misc.ATTR_POSTER);
@@ -464,6 +480,7 @@ class webrtcController {
                                 video: true,
                                 streamCallback: (stream) => {
                                     this._participateScreen(stream);
+                                    this._media.thirdVideoPreview.muted = true;
                                 }
                             });
                         } catch (e) {
@@ -612,7 +629,6 @@ class webrtcController {
 
     _onMessage() {
 
-        // Recebimento de mensagens
         this._connection.onmessage = (event) => {
             if (event.data.fileName) {
                 this._mediaController.incomingFile(event, this._connection);
@@ -740,7 +756,6 @@ class webrtcController {
                     if (this._roomController.checkDevices()) {
                         let videoConstraints;
                         let audioConstraints;
-                        // Identifica navegador
                         if (this._connection.DetectRTC.browser.name === 'Firefox') {
                             videoConstraints = {
                                 deviceId: this._roomController.videoList.value
@@ -762,7 +777,6 @@ class webrtcController {
                                 }]
                             }
                         }
-                        // Aplica dispositivos selecionados à sala criada
                         this._connection.mediaConstraints = {
                             video: videoConstraints,
                             audio: audioConstraints
@@ -802,6 +816,7 @@ class webrtcController {
                         bandwidth: this._connection.bandwidth
                     });
                 });
+                //this._saveRoom(room.name, room.tema, room.assunto, room.hash);
             } else {
                 this._alerta.initiateMessage(conf.message.FORM_ALERT);
             }
@@ -821,7 +836,10 @@ class webrtcController {
                             this._structure.viewers = numberOfBroadcastViewers;
                         });
                         let labelRoom = this._roomDataController.validateRoomName(moderatorId, array);
-                        if (!labelRoom) return;
+                        if (!labelRoom) {
+                            array.length > 1 ? null : this._roomController.noRooms();
+                            return;
+                        }
                         if (moderatorId == this._connection.userid) return;
                         let roomData = this._roomDataController.initiateRoomData(labelRoom);
                         roomData.allowed = this._roomDataController.validateAccess(roomData.curso, roomData.classes);

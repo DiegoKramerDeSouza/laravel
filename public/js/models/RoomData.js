@@ -4,13 +4,14 @@
  */
 class RoomData {
 
-    constructor(classe, apresentador, assunto, curso, whois, activeRoom, allowed, classes) {
+    constructor(classe, apresentador, assunto, curso, whois, timestamp, activeRoom, allowed, classes) {
 
         this._classe = classe;
         this._apresentador = apresentador;
         this._assunto = assunto;
         this._curso = curso;
         this._whois = whois;
+        this._timestamp = timestamp;
         this._activeRoom = activeRoom;
         this._allowed = allowed;
         this._classes = classes;
@@ -64,6 +65,16 @@ class RoomData {
     set whois(whois) {
 
         this._whois = whois;
+    }
+
+    get timestamp() {
+
+        return this._timestamp;
+    }
+
+    set timestamp(timestamp) {
+
+        this._timestamp = timestamp;
     }
 
     get activeRoom() {

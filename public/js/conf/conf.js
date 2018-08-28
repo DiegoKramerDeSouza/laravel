@@ -42,8 +42,8 @@ const conf = {
     },
     con: {
         /*Constantes de configuração de inicialização de CONEXÃO */
-        BAND_AUDIO: 200,
-        BAND_VIDEO: 300,
+        BAND_AUDIO: 500,
+        BAND_VIDEO: 500,
         DIRECTION: 'one-to-many',
         IS_BROADCAST: true,
         IS_PUBLIC: true,
@@ -55,9 +55,7 @@ const conf = {
         SESSION_BROADCAST: true,
         SESSION_ONEWAY: true,
         SHARE_DENIED: 'permission-denied',
-        //URL: 'https://sig.lrbtecnologia.com:443/',
-        //URL: 'http://sig.lrbtecnologia.com:80/',
-        //URL: 'http://10.255.2.140:9001/',
+        //URL: 'https://sig.lrbtecnologia.com:8080/',
         URL: 'https://rtcmulticonnection.herokuapp.com:443/'
     },
     socket: {
@@ -124,6 +122,8 @@ const conf = {
         INVALID_CEP: ['<i class="fa fa-times fa-lg"></i>', 'CEP inválido!', 'red darken-4'],
         NOTFOUND_CEP_LOCATION: ['<i class="fa fa-times fa-lg"></i>', 'CEP não localizado!', 'red darken-4'],
         SUCCESS_CEP_LOCATION: ['<i class="fa fa-check fa-lg"></i>', 'CEP localizado com sucesso!', 'light-green'],
+        SUCCESS_SAVE_CLASS: ['<i class="fa fa-check fa-lg"></i>', 'Sala registrada com Sucesso!', 'light-green'],
+        FAIL_SAVE_CLASS: ['<i class="fa fa-times fa-lg"></i>', 'Falha ao registrar a Sala!', 'red darken-4'],
     }
 }
 

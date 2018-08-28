@@ -63,6 +63,7 @@
                 </div>
             </div>
             <input type='hidden' id='target' name='target' disabled readonly />
+            <input type='hidden' id='token' name='token' disabled readonly data-content="{{ csrf_token() }}" />
 
         @else
 

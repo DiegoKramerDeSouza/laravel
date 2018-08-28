@@ -47,6 +47,7 @@ Route::group(['middleware' => 'auth'], function(){
      */
 
     Route::get('/salas', ['as' => 'salas', 'uses' => 'Site\RoomController@index']);
+    Route::post('/salas/salvar', ['as' => 'salas.salva', 'uses' => 'Site\RoomController@save']);
 
     /**
      *  Rota de Cadastros

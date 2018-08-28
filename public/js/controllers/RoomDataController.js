@@ -24,8 +24,9 @@ class RoomDataController {
 
         try {
             labelRoom = atob(labelRoom);
-            if (!(labelRoom.split('|').length === 5)) return false;
+            if (!(labelRoom.split('|').length === 6)) return false;
         } catch (exp) {
+            let roomView = new RoomView();
             if (roomsArray.length < 2) roomView.noRooms();
             return false;
         }
