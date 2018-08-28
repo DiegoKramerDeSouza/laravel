@@ -60,7 +60,7 @@ class webrtcController {
         this._setRoomBroadcastId();
     }
 
-    _saveRoom(autor, tema, assunto, hash) {
+    _saveRoom(postData, targetUrl) {
 
         $.ajaxSetup({
             headers: {
@@ -68,9 +68,9 @@ class webrtcController {
             }
         });
         $.ajax({
-            url: `${ this._origin }/salas/salvar`,
+            url: targetUrl,
             type: 'POST',
-            data: { hash: hash, name: tema, theme: assunto, author: autor },
+            data: postData,
             dataType: 'json',
             success: () => {
                 this._alerta.initiateMessage(conf.message.SUCCESS_SAVE_CLASS);
@@ -816,7 +816,9 @@ class webrtcController {
                         bandwidth: this._connection.bandwidth
                     });
                 });
-                //this._saveRoom(room.name, room.tema, room.assunto, room.hash);
+                let $postData = { author: room.name, name: room.tema, theme: room.assunto, hash: room.hash }
+                let $resource = `${ this._origin }/salas/salvar`;
+                this._saveRoom($postData, $resource);
             } else {
                 this._alerta.initiateMessage(conf.message.FORM_ALERT);
             }

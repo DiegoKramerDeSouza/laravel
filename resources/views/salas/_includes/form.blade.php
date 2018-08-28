@@ -63,7 +63,6 @@
                 </div>
             </div>
             <input type='hidden' id='target' name='target' disabled readonly />
-            <input type='hidden' id='token' name='token' disabled readonly data-content="{{ csrf_token() }}" />
 
         @else
 
@@ -71,6 +70,7 @@
             <input type='hidden' id='target' name='target' readonly disabled value='{{ $turmas->curso_id }}' />
 
         @endif
+        <span id='token' class='d-none' data-content="{{ csrf_token() }}"></span>
     </div>
 </div>
 
