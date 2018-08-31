@@ -16,6 +16,18 @@ class GeneralHelper {
         load.callLoading();
     }
 
+    static endLoading() {
+
+        let load = new LoadingController();
+        load.destroyLoading();
+    }
+
+    static devicesOff(audio, video) {
+
+        let load = new LoadingController();
+        load.devicesOff(audio, video);
+    }
+
     static hasClass(element, cls) {
 
         return (` ${element.className} `).indexOf(` ${cls} `) > -1;

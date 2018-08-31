@@ -59,6 +59,9 @@
                             <button id='btn-conf-devices' class='btn teal white-text waves-effect waves-light modal-trigger' style='display:none;' href='#choose-devices'>{!! $default->configIcon !!} Dispositivos</button>
                             <button type='submit' id='btn-join-as-productor' class='btn blue white-text waves-effect waves-light'>{!! $default->playButtomIcon !!} Iniciar</button>
                         </div>
+
+                        @include('salas._includes.preview')
+                        
                     </div> 
                 </div>
             </div>

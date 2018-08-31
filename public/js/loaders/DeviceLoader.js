@@ -6,10 +6,10 @@ $(document).ready(function() {
 
     let userType = doc.TAG(dom.ROOM_TYPE).value;
     let loadDeviceSelector = doc.TAG(dom.CONFIRM_DEVICES);
+    let deviceController = new DevicesController();
 
     if (userType == 0) {
 
-        let deviceController = new DevicesController();
         deviceController.initiateDevices();
 
         if (!GeneralHelper.detectmob()) $(dom.BTN_CONF_DEVICES).fadeIn(300);
@@ -19,5 +19,7 @@ $(document).ready(function() {
 
             deviceController.setDevices();
         };
+    } else {
+        deviceController.participantInitiateDevices();
     }
 });

@@ -7,6 +7,7 @@ class DevicesView {
         this._audioSelect = doc.TAG(dom.LIST_AUDIO);
         this._videoSelect = doc.TAG(dom.LIST_VIDEO);
         this._value;
+        this._cleanSelection();
     }
 
     createAudioSelector() {
@@ -37,6 +38,12 @@ class DevicesView {
         selected ?
             this._videoOption += `<option value="${ id }" selected>${ label }</option>` :
             this._videoOption += `<option value="${ id }">${ label }</option>`;
+    }
+
+    _cleanSelection() {
+
+        this._audioSelect.innerHTML = "";
+        this._videoSelect.innerHTML = "";
     }
 
     _convertValue(id, label, group) {

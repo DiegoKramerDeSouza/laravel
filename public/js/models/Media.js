@@ -8,6 +8,7 @@ class Media {
         videoPreview,
         secondVideoPreview,
         thirdVideoPreview,
+        previewVideo,
         mute,
         screen,
         exitscreen,
@@ -32,6 +33,7 @@ class Media {
         this._videoPreview = videoPreview;
         this._secondVideoPreview = secondVideoPreview;
         this._thirdVideoPreview = thirdVideoPreview;
+        this._previewVideo = previewVideo;
         this._mute = mute;
         this._screen = screen;
         this._exitscreen = exitscreen;
@@ -67,6 +69,11 @@ class Media {
     get thirdVideoPreview() {
 
         return this._thirdVideoPreview;
+    }
+
+    get previewVideo() {
+
+        return this._previewVideo;
     }
 
     get mute() {

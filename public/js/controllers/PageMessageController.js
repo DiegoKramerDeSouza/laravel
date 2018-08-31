@@ -15,7 +15,7 @@ class PageMessageController {
     _formatMessage(msgtext, success) {
 
         let msgBlock;
-        success ? msgBlock = [misc.ICON_SUCCESS, msgtext, misc.CLASS_SUCCESS_COLOR] : msgBlock = [misc.ICON_ERROR, msgtext, misc.CLASS_ERROR_COLOR];
+        success ? msgBlock = [misc.ICON_SUCCESS, msgtext, apr.msg.DB_MSG_COLOR] : msgBlock = [misc.ICON_ERROR, msgtext, apr.msg.ERROR_MSG_COLOR];
         this._message.initiateMessage(msgBlock);
     }
 }

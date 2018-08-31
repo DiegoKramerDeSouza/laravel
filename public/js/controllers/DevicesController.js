@@ -7,15 +7,47 @@ class DevicesController {
         this._alerta = new MessageController();
     }
 
+    participantInitiateDevices() {
+
+        DetectRTC.load();
+    }
+
+    checkParticipation() {
+
+        if (DetectRTC.isMobileDevice) return true;
+        if (DetectRTC.hasMicrophone !== true) {
+            this._alerta.initiateMessage(conf.message.AUDIO_DEVICE_NOT_FOUND);
+            return false;
+        }
+        if (DetectRTC.hasWebcam !== true) {
+            this._alerta.initiateMessage(conf.message.VIDEO_DEVICE_NOT_FOUND);
+            return false;
+        }
+        return true;
+    }
+
     initiateDevices() {
 
+        console.log('DetectRTC Versão: ', DetectRTC.version);
+        GeneralHelper.loading();
         DetectRTC.load(() => {
-
-            DetectRTC.audioInputDevices.forEach(device => this._devices.push(this._collectDevice(device)));
-            DetectRTC.videoInputDevices.forEach(device => this._devices.push(this._collectDevice(device)));
             setTimeout(() => {
+                if (DetectRTC.hasMicrophone !== true) {
+                    this._alerta.initiateMessage(conf.message.AUDIO_DEVICE_NOT_FOUND);
+                    GeneralHelper.devicesOff(false, true);
+                    return;
+                }
+                if (DetectRTC.hasWebcam !== true) {
+                    this._alerta.initiateMessage(conf.message.VIDEO_DEVICE_NOT_FOUND);
+                    GeneralHelper.devicesOff(true, false);
+                    return;
+                }
+                DetectRTC.audioInputDevices.forEach(device => this._devices.push(this._collectDevice(device)));
+                DetectRTC.videoInputDevices.forEach(device => this._devices.push(this._collectDevice(device)));
+                GeneralHelper.endLoading();
+                console.log('Dispositivos carregados: ', DetectRTC);
                 this._collectCookiesDevices();
-            }, 500);
+            }, 2000);
         });
     }
 
@@ -88,9 +120,12 @@ class DevicesController {
 
         this._devices.forEach(device => {
             if (device.kind === 'audioinput') {
+                view.selectedAudio(device.id, device.label);
+                /*
                 device.id == data ?
                     view.selectedAudio(device.id, device.label, true) :
                     view.selectedAudio(device.id, device.label);
+                */
             }
         });
         view.createAudioSelector();
@@ -100,9 +135,12 @@ class DevicesController {
 
         this._devices.forEach(device => {
             if (device.kind === 'videoinput') {
+                view.selectedVideo(device.id, device.label);
+                /*
                 device.id == data ?
                     view.selectedVideo(device.id, device.label, true) :
                     view.selectedVideo(device.id, device.label);
+                */
             }
         });
         view.createVideoSelector();

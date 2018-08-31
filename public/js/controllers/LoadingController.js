@@ -37,4 +37,14 @@ class LoadingController {
 
         this._loading.callLoading();
     }
+
+    devicesOff(audio, video) {
+
+        this._loading.callDeviceOff(audio, video);
+    }
+
+    setVersion() {
+
+        this._loading.setVersion();
+    }
 }

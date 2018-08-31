@@ -30,10 +30,13 @@ class webrtcController {
 
     manageRoom() {
 
+
         // Inicia listener para tratamento de compartilhamento de tela
         this._getScreenConstraints();
         // Inicia listener para inicialização de stream
         this._onStream();
+        // Inicia verificação de dispositivos e gera preview
+        this._initiateDevices();
         // Inicia listener para abertura de conexão
         this._onOpen();
         // Inicia listener para fechamento de stream
@@ -100,6 +103,7 @@ class webrtcController {
         this._connection.connectSocket((socket) => {
             // Socket - Join: 'join-broadcaster'
             socket.on(conf.socket.MSG_JOIN, (hintsToJoinBroadcast) => {
+                console.log('join-broadcaster', hintsToJoinBroadcast);
                 this._structure.broadcastStatus = 1;
                 this._connection.session = hintsToJoinBroadcast.typeOfStreams;
                 this._connection.sdpConstraints.mandatory = {
@@ -116,6 +120,7 @@ class webrtcController {
             });
             // Socket - Rejoin: 'rejoin-broadcast'
             socket.on(conf.socket.MSG_REJOIN, (getBroadcasterId) => {
+                console.log('rejoin-broadcaster');
                 this._structure.broadcastStatus = 1;
                 this._connection.attachStreams = [];
                 this._connection.extra.modifiedValue = this._roomInfo.currentRoomId.value + '-' + this._roomInfo.currentUser.value;
@@ -126,6 +131,7 @@ class webrtcController {
                         this._connection.userid = getBroadcasterId;
                     }
                     // Socket - Join to broadcast: 'join-broadcast'
+                    console.log('emit join-broadcaster');
                     socket.emit(conf.socket.MSG_JOIN_BROADCAST, {
                         broadcastId: getBroadcasterId,
                         userid: this._connection.userid,
@@ -135,11 +141,13 @@ class webrtcController {
             });
             // Socket - Parado: 'broadcast-stopped'
             socket.on(conf.socket.MSG_BROADCAST_STOP, (getBroadcasterId) => {
+                console.log('stop-broadcaster');
                 this._structure.broadcastStatus = 0;
                 this._alerta.initiateMessage(conf.message.END_TRANSMITION);
             });
-            // Socket - Iniciando: 'start-broadcasting
+            // Socket - Iniciando: 'start-broadcasting'
             socket.on(conf.socket.MSG_BROADCAST_START, (typeOfStreams) => {
+                console.log('start-broadcasting');
                 this._structure.broadcastStatus = 1;
                 this._connection.sdpConstraints.mandatory = {
                     OfferToReceiveVideo: false,
@@ -147,9 +155,11 @@ class webrtcController {
                 };
                 this._connection.session = typeOfStreams;
                 this._connection.open(this._connection.userid, this._connect.isPublicModerator);
+                console.log('initiate...')
             });
             // Socket - Saindo: 'leave-the-room'
             socket.on(conf.socket.MSG_LEAVE_ROOM, (targetconnection) => {
+                console.log('leave-broadcaster');
                 if (targetconnection.remoteUserId != this._connection.userid) return;
                 this._connection.leave();
             });
@@ -287,7 +297,11 @@ class webrtcController {
                 this._media.vol.onclick = () => this._mediaController.controlVolume(currentStream);
 
                 this._media.solPedir.onclick = () => {
+
+                    let devices = new DevicesController();
+                    let validadeDevices = devices.checkParticipation();
                     let altText = [];
+                    if (!validadeDevices) return;
                     if (this._structure.broadcastStatus == 1 && (this._structure.solicita === 0 && !this._structure.lockSolicitation)) {
                         let msgrash = this._mediaController.createSolicitationArray(
                             btoa(conf.req.PEDE_VEZ),
@@ -315,9 +329,9 @@ class webrtcController {
                 };
                 //===========================================================================
 
-            } else if (!this._structure.onParticipation && (event.type === 'local' && !event.stream.isScreen)) {
+            } else if (!this._structure.onParticipation && (event.type === 'local' && (!event.stream.isScreen && event.userid != 'self'))) {
 
-                console.log('TRANSMISSÃO LOCAL------', this._structure.mainVideo);
+                console.log('TRANSMISSÃO LOCAL------', this._structure.mainVideo, event.userid);
                 if (this._structure.incomingCon == event.stream.streamid) return;
 
                 this._structure.onParticipation = true;
@@ -456,6 +470,12 @@ class webrtcController {
                     }
                 };
                 //===========================================================================
+            } else if (event.type === 'local' && event.userid == 'self') {
+
+                console.log('LOCAL->', event);
+                this._media.previewVideo.srcObject = event.stream;
+                this._media.previewVideo.muted = true;
+                this._mediaController.initiateVideo(this._media.previewVideo);
             }
 
             // Tratamento das funções MUTE e UNMUTE
@@ -737,50 +757,84 @@ class webrtcController {
         }
     }
 
+    _initiateDevices() {
+
+        let confirm = doc.TAG(dom.CONFIRM_DEVICES);
+        confirm.onclick = () => {
+
+            this._finishSelfVideo();
+            this._setConnectionDevices();
+
+            if (this._roomController.checkDevices()) {
+                $(dom.SHOW_PREVIEW).fadeIn(300);
+
+                this._connection.session = {
+                    audio: false,
+                    video: true,
+                }
+                this._connection.sdpConstraints.mandatory = {
+                    OfferToReceiveVideo: false,
+                    OfferToReceiveAudio: false
+                };
+                this._connection.session = this._connection.session;
+                this._connection.open('self', false);
+            }
+        }
+    }
+
+    _setConnectionDevices() {
+
+        let videoConstraints;
+        let audioConstraints;
+        if (this._connection.DetectRTC.browser.name === 'Firefox') {
+            videoConstraints = { deviceId: this._roomController.videoList.value };
+            audioConstraints = { deviceId: this._roomController.audioList.value };
+        } else {
+            videoConstraints = {
+                mandatory: {},
+                optional: [{
+                    sourceId: this._roomController.videoList.value
+                }]
+            }
+            audioConstraints = {
+                mandatory: {},
+                optional: [{
+                    sourceId: this._roomController.audioList.value
+                }]
+            }
+        }
+        this._connection.mediaConstraints = {
+            video: videoConstraints,
+            audio: audioConstraints
+        }
+    }
+
+    _finishSelfVideo() {
+
+        this._connection.attachStreams.forEach(function(localStream) {
+            localStream.stop();
+        });
+        this._connection.close('self');
+        this._media.previewVideo.pause();
+    }
+
     createRoom() {
 
         this._structure.startRoom.onclick = () => {
             let room = this._roomController.initiateRoom();
             if (this._roomController.validade()) {
+                this._finishSelfVideo();
                 this._structure.usuario = room.name;
                 this._structure.onlobby = false;
                 // Verificação de dispositivos de entrada de áudio e vídeo
                 if (!GeneralHelper.detectmob() && this._structure.roomType.value == 0) {
-                    /*
+
                     if (!this._roomController.checkDevices()) {
                         this._alerta.initiateMessage(conf.message.DEVICE_ALERT);
                         this._structure.configDev.click();
                         return;
-                    }
-                    */
-                    if (this._roomController.checkDevices()) {
-                        let videoConstraints;
-                        let audioConstraints;
-                        if (this._connection.DetectRTC.browser.name === 'Firefox') {
-                            videoConstraints = {
-                                deviceId: this._roomController.videoList.value
-                            };
-                            audioConstraints = {
-                                deviceId: this._roomController.audioList.value
-                            };
-                        } else {
-                            videoConstraints = {
-                                mandatory: {},
-                                optional: [{
-                                    sourceId: this._roomController.videoList.value
-                                }]
-                            }
-                            audioConstraints = {
-                                mandatory: {},
-                                optional: [{
-                                    sourceId: this._roomController.audioList.value
-                                }]
-                            }
-                        }
-                        this._connection.mediaConstraints = {
-                            video: videoConstraints,
-                            audio: audioConstraints
-                        }
+                    } else {
+                        this._setConnectionDevices();
                     }
                 }
                 // Inicializa a tela de apresentação

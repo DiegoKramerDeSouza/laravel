@@ -8,13 +8,15 @@
                     <div class="col s12">
                     <h5 class="white-text">{{ $default->logo }}</h5>
                         <p class="grey-text text-lighten-1">
-                            Protótipo de aplicação voltado à comunicação via webconference utilizando WebRTC e compatível com os navegadores Google Chrome e Mozilla Firefox. 
-                            <br>
-                            <br>
-                            {!! $default->bookmarkIcon !!} Versão {!! $default->version !!}
-                            <br>
+                            Protótipo de aplicação voltado à comunicação via webconference utilizando WebRTC e compatível com os navegadores Google Chrome e Mozilla Firefox.
+                            <br/>
+                            Dispositívos: chrome://webrtc-internals/ 
+                            <br/>
+                            <br/>
+                            {!! $default->bookmarkIcon !!} Versão <span id="version"></span>
+                            <br/>
                             <span class='grey-text right'>
-                                 {!! $default->chromeIcon !!} &nbsp; {!! $default->firefoxIcon !!} 
+                                <a href="https://webrtc.github.io/samples/src/content/getusermedia/gum/" target="_blank" >{!! $default->chromeIcon !!}</a> &nbsp; {!! $default->firefoxIcon !!} 
                             </span>
                         </p>
                     </div>

@@ -6,6 +6,7 @@ $(document).ready(function() {
 
     // Inicializa de chamada de loading===
     let load = new LoadingController();
+    load.setVersion();
     load.destroyLoading();
     load.deployLoading();
     load.deployLoadingCancel();

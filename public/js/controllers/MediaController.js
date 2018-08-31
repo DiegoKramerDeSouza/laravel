@@ -12,6 +12,7 @@ class MediaController {
         this._videoPreview = doc.TAG(dom.FIRST_VIDEO);
         this._secondVideoPreview = doc.TAG(dom.SECOND_VIDEO);
         this._thirdVideoPreview = doc.TAG(dom.THIRD_VIDEO);
+        this._previewVideo = doc.TAG(dom.PREVIEW);
         this._mute = doc.TAG(dom.MUTE);
         this._screen = doc.TAG(dom.SCREEN);
         this._exitscreen = doc.TAG(dom.EXIT_SCREEN);
@@ -57,6 +58,7 @@ class MediaController {
             this._videoPreview,
             this._secondVideoPreview,
             this._thirdVideoPreview,
+            this._previewVideo,
             this._mute,
             this._screen,
             this._exitscreen,
@@ -116,13 +118,19 @@ class MediaController {
 
     initiateVideo(targetVideo) {
 
-        let playPromise = targetVideo.play();
-        if (playPromise !== undefined) {
-            playPromise.then(_ => {
-                    targetVideo.play();
-                })
-                .catch(error => {});
-        }
+        setTimeout(() => {
+            let playPromise = targetVideo.play();
+            if (playPromise !== undefined) {
+                playPromise.then(_ => {
+                        targetVideo.play();
+                    })
+                    .catch(error => {
+                        console.log('ERRO AO INICIALIZAR VIDEO...', error);
+                        this.initiateVideo(targetVideo);
+                    });
+                return;
+            }
+        }, 700);
     }
 
     controlVolume(currentStream) {

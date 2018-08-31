@@ -58,6 +58,7 @@
             
             <div id='audio-device-list' class='input-field col s12 m6 offset-m3'>
                 <select id='audio_list' class='' required name='audio_list'>
+                    <option value="">Carregando...</option>
                     <!-- AJAX input -->
                 </select>
                 <label for='audio_list'>{!! $default->microphoneIcon !!} Dispositivo de input áudio:</label>
@@ -65,6 +66,7 @@
             <br />
             <div id='video-device-list' class='input-field col s12 m6 offset-m3'>
                 <select id='video_list' class='' required name='video_list'>
+                    <option value="">Carregando...</option>
                     <!-- AJAX input -->
                 </select>
                 <label for='video_list'>{!! $default->camIcon !!} Dispositivo de input vídeo:</label>
@@ -96,6 +98,7 @@
         </div>
         <div class='modal-footer grey lighten-3'>
             <button id='informUsers' type='submit' class='btn-flat blue-text text-darken-2 waves-effect waves-teal'> {!! $default->applyIcon !!} Ok </button>
+            <input id='confirmDevices' type='hidden' />
         </div>
     </div>
 @endif

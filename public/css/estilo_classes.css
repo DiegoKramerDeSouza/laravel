@@ -141,6 +141,13 @@
     transition-duration: 0.4s;
 }
 
+.video-loading {
+    max-width: 420px;
+    -webkit-transition-duration: 0.4s;
+    transition-duration: 0.4s;
+    background: black url(/img/play_btn.png) center center no-repeat;
+}
+
 .margin-50-top {
     margin-top: 50px;
     margin-bottom: 50px;
