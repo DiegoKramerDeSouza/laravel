@@ -19,7 +19,7 @@ const doc = {
     COOKIE_LIFETIME: 365,
     COOKIE_AUDIO_DEVICE: "audioDevice",
     COOKIE_VIDEO_DEVICE: "videoDevice",
-    VERSION: "1.1.0.72"
+    VERSION: "1.1.0.73"
 }
 
 const apr = {

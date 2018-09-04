@@ -911,6 +911,11 @@ class webrtcController {
                             this._roomController.initiateRoomCard(moderatorId, card, divOpen, button);
                             //Função de entrada na sala a partir do botão ENTRAR
                             button.onclick = () => {
+                                try {
+                                    this._finishSelfVideo();
+                                } catch (e) {
+                                    console.log('Preview video disabled. Starting connection...');
+                                }
                                 this._mediaController.initiateStream();
                                 this._roomController.setRoomLabel(misc.ICON_FA_TV, roomData.classe, roomData.assunto);
                                 this._structure.onlobby = false;
