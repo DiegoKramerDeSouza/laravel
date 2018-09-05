@@ -114,6 +114,7 @@ class webrtcController {
                 this._connection.updateExtraData();
                 this._connection.broadcastId = hintsToJoinBroadcast.broadcastId;
                 this._connection.direction = this._connect.direction;
+
                 this._connection.join(hintsToJoinBroadcast.userid);
                 this._alerta.initiateMessage(conf.message.START_TRANSMITION);
                 console.log(this._connection);
@@ -854,10 +855,12 @@ class webrtcController {
                 }
 
                 // Controle da utilização de banda
+                /*
                 this._connection.bandwidth = {
                     audio: conf.con.BAND_AUDIO,
                     video: conf.con.BAND_VIDEO
                 }
+                */
 
                 // Inicializa Socket / Verifica existência do broadcast
                 let socket = this._connection.getSocket();
@@ -867,7 +870,7 @@ class webrtcController {
                         broadcastId: room.hash,
                         userid: this._connection.userid,
                         typeOfStreams: this._connection.session,
-                        bandwidth: this._connection.bandwidth
+                        //bandwidth: this._connection.bandwidth
                     });
                 });
                 let $postData = { author: room.name, name: room.tema, theme: room.assunto, hash: room.hash }
