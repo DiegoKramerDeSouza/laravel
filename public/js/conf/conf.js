@@ -61,7 +61,11 @@ const conf = {
         MAX_RELAY: 0,
         MSG: 'Inicia-Apresentacao',
         SESSION_AUDIO: true,
-        SESSION_VIDEO: true,
+        SESSION_VIDEO: {
+            mandatory: {
+                minFrameRate: 30
+            }
+        },
         SESSION_DATA: true,
         SESSION_BROADCAST: true,
         SESSION_ONEWAY: true,

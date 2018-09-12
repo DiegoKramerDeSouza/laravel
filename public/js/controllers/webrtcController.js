@@ -84,6 +84,27 @@ class webrtcController {
         });
     }
 
+    _updateRoom(postData, targetUrl) {
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('#token').attr('data-content')
+            }
+        });
+        $.ajax({
+            url: targetUrl,
+            type: 'POST',
+            data: postData,
+            dataType: 'json',
+            success: () => {
+                this._alerta.initiateMessage(conf.message.SUCCESS_SAVE_CLASS);
+            },
+            error: () => {
+                this._alerta.initiateMessage(conf.message.FAIL_SAVE_CLASS);
+            }
+        });
+    }
+
     _initiateConnection() {
 
         this._connection.enableScalableBroadcast = this._connect.enableScalableBroadcast;
@@ -917,7 +938,7 @@ class webrtcController {
                                 try {
                                     this._finishSelfVideo();
                                 } catch (e) {
-                                    console.log('Preview video disabled. Starting connection...');
+                                    console.log('Starting connection...');
                                 }
                                 this._mediaController.initiateStream();
                                 this._roomController.setRoomLabel(misc.ICON_FA_TV, roomData.classe, roomData.assunto);

@@ -77,7 +77,6 @@
             <button id='confirmDevices' type='submit' class='btn-flat blue-text text-darken-2 waves-effect waves-teal modal-close'> {!! $default->applyIcon !!} Ok </button>
         </div>
     </div>
-@else
     <div id='msg-informa-espectadores' class='modal'>
         <div class='modal-content'>
             <h5>
@@ -89,7 +88,7 @@
                 </span>
             </h5>
             <div class='divider'></div>
-            <p>Por favor informe quantas pessoas estão acompanhando esta apresentação:</p>
+            <p>Por favor informe quantas pessoas irão acompanhar esta apresentação:</p>
             <div class='input-field col s12 m6 offset-m3'>
                 <input class='validate' required type='text' name='numViews' id='numViews' >
                 <label for='numViews'>{!! $default->usuariosIcon !!} Quantidade de espectadores:</label>
@@ -98,7 +97,8 @@
         </div>
         <div class='modal-footer grey lighten-3'>
             <button id='informUsers' type='submit' class='btn-flat blue-text text-darken-2 waves-effect waves-teal'> {!! $default->applyIcon !!} Ok </button>
-            <input id='confirmDevices' type='hidden' />
         </div>
     </div>
+@else
+    <input id='confirmDevices' type='hidden' disabled readonly />
 @endif
