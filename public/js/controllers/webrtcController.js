@@ -75,31 +75,12 @@ class webrtcController {
             type: 'POST',
             data: postData,
             dataType: 'json',
-            success: () => {
+            success: (data) => {
+                console.log('Success', data);
                 this._alerta.initiateMessage(conf.message.SUCCESS_SAVE_CLASS);
             },
-            error: () => {
-                this._alerta.initiateMessage(conf.message.FAIL_SAVE_CLASS);
-            }
-        });
-    }
-
-    _updateRoom(postData, targetUrl) {
-
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('#token').attr('data-content')
-            }
-        });
-        $.ajax({
-            url: targetUrl,
-            type: 'POST',
-            data: postData,
-            dataType: 'json',
-            success: () => {
-                this._alerta.initiateMessage(conf.message.SUCCESS_SAVE_CLASS);
-            },
-            error: () => {
+            error: (data) => {
+                console.log('Error', data);
                 this._alerta.initiateMessage(conf.message.FAIL_SAVE_CLASS);
             }
         });
@@ -928,37 +909,25 @@ class webrtcController {
                             // Cria rótulo de sala se o acesso a ela for permitido
                             this._structure.countRooms += 1;
                             this._structure.usuario = this._roomInfo.currentUser.value;
-
                             let divOpen = doc.ADD('div');
                             let button = doc.ADD('a');
                             let card = this._roomController.constructAccessList(roomData.classe, roomData.assunto, roomData.apresentador, this._structure.viewers, moderatorId);
                             this._roomController.initiateRoomCard(moderatorId, card, divOpen, button);
+
                             //Função de entrada na sala a partir do botão ENTRAR
                             button.onclick = () => {
-                                try {
-                                    this._finishSelfVideo();
-                                } catch (e) {
-                                    console.log('Starting connection...');
-                                }
-                                this._mediaController.initiateStream();
+
                                 this._roomController.setRoomLabel(misc.ICON_FA_TV, roomData.classe, roomData.assunto);
-                                this._structure.onlobby = false;
-                                this._structure.isModerator = false;
-                                this._structure.connectedAt = moderatorId;
-                                this._roomInfo.broadcaster.value = roomData.whois;
-
-                                this._connection.session = {
-                                    audio: false,
-                                    video: false
-                                };
-
-                                let socket = this._connection.getSocket();
-                                socket.emit(conf.socket.MSG_JOIN_BROADCAST, {
-                                    broadcastId: this._structure.connectedAt,
-                                    userid: this._connection.userid,
-                                    typeOfStreams: this._connection.session
-                                });
-                            };
+                                doc.TAG(dom.INFORM_VIEWS).onclick = () => {
+                                    let validate = this._roomController.validateViews();
+                                    if (validate) this._roomEntered(moderatorId, roomData.whois);
+                                    else this._alerta.initiateMessage(conf.message.INVALID_VALUE);
+                                }
+                                setTimeout(() => {
+                                    this._roomController.checkViews() ? $(dom.INFORM_VIEWS).click() : null;
+                                    doc.TAG(dom.NUMBER_VIEWS).focus();
+                                }, 300);
+                            }
                         }
                         if (this._structure.countRooms == 0) this._roomController.noRooms();
 
@@ -1002,6 +971,34 @@ class webrtcController {
             }
         }
         return this._structure.onlobby;
+    }
+
+    _roomEntered(moderator, whois) {
+
+        try {
+            this._finishSelfVideo();
+        } catch (e) {}
+        this._mediaController.initiateStream();
+        this._structure.onlobby = false;
+        this._structure.isModerator = false;
+        this._structure.connectedAt = moderator;
+        this._roomInfo.broadcaster.value = whois;
+        let numViewers = doc.TAG(dom.NUMBER_VIEWS).value;
+
+        let $postData = { turmaHash: moderator, numViews: numViewers }
+        let $resource = `${ this._origin }/salas/update`;
+        this._saveRoom($postData, $resource);
+
+        this._connection.session = {
+            audio: false,
+            video: false
+        };
+        let socket = this._connection.getSocket();
+        socket.emit(conf.socket.MSG_JOIN_BROADCAST, {
+            broadcastId: this._structure.connectedAt,
+            userid: this._connection.userid,
+            typeOfStreams: this._connection.session
+        });
     }
 
     alertDisconnection(userid) {

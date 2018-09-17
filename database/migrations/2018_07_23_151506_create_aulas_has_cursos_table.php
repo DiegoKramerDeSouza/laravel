@@ -18,6 +18,7 @@ class CreateAulasHasCursosTable extends Migration
                 $table->primary(['aula_id', 'curso_id']);
                 $table->integer('aula_id')->unsigned();
                 $table->integer('curso_id')->unsigned();
+                $table->timestamps();
                 $table->foreign('aula_id')
                     ->references('id')->on('aulas')
                     ->onDelete('cascade');

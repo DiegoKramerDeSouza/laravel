@@ -15,11 +15,12 @@ const doc = {
     TAG: document.querySelector.bind(document),
     ALL: document.querySelectorAll.bind(document),
     ADD: document.createElement.bind(document),
+    ID: document.getElementById.bind(document),
     IDLE_TIME: 120,
     COOKIE_LIFETIME: 365,
     COOKIE_AUDIO_DEVICE: "audioDevice",
     COOKIE_VIDEO_DEVICE: "videoDevice",
-    VERSION: "1.1.0.74"
+    VERSION: "1.1.0.76"
 }
 
 const apr = {
@@ -141,11 +142,13 @@ const conf = {
         FAIL_SAVE_CLASS: ['<i class="fa fa-times fa-lg"></i>', 'Falha ao registrar a Sala!', apr.msg.ERROR_MSG_COLOR],
         AUDIO_DEVICE_NOT_FOUND: ['<i class="material-icons left">mic_off</i>', 'Microfone não detectado!', apr.msg.ERROR_MSG_COLOR],
         VIDEO_DEVICE_NOT_FOUND: ['<i class="material-icons left">videocam_off</i>', 'Câmera não detectada!', apr.msg.ERROR_MSG_COLOR],
+        INVALID_VALUE: ['<i class="fa fa-times fa-lg"></i>', 'Por favor informe um valor válido!', apr.msg.ERROR_MSG_COLOR],
+
     }
 }
 
 const dom = {
-    /* Elementos do DOM mais utilizados */
+    /* Elementos dinâmicos do DOM */
     ADDRESS: '#address',
     ASSUNTO: '#assunto',
     BROADCASTER: '#broadcaster',
@@ -186,6 +189,7 @@ const dom = {
     FIRST_VIDEO: '#video-preview',
     IN_ROOM: '#in-room',
     IN_SCREEN: '#in-screen',
+    INFORM_VIEWS: '#informViews',
     LABEL_USERS: '#users-counter',
     LI_CAM: '#li-toggle-camera',
     LI_FILE_SHARE: '#li-sharing-file',
@@ -209,6 +213,7 @@ const dom = {
     MUTE: '#toggle-mute',
     NAME: '#current-user',
     NUMBER: '#number',
+    NUMBER_VIEWS: '#numViews',
     PAGE_MAIN_CONTENT: '#main-content',
     PEDIR: '#pedir-vez',
     POSTAL: '#postal',
@@ -242,6 +247,7 @@ const dom = {
     TOGGLE_CHAT: '#toggle-chat',
     TOGGLE_VIDEO_SIZE: '#toggle-size',
     TOOLTIPED: '.tooltipped',
+    TURMA_HASH: '#turmaHash',
     UL_CON_USERS: '#connected-users',
     URL: '#url',
     URL_CEP: '#urlcep',

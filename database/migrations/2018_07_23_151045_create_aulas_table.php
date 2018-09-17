@@ -19,9 +19,12 @@ class CreateAulasTable extends Migration
                 $table->string('hash')->unique();
                 $table->string('name');
                 $table->string('theme');
-                $table->string('author');
+                $table->integer('author')->unsigned();
                 $table->integer('quantity')->default(0);
                 $table->timestamps();
+                $table->foreign('author')
+                    ->references('id')->on('users')
+                    ->onDelete('cascade');
             });
         }
     }

@@ -10,6 +10,7 @@ class RoomController {
         this._inputName = doc.TAG(dom.NAME);
         this.audioList = doc.TAG(dom.LIST_AUDIO);
         this.videoList = doc.TAG(dom.LIST_VIDEO);
+        this._numberOfViewers = doc.TAG(dom.NUMBER_VIEWS);
     }
 
     _createList() {
@@ -51,7 +52,7 @@ class RoomController {
 
     initiateRoomCard(moderatorId, label, container, obj) {
 
-        this._roomView.setRoomCard(moderatorId, label, container, obj);
+        this._roomView.setRoomCard(moderatorId, label, container, obj, this.checkViews());
     }
 
     noRooms() {
@@ -96,6 +97,17 @@ class RoomController {
         this._roomView.putList();
     }
 
+    validateViews() {
 
+        let validate = this._numberOfViewers.value > 0 && this._numberOfViewers.value < 99999;
+        return validate;
+    }
+
+    checkViews() {
+
+        let value = this._numberOfViewers.value != "" && this.validateViews();
+        return value;
+        //value ? $(dom.INFORM_VIEWS).click() : null;
+    }
 
 }

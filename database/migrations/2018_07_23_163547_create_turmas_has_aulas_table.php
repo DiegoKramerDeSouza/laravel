@@ -15,11 +15,12 @@ class CreateTurmasHasAulasTable extends Migration
     {
         if(!Schema::hasTable('turmas_has_aulas')){
             Schema::create('turmas_has_aulas', function (Blueprint $table) {
-                $table->primary(['turma_id', 'aula_id']);
-                $table->integer('turma_id')->unsigned();
+                $table->primary(['user_id', 'aula_id']);
+                $table->integer('user_id')->unsigned();
                 $table->integer('aula_id')->unsigned();
+                $table->timestamps();
                 $table->foreign('turma_id')
-                    ->references('id')->on('turmas')
+                    ->references('id')->on('users')
                     ->onDelete('cascade');
                 $table->foreign('aula_id')
                     ->references('id')->on('aulas')

@@ -11,6 +11,7 @@ use App\DefaultMessages;
 
 /**
  * Traits para reutilização de métodos criadas para os acessos administrativos;
+ * Acessível para todos os Controllers
  */
 
 trait EspecialMethods{
@@ -68,6 +69,9 @@ trait EspecialMethods{
         return redirect()->route('denied');
     }
 
+    /**
+     * Trata mensagem de retorno de operações de banco
+     */
     public function returnMessages($req, $target){
 
         if(isset($req->success)) {
@@ -79,6 +83,14 @@ trait EspecialMethods{
         } else {
             return null;
         }
+    }
+
+    /**
+     * Verifica existência da variável de sessão "viewers e efetua a sua remoção"
+     */
+    public function forgetSession(){
+
+        if(session()->has('viewers')) session()->forget('viewers');
     }
 
 }

@@ -25,7 +25,7 @@ class Defaults extends ServiceProvider
     public function register()
     {
         /**
-         *  Variáveis disponíveis para todas as Views
+         *  Implementação de DefaultElements em $default, disponível para todas as Views
          */
         $object = new DefaultElements();
         view()->share('default', $object);

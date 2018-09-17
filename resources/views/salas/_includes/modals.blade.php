@@ -77,28 +77,29 @@
             <button id='confirmDevices' type='submit' class='btn-flat blue-text text-darken-2 waves-effect waves-teal modal-close'> {!! $default->applyIcon !!} Ok </button>
         </div>
     </div>
-    <div id='msg-informa-espectadores' class='modal'>
-        <div class='modal-content'>
-            <h5>
-                {!! $default->usuariosBlueIcon !!} Espectadores:
-                <span class='right'>
-                    <a class='modal-close'>
-                        {!! $default->cancelRedIcon !!}
-                    </a>
-                </span>
-            </h5>
-            <div class='divider'></div>
-            <p>Por favor informe quantas pessoas irão acompanhar esta apresentação:</p>
-            <div class='input-field col s12 m6 offset-m3'>
-                <input class='validate' required type='text' name='numViews' id='numViews' >
-                <label for='numViews'>{!! $default->usuariosIcon !!} Quantidade de espectadores:</label>
-            </div>
-            <br>
-        </div>
-        <div class='modal-footer grey lighten-3'>
-            <button id='informUsers' type='submit' class='btn-flat blue-text text-darken-2 waves-effect waves-teal'> {!! $default->applyIcon !!} Ok </button>
-        </div>
-    </div>
 @else
     <input id='confirmDevices' type='hidden' disabled readonly />
 @endif
+
+<div id='msg-informa-espectadores' class='modal'>
+    <div class='modal-content'>
+        <h5>
+            {!! $default->usuariosBlueIcon !!} Espectadores:
+            <span class='right'>
+                <a class='modal-close'>
+                    {!! $default->cancelRedIcon !!}
+                </a>
+            </span>
+        </h5>
+        <div class='divider'></div>
+        <p>Por favor informe quantas pessoas irão acompanhar esta apresentação com você</p>
+        <div class='input-field col s12 m6 offset-m3'>
+            <input class='validate' required type="number" min='1' step='1' name='numViews' id='numViews' value='{{ isset($viewers) ? $viewers : ''}}' />
+            <label for='numViews'>{!! $default->usuariosIcon !!} Quantidade de espectadores:</label>
+        </div>
+        <br>
+    </div>
+    <div class='modal-footer grey lighten-3'>
+        <button id='informViews' type='submit' class='btn-flat blue-text text-darken-2 waves-effect waves-teal modal-close'> {!! $default->applyIcon !!} Ok </button>
+    </div>
+</div>

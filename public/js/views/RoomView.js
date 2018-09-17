@@ -69,18 +69,18 @@ class RoomView {
         return this._roomCard;
     }
 
-    setRoomCard(moderatorId, label, container, obj) {
+    setRoomCard(moderatorId, label, container, obj, valid) {
 
-        let getId = document.getElementById.bind(document);
         container.innerHTML = label;
         container.className = "card-panel hoverable";
         obj.id = moderatorId;
         obj.title = 'Acessar sala';
-        obj.className = 'btn-floating room-enter blue darken-1';
         obj.innerHTML = misc.ICON_PLAY;
+        obj.href = "#msg-informa-espectadores";
+        valid ? obj.className = 'btn-floating room-enter blue darken-1' : obj.className = 'btn-floating room-enter blue darken-1 modal-trigger';
 
         this._roomList.appendChild(container);
-        getId('_' + moderatorId).appendChild(obj);
+        doc.ID('_' + moderatorId).appendChild(obj);
     }
 
     clearLabelCon() {
