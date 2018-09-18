@@ -875,7 +875,8 @@ class webrtcController {
                         //bandwidth: this._connection.bandwidth
                     });
                 });
-                let $postData = { author: room.name, name: room.tema, theme: room.assunto, hash: room.hash }
+                let cursos = this._roomController.createList();
+                let $postData = { author: room.name, name: room.tema, theme: room.assunto, hash: room.hash, courses: cursos }
                 let $resource = `${ this._origin }/salas/salvar`;
                 this._saveRoom($postData, $resource);
             } else {
@@ -924,7 +925,7 @@ class webrtcController {
                                     else this._alerta.initiateMessage(conf.message.INVALID_VALUE);
                                 }
                                 setTimeout(() => {
-                                    this._roomController.checkViews() ? $(dom.INFORM_VIEWS).click() : null;
+                                    //this._roomController.checkViews() ? $(dom.INFORM_VIEWS).click() : null;
                                     doc.TAG(dom.NUMBER_VIEWS).focus();
                                 }, 300);
                             }

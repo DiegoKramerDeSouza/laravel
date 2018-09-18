@@ -13,7 +13,7 @@ class RoomController {
         this._numberOfViewers = doc.TAG(dom.NUMBER_VIEWS);
     }
 
-    _createList() {
+    createList() {
 
         this._inputCursos = $(dom.CURSO_LIST).val();
         return this._inputCursos.join(';');
@@ -22,7 +22,7 @@ class RoomController {
     _createHash() {
 
         let timestamp = +new Date();
-        return btoa(`${ this._inputMateria.value }|${ this._inputName.value }|${ this._inputAssunto.value }|${ this._createList() }|${ this._roomId.value }|${ timestamp }`);
+        return btoa(`${ this._inputMateria.value }|${ this._inputName.value }|${ this._inputAssunto.value }|${ this.createList() }|${ this._roomId.value }|${ timestamp }`);
     }
 
     setRoomLabel(icon, classe, assunto) {
@@ -37,12 +37,12 @@ class RoomController {
 
     validade() {
 
-        return (this._createList() != '' && (this._inputMateria.value != '' && this._inputAssunto.value != ''));
+        return (this.createList() != '' && (this._inputMateria.value != '' && this._inputAssunto.value != ''));
     }
 
     initiateRoom() {
 
-        return new Room(this._inputName.value, this._inputMateria.value, this._inputAssunto.value, this._createList(), this._createHash());
+        return new Room(this._inputName.value, this._inputMateria.value, this._inputAssunto.value, this.createList(), this._createHash());
     }
 
     constructAccessList(classe, assunto, apresentador, viwer, moderador) {
@@ -99,15 +99,12 @@ class RoomController {
 
     validateViews() {
 
-        let validate = this._numberOfViewers.value > 0 && this._numberOfViewers.value < 99999;
-        return validate;
+        return this._numberOfViewers.value > 0 && this._numberOfViewers.value < 99999;
     }
 
     checkViews() {
 
-        let value = this._numberOfViewers.value != "" && this.validateViews();
-        return value;
-        //value ? $(dom.INFORM_VIEWS).click() : null;
+        return this._numberOfViewers.value != "" && this.validateViews();
     }
 
 }

@@ -18,6 +18,7 @@ class CreateTurmasHasAulasTable extends Migration
                 $table->primary(['user_id', 'aula_id']);
                 $table->integer('user_id')->unsigned();
                 $table->integer('aula_id')->unsigned();
+                $table->integer('qtd')->default(0);
                 $table->timestamps();
                 $table->foreign('turma_id')
                     ->references('id')->on('users')

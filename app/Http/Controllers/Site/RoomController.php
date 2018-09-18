@@ -14,6 +14,7 @@ use App\Curso;
 use App\Modulo;
 use App\Aula;
 use App\Turmas_has_aula;
+use App\Aulas_has_curso;
 
 class RoomController extends Controller
 {
@@ -52,11 +53,21 @@ class RoomController extends Controller
             'hash'=>$req->hash,
             'name'=>$req->name,
             'theme'=>$req->theme,
-            'author'=>Auth::user()->id,
-            'quantity'=>0
+            'author'=>Auth::user()->id
         ];
         try{
-            Aula::create($aulas);
+            $aula = Aula::create($aulas);
+            $cursos = explode(';', $req->courses);
+            foreach($cursos as $curso){
+                $courses = [
+                    '_token'=>$req->_token,
+                    'aula_id'=>$aula->id,
+                    'curso_id'=>$curso
+                ];
+                try{
+                    Aulas_has_curso::create($courses);
+                }catch(\Exception $e){ }
+            }
         }catch(\Exception $e){
             if($e->getCode() == 23000) return $e->getCode();
             else return $e;
@@ -66,30 +77,29 @@ class RoomController extends Controller
 
     public function update(Request $req){
 
+        $user = Auth::user()->id;
         $aula = Aula::where('hash', $req->turmaHash)->first();
         $assistindo = [
             '_token'=>$req->_token,
-            'user_id'=>Auth::user()->id,
-            'aula_id'=>$aula->id
+            'user_id'=>$user,
+            'aula_id'=>$aula->id,
+            'qtd'=>$req->numViews
         ];
         session(['viewers' => $req->numViews]);
         try{
             $registro = Turmas_has_aula::create($assistindo);
         }catch(\Exception $e){
-            if($e->getCode() == 23000) return $e->getCode();
+            if($e->getCode() == 23000){
+                $count = ['qtd'=>$req->numViews];
+                try{
+                    Turmas_has_aula::where('user_id', $user)->where('aula_id', $aula->id)->update($count);
+                }catch(\Exception $e){
+                    return $e;
+                }
+                return \Response::json($assistindo);
+            }
             else return $e;
         }
-        $value = $aula->quantity + $req->numViews;
-        $count = [
-            '_token'=>$req->_token,
-            'quantity'=>$value
-        ];
-        try{
-            Aula::find($aula->id)->update($count);
-        }catch(\Exception $e){
-            if($e->getCode() == 23000) return $e->getCode();
-            else return $e;
-        }
-        return \Response::json($count);
+        return \Response::json($assistindo);
     }
 }

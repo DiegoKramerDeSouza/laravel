@@ -18,12 +18,14 @@ Route::get('/', function () {
 /*
  *  Rotas Iniciais  
  */
+if(env('APP_ENV') == 'offline') {
+    Route::get('/', ['as' => 'home', 'uses' => 'Site\OfflineController@index']);
+    Route::get('/login', ['as' => 'login', 'uses' => 'Site\OfflineController@index']);
+} else {
+    Route::get('/', ['as' => 'home', 'uses' => 'Site\HomeController@index']);
+    Route::get('/login', ['as' => 'login', 'uses' => 'Site\LoginController@index']);
+}
 
-//Rota para página inicial
-Route::get('/', ['as' => 'home', 'uses' => 'Site\HomeController@index']);
-
-//Rota para página de login
-Route::get('/login', ['as' => 'login', 'uses' => 'Site\LoginController@index']);
 Route::post('/login/access', ['as' => 'login.access', 'uses' => 'Site\LoginController@access']);
 Route::get('/login/destroy', ['as' => 'login.destroy', 'uses' => 'Site\LoginController@logout']);
 

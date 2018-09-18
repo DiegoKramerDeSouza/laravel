@@ -16,11 +16,11 @@ const doc = {
     ALL: document.querySelectorAll.bind(document),
     ADD: document.createElement.bind(document),
     ID: document.getElementById.bind(document),
-    IDLE_TIME: 120,
+    IDLE_TIME: 240,
     COOKIE_LIFETIME: 365,
     COOKIE_AUDIO_DEVICE: "audioDevice",
     COOKIE_VIDEO_DEVICE: "videoDevice",
-    VERSION: "1.1.0.76"
+    VERSION: "1.1.0.77"
 }
 
 const apr = {

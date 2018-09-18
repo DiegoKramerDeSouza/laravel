@@ -76,8 +76,9 @@ class RoomView {
         obj.id = moderatorId;
         obj.title = 'Acessar sala';
         obj.innerHTML = misc.ICON_PLAY;
+        obj.className = 'btn-floating room-enter blue darken-1 modal-trigger';
+        //valid ? null : obj.className += ' modal-trigger';
         obj.href = "#msg-informa-espectadores";
-        valid ? obj.className = 'btn-floating room-enter blue darken-1' : obj.className = 'btn-floating room-enter blue darken-1 modal-trigger';
 
         this._roomList.appendChild(container);
         doc.ID('_' + moderatorId).appendChild(obj);

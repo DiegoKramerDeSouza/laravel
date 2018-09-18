@@ -1,31 +1,31 @@
 @include('admin.cadastro._includes.alert')
 <div class='row'>
     <div class='input-field col s12 m6'>
-        <input class='validate' required type='text' name='name' id='name' value='{{ isset($user->name) ? $user->name : ''}}'>
+        <input class='validate' required type='text' name='name' id='name' maxlength='25' value='{{ isset($user->name) ? $user->name : ''}}'>
         <label for='name'>{!! $default->userOIcon !!} Nome</label>
     </div>
 
     <div class='input-field col s12 m6'>
-        <input class='validate' required type='text' name='login' id='login' value='{{ isset($user->login) ? $user->login : ''}}'>
+        <input class='validate' required type='text' name='login' id='login' maxlength='25' value='{{ isset($user->login) ? $user->login : ''}}'>
         <label for='login'>{!! $default->loginIcon !!} Login</label>
     </div>
 </div>
 @if(!isset($user->password))
     <div class='row'>
         <div class='input-field col s12 m6'>
-            <input class='validate' required type='password' name='password' id='password'>
+            <input class='validate' required type='password' name='password' id='password' maxlength='30'>
             <label for='password'>{!! $default->lockIcon !!} Senha</label>
         </div>
 
         <div class='input-field col s12 m6'>
-            <input class='validate' required type='password' name='password_confirmation' id='password_confirmation'>
+            <input class='validate' required type='password' name='password_confirmation' id='password_confirmation' maxlength='30'>
             <label for='password_confirmation'>{!! $default->lockIcon !!} Confirmar Senha</label>
         </div>
     </div>
 @endif
 <div class='row'>
     <div class='input-field col s12 m6'>
-        <input class='validate' required type='text' name='email' id='email' value='{{ isset($user->email) ? $user->email : ''}}'>
+        <input class='validate' required type='text' name='email' id='email' value='{{ isset($user->email) ? $user->email : ''}}' maxlength='50'>
         <label for='email'>{!! $default->envelopeIcon !!} E-mail</label>
     </div>
     <div class='input-field col s12 m6'>

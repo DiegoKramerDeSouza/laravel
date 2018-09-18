@@ -36,11 +36,11 @@
                     <div class='row'>
                         <!--Tema e Assunto da sala-->
                         <div class='input-field col s12'>
-                            <input type='text' class='validate' id='tema' name='tema' required autofocus>
+                            <input type='text' class='validate' id='tema' name='tema' maxlength="25" required autofocus>
                             <label for='tema'>{!! $default->bookIcon !!} Tema:</label>
                         </div>
                         <div class='input-field col s12'>
-                            <input type='text' class='validate' id='assunto' name='assunto' required>
+                            <input type='text' class='validate' id='assunto' name='assunto' maxlength="25" required>
                             <label for='assunto'>{!! $default->bookmarkIcon !!} Assunto:</label>
                         </div>
                         <div class='input-field col s12'>

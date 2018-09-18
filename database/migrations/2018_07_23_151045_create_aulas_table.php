@@ -20,7 +20,6 @@ class CreateAulasTable extends Migration
                 $table->string('name');
                 $table->string('theme');
                 $table->integer('author')->unsigned();
-                $table->integer('quantity')->default(0);
                 $table->timestamps();
                 $table->foreign('author')
                     ->references('id')->on('users')
