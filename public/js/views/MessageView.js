@@ -8,7 +8,7 @@ class MessageView {
 
     update() {
 
-        M.toast({ html: this._text, classes: this._color, displayLength: conf.message.TIMEOUT });
+        M.toast({ html: `<span class="white-text">${ this._text }</span>`, classes: this._color, displayLength: conf.message.TIMEOUT });
     }
 
 }

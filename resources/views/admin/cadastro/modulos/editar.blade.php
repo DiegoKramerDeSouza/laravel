@@ -19,14 +19,14 @@
 
                     <input type='hidden' name='_method' value='put' />
                     <div class='card-action' align='right'>
-                        <a href='{{ route('admin.cadastro.modulos', ['page' => '1']) }}' class='load-cancel btn-flat red-text text-darken-3 waves-effect waves-red'>{!! $cancelIcon !!} Cancelar</a>
-                        <button type='submit' class='load btn-flat green-text text-darken-2 waves-effect waves-green'>{!! $applyIcon !!} Atualizar</button>
+                        <a href='{{ route('admin.cadastro.modulos', ['page' => '1']) }}' class='load-cancel btn-flat red-text text-darken-3 waves-effect waves-red'>{!! $default->cancelIcon !!} Cancelar</a>
+                        <button type='submit' class='load btn-flat green-text text-darken-2 waves-effect waves-green'>{!! $default->applyIcon !!} Atualizar</button>
                     </div>
                 </form>
             @else
                 <br>
                 <br>
-                <h5 class='center grey-text'>{!! $cancelRedIcon !!} Módulo não encontrado!</h5>
+                <h5 class='center grey-text'>{!! $default->cancelRedIcon !!} Módulo não encontrado!</h5>
             @endif
         </div>
     </div>

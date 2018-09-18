@@ -2,15 +2,14 @@ class RoomDataController {
 
     constructor() {
 
-        let tag = document.querySelector.bind(document);
-        this._myClass = tag(conf.dom.TARGET);
-        this._countRooms = conf.roomdata.COUNT_ROOMS;
-        this._allowed = conf.roomdata.ALLOWED;
+        this._myClass = doc.TAG(dom.TARGET);
+        this._countRooms = conf.datacls.COUNT_ROOMS;
+        this._allowed = conf.datacls.ALLOWED;
     }
 
     _setClasses() {
 
-        if (this._myClass.value === '') return conf.roomdata.ADMIN_ACCESS
+        if (this._myClass.value === '') return conf.datacls.ADMIN_ACCESS
         else return this._myClass.value.split(';');
     }
 
@@ -25,8 +24,9 @@ class RoomDataController {
 
         try {
             labelRoom = atob(labelRoom);
-            if (!(labelRoom.split('|').length === 5)) return false;
+            if (!(labelRoom.split('|').length === 6)) return false;
         } catch (exp) {
+            let roomView = new RoomView();
             if (roomsArray.length < 2) roomView.noRooms();
             return false;
         }
@@ -36,7 +36,7 @@ class RoomDataController {
     validateAccess(curso, classes) {
 
         let valid = false;
-        if (classes === conf.roomdata.ADMIN_ACCESS) valid = true;
+        if (classes === conf.datacls.ADMIN_ACCESS) valid = true;
         else if (curso) {
             classes.forEach((cls) => {
                 if (curso.indexOf(cls) > -1) valid = true;

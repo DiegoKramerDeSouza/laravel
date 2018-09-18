@@ -8,6 +8,7 @@ class Media {
         videoPreview,
         secondVideoPreview,
         thirdVideoPreview,
+        previewVideo,
         mute,
         screen,
         exitscreen,
@@ -23,12 +24,16 @@ class Media {
         endSessionAccess,
         divEndBtn,
         toggleChat,
-        textMessage
+        textMessage,
+        fullsize,
+        sharedFile,
+        spanSecondVideo
     ) {
 
         this._videoPreview = videoPreview;
         this._secondVideoPreview = secondVideoPreview;
         this._thirdVideoPreview = thirdVideoPreview;
+        this._previewVideo = previewVideo;
         this._mute = mute;
         this._screen = screen;
         this._exitscreen = exitscreen;
@@ -45,6 +50,9 @@ class Media {
         this._divEndBtn = divEndBtn;
         this._toggleChat = toggleChat;
         this._textMessage = textMessage;
+        this._fullsize = fullsize;
+        this._sharedFile = sharedFile;
+        this._spanSecondVideo = spanSecondVideo;
         Object.freeze(this);
     }
 
@@ -61,6 +69,11 @@ class Media {
     get thirdVideoPreview() {
 
         return this._thirdVideoPreview;
+    }
+
+    get previewVideo() {
+
+        return this._previewVideo;
     }
 
     get mute() {
@@ -141,6 +154,21 @@ class Media {
     get textMessage() {
 
         return this._textMessage;
+    }
+
+    get fullsize() {
+
+        return this._fullsize;
+    }
+
+    get sharedFile() {
+
+        return this._sharedFile;
+    }
+
+    get spanSecondVideo() {
+
+        return this._spanSecondVideo;
     }
 
 }

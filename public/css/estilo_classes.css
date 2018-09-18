@@ -5,6 +5,7 @@
 
 .autocomplete-content {
     color: rgb(33, 150, 243) !important;
+    overflow-y: hidden !important;
 }
 
 .blockquoted {
@@ -61,6 +62,33 @@
     cursor: pointer;
 }
 
+.files-pool {
+    overflow-y: auto;
+    max-height: 170px;
+}
+
+.files-pool::-webkit-scrollbar-track {
+    background-color: #F4F4F4;
+    -webkit-transition-duration: 0.4s;
+    transition-duration: 0.4s;
+}
+
+.files-pool::-webkit-scrollbar {
+    width: 6px;
+    background: #F4F4F4;
+}
+
+.files-pool::-webkit-scrollbar-thumb {
+    background: #646464;
+    border-radius: 3px;
+    -webkit-transition-duration: 0.4s;
+    transition-duration: 0.4s;
+}
+
+.files-pool::-webkit-scrollbar-thumb:hover {
+    background: #535353;
+}
+
 .height-limit {
     max-height: 441px;
 }
@@ -113,6 +141,13 @@
     transition-duration: 0.4s;
 }
 
+.video-loading {
+    max-width: 420px;
+    -webkit-transition-duration: 0.4s;
+    transition-duration: 0.4s;
+    background: black url(/img/play_btn.png) center center no-repeat;
+}
+
 .margin-50-top {
     margin-top: 50px;
     margin-bottom: 50px;
@@ -149,6 +184,18 @@
 
 .min-video {
     max-width: 100%;
+}
+
+.obj-invisible {
+    opacity: 0;
+}
+
+.obj-visible {
+    opacity: 1;
+}
+
+.p-40 {
+    padding: 40px;
 }
 
 .room-enter:hover {

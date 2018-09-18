@@ -18,12 +18,14 @@ Route::get('/', function () {
 /*
  *  Rotas Iniciais  
  */
+if(env('APP_ENV') == 'offline') {
+    Route::get('/', ['as' => 'home', 'uses' => 'Site\OfflineController@index']);
+    Route::get('/login', ['as' => 'login', 'uses' => 'Site\OfflineController@index']);
+} else {
+    Route::get('/', ['as' => 'home', 'uses' => 'Site\HomeController@index']);
+    Route::get('/login', ['as' => 'login', 'uses' => 'Site\LoginController@index']);
+}
 
-//Rota para página inicial
-Route::get('/', ['as' => 'home', 'uses' => 'Site\HomeController@index']);
-
-//Rota para página de login
-Route::get('/login', ['as' => 'login', 'uses' => 'Site\LoginController@index']);
 Route::post('/login/access', ['as' => 'login.access', 'uses' => 'Site\LoginController@access']);
 Route::get('/login/destroy', ['as' => 'login.destroy', 'uses' => 'Site\LoginController@logout']);
 
@@ -47,6 +49,8 @@ Route::group(['middleware' => 'auth'], function(){
      */
 
     Route::get('/salas', ['as' => 'salas', 'uses' => 'Site\RoomController@index']);
+    Route::post('/salas/salvar', ['as' => 'salas.salva', 'uses' => 'Site\RoomController@save']);
+    Route::post('/salas/update', ['as' => 'salas.update', 'uses' => 'Site\RoomController@update']);
 
     /**
      *  Rota de Cadastros
@@ -106,4 +110,5 @@ Route::group(['middleware' => 'auth'], function(){
     //Rota para resolução do autocomplete
     Route::get('/admin/cadastro/{module}/autocomplete/', ['as' => 'admin.cadastro.autocomplete', 'uses' => 'Admin\CadastroAutocompleteController@autocomplete']);
     Route::get('/admin/cadastro/{module}/result/{name}', ['as' => 'admin.cadastro.autocomplete.result', 'uses' => 'Admin\CadastroAutocompleteController@resultAutocomplete']);
+
 });

@@ -11,17 +11,27 @@ use App\Modulo;
 class CadastroModuloController extends Controller
 {
     use EspecialMethods;
+    
+    public function __construct()
+    {
+        $this->pagination = $this->setDefaults()->pagination;
+        $this->module = 'Modulo';
+    }
 
     /**
      * Validação de permissão de acesso;
      * Coleta todos os módulos por nome;
      * Direciona para a View de Listagem de turmas;
      */
-    public function index(){
+    public function index(Request $req){
 
-        if($this->validade('Modulo')){
-            $modulos = Modulo::orderBy('name', 'asc')->paginate(5);
+        if($this->validade($this->module)){
+            $modulos = Modulo::orderBy('name', 'asc')->paginate($this->pagination);
             $isAutocomplete = true;
+            if(isset($req->success)) {
+                $success = $this->returnMessages($req, $this->module);
+                return view('admin.cadastro.modulos.index', compact('modulos', 'isAutocomplete', 'success'));
+            }
             return view('admin.cadastro.modulos.index', compact('modulos', 'isAutocomplete'));
         } else {
             return $this->accessDenied();
@@ -35,7 +45,7 @@ class CadastroModuloController extends Controller
      */
     public function add(){
 
-        if($this->validade('Modulo')){
+        if($this->validade($this->module)){
             $modulos = Modulo::all();
             return view('admin.cadastro.modulos.adicionar', compact('modulos'));
         } else {
@@ -51,7 +61,7 @@ class CadastroModuloController extends Controller
      */
     public function save(Request $req){
 
-        if($this->validade('Modulo')){
+        if($this->validade($this->module)){
             $validator = Validator::make($req->all(), [
                 'name' => 'bail|required|unique:modulos|min:4|max:191'
             ]);
@@ -67,7 +77,7 @@ class CadastroModuloController extends Controller
             ];
             Modulo::create($modulos);
 
-            return redirect()->route('admin.cadastro.modulos', ['page' => '1']);
+            return redirect()->route('admin.cadastro.modulos', ['success' => '1']);
         } else {
 
             return $this->accessDenied();
@@ -80,7 +90,7 @@ class CadastroModuloController extends Controller
      */   
     public function edit($id){
 
-        if($this->validade('Modulo')){
+        if($this->validade($this->module)){
             $modulos = Modulo::find($id);
             return view('admin.cadastro.modulos.editar', compact('modulos'));
         } else {
@@ -96,7 +106,7 @@ class CadastroModuloController extends Controller
      */
     public function update(Request $req, $id){
 
-        if($this->validade('Modulo')){
+        if($this->validade($this->module)){
             $validator = Validator::make($req->all(), [
                 'name' => 'bail|required|unique:modulos,name,' . $id . '|min:4|max:191'
             ]);
@@ -112,7 +122,7 @@ class CadastroModuloController extends Controller
             ];
             Modulo::find($id)->update($modulos);
 
-            return redirect()->route('admin.cadastro.modulos', ['page' => '1']);
+            return redirect()->route('admin.cadastro.modulos', ['success' => '2']);
         } else {
 
             return $this->accessDenied();
@@ -124,9 +134,9 @@ class CadastroModuloController extends Controller
      * Deleta ID informado na base Modulos;
      */
     public function delete($id){
-        if($this->validade('Modulo')){
+        if($this->validade($this->module)){
             Modulo::find($id)->delete();
-            return redirect()->route('admin.cadastro.modulos', ['page' => '1']);
+            return redirect()->route('admin.cadastro.modulos', ['success' => '3']);
         } else {
             return redirect()->route('denied');
         }

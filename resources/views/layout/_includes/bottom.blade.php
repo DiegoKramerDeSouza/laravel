@@ -1,21 +1,22 @@
             
             <!-- Fim do corpo de página -->
-
             </div>
         </main>
         <footer id="main-footer" class="page-footer grey darken-4">
             <div class="container">
                 <div class="row">
                     <div class="col s12">
-                    <h5 class="white-text">{{ $logo }}</h5>
+                    <h5 class="white-text">{{ $default->logo }}</h5>
                         <p class="grey-text text-lighten-1">
-                            Protótipo de aplicação voltado à comunicação via webconference utilizando WebRTC e compatível com os navegadores Google Chrome e Mozilla Firefox. 
-                            <br>
-                            <br>
-                            {!! $bookmarkIcon !!} Versão 1.0.1.1
-                            <br>
+                            Protótipo de aplicação voltado à comunicação via webconference utilizando WebRTC e compatível com os navegadores Google Chrome e Mozilla Firefox.
+                            <br/>
+                            Dispositívos: chrome://webrtc-internals/ 
+                            <br/>
+                            <br/>
+                            {!! $default->bookmarkIcon !!} Versão <span id="version"></span>
+                            <br/>
                             <span class='grey-text right'>
-                                 {!! $chromeIcon !!} &nbsp; {!! $firefoxIcon !!} 
+                                <a href="https://webrtc.github.io/samples/src/content/getusermedia/gum/" target="_blank" >{!! $default->chromeIcon !!}</a> &nbsp; {!! $default->firefoxIcon !!} 
                             </span>
                         </p>
                     </div>
@@ -23,7 +24,7 @@
             </div>
             <div class="footer-copyright black">
                 <div class='container'>
-                    {!! $copyRightIcon !!} 2018 Smart Group SA
+                    {!! $default->copyRightIcon !!} 2018 LRB Tecnologia
                 </div>
             </div>
         </footer>
@@ -32,17 +33,35 @@
         <script type="text/javascript" src="{!! asset('js/conf/conf.js') !!}"></script>
         <script type="text/javascript" src="{!! asset('js/jquery-3.1.1.min.js') !!}"></script>
         <script type="text/javascript" src="{!! asset('js/materialize.min.js') !!}"></script>
-        <script type="text/javascript" src="{!! asset('js/geral.js') !!}"></script>
+        
+        <script type="text/javascript" src="{!! asset('js/views/LoadingView.js') !!}"></script>
+        <script type="text/javascript" src="{!! asset('js/controllers/LoadingController.js') !!}"></script>
+        <script type="text/javascript" src="{!! asset('js/helpers/IdleHelper.js') !!}"></script>
+        <script type="text/javascript" src="{!! asset('js/models/Message.js') !!}"></script>
+        <script type="text/javascript" src="{!! asset('js/views/MessageView.js') !!}"></script>
+        <script type="text/javascript" src="{!! asset('js/controllers/MessageController.js') !!}"></script>
+        <script type="text/javascript" src="{!! asset('js/helpers/GeneralHelper.js') !!}"></script>
+        <script type="text/javascript" src="{!! asset('js/loaders/GeneralLoader.js') !!}"></script>
 
         @if(isset($isAutocomplete))
             <!-- Elementos das páginas de cadastros para autocomplete -->
-            <script type="text/javascript" src="{!! asset('js/formAutocomplete.js') !!}"></script>
+            <script type="text/javascript" src="{!! asset('js/loaders/AutocompleteLoader.js') !!}"></script>
+            <script type="text/javascript" src="{!! asset('js/models/Autocomplete.js') !!}"></script>
+            <script type="text/javascript" src="{!! asset('js/controllers/AutocompleteController.js') !!}"></script>
+        @endif
+        @if(isset($apicep))
+            <!-- Elementos de coleta de dados nas API's google maps e via cep -->
+            <script type="text/javascript" src="{!! asset('js/views/FormInstitutionView.js') !!}"></script>
+            <script type="text/javascript" src="{!! asset('js/controllers/FormInstitutionController.js') !!}"></script>
+            <script type="text/javascript" src="{!! asset('js/loaders/FormInstitutionLoader.js') !!}"></script>
         @endif
         @if(isset($streamPage))
-            <!-- Elementos para a formação de uma SALA ==================================================== -->
+            <!-- Formação de SALAS -->
             @if(! Auth::guest())
-                <!-- Adição dos scripts de utilização do WEBRTC-->
-                
+                <!-- Inicializa o controle de dispositivos -->
+                <script type="text/javascript" src="{!! asset('js/controllers/DevicesController.js') !!}"></script>  
+                <script type="text/javascript" src="{!! asset('js/views/DevicesView.js') !!}"></script>
+                <!-- Models e Controllers -->
                 <script type="text/javascript" src="{!! asset('js/models/Structure.js') !!}"></script>  
                 <script type="text/javascript" src="{!! asset('js/controllers/StructureController.js') !!}"></script>  
                 <script type="text/javascript" src="{!! asset('js/models/Room.js') !!}"></script>  
@@ -55,35 +74,35 @@
                 <script type="text/javascript" src="{!! asset('js/controllers/ConnectController.js') !!}"></script>  
                 <script type="text/javascript" src="{!! asset('js/models/Media.js') !!}"></script>  
                 <script type="text/javascript" src="{!! asset('js/controllers/MediaController.js') !!}"></script>
-                <script type="text/javascript" src="{!! asset('js/models/Message.js') !!}"></script> 
-                <script type="text/javascript" src="{!! asset('js/controllers/MessageController.js') !!}"></script>
- 
+                <!-- Loader específico para controle de dispositivos -->
+                <script type="text/javascript" src="{!! asset('js/loaders/DeviceLoader.js') !!}"></script>
+                <!-- Views -->
                 <script type="text/javascript" src="{!! asset('js/views/MediaView.js') !!}"></script>
-                <script type="text/javascript" src="{!! asset('js/views/MessageView.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/views/RoomView.js') !!}"></script>
-
-                <script type="text/javascript" src="{!! asset('js/helpers/RoomHelper.js') !!}"></script>    
-  
+                <!-- Helpers -->
+                <script type="text/javascript" src="{!! asset('js/helpers/RoomHelper.js') !!}"></script>        
+                <!-- WebRTC -->
                 <script type="text/javascript" src="{!! asset('js/webrtc/socket.io.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/webrtc/getHTMLMediaElement.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/webrtc/adapter.js') !!}"></script>                      
-                <script type="text/javascript" src="{!! asset('js/webrtc/RTCMultiConnectionNew.min.js') !!}"></script>
-                <script type="text/javascript" src="{!! asset('js/webrtc/MultiStreamsMixer.min.js') !!}"></script>
-                <script type="text/javascript" src="{!! asset('js/webrtc/application.js') !!}"></script>
+                <script type="text/javascript" src="{!! asset('js/webrtc/NewRTCMultiConnection.min.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/webrtc/getScreenId.js') !!}"></script>
-                <script type="text/javascript" src="{!! asset('js/chat.bottom.js') !!}"></script>
+                <script type="text/javascript" src="{!! asset('js/webrtc/FileBufferReader.js') !!}"></script>
+                
+                <script type="text/javascript" src="{!! asset('js/controllers/webrtcController.js') !!}"></script>
+                <script type="text/javascript" src="{!! asset('js/loaders/webrtcLoader.js') !!}"></script>
             @endif
-            <!-- ========================================================================================== -->
         @endif
-        @if(isset($grant))
-            <!-- Elemento para cadastro de perfis de usuários-->
-            <script type="text/javascript" src="{!! asset('js/grant.bottom.js') !!}"></script>
+
+        @if(isset($error) || isset($success))
+            <input type='hidden' name='error_level' id='error_level' value='{{ isset($error) ? $error : '' }}' />
+            <input type='hidden' name='success_level' id='success_level' value='{{ isset($success) ? $success : '' }}' />
+            <script type="text/javascript" src="{!! asset('js/controllers/PageMessageController.js') !!}"></script>
+            <script type="text/javascript" src="{!! asset('js/loaders/PageMessageLoader.js') !!}"></script>
         @endif
-        @if(isset($classroom))
-            <!-- Elemento para cadastro de turmas-->
-            <script type="text/javascript" src="{!! asset('js/turmas.bottom.js') !!}"></script>
-        @endif
+        
         <!-- Inicialização de elementos MaterializeCSS -->
-        <script type="text/javascript" src="{!! asset('js/materialize.bottom.js') !!}"></script>
+        <script type="text/javascript" src="{!! asset('js/controllers/MaterializeController.js') !!}"></script>
+        <script type="text/javascript" src="{!! asset('js/loaders/MaterializeLoader.js') !!}"></script>
     </body>
 </html>

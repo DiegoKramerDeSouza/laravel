@@ -5,19 +5,16 @@ class RoomView {
 
     constructor() {
 
-        let tag = document.querySelector.bind(document);
-        let addTag = document.createElement.bind(document);
-
-        this._countUsers = tag(conf.dom.LABEL_USERS);
-        this._roomLabel = tag(conf.dom.CLASS_TITLE);
+        this._countUsers = doc.TAG(dom.LABEL_USERS);
+        this._roomLabel = doc.TAG(dom.CLASS_TITLE);
         this._label;
-        this._publicRoomsDiv = tag(conf.dom.PUBLIC_CONFERENCE);
-        this._divOpen = addTag('div');
+        this._publicRoomsDiv = doc.TAG(dom.PUBLIC_CONFERENCE);
+        this._divOpen = doc.ADD('div');
         this._divMessage;
         this._roomCard;
-        this._roomList = tag(conf.dom.PUBLIC_CONFERENCE);
-        this._connectionList = tag(conf.dom.CONNECTION_LIST);
-        this._connectList = tag(conf.dom.USERS_LIST);
+        this._roomList = doc.TAG(dom.PUBLIC_CONFERENCE);
+        this._connectionList = doc.TAG(dom.CONNECTION_LIST);
+        this._connectList = doc.TAG(dom.USERS_LIST);
         this._listOfConCards = '';
     }
 
@@ -52,7 +49,7 @@ class RoomView {
 
         this._roomCard = `<div class="row valign-wrapper li-hover grey-text text-darken-3">
                             <div id="_${moderador}" align="center" class="col s3 m2">
-                                    <span class="blue-text">Entrar</span><br>
+                                    <span class="blue-text"><b>Entrar</b></span><br>
                                 </div>
                                 <div class="col s9 m10 l11">
                                     <span class="card-title">
@@ -72,18 +69,19 @@ class RoomView {
         return this._roomCard;
     }
 
-    setRoomCard(moderatorId, label, container, obj) {
+    setRoomCard(moderatorId, label, container, obj, valid) {
 
-        let getId = document.getElementById.bind(document);
         container.innerHTML = label;
         container.className = "card-panel hoverable";
         obj.id = moderatorId;
         obj.title = 'Acessar sala';
-        obj.className = 'btn-floating room-enter blue darken-1';
-        obj.innerHTML = '<i class="material-icons large">play_arrow</i>';
+        obj.innerHTML = misc.ICON_PLAY;
+        obj.className = 'btn-floating room-enter blue darken-1 modal-trigger';
+        //valid ? null : obj.className += ' modal-trigger';
+        obj.href = "#msg-informa-espectadores";
 
         this._roomList.appendChild(container);
-        getId('_' + moderatorId).appendChild(obj);
+        doc.ID('_' + moderatorId).appendChild(obj);
     }
 
     clearLabelCon() {

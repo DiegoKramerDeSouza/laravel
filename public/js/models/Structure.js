@@ -6,7 +6,8 @@ class Structure {
 
     constructor(
         viewers,
-        usuario, solicita,
+        usuario,
+        solicita,
         broadcastStatus,
         isModerator,
         onlobby,
@@ -15,9 +16,12 @@ class Structure {
         mainVideo,
         userVideo,
         startRoom,
+        configDev,
         publicRoomsList,
         connectList,
-        countRooms
+        roomType,
+        countRooms,
+        singlecon
     ) {
 
         this._viewers = viewers;
@@ -33,9 +37,13 @@ class Structure {
         this._mainVideo = mainVideo;
         this._userVideo = userVideo;
         this._startRoom = startRoom;
+        this._configDev = configDev;
         this._publicRoomsList = publicRoomsList;
         this._connectList = connectList;
+        this._roomType = roomType;
         this._countRooms = countRooms;
+        this._singleConnection = singlecon;
+
         this._targetUser;
         this._connections = [];
         this._streamVideos = [];
@@ -178,6 +186,11 @@ class Structure {
         return this._startRoom;
     }
 
+    get configDev() {
+
+        return this._configDev;
+    }
+
     get publicRoomsList() {
 
         return this._publicRoomsList;
@@ -186,6 +199,11 @@ class Structure {
     get connectList() {
 
         return this._connectList;
+    }
+
+    get roomType() {
+
+        return this._roomType;
     }
 
     // ------------------------------------------
@@ -198,6 +216,16 @@ class Structure {
     set countRooms(countRooms) {
 
         this._countRooms = countRooms;
+    }
+
+    get singleConnection() {
+
+        return this._singleConnection;
+    }
+
+    set singleConnection(singleConnection) {
+
+        this._singleConnection = singleConnection;
     }
 
     get targetUser() {

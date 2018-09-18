@@ -16,7 +16,7 @@
         <link href="{!! asset('css/materialize.min.css') !!}" media="all" rel="stylesheet" type="text/css" />
         @if(! Auth::guest() && Auth::user()->type == 0)
             <!--Instalação inline de extensão do chrome para compartilhamento de tela-->
-            <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/screen-capturing/ajhifddimkapgcifgcodmmfdlknahffk">
+            <!--<link rel="chrome-webstore-item" href="path $chromeExt">-->
         @endif        
     </head>
 
@@ -24,22 +24,22 @@
         <header>
             <nav class="nav-wrapper grey darken-4">
                 <div class="">
-                    <a href='#!' class='sidenav-trigger white-text text-darken-3 right' data-target='side-bar' title='Menu'>{!! $menuIcon !!}</a>
+                    <a href='#!' class='sidenav-trigger white-text text-darken-3 right' data-target='side-bar' title='Menu'>{!! $default->menuIcon !!}</a>
                     <a href='{{ route('home') }}' class='brand-logo load-cancel'><span class='white-text'>&nbsp;&nbsp;<b><span class='blue-text'>Web</span>Tv</b></span></a>
                     <ul id='nav-mobile' class='right hide-on-med-and-down white-text'>
                         @if(! Auth::guest())
                             @if(Auth::user()->type == 0)
                                 <li class='hover-footer-btn'>
                                     <a id='homeicon' href='{{ route('home') }}' class='load-cancel'>
-                                        <span class='white-text'>{!! $homeBlueIcon !!} <b>Início</b></span>
+                                        <span class='white-text'>{!! $default->homeBlueIcon !!} <b>Início</b></span>
                                     </a>
                                 </li>
                                 <li class='hover-footer-btn'>
-                                    <a href="{{ route('salas') }}" class='load-cancel'><span class='white-text'>{!! $roomsBlueIcon !!} <b>Salas</b></span></a>
+                                    <a href="{{ route('salas') }}" class='load-cancel'><span class='white-text'>{!! $default->roomsBlueIcon !!} <b>Salas</b></span></a>
                                 </li>
                                 <li class='hover-footer-btn'>
                                     <a id='gerDrop' class='load-cancel' href='{{ route('admin.cadastro') }}'>
-                                        <b><span class='white-text'>{!! $userPlusBlueIcon !!} Cadastro</span></b>
+                                        <span class='white-text'>{!! $default->manageBlueIcon !!} <b>Gerenciar</b></span>
                                     </a>
                                 </li>
                             @endif
@@ -52,12 +52,16 @@
                             </li>
                         @endif
                     </ul>
-                </div>		
-                <ul id='myProfile' class='dropdown-content'>
-                    <li class='white'><a href='#' class=''>{!! $configBlueIcon !!} Configurações</a></li>
-                    <li class='white'><a href='#' class=''>{!! $bookBlueIcon !!} Aulas</a></li>
-                    <li class='white'><a href='{{ route('login.destroy')}}' class='load-cancel red-text text-darken-2'>{!! $signOutRedIcon !!} Sair</a></li>
-                </ul>
+                </div>
+                @if(! Auth::guest())		
+                    <ul id='myProfile' class='dropdown-content'>
+                        @if(Auth::user()->type == 0)
+                            <li class='white'><a href='#' class=''>{!! $default->configBlueIcon !!} Configurações</a></li>
+                        @endif
+                        <li class='white'><a href='#' class=''>{!! $default->bookBlueIcon !!} Aulas</a></li>
+                        <li class='white'><a href='{{ route('login.destroy')}}' class='load-cancel red-text text-darken-2'>{!! $default->signOutRedIcon !!} Sair</a></li>
+                    </ul>
+                @endif
             </nav>
             <div id='side-bar' class='sidenav z-depth-5'>
                 <h4 class='blue-text' style='margin:10px;'><b>Web<span class='grey-text text-darken-3'>Tv</span></b></h4>
@@ -65,21 +69,21 @@
                 <ul>
                     @if(Auth::guest())
                         <li>
-                            <a href="{{ route('login') }}" class='load-cancel'><span class='grey-text text-darken-3'>{!! $loginBlueIcon !!} <b>Login</b></span></a>
+                            <a href="{{ route('login') }}" class='load-cancel'><span class='grey-text text-darken-3'>{!! $default->loginBlueIcon !!} <b>Login</b></span></a>
                         </li>
                     @else
                         @if(Auth::user()->type == 0)
                             <li>
                                 <a id='homeicon' href='{{ route('home') }}' class='load-cancel'>
-                                    <span class='grey-text text-darken-3'>{!! $homeBlueIcon !!} <b>Início</b></span>
+                                    <span class='grey-text text-darken-3'>{!! $default->homeBlueIcon !!} <b>Início</b></span>
                                 </a>
                             </li>
                             <li>
-                                <a href="{{ route('salas') }}" class='load-cancel'><span class='grey-text text-darken-3'>{!! $roomsBlueIcon !!} <b>Salas</b></span></a>
+                                <a href="{{ route('salas') }}" class='load-cancel'><span class='grey-text text-darken-3'>{!! $default->roomsBlueIcon !!} <b>Salas</b></span></a>
                             </li>
                             <li>
                                 <a class='load-cancel' id='gerDrop' href='{{ route('admin.cadastro') }}'>
-                                    <b><span class='grey-text text-darken-3'>{!! $userPlusBlueIcon !!} Cadastro</span></b>
+                                    <b><span class='grey-text text-darken-3'>{!! $default->manageBlueIcon !!} Gerenciar</span></b>
                                 </a>
                             </li>
                         @endif					
@@ -93,13 +97,17 @@
                     @endif
                 </ul>
                 <ul id='side-dropGer' class='dropdown-content'>
-                    <li class='grey darken-4'><a href='{{ route('login.destroy')}}' class='load-cancel red-text text-darken-3'>{!! $signOutRedIcon !!} <b>Sair</b></a></li>
+                    <li class='grey darken-4'><a href='{{ route('login.destroy')}}' class='load-cancel red-text text-darken-3'>{!! $default->signOutRedIcon !!} <b>Sair</b></a></li>
                 </ul>
-                <ul id='side-myProfile' class='dropdown-content'>
-                    <li><a href='#' class='grey-text text-darken-3'>{!! $configBlueIcon !!} Configurações</a></li>
-                    <li><a href='#' class='grey-text text-darken-3'>{!! $bookBlueIcon !!} Aulas</a></li>
-                    <li><a href='{{ route('login.destroy')}}' class='load-cancel red-text text-darken-3'>{!! $signOutRedIcon !!} Sair</a></li>
-                </ul>
+                @if(! Auth::guest())
+                    <ul id='side-myProfile' class='dropdown-content'>
+                        @if(Auth::user()->type == 0)
+                            <li><a href='#' class='grey-text text-darken-3'>{!! $default->configBlueIcon !!} Configurações</a></li>
+                        @endif
+                        <li><a href='#' class='grey-text text-darken-3'>{!! $default->bookBlueIcon !!} Aulas</a></li>
+                        <li><a href='{{ route('login.destroy')}}' class='load-cancel red-text text-darken-3'>{!! $default->signOutRedIcon !!} Sair</a></li>
+                    </ul>
+                @endif
             </div>
         </header>
         <main>
@@ -110,7 +118,7 @@
             </div>
             <!-- Imagem de fundo -->
             <div class='backgroundImage-Layer'>
-				<img id="backgroundLayer" src="{!! asset($bgImage) !!}" />
+				<img id="backgroundLayer" src="{!! asset($default->bgImage) !!}" />
             </div>
             <!-- Conteúdo da página em container -->
             <div id='main-content' class='main-container'>
