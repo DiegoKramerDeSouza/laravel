@@ -20,7 +20,9 @@ const doc = {
     COOKIE_LIFETIME: 365,
     COOKIE_AUDIO_DEVICE: "audioDevice",
     COOKIE_VIDEO_DEVICE: "videoDevice",
-    VERSION: "1.1.0.77"
+    URL_SALAS_SAVE: `${location.origin}/salas/salvar`,
+    URL_SALAS_UPDATE: `${location.origin}/salas/update`,
+    VERSION: "1.1.0.80"
 }
 
 const apr = {
@@ -50,7 +52,8 @@ const conf = {
         FILE_SHARING: true,
         WAITING_FOR_VIDEO: 'waiting',
         NUMBER_OF_ROOMS: 0,
-        POSTER_IMG: '/img/bg.jpg'
+        POSTER_IMG: '/img/bg.jpg',
+        NAV_EDGE: 'left'
     },
     con: {
         /*Constantes de configuração de inicialização de CONEXÃO */
@@ -151,12 +154,17 @@ const dom = {
     /* Elementos dinâmicos do DOM */
     ADDRESS: '#address',
     ASSUNTO: '#assunto',
+    BG_DARK: '#bgdark',
     BROADCASTER: '#broadcaster',
     BTN_CONF_DEVICES: '#btn-conf-devices',
     BTN_FILE_SHARING: '#file-sharing',
     BTN_SEND_MSG: '#send-message-btn',
     BTN_SUBMIT: 'button[type="submit"]',
     BTN_START_ROOM: '#btn-join-as-productor',
+    CALL_SEND: '#call-send-files',
+    CALL_SEND_MIN: '#call-send-min',
+    CALL_RECEIVE: '#call-receive-files',
+    CALL_RECEIVE_MIN: '#call-receive-min',
     CAM: '#toggle-camera',
     CITY: '#city',
     CHAT_PANEL: '#chat-panel',
@@ -166,6 +174,8 @@ const dom = {
     COLLAPSIBLE: '.collapsible',
     CONFIRM_DEVICES: '#confirmDevices',
     CONNECTION_LIST: '#connection-list',
+    COUNT_RECEIVE_FILES: '#count-receive-files',
+    COUNT_SEND_FILES: '#count-send-files',
     COUNT_PEDIR: '#count-pedir-vez',
     CTL_PEDIR: '#control-pedir-vez',
     CURSO_LIST: '#cursos-list',
@@ -185,6 +195,9 @@ const dom = {
     END_SESSION_ACCESS: '#end-session',
     ERROR_LEVEL: '#error_level',
     EXIT_SCREEN: '#exit-fullscreen',
+    FILE_EXP: '#exp-files',
+    FILE_LIST: '#file-list',
+    FILE_MIN: '#min-files',
     FILE_TRANSFERING: '#file-transfering',
     FIRST_VIDEO: '#video-preview',
     IN_ROOM: '#in-room',
@@ -207,9 +220,11 @@ const dom = {
     LOCK: '#lock',
     LOCK_CEP: '#lockcep',
     MATERIA: '#tema',
-    MSG_SHARE: '#msg-share',
+    MIN_SEND: '#min-send-files',
+    MIN_RECEIVE: '#min-receive-files',
     MODAL: '.modal',
     MODAL_USERS: '#msg-informa-espectadores',
+    MSG_SHARE: '#msg-share',
     MUTE: '#toggle-mute',
     NAME: '#current-user',
     NUMBER: '#number',

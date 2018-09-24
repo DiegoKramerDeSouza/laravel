@@ -3,7 +3,7 @@
         <div id='div-controller' class='d-none col s12 center'>
             <div id='nav-controller' class='container'>
                 <!-- Barra de controle de mídia -->
-                <div class='controllers-container blue-text center grey lighten-4'>
+                <div class='controllers-container blue-text center black'>
                     <span id='li-toggle-camera'>
                         <a id='toggle-camera' data-active='enabled' class='media-control btn-floating btn-large' data-position='top' title='Camera'>
                             {!! $default->videocamIcon !!}
@@ -49,38 +49,13 @@
                             {!! $default->shareIcon !!} 
                         </a>
                     </span>
-                    <span id='control-pedir-vez' class=''>
+                    <span id='control-pedir-vez'>
                         <a id='lista-pedir-vez' data-active='enabled' class='media-control btn-floating btn-large modal-trigger' data-position='top' title='Solicitações' href='#msg-solicita'>
                             {!! $default->panToolIcon !!} 
                         </a>
                         <span id='count-pedir-vez' href='#msg-solicita' class='btn-floating btn-small red darken-4 pulse modal-trigger'>0</span>
                     </span>
                     <input id='pedir-vez' type='hidden' disabled readonly value='0' />
-                </div>
-            </div>
-            <div id='send-files' class='container blue-text' align='left'>
-                <div class=''>
-                    <h6>{!! $default->blueCloudUpload !!} Arquivos Enviados:</h6>
-                    <div class='divider'></div>
-                </div>
-                <br/>
-                <div class="files-pool">
-                    <div id='div-sended-files' class='container'>
-                        <!-- Lista de arquivos enviados -->
-                    </div>
-                </div>
-            </div>
-            <div id='receive-files' class='container blue-text' align='left'>
-                <div class=''>
-                    <h6>{!! $default->blueCloudDownload !!} Arquivos Recebidos:</h6>
-                    <div class='divider'></div>
-                </div>
-                <br/>
-                <div class="files-pool">
-                    <div id='file-transfering' class='blue-text container'></div>
-                    <div id='div-file-sharing' class='container'>
-                        <!-- Lista de arquivos compartilhados -->
-                    </div>
                 </div>
             </div>
         </div>

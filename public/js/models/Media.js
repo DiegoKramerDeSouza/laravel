@@ -27,7 +27,11 @@ class Media {
         textMessage,
         fullsize,
         sharedFile,
-        spanSecondVideo
+        spanSecondVideo,
+        callReceiveFiles,
+        callSendFiles,
+        callMinReceiveFiles,
+        callMinSendFiles
     ) {
 
         this._videoPreview = videoPreview;
@@ -53,6 +57,10 @@ class Media {
         this._fullsize = fullsize;
         this._sharedFile = sharedFile;
         this._spanSecondVideo = spanSecondVideo;
+        this._callReceiveFiles = callReceiveFiles;
+        this._callSendFiles = callSendFiles;
+        this._callMinReceiveFiles = callMinReceiveFiles;
+        this._callMinSendFiles = callMinSendFiles;
         Object.freeze(this);
     }
 
@@ -169,6 +177,26 @@ class Media {
     get spanSecondVideo() {
 
         return this._spanSecondVideo;
+    }
+
+    get callReceiveFiles() {
+
+        return this._callReceiveFiles;
+    }
+
+    get callSendFiles() {
+
+        return this._callSendFiles;
+    }
+
+    get callMinReceiveFiles() {
+
+        return this._callMinReceiveFiles;
+    }
+
+    get callMinSendFiles() {
+
+        return this._callMinSendFiles;
     }
 
 }

@@ -9,6 +9,17 @@
     min-width: 100%;
     min-height: 100%;
     opacity: 1;
+    z-index: -2;
+}
+
+#bgdark {
+    position: fixed;
+    top: 0;
+    left: 0;
+    min-width: 100%;
+    min-height: 100%;
+    opacity: 0.6;
+    background-color: black;
     z-index: -1;
 }
 
@@ -58,6 +69,10 @@ body::-webkit-scrollbar-thumb:hover {
     background: #535353;
 }
 
+#class-title {
+    font-size: 26px;
+}
+
 #connected-users-list {
     overflow-y: auto;
     max-height: 380px;
@@ -70,7 +85,14 @@ body::-webkit-scrollbar-thumb:hover {
 #count-pedir-vez {
     position: absolute;
     z-index: 10;
-    transform: translate(-90%, 0%);
+    transform: translate(-100%, 0%);
+}
+
+#count-send-files,
+#count-receive-files {
+    position: absolute;
+    z-index: 0;
+    transform: translate(-60%, 110%);
 }
 
 #div-controller,

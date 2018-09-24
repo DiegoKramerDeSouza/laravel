@@ -33,6 +33,10 @@ class MediaController {
         this._fullsize = doc.TAG(dom.TOGGLE_VIDEO_SIZE);
         this._sharedFile = doc.TAG(dom.BTN_FILE_SHARING);
         this._spanSecondVideo = doc.TAG(dom.VIDEO_SECOND);
+        this._callMinReceiveFiles = doc.TAG(dom.CALL_RECEIVE);
+        this._callMinSendFiles = doc.TAG(dom.CALL_SEND);
+        this._callReceiveFiles = doc.TAG(dom.CALL_RECEIVE_MIN);
+        this._callSendFiles = doc.TAG(dom.CALL_SEND_MIN);
 
         this._controlCam = true;
         this._controlVoice = true;
@@ -77,7 +81,11 @@ class MediaController {
             this._textMessage,
             this._fullsize,
             this._sharedFile,
-            this._spanSecondVideo
+            this._spanSecondVideo,
+            this._callReceiveFiles,
+            this._callSendFiles,
+            this._callMinReceiveFiles,
+            this._callMinSendFiles
         );
     }
 
@@ -225,6 +233,8 @@ class MediaController {
 
         let mVideoP = this._videoPreview;
         let sVideoP = this._secondVideoPreview;
+        mVideoP.classList.add("obj-invisible");
+        sVideoP.classList.add("obj-invisible");
         let mainVideoSrc;
 
         this._videoIsMain ? mVideoP.classList.remove(misc.CLASS_WIDTH_LIMIT) : mVideoP.classList.add(misc.CLASS_WIDTH_LIMIT);
@@ -244,15 +254,17 @@ class MediaController {
                         sVideoP.play();
                     })
                     .catch(error => {
-                        console.log('Iniciando vídeo...');
+                        console.log('Iniciando vídeo...', error);
                     });
                 playReady.then(_ => {
                         mVideoP.play();
                     })
                     .catch(error => {
-                        console.log('Iniciando vídeo...');
+                        console.log('Iniciando vídeo...', error);
                     });
             }
+            mVideoP.classList.remove("obj-invisible");
+            sVideoP.classList.remove("obj-invisible");
         }, 500);
     }
 
@@ -449,6 +461,11 @@ class MediaController {
         this._mediaView.createProgressBar(file);
     }
 
+    openExpFiles(toggle) {
+
+        this._mediaView.toggleFileExp(toggle);
+    }
+
     _dataURItoBlob(dataURI) {
 
         let byteString = atob(dataURI.split(',')[1]);
@@ -529,5 +546,7 @@ class MediaController {
         this._mediaView.fadeOutElem(elem, delay)
             //delay != undefined ? this._mediaView.fadeOutElem(elem, delay) : this._mediaView.hideElem(elem);
     }
+
+
 
 }

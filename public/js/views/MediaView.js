@@ -26,7 +26,12 @@ class MediaView {
         this._countPedirVez = doc.TAG(dom.COUNT_PEDIR);
         this._solicitationList = doc.TAG(dom.SOL_LIST);
         this._fileTransfering = doc.TAG(dom.FILE_TRANSFERING);
+        this._fileList = doc.TAG(dom.FILE_LIST);
         this._listContent = '';
+        this._countReceiveFiles = 0;
+        this._countSendFiles = 0;
+        this._otherVideos = false;
+        this._openedFiles = false;
     }
 
     setInvisible(elem) {
@@ -104,20 +109,34 @@ class MediaView {
 
     openIncomingVideos(mainVideo, inVideo) {
 
-        mainVideo.classList.remove("s12");
-        mainVideo.classList.add("s6", "m8");
-        inVideo.classList.add("s6", "m4");
+        if (this._openedFiles) {
+            mainVideo.classList.remove("m8");
+            mainVideo.classList.add("m6");
+        } else {
+            mainVideo.classList.remove("m10");
+            mainVideo.classList.add("m8");
+        }
+        inVideo.classList.add("m3");
+        inVideo.classList.remove("m1");
+        this._otherVideos = true;
         setTimeout(() => {
-            $(dom.DIV_INCOMING_VIDEO).fadeIn(300);
+            //$(dom.DIV_INCOMING_VIDEO).fadeIn(300);
         }, 500);
     }
 
     closeIncomingVideos(mainVideo, inVideo) {
 
-        $(dom.DIV_INCOMING_VIDEO).fadeOut(300);
-        inVideo.classList.remove("s6", "m4");
-        mainVideo.classList.add("s12");
-        mainVideo.classList.remove("s6", "m8");
+        if (this._openedFiles) {
+            mainVideo.classList.add("m8");
+            mainVideo.classList.remove("m6");
+        } else {
+            mainVideo.classList.add("m10");
+            mainVideo.classList.remove("m8");
+        }
+        //$(dom.DIV_INCOMING_VIDEO).fadeOut(300);
+        this._otherVideos = false;
+        inVideo.classList.add("m1");
+        inVideo.classList.remove("m3");
     }
 
     startShare() {
@@ -238,6 +257,7 @@ class MediaView {
     }
 
     adjustStreamScreen() {
+        $(dom.BG_DARK).fadeIn(500);
         $(dom.ROOM_LOBBY).slideUp(500);
         $(dom.VIDEOS_PANEL).slideDown(500);
     }
@@ -320,16 +340,20 @@ class MediaView {
 
     adjustBroadCaster() {
 
-        this._adjustMediaMenu();
-        $(dom.LI_PERDIR).hide();
-        $(dom.DIV_RECEIVE_FILES).hide();
+        this._prepareFileMenu(dom.LI_PERDIR, dom.DIV_RECEIVE_FILES, dom.MIN_SEND);
     }
 
     adjustEspect() {
 
+        this._prepareFileMenu(dom.CTL_PEDIR, dom.DIV_UPLOADED_FILES, dom.MIN_RECEIVE);
+    }
+
+    _prepareFileMenu(pedir, files, filesMin) {
+
         this._adjustMediaMenu();
-        $(dom.CTL_PEDIR).hide();
-        $(dom.DIV_UPLOADED_FILES).hide();
+        $(pedir).hide();
+        $(files).hide();
+        $(filesMin).fadeIn(500);
     }
 
     createProgressBar(file) {
@@ -342,6 +366,8 @@ class MediaView {
 
     transferCompleted() {
 
+        this._countReceiveFiles++;
+        doc.TAG(dom.COUNT_RECEIVE_FILES).innerHTML = this._countReceiveFiles;
         this._fileTransfering.innerHTML = '';
     }
 
@@ -349,6 +375,8 @@ class MediaView {
 
         let filesSended = doc.TAG(dom.DIV_SEND_FILES);
         let div = document.createElement('div');
+        this._countSendFiles++;
+        doc.TAG(dom.COUNT_SEND_FILES).innerHTML = this._countSendFiles;
         div.innerHTML = `<span class="fa fa-cloud text-darken-1"></span> <b>${name}</b> (${this._convertSize(size)})<br/>`;
         filesSended.insertBefore(div, filesSended.firstChild);
     }
@@ -386,6 +414,63 @@ class MediaView {
     fadeOutElem(elem, delay) {
 
         $(elem).fadeOut(delay);
+    }
+
+    toggleFileExp(toggle) {
+
+        toggle ? this._expFiles() : this._minFiles();
+    }
+
+    _expFiles() {
+
+        this._openedFiles = true;
+        this._divMainVideo.classList.add("obj-invisible");
+        this._divIncomingVideo.classList.add("obj-invisible");
+        setTimeout(() => {
+            $(dom.FILE_MIN).hide();
+            $(dom.FILE_EXP).fadeIn(300);
+            this._fileList.classList.add("m3");
+            this._fileList.classList.remove("m1");
+        }, 300);
+        setTimeout(() => {
+            if (this._otherVideos) {
+                this._divMainVideo.classList.add("m6");
+                this._divMainVideo.classList.remove("m8");
+            } else {
+                this._divMainVideo.classList.add("m8");
+                this._divMainVideo.classList.remove("m10");
+            }
+        }, 500);
+        setTimeout(() => {
+            this._divMainVideo.classList.remove("obj-invisible");
+            this._divIncomingVideo.classList.remove("obj-invisible");
+        }, 900);
+    }
+
+    _minFiles() {
+
+        this._openedFiles = false;
+        this._divMainVideo.classList.add("obj-invisible");
+        this._divIncomingVideo.classList.add("obj-invisible");
+        setTimeout(() => {
+            this._fileList.classList.add("m1");
+            this._fileList.classList.remove("m3");
+            $(dom.FILE_EXP).hide();
+            $(dom.FILE_MIN).fadeIn(300);
+        }, 300);
+        setTimeout(() => {
+            if (this._otherVideos) {
+                this._divMainVideo.classList.add("m8");
+                this._divMainVideo.classList.remove("m6");
+            } else {
+                this._divMainVideo.classList.add("m10");
+                this._divMainVideo.classList.remove("m8");
+            }
+        }, 500);
+        setTimeout(() => {
+            this._divMainVideo.classList.remove("obj-invisible");
+            this._divIncomingVideo.classList.remove("obj-invisible");
+        }, 900);
     }
 
 }

@@ -11,7 +11,7 @@ class DefaultElements extends Model
     {
         $this->bgImage = 'img/bg.jpg';
         $this->playImg = 'img/play_btn.png';
-        $this->version = '1.1.0.56';
+        $this->version = '1.1.0.80';
         // Definição do nome da aplicação
         $this->logo = 'WebTV';
         // Extensão de navegador para compartilhamento de tela
@@ -22,6 +22,8 @@ class DefaultElements extends Model
         // MaterializeCSS Icons:
         $this->controlLargeIcon =           "<i class='material-icons large'>more_horiz</i>";
         $this->blueExtension =              "<i class='material-icons blue-text'>extension</i>";
+        $this->chevronRightLeft =           "<i class='material-icons'>keyboard_arrow_right</i>";
+        $this->chevronLeftLeft =            "<i class='material-icons left'>keyboard_arrow_left</i>";
         $this->forumIcon =                  "<i class='material-icons'>forum</i>";
         $this->fullscreenExitLargeIcon =    "<i class='material-icons large'>fullscreen_exit</i>";
         $this->fullscreenIcon =             "<i class='material-icons'>fullscreen</i>";
@@ -29,6 +31,7 @@ class DefaultElements extends Model
         $this->panToolBlueIcon =            "<i class='material-icons blue-text'>pan_tool</i>";
         $this->panToolIcon =                "<i class='material-icons'>pan_tool</i>";
         $this->peopleIcon =                 "<i class='material-icons'>people_outline</i>";
+        $this->peopleIconLeft =             "<i class='material-icons left'>people_outline</i>";
         $this->peopleLargeIcon =            "<i class='material-icons large'>people_outline</i>";
         $this->searchIcon =                 "<i class='material-icons'>search</i>";
         $this->screenShareIcon =            "<i class='material-icons'>screen_share</i>";
@@ -49,7 +52,9 @@ class DefaultElements extends Model
         $this->acessosIcon =            "<i class='fa fa-shield fa-lg'></i>";
         $this->applyIcon =              "<i class='fa fa-check'></i>";
         $this->blueCloudDownload =      "<i class='fa fa-cloud-download'></i>";
+        $this->blueCloudDownloadLg =    "<i class='fa fa-cloud-download fa-2x'></i>";
         $this->blueCloudUpload =        "<i class='fa fa-cloud-upload'></i>";
+        $this->blueCloudUploadLg =      "<i class='fa fa-cloud-upload fa-2x'></i>";
         $this->bookBlueIcon =           "<i class='fa fa-book blue-text'></i>";
         $this->bookIcon =               "<i class='fa fa-book'></i>";
         $this->bookmarkIcon =           "<i class='fa fa-bookmark'></i>";
@@ -105,6 +110,7 @@ class DefaultElements extends Model
         $this->usuariosLargeIcon =      "<i class='fa fa-users fa-2x'></i>";
         $this->userIcon =               "<i class='fa fa-user fa-lg'></i>";
         $this->userOIcon =              "<i class='fa fa-user-o fa-lg'></i>";
+        $this->usersOIcon =             "<i class='fa fa-users fa-lg'></i>";
         $this->userPlusBlueIcon =       "<span class='fa fa-user-plus fa-lg blue-text'></span>";
         $this->warningIcon =            "<i class='fa fa-exclamation-triangle fa-lg'></i>";
         // Ícones que necessitam da classe prefix

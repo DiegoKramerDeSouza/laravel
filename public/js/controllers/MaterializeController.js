@@ -43,7 +43,7 @@ class MaterializeController {
 
     _initSidenav() {
 
-        this._sidenavInstance = M.Sidenav.init(this._sidenav);
+        this._sidenavInstance = M.Sidenav.init(this._sidenav, { edge: conf.str.NAV_EDGE });
     }
 
     _initSelect() {

@@ -118,7 +118,8 @@
             </div>
             <!-- Imagem de fundo -->
             <div class='backgroundImage-Layer'>
-				<img id="backgroundLayer" src="{!! asset($default->bgImage) !!}" />
+                <img id="backgroundLayer" src="{!! asset($default->bgImage) !!}" />
+                <div id="bgdark" class="d-none"></div>
             </div>
             <!-- Conteúdo da página em container -->
             <div id='main-content' class='main-container'>

@@ -15,7 +15,6 @@ class webrtcController {
         this._media = this._mediaController.initiateMedia();
         this._structure = this._structureController.initiateStructure();
         this._roomInfo = this._roomInfoController.initiateRoomInfo();
-        this._origin = location.origin;
     }
 
     configureDefaults() {
@@ -491,6 +490,8 @@ class webrtcController {
             this._media.fullsize.onclick = () => this._mediaController.toggleFullSize();
             // Tratamento da função de chat da barra de controle de mídia
             this._media.toggleChat.onclick = () => this._media.textMessage.focus();
+            // Tratamento da função de exibição de arquivos enviados/recebidos
+            this._fileshareToggle();
             // Tratamento de ingresso na transmissão: Botão "Ingressar" -> Ingressa e participa da apresentação
             this._media.sessionAccess.onclick = () => {
 
@@ -539,7 +540,17 @@ class webrtcController {
                     }
                 }
             };
+
+
         }
+    }
+
+    _fileshareToggle() {
+
+        this._media.callSendFiles.onclick = () => this._mediaController.openExpFiles(false);
+        this._media.callMinSendFiles.onclick = () => this._mediaController.openExpFiles(true);
+        this._media.callReceiveFiles.onclick = () => this._mediaController.openExpFiles(false);
+        this._media.callMinReceiveFiles.onclick = () => this._mediaController.openExpFiles(true);
     }
 
     _screenStream(stream) {
@@ -877,7 +888,7 @@ class webrtcController {
                 });
                 let cursos = this._roomController.createList();
                 let $postData = { author: room.name, name: room.tema, theme: room.assunto, hash: room.hash, courses: cursos }
-                let $resource = `${ this._origin }/salas/salvar`;
+                let $resource = doc.URL_SALAS_SAVE;
                 this._saveRoom($postData, $resource);
             } else {
                 this._alerta.initiateMessage(conf.message.FORM_ALERT);
@@ -978,7 +989,7 @@ class webrtcController {
 
         try {
             this._finishSelfVideo();
-        } catch (e) {}
+        } catch (e) { /* Ignora erro */ }
         this._mediaController.initiateStream();
         this._structure.onlobby = false;
         this._structure.isModerator = false;
@@ -987,7 +998,7 @@ class webrtcController {
         let numViewers = doc.TAG(dom.NUMBER_VIEWS).value;
 
         let $postData = { turmaHash: moderator, numViews: numViewers }
-        let $resource = `${ this._origin }/salas/update`;
+        let $resource = doc.URL_SALAS_UPDATE;
         this._saveRoom($postData, $resource);
 
         this._connection.session = {
