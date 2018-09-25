@@ -64,7 +64,7 @@
                 @endif
             </nav>
             <div id='side-bar' class='sidenav z-depth-5'>
-                <h4 class='blue-text' style='margin:10px;'><b>Web<span class='grey-text text-darken-3'>Tv</span></b></h4>
+                <h4 class='blue-text m-10'><b>Web<span class='grey-text text-darken-3'>Tv</span></b></h4>
                 <div class='divider'></div>
                 <ul>
                     @if(Auth::guest())
@@ -119,7 +119,7 @@
             <!-- Imagem de fundo -->
             <div class='backgroundImage-Layer'>
                 <img id="backgroundLayer" src="{!! asset($default->bgImage) !!}" />
-                <div id="bgdark" class="d-none"></div>
+                <div id="bgdark" class="d-none black"></div>
             </div>
             <!-- Conteúdo da página em container -->
             <div id='main-content' class='main-container'>

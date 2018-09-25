@@ -19,7 +19,6 @@
     min-width: 100%;
     min-height: 100%;
     opacity: 0.6;
-    background-color: black;
     z-index: -1;
 }
 
@@ -33,7 +32,8 @@
     opacity: 1;
 }
 
-#chat-textarea {
+#chat-textarea,
+#exp-files {
     overflow-y: auto;
     max-width: 100%;
     overflow-x: hidden;
@@ -41,6 +41,7 @@
 
 #chat-textarea::-webkit-scrollbar-track,
 #connected-users-list::-webkit-scrollbar-track,
+#exp-files::-webkit-scrollbar-track,
 body::-webkit-scrollbar-track {
     background-color: #F4F4F4;
     -webkit-transition-duration: 0.4s;
@@ -49,6 +50,7 @@ body::-webkit-scrollbar-track {
 
 #chat-textarea::-webkit-scrollbar,
 #connected-users-list::-webkit-scrollbar,
+#exp-files::-webkit-scrollbar,
 body::-webkit-scrollbar {
     width: 6px;
     background: #F4F4F4;
@@ -56,6 +58,7 @@ body::-webkit-scrollbar {
 
 #chat-textarea::-webkit-scrollbar-thumb,
 #connected-users-list::-webkit-scrollbar-thumb,
+#exp-files::-webkit-scrollbar-thumb,
 body::-webkit-scrollbar-thumb {
     background: #646464;
     border-radius: 3px;
@@ -65,6 +68,7 @@ body::-webkit-scrollbar-thumb {
 
 #chat-textarea::-webkit-scrollbar-thumb:hover,
 #connected-users-list::-webkit-scrollbar-thumb:hover,
+#exp-files::-webkit-scrollbar-thumb:hover,
 body::-webkit-scrollbar-thumb:hover {
     background: #535353;
 }
@@ -109,6 +113,11 @@ body::-webkit-scrollbar-thumb:hover {
 #div-main-video {
     -webkit-transition-duration: 0.4s !important;
     transition-duration: 0.4s !important;
+}
+
+#files-side-bar {
+    overflow-y: hidden;
+    overflow-x: hidden;
 }
 
 #fglayer {

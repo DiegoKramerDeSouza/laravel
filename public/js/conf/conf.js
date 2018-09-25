@@ -106,7 +106,7 @@ const conf = {
         /*Tempo padrão de exibição das MENSAGENS de toast */
         TIMEOUT: 2000,
         /*Atributos para formação de MENSAGENS padronizadas: array[ícone(html), texto(html), cor de fundo(classes MaterializeCSS)] */
-        CHAT_MESSAGE: ['<div align="right"><i class="fa fa-comment-o blue-text"></i>', '</div>', 'grey darken-4'],
+        CHAT_MESSAGE: ['<div align="right"><i class="fa fa-comment-o white-text"></i>', '</div>', 'grey darken-2'],
         START_TRANSMITION: ['<i class="fa fa-play-circle fa-lg"></i>', 'Transmissão iniciada!', apr.msg.LOCAL_MSG_COLOR],
         END_TRANSMITION: ['<i class="fa fa-stop-circle fa-lg"></i>', 'Transmissão finalizada!', apr.msg.ERROR_MSG_COLOR],
         START_PARTICIPATION: ['<i class="material-icons">videocam</i>', 'Participação iniciada!', apr.msg.LOCAL_MSG_COLOR],
@@ -153,6 +153,7 @@ const conf = {
 const dom = {
     /* Elementos dinâmicos do DOM */
     ADDRESS: '#address',
+    ALERT_SHARE: '#alert-share',
     ASSUNTO: '#assunto',
     BG_DARK: '#bgdark',
     BROADCASTER: '#broadcaster',
@@ -178,6 +179,11 @@ const dom = {
     COUNT_SEND_FILES: '#count-send-files',
     COUNT_PEDIR: '#count-pedir-vez',
     CTL_PEDIR: '#control-pedir-vez',
+    CURRENT_HOUR: '#currentHour',
+    CURRENT_MIN: '#currentMin',
+    CURRENT_SEC: '#currentSec',
+    CURRENT_TIME: '#current-time',
+    CURRENT_USERS: '#current-users',
     CURSO_LIST: '#cursos-list',
     DISCONNECT_BTN: '.disconnect-btn',
     DIV_BTN_END: '#div-end',
@@ -198,6 +204,7 @@ const dom = {
     FILE_EXP: '#exp-files',
     FILE_LIST: '#file-list',
     FILE_MIN: '#min-files',
+    FILE_SIDE_BAR: '#files-side-bar',
     FILE_TRANSFERING: '#file-transfering',
     FIRST_VIDEO: '#video-preview',
     IN_ROOM: '#in-room',
@@ -237,6 +244,7 @@ const dom = {
     REQUIRED: '[required]',
     ROOM: '#room-id',
     ROOM_LOBBY: '#initial-access',
+    ROOM_STATUS: '#room-status',
     ROOM_TYPE: '#room-type',
     SCREEN: '#toggle-screen',
     SCRIPT: 'script',
@@ -288,6 +296,7 @@ const misc = {
     CLASS_INVISIBLE: 'obj-invisible',
     CLASS_VISIBLE: 'obj-visible',
     CLASS_WIDTH_LIMIT: 'width-limit',
+    CLASS_WIDTH_LIMIT_NO: 'width-no-limit',
     CLASS_MAIN_CONTAINER: 'main-container',
     CLASS_MAIN_CONTAINER_FULL: 'main-container-full',
     CLASS_SUCCESS_COLOR: apr.msg.LOCAL_MSG_COLOR,

@@ -3,7 +3,7 @@
         <div id='div-controller' class='d-none col s12 center'>
             <div id='nav-controller' class='container'>
                 <!-- Barra de controle de mídia -->
-                <div class='controllers-container blue-text center black'>
+                <div class='controllers-container blue-text center dark-grey'>
                     <span id='li-toggle-camera'>
                         <a id='toggle-camera' data-active='enabled' class='media-control btn-floating btn-large' data-position='top' title='Camera'>
                             {!! $default->videocamIcon !!}
@@ -44,17 +44,32 @@
                             {!! $default->panToolIcon !!} 
                         </a>
                     </span>
-                    <span id='li-sharing-file'>
-                        <a id='file-sharing' data-active='enabled' class='media-control btn-floating btn-large' title='Compartilhar arquivos'>
-                            {!! $default->shareIcon !!} 
-                        </a>
-                    </span>
                     <span id='control-pedir-vez'>
                         <a id='lista-pedir-vez' data-active='enabled' class='media-control btn-floating btn-large modal-trigger' data-position='top' title='Solicitações' href='#msg-solicita'>
                             {!! $default->panToolIcon !!} 
                         </a>
                         <span id='count-pedir-vez' href='#msg-solicita' class='btn-floating btn-small red darken-4 pulse modal-trigger'>0</span>
                     </span>
+                    <span id='li-sharing-file'>
+                        <a id='file-sharing' data-active='enabled' class='media-control btn-floating btn-large' title='Compartilhar arquivos'>
+                            {!! $default->shareIcon !!} 
+                        </a>
+                    </span>
+                    <span id='min-files'>
+                        <span id='min-send-files' title='Arquivos Enviados'>
+                            <a href='#' id='view-send-files' class='sidenav-trigger media-control btn-floating btn-large' data-target='files-side-bar'>
+                                {!! $default->blueCloudUploadLg !!}
+                            </a>
+                            <b><span id='count-send-files' class='inform-files btn-floating btn-small white-text red darken-4'>0</span></b>
+                        </span>
+                        <span id='min-receive-files' title='Arquivos Recebidos'>
+                            <a href='#' id='view-receive-files' class='sidenav-trigger media-control btn-floating btn-large' data-target='files-side-bar'>
+                                {!! $default->blueCloudDownloadLg !!}
+                            </a>
+                            <b><span id='count-receive-files' class='inform-files btn-floating btn-small white-text red darken-4'>0</span></b>
+                        </span>
+                    </span>
+
                     <input id='pedir-vez' type='hidden' disabled readonly value='0' />
                 </div>
             </div>

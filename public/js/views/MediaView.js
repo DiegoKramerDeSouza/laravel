@@ -27,11 +27,11 @@ class MediaView {
         this._solicitationList = doc.TAG(dom.SOL_LIST);
         this._fileTransfering = doc.TAG(dom.FILE_TRANSFERING);
         this._fileList = doc.TAG(dom.FILE_LIST);
+        this._fileSideBar = doc.TAG(dom.FILE_EXP);
         this._listContent = '';
         this._countReceiveFiles = 0;
         this._countSendFiles = 0;
         this._otherVideos = false;
-        this._openedFiles = false;
     }
 
     setInvisible(elem) {
@@ -109,34 +109,20 @@ class MediaView {
 
     openIncomingVideos(mainVideo, inVideo) {
 
-        if (this._openedFiles) {
-            mainVideo.classList.remove("m8");
-            mainVideo.classList.add("m6");
-        } else {
-            mainVideo.classList.remove("m10");
-            mainVideo.classList.add("m8");
-        }
+        mainVideo.classList.remove("m8");
+        mainVideo.classList.add("m7");
         inVideo.classList.add("m3");
-        inVideo.classList.remove("m1");
+        inVideo.classList.remove("m2");
         this._otherVideos = true;
-        setTimeout(() => {
-            //$(dom.DIV_INCOMING_VIDEO).fadeIn(300);
-        }, 500);
     }
 
     closeIncomingVideos(mainVideo, inVideo) {
 
-        if (this._openedFiles) {
-            mainVideo.classList.add("m8");
-            mainVideo.classList.remove("m6");
-        } else {
-            mainVideo.classList.add("m10");
-            mainVideo.classList.remove("m8");
-        }
-        //$(dom.DIV_INCOMING_VIDEO).fadeOut(300);
-        this._otherVideos = false;
-        inVideo.classList.add("m1");
+        mainVideo.classList.add("m8");
+        mainVideo.classList.remove("m7");
+        inVideo.classList.add("m2");
         inVideo.classList.remove("m3");
+        this._otherVideos = false;
     }
 
     startShare() {
@@ -244,8 +230,9 @@ class MediaView {
 
         this._pageMainContainer.classList.remove(misc.CLASS_MAIN_CONTAINER);
         this._pageMainContainer.classList.add(misc.CLASS_MAIN_CONTAINER_FULL);
+        this._spanMainVideo.classList.add(misc.CLASS_WIDTH_LIMIT_NO);
         this._spanMainVideo.classList.remove(misc.CLASS_WIDTH_LIMIT);
-        this._spanMainVideo.classList.add('col', 's12');
+        //this._spanMainVideo.classList.add('col', 's12');
     }
 
     shrinkVideoSize() {
@@ -253,19 +240,33 @@ class MediaView {
         this._pageMainContainer.classList.remove(misc.CLASS_MAIN_CONTAINER_FULL);
         this._pageMainContainer.classList.add(misc.CLASS_MAIN_CONTAINER);
         this._spanMainVideo.classList.add(misc.CLASS_WIDTH_LIMIT);
-        this._spanMainVideo.classList.remove('col', 's12');
+        this._spanMainVideo.classList.remove(misc.CLASS_WIDTH_LIMIT_NO);
+        //this._spanMainVideo.classList.remove('col', 's12');
     }
 
     adjustStreamScreen() {
+
         $(dom.BG_DARK).fadeIn(500);
         $(dom.ROOM_LOBBY).slideUp(500);
         $(dom.VIDEOS_PANEL).slideDown(500);
+        setTimeout(() => {
+            doc.TAG(dom.ALERT_SHARE).click();
+            $(dom.ROOM_STATUS).show(500);
+            $(dom.DIV_MAIN_VIDEO).show(500);
+            $(dom.DIV_INCOMING_VIDEO).show(500);
+            doc.TAG(dom.ROOM_STATUS).classList.remove("obj-invisible");
+            doc.TAG(dom.DIV_MAIN_VIDEO).classList.remove("obj-invisible");
+            doc.TAG(dom.DIV_INCOMING_VIDEO).classList.remove("obj-invisible");
+        }, 1000);
     }
 
-    adjustChatPanel() {
+    adjustChatFilePanel() {
+
         let chatHeight = window.screen.height;
         this._chatPanel.style.height = (chatHeight - 250) + 'px';
         this._chatPanel.style.maxHeight = (chatHeight - 250) + 'px';
+        this._fileSideBar.style.height = (chatHeight - 200) + 'px';
+        this._fileSideBar.style.maxHeight = (chatHeight - 200) + 'px';
     }
 
     writeReceiveMessage(message, pContainer, isOpen) {
@@ -340,12 +341,12 @@ class MediaView {
 
     adjustBroadCaster() {
 
-        this._prepareFileMenu(dom.LI_PERDIR, dom.DIV_RECEIVE_FILES, dom.MIN_SEND);
+        this._prepareFileMenu(dom.LI_PERDIR, dom.DIV_RECEIVE_FILES, dom.MIN_RECEIVE);
     }
 
     adjustEspect() {
 
-        this._prepareFileMenu(dom.CTL_PEDIR, dom.DIV_UPLOADED_FILES, dom.MIN_RECEIVE);
+        this._prepareFileMenu(dom.CTL_PEDIR, dom.DIV_UPLOADED_FILES, dom.MIN_SEND);
     }
 
     _prepareFileMenu(pedir, files, filesMin) {
@@ -353,7 +354,7 @@ class MediaView {
         this._adjustMediaMenu();
         $(pedir).hide();
         $(files).hide();
-        $(filesMin).fadeIn(500);
+        $(filesMin).hide();
     }
 
     createProgressBar(file) {
@@ -377,7 +378,10 @@ class MediaView {
         let div = document.createElement('div');
         this._countSendFiles++;
         doc.TAG(dom.COUNT_SEND_FILES).innerHTML = this._countSendFiles;
-        div.innerHTML = `<span class="fa fa-cloud text-darken-1"></span> <b>${name}</b> (${this._convertSize(size)})<br/>`;
+        div.innerHTML = `<div class="p-5 rounded-borders grey darken-4 truncate" title="${name}">
+                            <span class="fa fa-cloud text-darken-1"></span> <b>${name}</b><br/>
+                            Tamanho: ${this._convertSize(size)}
+                        </div>`;
         filesSended.insertBefore(div, filesSended.firstChild);
     }
 
@@ -385,11 +389,17 @@ class MediaView {
 
         file.url = URL.createObjectURL(file);
         let div = document.createElement('div');
-        div.innerHTML = `<a class="shared-file blue-text" href="${file.url}" download="${file.name}"><span class="fa fa-download text-darken-1"></span> <b>${file.name}</b> (${this._convertSize(file.size)})</a><br/>`;
+        div.innerHTML = `<div class="p-5 rounded-borders grey darken-4 truncate">
+                            <a class="shared-file blue-text" href="${file.url}" download="${file.name}" title="${file.name}">
+                                <span class="fa fa-download text-darken-1"></span> <b>${file.name}</b><br>
+                                Tamanho: ${this._convertSize(file.size)}<br>
+                            </a>
+                        </div>`;
         connection.filesContainer.insertBefore(div, connection.filesContainer.firstChild);
     }
 
     _convertSize(bytes) {
+
         let sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
         if (bytes == 0) return '0 Byte';
         let i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
@@ -414,63 +424,6 @@ class MediaView {
     fadeOutElem(elem, delay) {
 
         $(elem).fadeOut(delay);
-    }
-
-    toggleFileExp(toggle) {
-
-        toggle ? this._expFiles() : this._minFiles();
-    }
-
-    _expFiles() {
-
-        this._openedFiles = true;
-        this._divMainVideo.classList.add("obj-invisible");
-        this._divIncomingVideo.classList.add("obj-invisible");
-        setTimeout(() => {
-            $(dom.FILE_MIN).hide();
-            $(dom.FILE_EXP).fadeIn(300);
-            this._fileList.classList.add("m3");
-            this._fileList.classList.remove("m1");
-        }, 300);
-        setTimeout(() => {
-            if (this._otherVideos) {
-                this._divMainVideo.classList.add("m6");
-                this._divMainVideo.classList.remove("m8");
-            } else {
-                this._divMainVideo.classList.add("m8");
-                this._divMainVideo.classList.remove("m10");
-            }
-        }, 500);
-        setTimeout(() => {
-            this._divMainVideo.classList.remove("obj-invisible");
-            this._divIncomingVideo.classList.remove("obj-invisible");
-        }, 900);
-    }
-
-    _minFiles() {
-
-        this._openedFiles = false;
-        this._divMainVideo.classList.add("obj-invisible");
-        this._divIncomingVideo.classList.add("obj-invisible");
-        setTimeout(() => {
-            this._fileList.classList.add("m1");
-            this._fileList.classList.remove("m3");
-            $(dom.FILE_EXP).hide();
-            $(dom.FILE_MIN).fadeIn(300);
-        }, 300);
-        setTimeout(() => {
-            if (this._otherVideos) {
-                this._divMainVideo.classList.add("m8");
-                this._divMainVideo.classList.remove("m6");
-            } else {
-                this._divMainVideo.classList.add("m10");
-                this._divMainVideo.classList.remove("m8");
-            }
-        }, 500);
-        setTimeout(() => {
-            this._divMainVideo.classList.remove("obj-invisible");
-            this._divIncomingVideo.classList.remove("obj-invisible");
-        }, 900);
     }
 
 }

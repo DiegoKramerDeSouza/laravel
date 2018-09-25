@@ -40,6 +40,7 @@ class DefaultElements extends Model
         $this->shareLargeIcon =             "<i class='material-icons large'>share</i>";
         $this->sizeIcon =                   "<i class='material-icons'>zoom_out_map</i>";
         $this->swapIcon =                   "<i class='material-icons'>swap_horiz</i>";
+        $this->timeIconLeft =               "<i class='material-icons left'>query_builder</i>";
         $this->transmitLargeIcon =          "<i class='material-icons large'>wifi_tethering</i>";
         $this->tvBlueIcon =                 "<i class='material-icons blue-text'>live_tv</i>";
         $this->tvIcon =                     "<i class='material-icons'>live_tv</i>";
@@ -126,5 +127,8 @@ class DefaultElements extends Model
         'PE'=>'Pernambuco','PI'=>'Piauí','RJ'=>'Rio de Janeiro','RN'=>'Rio Grande do Norte',
         'RS'=>'Rio Grande do Sul','RO'=>'Rondônia','RR'=>'Roraima','SC'=>'Santa Catarina','SP'=>'São Paulo',
         'SE'=>'Sergipe','TO'=>'Tocantins'];
+
+        //Textos
+        $this->connecting = "Conectando...";
     }
 }

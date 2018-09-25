@@ -3,11 +3,11 @@
     <div id='video-panel' class='d-none'>
         <div class='col s12'>
             <!--Card de vídeo-->
-            <div class='card grey darken-4 '>
-                <div class='card-content rounded-borders'>
-                    <div id='class-suptitle' class='black p-10 rounded-borders'>
+            <div class='card grey darken-4 rounded-borders'>
+                <div id='this-room' class='card-content rounded-borders'>
+                    <div id='class-suptitle' class='dark-grey p-10 rounded-borders'>
                         <span id='screen-share-alert' title='Você está transmintindo a sua tela' class='d-none left'>
-                            <a href='#' class='btn-floating red darken-4 pulse'>{!! $default->tvIcon !!}</a>
+                            <a href='#this-room' id='alert-share' class='btn-floating red darken-4 pulse'>{!! $default->tvIcon !!}</a>
                         </span>&nbsp;
                         <span id='class-title' class='white-text'>
                             <!-- Matéria: Assunto -->
@@ -19,7 +19,7 @@
                         <!-- Loading de conteúdo -->
                         <div id='div-connect' class='col s12'>
                             <div align='center' class='mt-50'>
-                                <h6 class='blue-text'>Conectando...</h6>
+                                <h6 class='blue-text'>{!! $default->connecting !!}</h6>
                             </div>
                             <div class="progress grey darken-4">
                                 <div class="indeterminate blue"></div>
@@ -27,52 +27,23 @@
                         </div>
                          
                         <div class='row'>
-                            <div id='file-list' class='col s12 m1 blue-text'>
-                                
-                                <div id='min-files' align='center'>
-                                    <span id='min-send-files' title='Arquivos Enviados' class='d-none'>
-                                        <a href='#' id='call-send-files' class='media-control btn-floating btn-large'>
-                                            {!! $default->blueCloudUploadLg !!}
-                                        </a>
-                                        <b><span id='count-send-files' class='inform-files btn-floating btn-small white-text red darken-4'>0</span></b>
-                                    </span>
-                                    <span id='min-receive-files' title='Arquivos Recebidos' class='d-none'>
-                                        <a href='#' id='call-receive-files' class='media-control btn-floating btn-large'>
-                                            {!! $default->blueCloudDownloadLg !!}
-                                        </a>
-                                        <b><span id='count-receive-files' class='inform-files btn-floating btn-small white-text red darken-4'>0</span></b>
-                                    </span>
-                                </div>
-                                <div id='exp-files' class='d-none'>
-                                    <div id='send-files' class='blue-text' align='left'>
-                                        <div class=''>
-                                            <h6 class='truncate'><a href='#' id='call-send-min'>{!! $default->chevronLeftLeft !!} Arquivos Enviados:</a></h6>
-                                            <div class='divider'></div>
-                                        </div>
-                                        <div class="files-pool p-10 mt-10 rounded-borders">
-                                            <div id='div-sended-files' class='truncate'>
-                                                <!-- Lista de arquivos enviados -->
-                                            </div>
-                                        </div>
+                            <div id='room-status' class='col s12 m2 blue-text d-none obj-invisible'>
+                                <div class='row' align='center'>
+                                    <!-- STATUS DA SALA -->
+                                    <div class="col s5 m12 push-s1" title='Tempo conectado'>
+                                        {!! $default->timeIconLeft !!} 
+                                        <span id='current-time' class='white-text left'>
+                                            <span id='currentHour'>--</span>:<span id='currentMin'>--</span>:<span id='currentSec'>--</span>
+                                        </span>
                                     </div>
-                                    <div id='receive-files' class='blue-text' align='left'>
-                                        <div class=''>
-                                            <h6 class='truncate'><a href='#' id='call-receive-min'>{!! $default->chevronLeftLeft !!} Arquivos Recebidos:</a></h6>
-                                            <div class='divider'></div>
-                                        </div>
-                                        <div class="files-pool p-10 mt-10 rounded-borders">
-                                            <div id='file-transfering' class='blue-text '></div>
-                                            <div id='div-file-sharing' class='truncate'>
-                                                <!-- Lista de arquivos compartilhados -->
-                                            </div>
-                                        </div>
+                                    <div class="col s5 m12 push-s1" title='Espectadores'>
+                                        {!! $default->peopleIconLeft !!} <span id='current-users' class='white-text left'>0</span>
                                     </div>
                                 </div>
-                                <br/>
                             </div>                 
-                            <div id='div-main-video' class='col s12 m10'>
-                                <div class='row'>
-                                    <div id='main-video' align='center' class='inroom mainView col s12'>
+                            <div id='div-main-video' class='col s12 m8 d-none obj-invisible'>
+                                <div class=''>
+                                    <div id='main-video' align='center' class='inroom mainView'>
                                         <div id='videos'>
                                             <!--VÍDEO PRINCIPAL-->
                                             <div id='span-video-preview' data-status='disabled' data-position='main' class='width-limit first-video'>
@@ -87,7 +58,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div id='div-incoming-videos' data-active='out' class='col s12 m1'>
+                            <div id='div-incoming-videos' data-active='out' class='col s12 m2 d-none obj-invisible' align='center'>
                                 <div class='row'>
                                     <!--TERCEIRO VÍDEO-->
                                     <div id='span-video-preview-3rd' align="center" data-status='disabled' data-position='second' class='col s12 d-none'>
@@ -111,9 +82,9 @@
                                 <!-- Controle de espectadores conectados -->
                                 <ul id="connected-users" class='collapsible popout d-none'>
                                     <li>
-                                        <div class="collapsible-header white-text black"><b>
+                                        <div class="collapsible-header white-text dark-grey">
                                             <span class="blue-text">{!! $default->peopleIconLeft !!}</span>
-                                            </i>Espectadores: <span id="users-counter" data-target='{{ Auth::user()->type  }}' class="blue-text">0</span></b>
+                                            <b> Espectadores: <span id="users-counter" data-target='{{ Auth::user()->type  }}' class="blue-text">0</span></b>
                                         </div>
                                         <div id="connected-users-list" class="collapsible-body active white-text">
                                             <!-- Lista de espectadores ativos -->
@@ -151,4 +122,31 @@
             </div>
         </div>
     </ul>
-    
+    <!-- Sidebar de painel de arquivos enviados/recebidos -->
+    <div id='files-side-bar' class='sidenav z-depth-5 grey darken-4'>
+        <h4 class='blue-text m-10'><b>Web<span class='white-text'>Tv</span></b></h4>
+        <div class='divider'></div>
+        <div id='exp-files' align='left'>
+            <div id='send-files' class='blue-text'>
+                <div class='p-10'>
+                    <h6><b>{!! $default->blueCloudUpload !!} Arquivos Enviados</b></h6>
+                </div>
+                <div id='send-pool' class='files-pool p-10 m-10 dark-grey rounded-borders'>
+                    <div id='div-sended-files' class=''>
+                        <!-- Lista de arquivos enviados -->
+                    </div>
+                </div>
+            </div>
+            <div id='receive-files' class='blue-text'>
+                <div class='p-10'>
+                    <h6><b>{!! $default->blueCloudDownload !!} Arquivos Recebidos</b></h6>
+                </div>
+                <div id='receive-pool' class='files-pool p-10 m-10 dark-grey rounded-borders'>
+                    <div id='file-transfering' class='blue-text '></div>
+                    <div id='div-file-sharing'>
+                        <!-- Lista de arquivos compartilhados -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

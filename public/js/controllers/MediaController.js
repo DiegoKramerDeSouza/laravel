@@ -113,10 +113,13 @@ class MediaController {
         return value ? false : true;
     }
 
-    initiateStream() {
+    initiateStream(room) {
 
         this._mediaView.adjustStreamScreen();
-        this._mediaView.adjustChatPanel();
+        this._mediaView.adjustChatFilePanel();
+        setTimeout(() => {
+            room.initiateClock();
+        }, 500);
     }
 
     getControlSharing() {
@@ -448,6 +451,7 @@ class MediaController {
     incomingFile(event, connection) {
 
         let blob = this._dataURItoBlob(event.data.dataURL);
+        console.log(event.data);
         let file = new File([blob], event.data.fileName, {
             type: event.data.fileType
         });
@@ -459,11 +463,6 @@ class MediaController {
     createProgressBar(file) {
 
         this._mediaView.createProgressBar(file);
-    }
-
-    openExpFiles(toggle) {
-
-        this._mediaView.toggleFileExp(toggle);
     }
 
     _dataURItoBlob(dataURI) {

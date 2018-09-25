@@ -6,6 +6,7 @@ class RoomView {
     constructor() {
 
         this._countUsers = doc.TAG(dom.LABEL_USERS);
+        this._currentUsers = doc.TAG(dom.CURRENT_USERS);
         this._roomLabel = doc.TAG(dom.CLASS_TITLE);
         this._label;
         this._publicRoomsDiv = doc.TAG(dom.PUBLIC_CONFERENCE);
@@ -18,12 +19,20 @@ class RoomView {
         this._listOfConCards = '';
     }
 
+    setCurrentTime(hour, minute, second) {
+
+        doc.TAG(dom.CURRENT_HOUR).innerHTML = hour;
+        doc.TAG(dom.CURRENT_MIN).innerHTML = minute;
+        doc.TAG(dom.CURRENT_SEC).innerHTML = second;
+    }
+
     changeCounter(value) {
         if (this._countUsers) {
             if (this._countUsers.getAttribute('data-target') == '0') {
                 this._countUsers.innerHTML = value;
             }
         }
+        this._currentUsers.innerHTML = value;
     }
 
     createRoomLabel(icon, classe, assunto) {
