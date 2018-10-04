@@ -22,7 +22,7 @@ const doc = {
     COOKIE_VIDEO_DEVICE: "videoDevice",
     URL_SALAS_SAVE: `${location.origin}/salas/salvar`,
     URL_SALAS_UPDATE: `${location.origin}/salas/update`,
-    VERSION: "1.1.0.80"
+    VERSION: "1.1.0.81"
 }
 
 const apr = {
@@ -48,7 +48,6 @@ const conf = {
         ON_LOBBY: true,
         ON_PARTICIPATION: false,
         LOCK_SOLICITATION: false,
-        SINGLE_CON: false,
         FILE_SHARING: true,
         WAITING_FOR_VIDEO: 'waiting',
         NUMBER_OF_ROOMS: 0,
@@ -73,9 +72,12 @@ const conf = {
         SESSION_DATA: true,
         SESSION_BROADCAST: true,
         SESSION_ONEWAY: true,
+        SET_BAND_LIMIT: false,
         SHARE_DENIED: 'permission-denied',
+        SINGLE_CON: false,
         URL: 'https://sig.lrbtecnologia.com:8080/',
-        //URL: 'https://rtcmulticonnection.herokuapp.com:443/'
+        //URL: 'https://rtcmulticonnection.herokuapp.com:443/',
+        //URL: 'https://webrtcweb.com:9001/'
     },
     socket: {
         /*Constantes de padronização de mensagens SOCKET.IO */
@@ -91,16 +93,21 @@ const conf = {
         /*Atributos de inicialização de SALAS para espectadores */
         ADMIN_ACCESS: 'ADMIN',
         ALLOWED: false,
+        TRANSMITING: false,
         COUNT_ROOMS: 0
     },
     req: {
         /*Padrão de mensagens de chat com REQUISIÇÕES/RESPOSTAS a ações */
-        PEDE_VEZ: '@PedeAVez',
-        RESP_PEDE_VEZ: '@PedeAVez:',
-        END_SHARE: '@Finaliza-Share',
-        END_PARTICIPATION: '@Finaliza-Participacao',
         END_PARTICIPANT: '@Finaliza-Participante',
+        END_PARTICIPATION: '@Finaliza-Participacao',
+        END_SHARE: '@Finaliza-Share',
+        PEDE_VEZ: '@PedeAVez',
         RECEIVE_FILE: '@Receive-File',
+        REJOIN_ROOM: '@RejoinRoom',
+        REQ_ALLOW: 'allow',
+        REQ_DENY: 'deny',
+        RESP_PEDE_VEZ: '@PedeAVez:',
+        USERS_STATUS: '@UsersStatus'
     },
     message: {
         /*Tempo padrão de exibição das MENSAGENS de toast */
@@ -202,7 +209,8 @@ const dom = {
     ERROR_LEVEL: '#error_level',
     EXIT_SCREEN: '#exit-fullscreen',
     FILE_EXP: '#exp-files',
-    FILE_LIST: '#file-list',
+    FILE_LIST_SENDED: '#view-send-files',
+    FILE_LIST_REICEIVED: '#view-receive-files',
     FILE_MIN: '#min-files',
     FILE_SIDE_BAR: '#files-side-bar',
     FILE_TRANSFERING: '#file-transfering',

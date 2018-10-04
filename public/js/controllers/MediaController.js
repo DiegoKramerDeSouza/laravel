@@ -113,13 +113,10 @@ class MediaController {
         return value ? false : true;
     }
 
-    initiateStream(room) {
+    initiateStream() {
 
         this._mediaView.adjustStreamScreen();
         this._mediaView.adjustChatFilePanel();
-        setTimeout(() => {
-            room.initiateClock();
-        }, 500);
     }
 
     getControlSharing() {
@@ -136,7 +133,7 @@ class MediaController {
                         targetVideo.play();
                     })
                     .catch(error => {
-                        console.log('ERRO AO INICIALIZAR VIDEO...', error);
+                        console.log('Erro ao inicializar vídeo...', error);
                         this.initiateVideo(targetVideo);
                     });
                 return;
@@ -405,6 +402,11 @@ class MediaController {
         }
     }
 
+    writeChatMessage(user, message) {
+
+        return this._mediaView.writeChatMessage(user, message);
+    }
+
     writeMessage(msg, rmt) {
 
         let msgbox;
@@ -418,6 +420,11 @@ class MediaController {
     disableFileSharing() {
 
         this._mediaView.fileSharingOff();
+    }
+
+    disableFileSharingList() {
+
+        this._mediaView.fileSharingListOff();
     }
 
     fileSharing(connection, count) {

@@ -39,5 +39,6 @@ function checkAvaliableRooms() {
 
 function searchAvaliableRooms() {
 
+    webrtc.setUsersInformation();
     onLobby = webrtc.checkRooms();
 }

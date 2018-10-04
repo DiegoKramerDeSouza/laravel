@@ -26,7 +26,8 @@ class MediaView {
         this._countPedirVez = doc.TAG(dom.COUNT_PEDIR);
         this._solicitationList = doc.TAG(dom.SOL_LIST);
         this._fileTransfering = doc.TAG(dom.FILE_TRANSFERING);
-        this._fileList = doc.TAG(dom.FILE_LIST);
+        this._fileListReceive = doc.TAG(dom.FILE_LIST_REICEIVED);
+        this._fileListSend = doc.TAG(dom.FILE_LIST_SENDED);
         this._fileSideBar = doc.TAG(dom.FILE_EXP);
         this._listContent = '';
         this._countReceiveFiles = 0;
@@ -62,6 +63,7 @@ class MediaView {
 
         this._mute.classList.add(misc.DISABLED_COLOR);
         this._mute.innerHTML = misc.ICON_MUTE_MIC;
+        this._mute.disabled = true;
         $(dom.LI_MUTE).hide();
     }
 
@@ -83,6 +85,7 @@ class MediaView {
 
         this._vol.classList.add(misc.DISABLED_COLOR);
         this._vol.innerHTML = misc.ICON_VOL_OFF;
+        this._vol.disabled = true;
         $(dom.LI_VOLUME).hide();
     }
 
@@ -104,6 +107,7 @@ class MediaView {
 
         this._cam.classList.add(misc.DISABLED_COLOR);
         this._cam.innerHTML = misc.ICON_CAM_OFF;
+        this._cam.disabled = true;
         $(dom.LI_CAM).hide();
     }
 
@@ -145,6 +149,7 @@ class MediaView {
         this._share.disabled = true;
         this._share.classList.add(misc.DISABLED_COLOR);
         this._share.innerHTML = misc.ICON_SHARE_ON;
+        this._share.disabled = true;
         $(dom.LI_SHARE).hide();
     }
 
@@ -171,6 +176,7 @@ class MediaView {
         this._participation.classList.remove(misc.HILIGHT_COLOR);
         this._participation.classList.add(misc.OFF_COLOR);
         this._participation.innerHTML = misc.ICON_CAM_OFF;
+        this._participation.disabled = true;
         $(dom.DIV_ENTER).hide();
     }
 
@@ -194,6 +200,7 @@ class MediaView {
     pedirOff() {
 
         this._pedir.classList.add(misc.OFF_COLOR);
+        this._pedir.disabled = true;
         $(dom.PEDIR).hide();
     }
 
@@ -201,7 +208,19 @@ class MediaView {
 
         this._sharedFile.classList.remove(misc.HILIGHT_COLOR);
         this._sharedFile.classList.add(misc.OFF_COLOR);
+        this._sharedFile.disabled = true;
         $(dom.BTN_FILE_SHARING).hide();
+    }
+
+    fileSharingListOff() {
+
+        this._fileListReceive.classList.remove(misc.HILIGHT_COLOR);
+        this._fileListSend.classList.remove(misc.HILIGHT_COLOR);
+        this._fileListReceive.classList.add(misc.OFF_COLOR);
+        this._fileListSend.classList.add(misc.OFF_COLOR);
+        this._fileListReceive.disabled = true;
+        this._fileListSend.disabled = true;
+        $(dom.FILE_LIST).hide();
     }
 
     noFileSharing() {
@@ -232,7 +251,6 @@ class MediaView {
         this._pageMainContainer.classList.add(misc.CLASS_MAIN_CONTAINER_FULL);
         this._spanMainVideo.classList.add(misc.CLASS_WIDTH_LIMIT_NO);
         this._spanMainVideo.classList.remove(misc.CLASS_WIDTH_LIMIT);
-        //this._spanMainVideo.classList.add('col', 's12');
     }
 
     shrinkVideoSize() {
@@ -241,7 +259,6 @@ class MediaView {
         this._pageMainContainer.classList.add(misc.CLASS_MAIN_CONTAINER);
         this._spanMainVideo.classList.add(misc.CLASS_WIDTH_LIMIT);
         this._spanMainVideo.classList.remove(misc.CLASS_WIDTH_LIMIT_NO);
-        //this._spanMainVideo.classList.remove('col', 's12');
     }
 
     adjustStreamScreen() {
@@ -267,6 +284,13 @@ class MediaView {
         this._chatPanel.style.maxHeight = (chatHeight - 250) + 'px';
         this._fileSideBar.style.height = (chatHeight - 200) + 'px';
         this._fileSideBar.style.maxHeight = (chatHeight - 200) + 'px';
+    }
+
+    writeChatMessage(user, message) {
+
+        let texto = `<b class='small'>${user}</b> :<br>${message}`;
+        texto = btoa(texto);
+        return texto;
     }
 
     writeReceiveMessage(message, pContainer, isOpen) {

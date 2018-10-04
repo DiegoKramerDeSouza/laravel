@@ -19,11 +19,11 @@ class RoomView {
         this._listOfConCards = '';
     }
 
-    setCurrentTime(hour, minute, second) {
+    setCurrentTime(...time) {
 
-        doc.TAG(dom.CURRENT_HOUR).innerHTML = hour;
-        doc.TAG(dom.CURRENT_MIN).innerHTML = minute;
-        doc.TAG(dom.CURRENT_SEC).innerHTML = second;
+        doc.TAG(dom.CURRENT_HOUR).innerHTML = time[0];
+        doc.TAG(dom.CURRENT_MIN).innerHTML = time[1];
+        doc.TAG(dom.CURRENT_SEC).innerHTML = time[2];
     }
 
     changeCounter(value) {

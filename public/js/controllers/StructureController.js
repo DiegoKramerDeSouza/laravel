@@ -18,7 +18,7 @@ class StructureController {
         this._connectList = doc.TAG(dom.USERS_LIST);
         this._roomType = doc.TAG(dom.ROOM_TYPE);
         this._countRooms = conf.str.NUMBER_OF_ROOMS;
-        this._singlecon = conf.str.SINGLE_CON;
+        this._singlecon = conf.con.SINGLE_CON;
     }
 
     initiateStructure() {

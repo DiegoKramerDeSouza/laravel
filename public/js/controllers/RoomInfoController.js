@@ -9,6 +9,7 @@ class RoomInfoController {
         this._currentUser = doc.TAG(dom.NAME);
         this._myClass = doc.TAG(dom.TARGET);
         this._countUsers = doc.TAG(dom.LABEL_USERS);
+
         this._view = new RoomView();
         this._hours = 0;
         this._minutes = 0;
@@ -16,6 +17,8 @@ class RoomInfoController {
         this._formH = '00';
         this._formM = '00';
         this._formS = '00';
+        this._currentTime;
+        this.stoped = true;
     }
 
     initiateRoomInfo() {
@@ -34,22 +37,29 @@ class RoomInfoController {
     initiateClock() {
 
         setTimeout(() => {
-            this._seconds++;
-            if (this._seconds >= 60) {
-                this._seconds = 0;
-                this._minutes++;
-                if (this._minutes >= 60) {
-                    this._minutes = 0;
-                    this._hours++;
-                    if (this._hours > 99) return;
-                    this._formH = this._formatTime(this._hours);
-                }
-                this._formM = this._formatTime(this._minutes);
+            if (!this.stoped) {
+                this._currentTime = this._startToCount();
+                this._view.setCurrentTime(...this._currentTime);
             }
-            this._formS = this._formatTime(this._seconds);
-            this._view.setCurrentTime(this._formH, this._formM, this._formS);
             this.initiateClock();
         }, 1000);
+    }
+
+    _startToCount() {
+
+        this._seconds++;
+        if (this._seconds >= 60) {
+            this._seconds = 0;
+            this._minutes++;
+            if (this._minutes >= 60) {
+                this._minutes = 0;
+                this._hours++;
+                this._formH = this._formatTime(this._hours);
+            }
+            this._formM = this._formatTime(this._minutes);
+        }
+        this._formS = this._formatTime(this._seconds);
+        return [this._formH, this._formM, this._formS];
     }
 
     _formatTime(value) {

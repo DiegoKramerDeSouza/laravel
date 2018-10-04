@@ -16,7 +16,7 @@ class RoomDataController {
     initiateRoomData(roomid) {
 
         let arrRoomId = roomid.split('|');
-        arrRoomId.push(this._countRooms, this._allowed, this._setClasses());
+        arrRoomId.push(this._countRooms, this._allowed, this._setClasses(), conf.datacls.TRANSMITING);
         return new RoomData(...arrRoomId);
     }
 

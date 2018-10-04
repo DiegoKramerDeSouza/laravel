@@ -8,6 +8,7 @@ class ConnectController {
         this._isPublic = conf.con.IS_PUBLIC;
         this._direction = conf.con.DIRECTION;
         this._fileSharing = conf.str.FILE_SHARING;
+        this.points = [];
     }
 
     initiateConnection() {
@@ -19,7 +20,7 @@ class ConnectController {
 
         if (incomingCon == event.stream.streamid) {
             connection.getAllParticipants().forEach((p) => {
-                if (p == event.userid) {
+                if (p + '' == event.userid + '') {
                     let peer = connection.peers[p].peer;
                     stream.stop();
                     peer.removeStream(event.stream);
@@ -29,4 +30,15 @@ class ConnectController {
         }
         return;
     }
+
+    cancelFullMeshConnection(connection, brodcaster) {
+
+        connection.extra.alteredValue = false;
+        connection.getAllParticipants().forEach((p) => {
+            if (p + '' != brodcaster + '') {
+                connection.disconnectWith(p);
+            }
+        });
+    }
+
 }
