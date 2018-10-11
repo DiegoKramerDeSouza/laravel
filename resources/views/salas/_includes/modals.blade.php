@@ -42,7 +42,7 @@
         </div>
     </div>
     <!-- Modal de seleção de dispositívos de áudio e vídeo -->
-    <div id='choose-devices' class='modal'>
+    <div id='choose-devices' class='modal modal-fixed-footer'>
         <div class='modal-content'>
             <h5>
                 {!! $default->configBlueIcon !!} Dispositivos:
@@ -81,7 +81,7 @@
     <input id='confirmDevices' type='hidden' disabled readonly />
 @endif
 
-<div id='msg-informa-espectadores' class='modal'>
+<div id='msg-informa-espectadores' class='modal modal-fixed-footer'>
     <div class='modal-content'>
         <h5>
             {!! $default->usuariosBlueIcon !!} Espectadores:

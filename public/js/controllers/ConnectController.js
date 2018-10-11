@@ -18,7 +18,9 @@ class ConnectController {
 
     checkDuplicatedCon(incomingCon, event, connection) {
 
+        console.warn("RECEBEMDO --> Nova conexão: ", event.stream.streamid, incomingCon);
         if (incomingCon == event.stream.streamid) {
+            console.warn("------------> Finalizando ", event.stream.streamid, event);
             connection.getAllParticipants().forEach((p) => {
                 if (p + '' == event.userid + '') {
                     let peer = connection.peers[p].peer;

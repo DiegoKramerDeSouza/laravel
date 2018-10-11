@@ -44,6 +44,7 @@ class DefaultElements extends Model
         $this->transmitLargeIcon =          "<i class='material-icons large'>wifi_tethering</i>";
         $this->tvBlueIcon =                 "<i class='material-icons blue-text'>live_tv</i>";
         $this->tvIcon =                     "<i class='material-icons'>live_tv</i>";
+        $this->tokenUsb =                   "<i class='material-icons left'>usb</i>";
         $this->userVideoBlueIcon =          "<i class='material-icons blue-text'>ondemand_video</i>";
         $this->videocamIcon =               "<i class='material-icons'>videocam</i>";
         $this->videocamLargeIcon =          "<i class='material-icons large'>videocam</i>";

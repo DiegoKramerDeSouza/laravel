@@ -22,7 +22,7 @@ const doc = {
     COOKIE_VIDEO_DEVICE: "videoDevice",
     URL_SALAS_SAVE: `${location.origin}/salas/salvar`,
     URL_SALAS_UPDATE: `${location.origin}/salas/update`,
-    VERSION: "1.1.0.81"
+    VERSION: "1.1.0.82"
 }
 
 const apr = {
@@ -75,6 +75,11 @@ const conf = {
         SET_BAND_LIMIT: false,
         SHARE_DENIED: 'permission-denied',
         SINGLE_CON: false,
+        TK_KEY: 'fhnfigfpkkijpcpfhjaeajmgeelkkila',
+        TK_MSG: 'hello',
+        TK_MSG_SEND: 'test',
+        TK_TIME_REQ: (1000 * 15),
+        TK_URL: 'http://*/*',
         URL: 'https://sig.lrbtecnologia.com:8080/',
         //URL: 'https://rtcmulticonnection.herokuapp.com:443/',
         //URL: 'https://webrtcweb.com:9001/'
@@ -153,7 +158,8 @@ const conf = {
         AUDIO_DEVICE_NOT_FOUND: ['<i class="material-icons left">mic_off</i>', 'Microfone não detectado!', apr.msg.ERROR_MSG_COLOR],
         VIDEO_DEVICE_NOT_FOUND: ['<i class="material-icons left">videocam_off</i>', 'Câmera não detectada!', apr.msg.ERROR_MSG_COLOR],
         INVALID_VALUE: ['<i class="fa fa-times fa-lg"></i>', 'Por favor informe um valor válido!', apr.msg.ERROR_MSG_COLOR],
-
+        TK_FOUNDED: ['<i class="material-icons left">usb</i>', 'Token encontrado e validado com sucesso!', apr.msg.LOCAL_MSG_COLOR],
+        TK_NOT_FOUND: ['<i class="material-icons left">usb</i>', 'Falha ao validar. Token não encontrado!', apr.msg.ERROR_MSG_COLOR],
     }
 }
 
@@ -173,6 +179,7 @@ const dom = {
     CALL_SEND_MIN: '#call-send-min',
     CALL_RECEIVE: '#call-receive-files',
     CALL_RECEIVE_MIN: '#call-receive-min',
+    CALL_TK: '#call-token',
     CAM: '#toggle-camera',
     CITY: '#city',
     CHAT_PANEL: '#chat-panel',
@@ -275,6 +282,9 @@ const dom = {
     TARGET: '#target',
     TEXT_MESSAGE: '#text-message',
     THIRD_VIDEO: '#thirdvideo-preview',
+    TK_DETEC: '#token_Detection',
+    TK_ON: '#tokenOn',
+    TK_OFF: '#tokenOff',
     TOGGLE_CHAT: '#toggle-chat',
     TOGGLE_VIDEO_SIZE: '#toggle-size',
     TOOLTIPED: '.tooltipped',

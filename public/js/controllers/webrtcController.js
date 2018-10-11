@@ -20,6 +20,7 @@ class webrtcController {
         this._retransmitingWho;
         this._roomId;
         this._currentUsers;
+        this._mainEventStream;
     }
 
     /**
@@ -231,9 +232,9 @@ class webrtcController {
 
         this._connection.onstream = (event) => {
             let currentStream;
-            if (!this._structure.onParticipation && !event.extra.modifiedValue) {
-                this._roomInfo.inRoom.value = event.userid;
-            }
+            if (!this._structure.onParticipation && !event.extra.modifiedValue) this._roomInfo.inRoom.value = event.userid;
+            if (this._mainEventStream == undefined && event.userid != 'self') this._mainEventStream = event.stream;
+
             // Marca container onde serão exibidos os arquivos enviados e recebidos
             this._connection.filesContainer = doc.TAG(dom.DIV_FILE_SHARING);
 
@@ -243,31 +244,58 @@ class webrtcController {
              */
             if (event.type === 'remote' && this._connection.isInitiator) {
 
-                // Remove qualquer conexão duplicada
-                this._connectController.checkDuplicatedCon(this._structure.incomingCon, event, this._connection);
+                if (this._retransmiting) return;
 
+                // Remove qualquer conexão duplicada
+                //this._connectController.checkDuplicatedCon(this._structure.incomingCon, event, this._connection);
+
+                let operators = [];
                 // Conexão remota de transmissão com o broadcaster
                 if (this._structure.mainVideo != conf.str.WAITING_FOR_VIDEO) {
+
                     this._structure.incomingCon = event.stream.streamid;
                     this._media.thirdVideoPreview.srcObject = event.stream;
                     this._structure.userVideo = event.stream;
-                    if (this._structure.singleConnection) {
+
+                    if (!this._structure.singleConnection) {
                         this._connection.getAllParticipants().forEach((p) => {
-                            if (p + '' != event.userid + '') {
+                            if (p + '' != event.userid + '' && operators.indexOf(p) == -1) {
+                                let isRetransmited = false;
+                                operators.push(p);
+                                console.warn("Enviando para " + p);
                                 let peer = this._connection.peers[p].peer;
                                 event.stream.getTracks().forEach((track) => {
-                                    console.log(track, event.stream, p);
+                                    console.warn(track, event.stream, this._mainEventStream);
                                     try {
                                         peer.addTrack(track, event.stream);
                                         //this._connection.peers[p].addTrack(track, event.stream);
                                         //this._connection.peers[p].addStream(event.stream);
+                                        isRetransmited = true;
                                     } catch (e) {
-                                        console.log("Falha ao retransmitir para " + p, e);
+                                        //peer.removeTrack(track);
+                                        //peer.addTrack(track, event.stream);
+                                        isRetransmited = false;
+                                        console.error("Falha ao retransmitir para " + p, e, "TRACK: ", track, "EVENTO: ", event.stream, "INCOMING CON: ", this._structure.incomingCon);
                                     }
+
                                 });
-                                this._connection.dontAttachStream = true;
-                                this._connection.renegotiate(p);
-                                this._connection.dontAttachStream = false;
+                                if (isRetransmited) {
+                                    /*
+                                    this._connection.dontAttachStream = true;
+                                    console.warn("RENEGOCIANDO COM ", p);
+                                    this._connection.renegotiate(p);
+                                    this._connection.dontAttachStream = false;
+                                    */
+                                    let msgrash = this._mediaController.createSolicitationArray(
+                                        btoa("@Renegocie"),
+                                        this._connection.userid,
+                                        false,
+                                        false,
+                                        false
+                                    );
+                                    this._connection.send(msgrash, p);
+                                    msgrash = [];
+                                }
                             }
                         });
                     }
@@ -311,6 +339,7 @@ class webrtcController {
                     return;
                 }
 
+
             } else if (!this._structure.onParticipation && (event.type === 'remote' && event.stream.isScreen === true)) {
 
                 console.log('REMOTO COM SCREEN --> ', event.stream);
@@ -318,14 +347,14 @@ class webrtcController {
 
             } else if (!this._structure.onParticipation && (event.type === 'remote' && !event.stream.isScreen)) {
 
+                event.stream.getTracks().forEach((track) => {
+                    console.warn(track, event);
+                });
                 console.log('REMOTO SEM SCREEN --> ', event.stream);
 
                 if (this._structure.mainVideo != conf.str.WAITING_FOR_VIDEO || event.extra.modifiedValue) {
 
-                    // Inicializa tela e vídeo de participação
-                    //if (this._structure.singleConnection)
-                    //this._reconnect();
-                    console.log("I'M PEER: ", this._connection.userid, event);
+                    console.warn("I'M PEER: ", this._connection.userid, event);
                     this._participateScreen(event.stream);
 
                 } else {
@@ -345,7 +374,7 @@ class webrtcController {
                 this._roomView.changeCounter(this._structure.viewers);
 
                 // Tratamento de ação de controles de mídia==================================
-                this._media.vol.onclick = () => this._mediaController.controlVolume(currentStream);
+                this._media.vol.onclick = () => this._mediaController.controlVolume([event.stream]);
 
                 this._media.solPedir.onclick = () => {
 
@@ -518,7 +547,7 @@ class webrtcController {
                 };
                 //===========================================================================
             } else if (event.type === 'local' && event.userid == 'self') {
-                console.log('LOCAL--->', event);
+                console.log('LOCAL--->', event, this._connection);
                 this._media.previewVideo.srcObject = event.stream;
                 this._media.previewVideo.muted = true;
                 this._mediaController.initiateVideo(this._media.previewVideo);
@@ -637,7 +666,7 @@ class webrtcController {
             if (event.userid == this._roomId || this._connection.isInitiator || this._roomData.transmiting) return;
             else if (this._structure.singleConnection && (event.extra.modifiedValue && !event.extra.alteredValue)) {
                 console.log("-----> Estou me desconectando de: ", event.userid);
-                this._connection.disconnectWith(event.userid);
+                //this._connection.disconnectWith(event.userid);
             }
         };
     }
@@ -756,7 +785,7 @@ class webrtcController {
         if (event.data.userRemoved === true) {
             if (event.data.removedUserId == this._connection.userid) {
                 this._connection.close();
-                setTimeout(location.reload.bind(location), 3000);
+                setTimeout(location.reload.bind(location), 2000);
             }
             return;
         } else if (this._structure.singleConnection && (this._connection.isInitiator && (event.data && !event.data.userRemoved))) {
@@ -817,6 +846,7 @@ class webrtcController {
                 msgData[2] = chkrash[4];
                 this._structure.solicita = this._mediaController.listBox(msgData, this._structure.solicita);
                 return;
+
             } else if (chkrash[0] === btoa(conf.req.RESP_PEDE_VEZ + conf.req.REQ_ALLOW)) {
                 if (chkrash[2] === myRoom) {
                     this._structure.solicita -= 1;
@@ -824,6 +854,7 @@ class webrtcController {
                     this._structure.lockSolicitation = true;
                 }
                 return;
+
             } else if (chkrash[0] === btoa(conf.req.RESP_PEDE_VEZ + conf.req.REQ_DENY)) {
                 if (chkrash[2] === myRoom) {
                     this._structure.solicita -= 1;
@@ -831,6 +862,7 @@ class webrtcController {
                     this._structure.lockSolicitation = false;
                 }
                 return;
+
             } else if (chkrash[0] === btoa(conf.req.END_SHARE)) {
                 if (this._mediaController._videoIsMain) {
                     this._media.swapSecond.click();
@@ -838,6 +870,7 @@ class webrtcController {
                 setTimeout(() => {
                     this._mediaController.hideElem(dom.VIDEO_SECOND);
                 }, 1000);
+
             } else if (chkrash[0] === btoa(conf.req.END_PARTICIPATION)) {
                 if (!this._structure.onParticipation) {
                     this._structure.onParticipation = true;
@@ -845,12 +878,30 @@ class webrtcController {
                 }
                 this._setReconnect(false);
                 this._media.sessionAccess.click();
+
             } else if (chkrash[0] === btoa(conf.req.END_PARTICIPANT)) {
                 this._mediaController.hideElem(dom.DIV_BTN_END);
                 this._retransmiting = false;
                 this._retransmitingWho = undefined;
+
             } else if (chkrash[0] === btoa(conf.req.RECEIVE_FILE)) {
                 this._mediaController.createProgressBar(chkrash[1]);
+
+            } else if (chkrash[0] === btoa("@Renegocie")) {
+
+                this._connection.attachStreams.forEach((stream) => {
+                    console.log("Removendo stream: ", stream);
+                    this._connection.getAllParticipants().forEach((p) => {
+                        let peer = this._connection.peers[p].peer;
+                        stream.stop();
+                        peer.removeStream(stream);
+                    });
+                });
+                setTimeout(() => {
+                    console.warn("Renegociando com ", chkrash);
+                    this._connection.renegotiate(chkrash[1]);
+                }, 1000);
+
             } else {
                 return;
             }
@@ -988,6 +1039,11 @@ class webrtcController {
                 this._saveRoom($postData, $resource);
                 // Inicia contagem de tempo
                 this._roomInfoController.stoped = false;
+                // Inicializa verificação de token caso não seja um dispositivo Mobile
+                if (!DetectRTC.isMobileDevice) {
+                    $(dom.TK_DETEC).show();
+                    $(dom.CALL_TK).click();
+                }
             } else {
                 this._alerta.initiateMessage(conf.message.FORM_ALERT);
             }
@@ -1102,12 +1158,20 @@ class webrtcController {
         this._saveRoom($postData, $resource);
         // Inicia contagem de tempo
         this._roomInfoController.stoped = false;
-
+        // Define Parâmetros de conexão
         this._connection.session = {
             audio: false,
             video: false
         };
+        // Inicializa Sala
         this._roomEnteredStart(this._connection, this._structure);
+        // Inicializa verificação de token caso não seja um dispositivo Mobile
+        /*
+        if (!DetectRTC.isMobileDevice){
+            $(dom.TK_DETEC).show();
+            $(dom.CALL_TK).click();
+        }
+        */
     }
 
     _roomEnteredStart(connection, structure) {
@@ -1142,28 +1206,17 @@ class webrtcController {
      */
     _startParticipation() {
 
-        if (this._structure.singleConnection) {
-            this._reconnect();
-            setTimeout(() => {
-                this._connection.addStream({
-                    video: true,
-                    streamCallback: (stream) => {
-                        this._participateScreen(stream);
-                        this._media.thirdVideoPreview.muted = true;
-                        this._roomData.transmiting = true;
-                    }
-                });
-            }, 1000);
-        } else {
-            this._connection.addStream({
-                video: true,
-                streamCallback: (stream) => {
-                    this._participateScreen(stream);
-                    this._media.thirdVideoPreview.muted = true;
-                    this._roomData.transmiting = true;
-                }
-            });
-        }
+        //this._connection.peers[this._roomId].addStream({
+        this._connection.addStream({
+            audio: true,
+            video: true,
+            streamCallback: (stream) => {
+                this._participateScreen(stream);
+                this._media.thirdVideoPreview.muted = true;
+                this._roomData.transmiting = true;
+                console.log("Compartilhando vídeo ------>", stream);
+            }
+        });
     }
 
     /**

@@ -138,6 +138,10 @@ body::-webkit-scrollbar-thumb:hover {
     padding: 5px;
 }
 
+#msg-informa-espectadores {
+    max-height: 320px;
+}
+
 #secondvideo-preview {
     border: 2px solid rgba(200, 200, 200, 0.5);
     border-radius: 2px;
@@ -200,4 +204,8 @@ video::-webkit-media-controls-enclosure {
 
 #viewers {
     font-size: 18px;
+}
+
+#video-preview-broadcaster {
+    width: 50%;
 }

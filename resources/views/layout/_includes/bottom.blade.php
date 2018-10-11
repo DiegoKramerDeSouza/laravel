@@ -8,15 +8,21 @@
                     <div class="col s12">
                     <h5 class="white-text">{{ $default->logo }}</h5>
                         <p class="grey-text text-lighten-1">
-                            Protótipo de aplicação voltado à comunicação via webconference utilizando WebRTC e compatível com os navegadores Google Chrome e Mozilla Firefox.
+                            Protótipo de aplicação voltado a apresentações utilizando WebRTC. Compatível com o navegador Google Chrome.
                             <br/>
-                            Dispositívos: chrome://webrtc-internals/ 
+                            Dispositívos: 
+                            <br/>
+                            chrome://webrtc-internals/
+                            <br/> 
+                            chrome://device-log/
+                            <br/>
+                            chrome://flags/
                             <br/>
                             <br/>
                             {!! $default->bookmarkIcon !!} Versão <span id="version"></span>
                             <br/>
                             <span class='grey-text right'>
-                                <a href="https://webrtc.github.io/samples/src/content/getusermedia/gum/" target="_blank" >{!! $default->chromeIcon !!}</a> &nbsp; {!! $default->firefoxIcon !!} 
+                                <a href="https://webrtc.github.io/samples/src/content/getusermedia/gum/" target="_blank" >{!! $default->chromeIcon !!}</a> 
                             </span>
                         </p>
                     </div>
@@ -74,8 +80,11 @@
                 <script type="text/javascript" src="{!! asset('js/controllers/ConnectController.js') !!}"></script>  
                 <script type="text/javascript" src="{!! asset('js/models/Media.js') !!}"></script>  
                 <script type="text/javascript" src="{!! asset('js/controllers/MediaController.js') !!}"></script>
+                <script type="text/javascript" src="{!! asset('js/models/SerialValidation.js') !!}"></script>
+                <script type="text/javascript" src="{!! asset('js/controllers/SerialValidationController.js') !!}"></script>
                 <!-- Loader específico para controle de dispositivos -->
                 <script type="text/javascript" src="{!! asset('js/loaders/DeviceLoader.js') !!}"></script>
+                <script type="text/javascript" src="{!! asset('js/loaders/SerialValidationLoader.js') !!}"></script>
                 <!-- Views -->
                 <script type="text/javascript" src="{!! asset('js/views/MediaView.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/views/RoomView.js') !!}"></script>

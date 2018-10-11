@@ -4,10 +4,10 @@
         <div class='col s12'>
             <!--Card de vídeo-->
             <div class='card grey darken-4 rounded-borders'>
-                <div id='this-room' class='card-content rounded-borders'>
+                <div id='started_room' class='card-content rounded-borders'>
                     <div id='class-suptitle' class='dark-grey p-10 rounded-borders'>
                         <span id='screen-share-alert' title='Você está transmintindo a sua tela' class='d-none left'>
-                            <a href='#this-room' id='alert-share' class='btn-floating red darken-4 pulse'>{!! $default->tvIcon !!}</a>
+                            <a href='#started_room' id='alert-share' class='btn-floating red darken-4 pulse'>{!! $default->tvIcon !!}</a>
                         </span>&nbsp;
                         <span id='class-title' class='white-text'>
                             <!-- Matéria: Assunto -->
@@ -27,21 +27,29 @@
                         </div>
                          
                         <div class='row'>
-                            <div id='room-status' class='col s12 m2 blue-text d-none obj-invisible'>
-                                <div class='row' align='center'>
+                            <div id='room-status' class='col s12 m12 l2 blue-text d-none obj-invisible'>
+                                <div class='row p-10' align='center'>
                                     <!-- STATUS DA SALA -->
-                                    <div class="col s5 m12 push-s1" title='Tempo conectado'>
+                                    <div class="col s5 m4 l12 push-s1" title='Tempo conectado'>
                                         {!! $default->timeIconLeft !!} 
                                         <span id='current-time' class='white-text left'>
                                             <span id='currentHour'>--</span>:<span id='currentMin'>--</span>:<span id='currentSec'>--</span>
                                         </span>
                                     </div>
-                                    <div class="col s5 m12 push-s1" title='Espectadores'>
+                                    <div class="col s5 m4 l12 push-s1" title='Espectadores'>
                                         {!! $default->peopleIconLeft !!} <span id='current-users' class='white-text left'>0</span>
+                                    </div>
+                                    <div id="token_Detection" class="col m4 l12 hide-on-small-and-down d-none" align="left">
+                                        <span id="tokenOn" class="d-none blue-text" title='Token Conectado'>{!! $default->tokenUsb !!}<b>ON</b></span>
+                                        <span id="tokenOff" class="d-none red-text" title='Token Desconectado'>{!! $default->tokenUsb !!}<b>OFF</b></span>
+                                    </div>
+                                    <div class="d-none">
+                                        <!-- BOTÃO DE VALIDAÇÃO DO TOKEN DE ACESSO -->
+                                        <a id='call-token' class='btn btn-floating blue waves-effect waves-light'><i class='material-icons'>usb</i></a>
                                     </div>
                                 </div>
                             </div>                 
-                            <div id='div-main-video' class='col s12 m8 d-none obj-invisible'>
+                            <div id='div-main-video' class='col s12 m8 l8 push-m2 d-none obj-invisible'>
                                 <div class=''>
                                     <div id='main-video' align='center' class='inroom mainView'>
                                         <div id='videos'>
