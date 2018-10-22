@@ -95,7 +95,7 @@ body::-webkit-scrollbar-thumb:hover {
 #count-send-files,
 #count-receive-files {
     position: absolute;
-    z-index: 0;
+    z-index: 2;
     transform: translate(-60%, 110%);
 }
 

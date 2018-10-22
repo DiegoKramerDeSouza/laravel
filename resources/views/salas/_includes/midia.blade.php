@@ -66,7 +66,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div id='div-incoming-videos' data-active='out' class='col s12 m2 d-none obj-invisible' align='center'>
+                            <div id='div-incoming-videos' data-active='out' class='col s12 m2 l2 push-m2 d-none obj-invisible' align='center'>
                                 <div class='row'>
                                     <!--TERCEIRO VÍDEO-->
                                     <div id='span-video-preview-3rd' align="center" data-status='disabled' data-position='second' class='col s12 d-none'>

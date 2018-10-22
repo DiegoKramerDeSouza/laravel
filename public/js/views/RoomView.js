@@ -101,7 +101,7 @@ class RoomView {
     newLabelCon(userid, username, deleteBtn) {
 
         this._listOfConCards += `
-                            <div id="li-disconnect-${ userid }" data-sender="${ username }" class="li-disconnect truncate">
+                            <div id="li-disconnect-${ userid }" data-sender="${ username }" class="li-disconnect truncate container p-5" title="${ username }">
                                 <i class="fa fa-user-o blue-text lighten-2"></i> <b>${ username }</b>
                                 <span class="right">
                                     ${ deleteBtn }
@@ -111,12 +111,12 @@ class RoomView {
 
     setDisabledConBtn(userid, username, announce) {
 
-        return '<a id="disabled-' + userid + '" name="' + username + '" data-announced="' + announce + '" ><i class="material-icons grey-text text-lighten-1">close</i></a>';
+        return '<a id="disabled-' + userid + '" name="' + username + '" data-announced="' + announce + '" >' + misc.ICON_REMOVE_DISABLED + '</a>';
     }
 
     setRemoveConBtn(userid, username, announce) {
 
-        return '<a id="disconnect-' + userid + '" name="' + username + '" data-announced="' + announce + '" title="Desconectar espectador" class="disconnect-btn"><i class="material-icons red-text text-darken-4">close</i></a>';;
+        return '<a id="disconnect-' + userid + '" name="' + username + '" data-announced="' + announce + '" title="Desconectar espectador" class="disconnect-btn">' + misc.ICON_REMOVE_USER + '</a>';;
     }
 
     putList() {

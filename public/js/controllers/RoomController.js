@@ -22,7 +22,7 @@ class RoomController {
     _createHash() {
 
         let timestamp = +new Date();
-        return btoa(`${ this._inputMateria.value }|${ this._inputName.value }|${ this._inputAssunto.value }|${ this.createList() }|${ this._roomId.value }|${ timestamp }`);
+        return `${ this.createList() }|${ this._roomId.value }|${ timestamp }`;
     }
 
     setRoomLabel(icon, classe, assunto) {

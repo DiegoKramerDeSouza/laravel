@@ -60,13 +60,13 @@
                             <a href='#' id='view-send-files' class='sidenav-trigger media-control btn-floating btn-large' data-target='files-side-bar'>
                                 {!! $default->blueCloudUploadLg !!}
                             </a>
-                            <b><span id='count-send-files' class='inform-files btn-floating btn-small white-text red darken-4'>0</span></b>
+                            <b><span id='count-send-files' class='inform-files btn-floating btn-small white-text blue'>0</span></b>
                         </span>
                         <span id='min-receive-files' title='Arquivos Recebidos'>
                             <a href='#' id='view-receive-files' class='sidenav-trigger media-control btn-floating btn-large' data-target='files-side-bar'>
                                 {!! $default->blueCloudDownloadLg !!}
                             </a>
-                            <b><span id='count-receive-files' class='inform-files btn-floating btn-small white-text red darken-4'>0</span></b>
+                            <b><span id='count-receive-files' class='inform-files btn-floating btn-small white-text blue'>0</span></b>
                         </span>
                     </span>
 

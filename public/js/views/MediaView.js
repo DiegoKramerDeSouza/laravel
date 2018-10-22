@@ -420,6 +420,7 @@ class MediaView {
                             </a>
                         </div>`;
         connection.filesContainer.insertBefore(div, connection.filesContainer.firstChild);
+        this._alerta.initiateMessage(conf.message.FILE_RECEIVED, file.name);
     }
 
     _convertSize(bytes) {

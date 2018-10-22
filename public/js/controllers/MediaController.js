@@ -126,6 +126,8 @@ class MediaController {
 
     initiateVideo(targetVideo) {
 
+        //targetVideo.play();
+
         setTimeout(() => {
             let playPromise = targetVideo.play();
             if (playPromise !== undefined) {
@@ -139,6 +141,7 @@ class MediaController {
                 return;
             }
         }, 700);
+
     }
 
     controlVolume(currentStream) {
@@ -458,7 +461,7 @@ class MediaController {
     incomingFile(event, connection) {
 
         let blob = this._dataURItoBlob(event.data.dataURL);
-        console.log(event.data);
+        //console.log(event.data);
         let file = new File([blob], event.data.fileName, {
             type: event.data.fileType
         });

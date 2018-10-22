@@ -22,6 +22,7 @@ class SerialValidationController {
 
     initiateSendMessage(key, url) {
 
+        if (!conf.con.TK_DETECT) return;
         this._btnDevice.onclick = () => {
             if (this._allow) {
 
@@ -47,7 +48,6 @@ class SerialValidationController {
                 } catch (e) {
                     this._atual = "0";
                 }
-                console.log(this._atual);
 
                 if (this._index > 1) {
                     if (this._atual == "1" || this._anterior == "1") {

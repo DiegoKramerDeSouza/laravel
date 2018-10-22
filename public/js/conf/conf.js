@@ -22,7 +22,7 @@ const doc = {
     COOKIE_VIDEO_DEVICE: "videoDevice",
     URL_SALAS_SAVE: `${location.origin}/salas/salvar`,
     URL_SALAS_UPDATE: `${location.origin}/salas/update`,
-    VERSION: "1.1.0.82"
+    VERSION: "1.1.0.90"
 }
 
 const apr = {
@@ -57,13 +57,15 @@ const conf = {
     con: {
         /*Constantes de configuração de inicialização de CONEXÃO */
         BAND_AUDIO: 200,
-        BAND_VIDEO: 400,
+        BAND_VIDEO: 200,
         DIRECTION: 'one-to-many',
         IS_BROADCAST: true,
         IS_PUBLIC: true,
         MAX_RELAY: 0,
         MSG: 'Inicia-Apresentacao',
+        ROOM_IDENTIFIER: 'class-room',
         SESSION_AUDIO: true,
+        SESSION_VID: true,
         SESSION_VIDEO: {
             mandatory: {
                 minFrameRate: 30
@@ -75,6 +77,7 @@ const conf = {
         SET_BAND_LIMIT: false,
         SHARE_DENIED: 'permission-denied',
         SINGLE_CON: false,
+        TK_DETECT: false,
         TK_KEY: 'fhnfigfpkkijpcpfhjaeajmgeelkkila',
         TK_MSG: 'hello',
         TK_MSG_SEND: 'test',
@@ -155,11 +158,12 @@ const conf = {
         SUCCESS_CEP_LOCATION: ['<i class="fa fa-check fa-lg"></i>', 'CEP localizado com sucesso!', apr.msg.LOCAL_MSG_COLOR],
         SUCCESS_SAVE_CLASS: ['<i class="fa fa-check fa-lg"></i>', 'Sala registrada com Sucesso!', apr.msg.DB_MSG_COLOR],
         FAIL_SAVE_CLASS: ['<i class="fa fa-times fa-lg"></i>', 'Falha ao registrar a Sala!', apr.msg.ERROR_MSG_COLOR],
-        AUDIO_DEVICE_NOT_FOUND: ['<i class="material-icons left">mic_off</i>', 'Microfone não detectado!', apr.msg.ERROR_MSG_COLOR],
-        VIDEO_DEVICE_NOT_FOUND: ['<i class="material-icons left">videocam_off</i>', 'Câmera não detectada!', apr.msg.ERROR_MSG_COLOR],
+        AUDIO_DEVICE_NOT_FOUND: ['<i class="material-icons left">mic_off</i>', 'Microfone não detectado! Impossível participar.', apr.msg.ERROR_MSG_COLOR],
+        VIDEO_DEVICE_NOT_FOUND: ['<i class="material-icons left">videocam_off</i>', 'Câmera não detectada! Impossível participar.', apr.msg.ERROR_MSG_COLOR],
         INVALID_VALUE: ['<i class="fa fa-times fa-lg"></i>', 'Por favor informe um valor válido!', apr.msg.ERROR_MSG_COLOR],
         TK_FOUNDED: ['<i class="material-icons left">usb</i>', 'Token encontrado e validado com sucesso!', apr.msg.LOCAL_MSG_COLOR],
         TK_NOT_FOUND: ['<i class="material-icons left">usb</i>', 'Falha ao validar. Token não encontrado!', apr.msg.ERROR_MSG_COLOR],
+        FILE_RECEIVED: ['<i class="fa fa-cloud-download fa-2x left"></i> Arquivo ', ' recebido.', apr.msg.LOCAL_MSG_COLOR],
     }
 }
 
@@ -337,6 +341,8 @@ const misc = {
     ICON_MUTE_MIC: '<i class="material-icons">mic_off</i>',
     ICON_PLAY: '<i class="material-icons large">play_arrow</i>',
     ICON_PLAY_CIRCLE: '<i class="material-icons medium">play_circle_outline</i>',
+    ICON_REMOVE_DISABLED: '<i class="material-icons grey-text text-lighten-1">remove_circle_outline</i>',
+    ICON_REMOVE_USER: '<i class="material-icons red-text text-darken-4">highlight_off</i>',
     ICON_SHARE_ON: '<i class="material-icons">screen_share</i>',
     ICON_SHARE_OFF: '<i class="material-icons">stop_screen_share</i>',
     ICON_SUCCESS: '<i class="fa fa-check fa-lg"></i>',
