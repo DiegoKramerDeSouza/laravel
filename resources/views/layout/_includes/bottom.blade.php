@@ -11,26 +11,34 @@
                             Protótipo de aplicação voltado a apresentações utilizando WebRTC. Compatível com o navegador Google Chrome.
                             <br/>
                             <br/>
-                            <b>Dispositívos detectados: </b>
-                            <br/>
-                            chrome://webrtc-internals/
-                            <br/> 
-                            <br/>
-                            <b>Logs de dispositívos: </b>
-                            <br/>
-                            chrome://device-log/
-                            <br/>
-                            <br/>
-                            <b>Configurações de desenvolvimento: </b>
-                            <br/>
-                            chrome://flags/
-                            <br/>
-                            <br/>
-                            {!! $default->bookmarkIcon !!} Versão <span id="version"></span>
-                            <br/>
-                            <span class='grey-text right'>
-                                <a href="https://webrtc.github.io/samples/src/content/getusermedia/gum/" target="_blank" >{!! $default->chromeIcon !!}</a> 
-                            </span>
+                            @if(env('APP_ENV') != 'production')
+                                <b>Dispositívos detectados: </b>
+                                <br/>
+                                chrome://webrtc-internals/
+                                <br/> 
+                                <br/>
+                                <b>Logs de dispositívos: </b>
+                                <br/>
+                                chrome://device-log/
+                                <br/>
+                                <br/>
+                                <b>Configurações de desenvolvimento: </b>
+                                <br/>
+                                chrome://flags/
+                                <br/>
+                                <br/>
+                                {!! $default->bookmarkIcon !!} Versão <span id="version"></span>
+                                <br/>
+                                <span class='grey-text right'>
+                                    <a href="https://webrtc.github.io/samples/src/content/getusermedia/gum/" target="_blank" >Teste WebRTC {!! $default->chromeIcon !!}</a> 
+                                </span>
+                            @else
+                                {!! $default->bookmarkIcon !!} Versão <span id="version"></span>
+                                <br/>
+                                <span class='grey-text right'>
+                                    {!! $default->chromeIcon !!}
+                                </span>
+                            @endif
                         </p>
                     </div>
                 </div>
@@ -44,8 +52,7 @@
 
         <!-- Inicialização de Javascript -->
         <script type="text/javascript" src="{!! asset('js/conf/conf.js') !!}"></script>
-        <!--<script type="text/javascript" src="{!! asset('js/jquery-3.1.1.min.js') !!}"></script>-->
-        <script type="text/javascript" src="{!! asset('js/new/jquery-3.3.1.min.js') !!}"></script>
+        <script type="text/javascript" src="{!! asset('js/jquery-3.3.1.min.js') !!}"></script>
         <script type="text/javascript" src="{!! asset('js/materialize.min.js') !!}"></script>
         
         <script type="text/javascript" src="{!! asset('js/views/LoadingView.js') !!}"></script>
@@ -98,19 +105,15 @@
                 <script type="text/javascript" src="{!! asset('js/views/RoomView.js') !!}"></script>
                 <!-- Helpers -->
                 <script type="text/javascript" src="{!! asset('js/helpers/RoomHelper.js') !!}"></script>        
-                <!-- WebRTC -->
-                <!--<script type="text/javascript" src="{!! asset('js/webrtc/socket.io.js') !!}"></script> -->
-                <script type="text/javascript" src="{!! asset('js/new/socket.io.js') !!}"></script>
+                <!-- WebRTC Modules -->
+                <script type="text/javascript" src="{!! asset('js/webrtc/socket.io.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/webrtc/getHTMLMediaElement.js') !!}"></script>
-                <!--<script type="text/javascript" src="{!! asset('js/webrtc/adapter.js') !!}"></script> -->                     
-                <script type="text/javascript" src="{!! asset('js/new/adapter.js') !!}"></script>                     
+                <script type="text/javascript" src="{!! asset('js/webrtc/adapter.js') !!}"></script>                  
                 <script type="text/javascript" src="{!! asset('js/webrtc/NewRTCMultiConnection.min.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/webrtc/getScreenId.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/webrtc/FileBufferReader.js') !!}"></script>
-                
-                <!--<script type="text/javascript" src="{!! asset('js/controllers/webrtcControllerNew.js') !!}"></script>-->
+    
                 <script type="text/javascript" src="{!! asset('js/controllers/webrtcController.js') !!}"></script>
-
                 <script type="text/javascript" src="{!! asset('js/loaders/webrtcLoader.js') !!}"></script>
             @endif
         @endif

@@ -83,7 +83,7 @@ const conf = {
         TK_MSG_SEND: 'test',
         TK_TIME_REQ: (1000 * 15),
         TK_URL: 'http://*/*',
-        URL: 'https://sig.lrbtecnologia.com:8080/',
+        URL: 'https://sig.lrbtecnologia.com:443/',
         //URL: 'https://rtcmulticonnection.herokuapp.com:443/',
         //URL: 'https://webrtcweb.com:9001/'
     },
