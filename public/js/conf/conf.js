@@ -11,14 +11,14 @@
 //const cfg = $.getJSON(jFile);
 
 const doc = {
-
-    TAG: document.querySelector.bind(document),
+    /*Constantes de configuração de elementos do documento */
     ALL: document.querySelectorAll.bind(document),
     ADD: document.createElement.bind(document),
     ID: document.getElementById.bind(document),
+    TAG: document.querySelector.bind(document),
     IDLE_TIME: 240,
-    COOKIE_LIFETIME: 365,
     COOKIE_AUDIO_DEVICE: "audioDevice",
+    COOKIE_LIFETIME: 365,
     COOKIE_VIDEO_DEVICE: "videoDevice",
     URL_SALAS_SAVE: `${location.origin}/salas/salvar`,
     URL_SALAS_UPDATE: `${location.origin}/salas/update`,
@@ -26,7 +26,7 @@ const doc = {
 }
 
 const apr = {
-
+    /*Constantes de aparencia de elementos */
     msg: {
         DB_MSG_COLOR: 'cyan',
         ERROR_MSG_COLOR: 'red darken-4',
@@ -39,26 +39,27 @@ const conf = {
 
     str: {
         /*Constantes de configuração de inicialização da ESTRUTURA do documento de salas */
-        VIEWER: 'Calculando...',
-        FORM: 'Verificando...',
-        USER: '',
-        SOLICITA: 0,
         BROADCAST_STATUS: 0,
+        FILE_SHARING: true,
+        FORM: 'Verificando...',
         IS_MODERATOR: true,
+        LOCK_SOLICITATION: false,
+        NAV_EDGE: 'left',
+        NUMBER_OF_ROOMS: 0,
         ON_LOBBY: true,
         ON_PARTICIPATION: false,
-        LOCK_SOLICITATION: false,
-        FILE_SHARING: true,
-        WAITING_FOR_VIDEO: 'waiting',
-        NUMBER_OF_ROOMS: 0,
         POSTER_IMG: '/img/bg.jpg',
-        NAV_EDGE: 'left'
+        SOLICITA: 0,
+        USER: '',
+        VIEWER: 'Calculando...',
+        WAITING_FOR_VIDEO: 'waiting'
     },
     con: {
         /*Constantes de configuração de inicialização de CONEXÃO */
         BAND_AUDIO: 200,
         BAND_VIDEO: 200,
         DIRECTION: 'one-to-many',
+        DISCONNECTION_TIMER: 2000,
         IS_BROADCAST: true,
         IS_PUBLIC: true,
         MAX_RELAY: 0,
@@ -89,20 +90,20 @@ const conf = {
     },
     socket: {
         /*Constantes de padronização de mensagens SOCKET.IO */
-        MSG_JOIN: 'join-broadcaster',
-        MSG_REJOIN: 'rejoin-broadcast',
-        MSG_CHK_PRESENCE: 'check-broadcast-presence',
-        MSG_JOIN_BROADCAST: 'join-broadcast',
-        MSG_BROADCAST_STOP: 'broadcast-stopped',
         MSG_BROADCAST_START: 'start-broadcasting',
-        MSG_LEAVE_ROOM: 'leave-the-room'
+        MSG_BROADCAST_STOP: 'broadcast-stopped',
+        MSG_CHK_PRESENCE: 'check-broadcast-presence',
+        MSG_JOIN: 'join-broadcaster',
+        MSG_JOIN_BROADCAST: 'join-broadcast',
+        MSG_LEAVE_ROOM: 'leave-the-room',
+        MSG_REJOIN: 'rejoin-broadcast'
     },
     datacls: {
         /*Atributos de inicialização de SALAS para espectadores */
         ADMIN_ACCESS: 'ADMIN',
         ALLOWED: false,
-        TRANSMITING: false,
-        COUNT_ROOMS: 0
+        COUNT_ROOMS: 0,
+        TRANSMITING: false
     },
     req: {
         /*Padrão de mensagens de chat com REQUISIÇÕES/RESPOSTAS a ações */
@@ -287,6 +288,7 @@ const dom = {
     TEXT_MESSAGE: '#text-message',
     THIRD_VIDEO: '#thirdvideo-preview',
     TK_DETEC: '#token_Detection',
+    TK_OBJ: '#token',
     TK_ON: '#tokenOn',
     TK_OFF: '#tokenOff',
     TOGGLE_CHAT: '#toggle-chat',
@@ -307,31 +309,28 @@ const dom = {
 
 const misc = {
     /* Atributos gerais muito utilizados com funcionalidades variádas (MISCELÂNEA) */
-    /*Cores */
-    DISABLED_COLOR: 'grey',
-    ON_COLOR: 'blue',
-    OFF_COLOR: 'red',
-    HILIGHT_COLOR: 'cyan',
-    TURNOFF_COLOR: 'black',
+    /*Atributos de elementos do DOM */
+    ATTR_POSTER: 'poster',
+    ATTR_SOLICITATION: 'data-sender',
+    ATTR_USER_ANNOUNCE: 'data-announced',
+    ATTR_USER_TYPE: 'data-target',
     /*Classes de estilo CSS */
     CLASS_ERROR_COLOR: apr.msg.ERROR_MSG_COLOR,
     CLASS_INVISIBLE: 'obj-invisible',
-    CLASS_VISIBLE: 'obj-visible',
-    CLASS_WIDTH_LIMIT: 'width-limit',
-    CLASS_WIDTH_LIMIT_NO: 'width-no-limit',
     CLASS_MAIN_CONTAINER: 'main-container',
     CLASS_MAIN_CONTAINER_FULL: 'main-container-full',
     CLASS_SUCCESS_COLOR: apr.msg.LOCAL_MSG_COLOR,
-    /*Atribuição CSS */
-    STYLE_HEIGHT_INHERIT: 'inherit',
-    /*Atributos de elementos do DOM */
-    ATTR_SOLICITATION: 'data-sender',
-    ATTR_USER_TYPE: 'data-target',
-    ATTR_USER_ANNOUNCE: 'data-announced',
-    ATTR_POSTER: 'poster',
+    CLASS_VISIBLE: 'obj-visible',
+    CLASS_WIDTH_LIMIT: 'width-limit',
+    CLASS_WIDTH_LIMIT_NO: 'width-no-limit',
+    /*Elementos HTML para caixas de mensagens */
+    DEFAULT_MSGBOX_IN: '<p class="chat-out grey" align="right">',
+    DEFAULT_MSGBOX_OUT: '<p class="chat-in blue">',
+    /* Elementos vizuais padrões */
+    DEFAULT_SELECT_DEVICE: '<option value="" disabled selected>Selecione um dispositivo</option>',
     /*Ícones */
-    ICON_CAM_ON: '<i class="material-icons">videocam</i>',
     ICON_CAM_OFF: '<i class="material-icons">videocam_off</i>',
+    ICON_CAM_ON: '<i class="material-icons">videocam</i>',
     ICON_CLOUD_UPLOAD: '<i class="fa fa-cloud-upload"></i>',
     ICON_ERROR: '<i class="fa fa-times fa-lg"></i>',
     ICON_FA_HOME: '<i class="fa fa-home fa-lg"></i>',
@@ -343,14 +342,17 @@ const misc = {
     ICON_PLAY_CIRCLE: '<i class="material-icons medium">play_circle_outline</i>',
     ICON_REMOVE_DISABLED: '<i class="material-icons grey-text text-lighten-1">remove_circle_outline</i>',
     ICON_REMOVE_USER: '<i class="material-icons red-text text-darken-4">highlight_off</i>',
-    ICON_SHARE_ON: '<i class="material-icons">screen_share</i>',
     ICON_SHARE_OFF: '<i class="material-icons">stop_screen_share</i>',
+    ICON_SHARE_ON: '<i class="material-icons">screen_share</i>',
     ICON_SUCCESS: '<i class="fa fa-check fa-lg"></i>',
-    ICON_VOL_ON: '<i class="material-icons">volume_up</i>',
     ICON_VOL_OFF: '<i class="material-icons">volume_off</i>',
-    /*Elementos HTML para caixas de mensagens */
-    DEFAULT_MSGBOX_OUT: '<p class="chat-in blue">',
-    DEFAULT_MSGBOX_IN: '<p class="chat-out grey" align="right">',
-    /* Elementos vizuais padrões */
-    DEFAULT_SELECT_DEVICE: '<option value="" disabled selected>Selecione um dispositivo</option>'
+    ICON_VOL_ON: '<i class="material-icons">volume_up</i>',
+    /*Atribuição CSS */
+    STYLE_HEIGHT_INHERIT: 'inherit',
+    /*Cores */
+    DISABLED_COLOR: 'grey',
+    HILIGHT_COLOR: 'cyan',
+    OFF_COLOR: 'red',
+    ON_COLOR: 'blue',
+    TURNOFF_COLOR: 'black'
 }

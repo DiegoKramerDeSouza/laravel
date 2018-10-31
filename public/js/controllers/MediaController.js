@@ -534,6 +534,7 @@ class MediaController {
 
         if (type === 'local') {
             this.disableVolume();
+            if (DetectRTC.isMobileDevice) this.disableShare();
             this._mediaView.adjustBroadCaster();
         } else {
             this.disableCam();

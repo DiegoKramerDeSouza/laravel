@@ -46,27 +46,18 @@ class webrtcController {
     }
 
     /**
-     * Inicializa eventos de stream
+     * Inicializa eventos de devices
      */
     manageRoom() {
 
-
-        // Inicia listener para tratamento de compartilhamento de tela
-        //this._getScreenConstraints();
-        // Inicia verificação de dispositivos e gera preview
         this._initiateDevices();
     }
 
     /**
-     * Inicializa tratamento de eventos in-stream
+     * Inicializa tratamento de eventos de mensagens de chat
      */
     operateRoom() {
 
-        // Inicia listener para atualização de acessos à sala
-        // this._onNumberOfBroadcastViewersUpdated();
-        // Inicia listener para recebimento de mensagens de chat
-        // this._onMessage();
-        // Inicia listener para envio de mensagens de chat
         this._chatSendMessage();
     }
 
@@ -90,21 +81,16 @@ class webrtcController {
 
         // Setup para permitir integração Laravel x Ajax 
         $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('#token').attr('data-content')
-            }
+            headers: { 'X-CSRF-TOKEN': $(dom.TK_OBJ).attr('data-content') }
         });
+        // Post para registro de eventos
         $.ajax({
             url: targetUrl,
             type: 'POST',
             data: postData,
             dataType: 'json',
-            success: (data) => {
-                this._alerta.initiateMessage(conf.message.SUCCESS_SAVE_CLASS);
-            },
-            error: (data) => {
-                this._alerta.initiateMessage(conf.message.FAIL_SAVE_CLASS);
-            }
+            success: (data) => this._alerta.initiateMessage(conf.message.SUCCESS_SAVE_CLASS),
+            error: (data) => this._alerta.initiateMessage(conf.message.FAIL_SAVE_CLASS)
         });
     }
 
@@ -294,7 +280,8 @@ class webrtcController {
     }
 
     /**
-     * Trata eventos de incialização de stream e demais eventos vinculados
+     * Trata eventos de incialização de stream e demais eventos vinculados ao controle de mídias
+     * @param {Obj RTCMultiConnection} connection 
      */
     _onStream(connection) {
 
@@ -338,53 +325,16 @@ class webrtcController {
                     connection.dontCaptureUserMedia = true;
                     connection.attachStreams.push(event.stream);
                     connection.getAllParticipants().forEach((p) => {
-                        console.log(p);
+                        //console.log(p);
                         if (p + '' != event.userid + '' && operators.indexOf(p) == -1) {
                             operators.push(p);
                             connection.dontAttachStream = true;
-                            console.warn("RENEGOCIANDO COM ", p, event.stream.isAudio, event.stream.isVideo);
+                            //console.warn("RENEGOCIANDO COM ", p, event.stream.isAudio, event.stream.isVideo);
                             connection.renegotiate(p);
                             connection.dontAttachStream = false;
                         }
                     });
-                    console.log(connection.attachStreams, this._media.thirdVideoPreview.srcObject);
-
-
-
-                    /*
-                    console.log("Get All Participants -> ", connection.getAllParticipants());
-                    connection.getAllParticipants().forEach((p) => {
-                        console.log(p);
-                        if (p + '' != event.userid + '' && operators.indexOf(p) == -1) {
-                            let isRetransmited = false;
-                            operators.push(p);
-
-                            let peer = connection.peers[p].peer;
-                            console.warn("Enviando para ", peer, event.stream);
-
-                            event.stream.getTracks().forEach((track) => {
-                                //console.warn(track, event.stream, this._mainEventStream);
-                                try {
-                                    peer.addTrack(track, event.stream);
-                                    //connection.peers[p].addTrack(track, event.stream);
-                                    //connection.peers[p].addStream(event.stream);
-                                    //connection.addStream(event.stream);
-                                    isRetransmited = true;
-                                } catch (e) {
-                                    isRetransmited = false;
-                                    console.error("Falha ao retransmitir para " + p, e, "TRACK: ", track, "EVENTO: ", event.stream, "INCOMING CON: ", this._structure.incomingCon);
-                                }
-
-                            });
-                            if (isRetransmited) {
-                                connection.dontAttachStream = true;
-                                console.warn("RENEGOCIANDO COM ", p);
-                                connection.renegotiate(p);
-                                connection.dontAttachStream = false;
-                            }
-                        }
-                    });
-                    */
+                    //console.log(connection.attachStreams, this._media.thirdVideoPreview.srcObject);
 
 
                     this._mediaController.initiateVideo(this._media.thirdVideoPreview);
@@ -432,45 +382,19 @@ class webrtcController {
             } else if (!this._structure.onParticipation && (event.type === 'remote' && !event.stream.isScreen)) {
 
                 console.log('REMOTO SEM SCREEN --> ', event, event.stream, event.extra.remote, event.stream.streamid);
+
                 // Identifica mídia do broadcaster
                 let isBroadcasterMidia = true;
                 // Valida dispositívos de áudio e vídeo
                 let devices = new DevicesController();
                 devices.participantInitiateDevices();
 
-                event.stream.getTracks().forEach((track) => {
-                    console.warn(track);
-                });
                 if (event.extra.broadcastStream == event.stream.streamid) isBroadcasterMidia = false;
-
                 if (isBroadcasterMidia) {
 
-                    console.warn("I'M A PEER - Recebendo vídeo de usuário: ", connection.userid, event, isBroadcasterMidia, event.stream.isAudio, event.stream.isVideo);
+                    //console.warn("I'M A PEER - Recebendo vídeo de usuário: ", connection.userid, event, isBroadcasterMidia, event.stream.isAudio, event.stream.isVideo);
                     this._participateScreen(event.stream);
-
-                    /*
-                    this._mediaController.displayElem(dom.VIDEO_THIRD, 300);
-                    setTimeout(() => {
-                        if (this._media.videoPreview.srcObject) {
-                            this._structure.incomingCon = event.stream.streamid;
-                            this._media.thirdVideoPreview.srcObject = event.stream;
-                            this._structure.userVideo = event.stream;
-                        }
-                        doc.TAG('#play-third-video').onclick = () => {
-                            console.info(this._media.videoPreview.srcObject);
-                            console.info(this._media.thirdVideoPreview.srcObject);
-                            this._media.thirdVideoPreview.pause();
-                            setTimeout(() => {
-                                this._media.thirdVideoPreview.play();
-                                event.stream.unmute('video');
-
-                            }, 1000);
-                        };
-                    }, 1000);
-                    */
-
                 } else {
-                    console.log("Recebendo stream do broadcaster: ", event, isBroadcasterMidia);
                     this._structure.incomingCon = event.stream.streamid;
                     this._structure.onParticipation = false;
                     this._media.videoPreview.srcObject = event.stream;
@@ -664,11 +588,6 @@ class webrtcController {
                     }
                 };
                 //===========================================================================
-            } else if (event.type === 'local' && event.extra.self) {
-                console.log('SELF -> LOCAL--->', event, connection);
-                this._media.previewVideo.srcObject = event.stream;
-                this._media.previewVideo.muted = true;
-                this._mediaController.initiateVideo(this._media.previewVideo);
             }
 
             // Tratamento das funções MUTE e UNMUTE
@@ -908,6 +827,9 @@ class webrtcController {
         };
     }
 
+    /**
+     * Informa espectadores conectados
+     */
     setUsersInformation() {
 
         if (this._broadcaster) {
@@ -916,6 +838,10 @@ class webrtcController {
         }
     }
 
+    /**
+     * Tratamento de recebimento de dados: arquivos/mensagens
+     * @param {Obj RTCMultiConnection} connection 
+     */
     _onMessage(connection) {
 
         connection.onmessage = (event) => {
@@ -924,6 +850,11 @@ class webrtcController {
         }
     }
 
+    /**
+     * Tratamento de mensagens recebidas
+     * @param {Obj} event 
+     * @param {Obj RTCMultiConnection} connection 
+     */
     _incomingMessage(event, connection) {
 
         if (event.data.userRemoved === true) {
@@ -941,12 +872,19 @@ class webrtcController {
         }
     }
 
+    /**
+     * Tratamento de de eventos de envio de mensagens
+     */
     _chatSendMessage() {
 
         this._media.textMessage.onkeyup = event => this._formatChatMessage(event);
         doc.TAG(dom.BTN_SEND_MSG).onclick = () => this._formatChatMessage();
     }
 
+    /**
+     * Formatação de mensagem de texto
+     * @param {Obj} event 
+     */
     _formatChatMessage(event) {
 
         let value = this._media.textMessage.value;
@@ -961,6 +899,10 @@ class webrtcController {
         this._media.textMessage.value = '';
     }
 
+    /**
+     * Tratamento de mensagens enviadas/recebidas a partir do seu conteúdo
+     * @param {Obj} event 
+     */
     _messageSetting(event) {
 
         let remoto;
@@ -1045,6 +987,9 @@ class webrtcController {
         }
     }
 
+    /**
+     * Inicialização dos dispositívos de mídia e criação de vídeo de preview
+     */
     _initiateDevices() {
 
         let confirm = doc.TAG(dom.CONFIRM_DEVICES);
@@ -1076,13 +1021,17 @@ class webrtcController {
                     self.extra.self = true;
                     self.open('self');
                     this._self = self;
-                    console.log(this._self);
+                    //console.log(this._self);
                 }
             }, 500);
 
         }
     }
 
+    /**
+     * Tratamento de evento de stream de vídeo de preview
+     * @param {Obj RTCMultiConnection} connection 
+     */
     _afterOpenSelfVideo(connection) {
 
         connection.onstream = (event) => {
@@ -1093,6 +1042,30 @@ class webrtcController {
         }
     }
 
+    /**
+     * Finalização de vídeo de preview
+     */
+    _finishSelfVideo() {
+
+        if (this._self != undefined) {
+            this._self.extra.self = false;
+            this._self.attachStreams.forEach(function(localStream) {
+                localStream.stop();
+            });
+            let socket = io.connect(this._connect.urlSocket + '?userid=admin');
+            socket.emit('admin', {
+                deleteUser: true,
+                userid: this._self.userid
+            });
+            this._media.previewVideo.pause();
+            this._self = undefined;
+        }
+    }
+
+    /**
+     * Definição dos dispositívos selecionados para abertura de sala
+     * @param {Obj RTCMultiConnection} connection 
+     */
     _setConnectionDevices(connection) {
 
         if (connection.DetectRTC.browser.name === 'Firefox') {
@@ -1118,23 +1091,9 @@ class webrtcController {
         }
     }
 
-    _finishSelfVideo() {
-
-        if (this._self != undefined) {
-            this._self.extra.self = false;
-            this._self.attachStreams.forEach(function(localStream) {
-                localStream.stop();
-            });
-            let socket = io.connect(this._connect.urlSocket + '?userid=admin');
-            socket.emit('admin', {
-                deleteUser: true,
-                userid: this._self.userid
-            });
-            this._media.previewVideo.pause();
-            this._self = undefined;
-        }
-    }
-
+    /**
+     * Tratamento de evento de criação de uma nova sala
+     */
     createRoom() {
 
         this._structure.startRoom.onclick = () => {
@@ -1164,10 +1123,12 @@ class webrtcController {
                     data: conf.con.SESSION_DATA,
                     oneway: conf.con.SESSION_ONEWAY
                 };
+
                 /*
                 broadcast: conf.con.SESSION_BROADCAST,
                 oneway: conf.con.SESSION_ONEWAY
                 */
+
                 // Controle da utilização de banda
                 if (conf.con.SET_BAND_LIMIT) {
                     this._broadcaster.bandwidth = {
@@ -1198,10 +1159,7 @@ class webrtcController {
 
                 let socket = this._connection.getSocket();
                 socket.emit('check-broadcast-presence', broadcastId, (isBroadcastExists) => {
-                    if (!isBroadcastExists) {
-                        this._broadcaster.userid = broadcastId;
-                    }
-                    console.log('check-broadcast-presence', broadcastId, isBroadcastExists);
+                    if (!isBroadcastExists) this._broadcaster.userid = broadcastId;
                     if (conf.con.SET_BAND_LIMIT) {
                         socket.emit('join-broadcast', {
                             broadcastId: broadcastId,
@@ -1224,11 +1182,18 @@ class webrtcController {
         }
     }
 
+    /**
+     * Coleta lista de salas abertas
+     */
     getPublicModerators() {
 
         this._connection.socket.emit('get-public-rooms', this._publicRoomIdentifier, listOfRooms => this._checkRooms(listOfRooms));
     }
 
+    /**
+     * Gera listagem de salas abertas
+     * @param {Obj} rooms 
+     */
     _checkRooms(rooms) {
 
         if (this._structure.onlobby) {
@@ -1277,7 +1242,7 @@ class webrtcController {
                 if (this._structure.countRooms == 0) this._roomController.noRooms();
             });
         } else {
-            // Tratamento de conexões de espectadores
+            // Tratamento de conexões de espectadores ao entrar em uma sala
             this._roomController.clearConList();
 
             if (!this._currentUsers) return;
@@ -1285,6 +1250,7 @@ class webrtcController {
             let connection = this._broadcaster || this._espectador;
             this._structure.viewers = this._currentUsers.length - 1;
 
+            // Criação de rótulos para listagem de usuários ativos
             this._currentUsers.forEach((espectador) => {
                 if (espectador == btoa(conf.req.USERS_STATUS)) return;
                 let participant = espectador.split('|');
@@ -1312,9 +1278,7 @@ class webrtcController {
                 for (var j = 0; j < btnDisconnect.length; j++) {
                     let thisId = doc.TAG('#' + btnDisconnect[j].id);
                     let thisName = btnDisconnect[j].name;
-                    btnDisconnect[j].onclick = () => {
-                        this._disconnectUser(connection, thisId, this._alerta, thisName)
-                    }
+                    btnDisconnect[j].onclick = () => this._disconnectUser(connection, thisId, thisName);
                 }
             }
 
@@ -1322,7 +1286,13 @@ class webrtcController {
         return this._structure.onlobby;
     }
 
-    _disconnectUser(connection, thisId, alerta, thisName) {
+    /**
+     * Tratamento de eventos de solicitação de remoção de usuário da sala 
+     * @param {Obj RTCMultiConnection} connection 
+     * @param {String} thisId 
+     * @param {String} thisName 
+     */
+    _disconnectUser(connection, thisId, thisName) {
 
         let disconnectId = thisId.getAttribute(misc.ATTR_USER_ANNOUNCE);
         if (connection.isInitiator) connection.disconnectWith(disconnectId);
@@ -1332,9 +1302,14 @@ class webrtcController {
                 removedUserId: disconnectId
             });
         }
-        alerta.initiateMessage(conf.message.DISCONNECT_USER, thisName);
+        this._alerta.initiateMessage(conf.message.DISCONNECT_USER, thisName);
     }
 
+    /**
+     * Configuração e tratamento de eventos de acasso a uma sala
+     * @param {String} moderator 
+     * @param {String} whois 
+     */
     _roomEntered(moderator, whois) {
 
         try {
@@ -1376,7 +1351,6 @@ class webrtcController {
             userid: this._espectador.userid,
             typeOfStreams: this._espectador.session
         });
-
         // Inicia contagem de tempo
         this._roomInfoController.stoped = false;
 
@@ -1385,16 +1359,6 @@ class webrtcController {
             $(dom.TK_DETEC).show();
             $(dom.CALL_TK).click();
         }
-    }
-
-    _roomEnteredStart(connection, structure) {
-
-        let socket = connection.getSocket();
-        socket.emit(conf.socket.MSG_JOIN_BROADCAST, {
-            broadcastId: structure.connectedAt,
-            userid: connection.userid,
-            typeOfStreams: connection.session
-        });
     }
 
     /**
@@ -1441,6 +1405,10 @@ class webrtcController {
         this._connection.updateExtraData();
     }
 
+    /**
+     * Tratamento de desconexões de uma sala criada
+     * @param {String} userid 
+     */
     alertDisconnection(userid) {
 
         if (this._broadcaster) {
@@ -1449,6 +1417,11 @@ class webrtcController {
         this._refreshRoom(userid, true);
     }
 
+    /**
+     * Tratamento dos valores contidos no array de usuários ativos
+     * @param {Array:String} array 
+     * @param {String} user 
+     */
     _removeUser(array, user) {
 
         for (var i = 0; i < array.length; i++) {
@@ -1459,11 +1432,16 @@ class webrtcController {
         }
     }
 
+    /**
+     * Tratamento de reload após a finalização de uma sala
+     * @param {String} user 
+     * @param {Boolean} message 
+     */
     _refreshRoom(user, message) {
 
         if (user === this._roomId && !this._connection.extra.reconnect) {
             message ? this._alerta.initiateMessage(conf.message.ALERT_DISCONNECTION) : null;
-            setTimeout(location.reload.bind(location), 2000);
+            setTimeout(location.reload.bind(location), conf.con.DISCONNECTION_TIMER);
         }
     }
 
