@@ -57,7 +57,7 @@ const conf = {
     con: {
         /*Constantes de configuração de inicialização de CONEXÃO */
         BAND_AUDIO: 200,
-        BAND_VIDEO: 200,
+        BAND_VIDEO: 300,
         DIRECTION: 'one-to-many',
         DISCONNECTION_TIMER: 2000,
         IS_BROADCAST: true,
@@ -75,7 +75,7 @@ const conf = {
         SESSION_DATA: true,
         SESSION_BROADCAST: true,
         SESSION_ONEWAY: true,
-        SET_BAND_LIMIT: false,
+        SET_BAND_LIMIT: true,
         SHARE_DENIED: 'permission-denied',
         SINGLE_CON: false,
         TK_DETECT: false,

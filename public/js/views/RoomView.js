@@ -37,9 +37,7 @@ class RoomView {
 
     createRoomLabel(icon, classe, assunto) {
 
-        this._label = `${ icon } <b>${ classe }</b> (${ assunto })
-                            <span class='right'><a href='' title='Sair' class='red-text text-darken-4'>
-                        <i class='fa fa-times'></i></a></span>`;
+        this._label = `${ icon } <b>${ classe }</b> (${ assunto })`;
         this._roomLabel.innerHTML = this._label;
     }
 
@@ -98,11 +96,13 @@ class RoomView {
         this._listOfConCards = '';
     }
 
-    newLabelCon(userid, username, deleteBtn) {
+    newLabelCon(userid, username, deleteBtn, itsMe) {
 
+        let me;
+        itsMe ? me = '(você)' : me = '';
         this._listOfConCards += `
                             <div id="li-disconnect-${ userid }" data-sender="${ username }" class="li-disconnect truncate container p-5" title="${ username }">
-                                <i class="fa fa-user-o blue-text lighten-2"></i> <b>${ username }</b>
+                                <i class="fa fa-user-o blue-text lighten-2"></i> <b>${ username } ${ me }</b>
                                 <span class="right">
                                     ${ deleteBtn }
                                 </span>

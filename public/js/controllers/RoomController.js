@@ -65,14 +65,14 @@ class RoomController {
         this._roomView.clearLabelCon();
     }
 
-    constructConnectionList(userid, username, announce, deletable) {
+    constructConnectionList(userid, username, announce, itsMe) {
 
         let deleteButton;
         userid = userid.split('-')[0];
-        deletable ?
-            deleteButton = this._roomView.setRemoveConBtn(userid, username, announce) :
-            deleteButton = this._roomView.setDisabledConBtn(userid, username, announce);
-        this._roomView.newLabelCon(userid, username, deleteButton);
+        itsMe ?
+            deleteButton = this._roomView.setDisabledConBtn(userid, username, announce) :
+            deleteButton = this._roomView.setRemoveConBtn(userid, username, announce);
+        this._roomView.newLabelCon(userid, username, deleteButton, itsMe);
     }
 
     inputConList() {

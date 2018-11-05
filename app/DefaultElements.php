@@ -79,6 +79,7 @@ class DefaultElements extends Model
         $this->editIcon =               "<i class='fa fa-pencil'></i>";
         $this->enderecoIcon =           "<i class='fa fa-map-marker fa-lg'></i>";
         $this->envelopeIcon =           "<i class='fa fa-envelope-o fa-lg'></i>";
+        $this->exitRoom =               "<i class='fa fa-times fa-2x'></i>";
         $this->firefoxIcon =            "<i class='fa fa-firefox'></i>";
         $this->globoIcon =              "<i class='fa fa-globe fa-lg'></i>";
         $this->homeBlueIcon =           "<span class='fa fa-home fa-lg blue-text'></span>";

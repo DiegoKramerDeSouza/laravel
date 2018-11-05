@@ -119,6 +119,11 @@ class MediaController {
         this._mediaView.adjustChatFilePanel();
     }
 
+    initiateControls() {
+
+        this._mediaView.showControlElements();
+    }
+
     getControlSharing() {
 
         return this._controlSharing;

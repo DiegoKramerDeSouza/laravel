@@ -4,13 +4,17 @@
         <div class='col s12'>
             <!--Card de vídeo-->
             <div class='card grey darken-4 rounded-borders'>
+                
                 <div id='started_room' class='card-content rounded-borders'>
                     <div id='class-suptitle' class='dark-grey p-10 rounded-borders'>
+                        <span class='right'>
+                            <a href='' title='Sair' class='red-text text-darken-4'>{!! $default->exitRoom !!}</a>
+                        </span>
                         <span id='screen-share-alert' title='Você está transmintindo a sua tela' class='d-none left'>
                             <a href='#started_room' id='alert-share' class='btn-floating red darken-4 pulse'>{!! $default->tvIcon !!}</a>
                         </span>&nbsp;
                         <span id='class-title' class='white-text'>
-                            <!-- Matéria: Assunto -->
+                            <!-- Matéria (Assunto) -->
                         </span>
                     </div>
                     

@@ -299,6 +299,9 @@ class webrtcController {
             // Marca container onde serão exibidos os arquivos enviados e recebidos
             connection.filesContainer = doc.TAG(dom.DIV_FILE_SHARING);
 
+            // Inicializa a tela de apresentação
+            this._mediaController.initiateControls();
+
             /**==============================================================================
              * Tratamento de conexões REMOTAS e LOCAIS
              * ==============================================================================
@@ -407,7 +410,6 @@ class webrtcController {
                 // Desabilita botão de ação para câmera/microfone/compartilhamento de tela
                 this._mediaController.adjustMediaMenu(event.type);
                 this._structure.viewers = connection.getAllParticipants().length;
-                this._roomView.changeCounter(this._structure.viewers);
 
                 // Tratamento de ação de controles de mídia==================================
                 this._media.vol.onclick = () => this._mediaController.controlVolume([event.stream]);
@@ -699,12 +701,12 @@ class webrtcController {
      */
     _onOpen(connection) {
 
-        //let connection = this._broadcaster || this._espectador;
         connection.onopen = (event) => {
             console.log("Abrindo conexão ", event);
             if (connection.isInitiator) {
                 this._connectController.points.push(event.userid + '|' + event.extra.modifiedValue);
                 this._currentUsers = this._connectController.points;
+                this.setUsersInformation();
             }
             if (event.userid == this._roomId || connection.isInitiator)
                 return;
@@ -762,7 +764,7 @@ class webrtcController {
 
         connection.onleave = (event) => {
             console.error('Deixando sala...', event);
-            //this._refreshRoom(event.userid);
+            //this._reloadRoom(event.userid);
             this.alertDisconnection(event.userid);
         };
     }
@@ -823,7 +825,6 @@ class webrtcController {
             //if (!connection.isInitiator) return;
             console.info('Number of broadcast (', event.broadcastId, ') viewers', event.numberOfBroadcastViewers);
             this._structure.viewers = event.numberOfBroadcastViewers;
-            this._roomView.changeCounter(this._structure.viewers);
         };
     }
 
@@ -833,9 +834,11 @@ class webrtcController {
     setUsersInformation() {
 
         if (this._broadcaster) {
-            if (this._broadcaster.isInitiator && this._connectController.points.length > 1)
+            if (this._broadcaster.isInitiator && this._connectController.points.length > 1) {
                 this._broadcaster.send(this._connectController.points);
-        }
+                this._updateUsersList();
+            }
+        } else return;
     }
 
     /**
@@ -911,6 +914,7 @@ class webrtcController {
         // Informações de usuários conectados à sala
         if (remoto && (Array.isArray(text) && (text.length >= 2 && text[0] == btoa(conf.req.USERS_STATUS)))) {
             this._currentUsers = event.data;
+            this._updateUsersList();
             return;
         }
         // Definição de mensagem sistêmicas (Requisições Específicas)
@@ -1021,7 +1025,6 @@ class webrtcController {
                     self.extra.self = true;
                     self.open('self');
                     this._self = self;
-                    //console.log(this._self);
                 }
             }, 500);
 
@@ -1117,17 +1120,15 @@ class webrtcController {
                 // Define elementos de inicialização da sessão criada
                 let audioConf = conf.con.SESSION_AUDIO;
                 let videoConf = conf.con.SESSION_VID;
+
+                // Define configuração de sessão
                 this._broadcaster.session = {
                     audio: audioConf,
                     video: videoConf,
                     data: conf.con.SESSION_DATA,
-                    oneway: conf.con.SESSION_ONEWAY
+                    oneway: conf.con.SESSION_ONEWAY,
+                    broadcast: conf.con.SESSION_BROADCAST
                 };
-
-                /*
-                broadcast: conf.con.SESSION_BROADCAST,
-                oneway: conf.con.SESSION_ONEWAY
-                */
 
                 // Controle da utilização de banda
                 if (conf.con.SET_BAND_LIMIT) {
@@ -1187,7 +1188,10 @@ class webrtcController {
      */
     getPublicModerators() {
 
-        this._connection.socket.emit('get-public-rooms', this._publicRoomIdentifier, listOfRooms => this._checkRooms(listOfRooms));
+        this._connection.socket.emit('get-public-rooms', this._publicRoomIdentifier, listOfRooms => {
+            this._checkRooms(listOfRooms);
+        });
+        return this._structure.onlobby;
     }
 
     /**
@@ -1241,49 +1245,53 @@ class webrtcController {
                 }
                 if (this._structure.countRooms == 0) this._roomController.noRooms();
             });
-        } else {
-            // Tratamento de conexões de espectadores ao entrar em uma sala
-            this._roomController.clearConList();
-
-            if (!this._currentUsers) return;
-
-            let connection = this._broadcaster || this._espectador;
-            this._structure.viewers = this._currentUsers.length - 1;
-
-            // Criação de rótulos para listagem de usuários ativos
-            this._currentUsers.forEach((espectador) => {
-                if (espectador == btoa(conf.req.USERS_STATUS)) return;
-                let participant = espectador.split('|');
-                let target = participant[0];
-                let itsMe = false;
-                let label;
-                let user;
-                if (connection.extra.modifiedValue) itsMe = (connection.extra.modifiedValue === participant[1]);
-                if (itsMe) {
-                    label = this._roomInfo.currentUser.value + ' (você)';
-                    user = this._roomInfo.currentRoomId.value;
-                } else {
-                    label = participant[1].split('-')[1];
-                    user = participant[1];
-                }
-                this._roomController.constructConnectionList(user, label, target, !itsMe);
-            });
-            if (this._structure.viewers >= 0) {
-                if (this._roomInfo.countUsers.getAttribute(misc.ATTR_USER_TYPE) == 0) {
-                    this._roomController.inputConList();
-                    this._mediaController.displayElem(dom.UL_CON_USERS, 300);
-                }
-                this._roomView.changeCounter(this._structure.viewers);
-                let btnDisconnect = doc.ALL(dom.DISCONNECT_BTN);
-                for (var j = 0; j < btnDisconnect.length; j++) {
-                    let thisId = doc.TAG('#' + btnDisconnect[j].id);
-                    let thisName = btnDisconnect[j].name;
-                    btnDisconnect[j].onclick = () => this._disconnectUser(connection, thisId, thisName);
-                }
-            }
-
         }
         return this._structure.onlobby;
+    }
+
+
+    _updateUsersList() {
+
+        // Tratamento de conexões de espectadores ao entrar em uma sala
+        this._roomController.clearConList();
+
+        if (!this._currentUsers) return;
+
+        let connection = this._broadcaster || this._espectador;
+        // Número de espectadores conectados
+        this._structure.viewers = this._currentUsers.length - 1;
+
+        // Criação de rótulos para listagem de usuários ativos
+        this._currentUsers.forEach((espectador) => {
+            if (espectador == btoa(conf.req.USERS_STATUS)) return;
+            let participant = espectador.split('|');
+            let target = participant[0];
+            let itsMe = false;
+            let label;
+            let user;
+            if (connection.extra.modifiedValue) itsMe = (connection.extra.modifiedValue === participant[1]);
+            if (itsMe) {
+                label = this._roomInfo.currentUser.value;
+                user = this._roomInfo.currentRoomId.value;
+            } else {
+                label = participant[1].split('-')[1];
+                user = participant[1];
+            }
+            this._roomController.constructConnectionList(user, label, target, itsMe);
+        });
+        if (this._structure.viewers >= 0) {
+            if (this._roomInfo.countUsers.getAttribute(misc.ATTR_USER_TYPE) == 0) {
+                this._roomController.inputConList();
+                this._mediaController.displayElem(dom.UL_CON_USERS, 300);
+            }
+            this._roomView.changeCounter(this._structure.viewers);
+            let btnDisconnect = doc.ALL(dom.DISCONNECT_BTN);
+            for (var j = 0; j < btnDisconnect.length; j++) {
+                let thisId = doc.TAG('#' + btnDisconnect[j].id);
+                let thisName = btnDisconnect[j].name;
+                btnDisconnect[j].onclick = () => this._disconnectUser(connection, thisId, thisName);
+            }
+        }
     }
 
     /**
@@ -1414,7 +1422,7 @@ class webrtcController {
         if (this._broadcaster) {
             if (this._broadcaster.isInitiator) this._removeUser(this._connectController.points, userid);
         }
-        this._refreshRoom(userid, true);
+        this._reloadRoom(userid, true);
     }
 
     /**
@@ -1427,6 +1435,7 @@ class webrtcController {
         for (var i = 0; i < array.length; i++) {
             if (array[i].split('|')[0] == user) {
                 array.splice(i, 1);
+                this.setUsersInformation();
                 return;
             }
         }
@@ -1437,7 +1446,7 @@ class webrtcController {
      * @param {String} user 
      * @param {Boolean} message 
      */
-    _refreshRoom(user, message) {
+    _reloadRoom(user, message) {
 
         if (user === this._roomId && !this._connection.extra.reconnect) {
             message ? this._alerta.initiateMessage(conf.message.ALERT_DISCONNECTION) : null;

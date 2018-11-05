@@ -266,15 +266,6 @@ class MediaView {
         $(dom.BG_DARK).fadeIn(500);
         $(dom.ROOM_LOBBY).slideUp(500);
         $(dom.VIDEOS_PANEL).slideDown(500);
-        setTimeout(() => {
-            doc.TAG(dom.ALERT_SHARE).click();
-            $(dom.ROOM_STATUS).show(500);
-            $(dom.DIV_MAIN_VIDEO).show(500);
-            $(dom.DIV_INCOMING_VIDEO).show(500);
-            doc.TAG(dom.ROOM_STATUS).classList.remove("obj-invisible");
-            doc.TAG(dom.DIV_MAIN_VIDEO).classList.remove("obj-invisible");
-            doc.TAG(dom.DIV_INCOMING_VIDEO).classList.remove("obj-invisible");
-        }, 1000);
     }
 
     adjustChatFilePanel() {
@@ -284,6 +275,19 @@ class MediaView {
         this._chatPanel.style.maxHeight = (chatHeight - 250) + 'px';
         this._fileSideBar.style.height = (chatHeight - 200) + 'px';
         this._fileSideBar.style.maxHeight = (chatHeight - 200) + 'px';
+    }
+
+    showControlElements() {
+
+        doc.TAG(dom.ALERT_SHARE).click();
+        $(dom.ROOM_STATUS).show(500);
+        $(dom.DIV_MAIN_VIDEO).show(500);
+        $(dom.DIV_INCOMING_VIDEO).show(500);
+        setTimeout(() => {
+            doc.TAG(dom.ROOM_STATUS).classList.remove("obj-invisible");
+            doc.TAG(dom.DIV_MAIN_VIDEO).classList.remove("obj-invisible");
+            doc.TAG(dom.DIV_INCOMING_VIDEO).classList.remove("obj-invisible");
+        }, 800);
     }
 
     writeChatMessage(user, message) {
