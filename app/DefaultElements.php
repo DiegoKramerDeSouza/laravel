@@ -9,11 +9,12 @@ class DefaultElements extends Model
 
     public function __construct()
     {
+        // Arquivos de imagens
         $this->bgImage = 'img/bg.jpg';
         $this->playImg = 'img/play_btn.png';
-        $this->version = '1.1.0.80';
         // Definição do nome da aplicação
         $this->logo = 'WebTV';
+        $this->mainLogo = '<b class="white-text"><span class="blue-text">Web</span>Tv</b>';
         // Extensão de navegador para compartilhamento de tela
         $this->chromeExt = 'https://chrome.google.com/webstore/detail/screen-capturing/ajhifddimkapgcifgcodmmfdlknahffk';
         $this->firefoxExt = 'https://addons.mozilla.org/en-US/firefox/addon/enable-screen-capturing/';
@@ -33,6 +34,7 @@ class DefaultElements extends Model
         $this->peopleIcon =                 "<i class='material-icons'>people_outline</i>";
         $this->peopleIconLeft =             "<i class='material-icons left'>people_outline</i>";
         $this->peopleLargeIcon =            "<i class='material-icons large'>people_outline</i>";
+        $this->playLargeIcon =               "<i class='material-icons large'>play_circle_outline</i>";
         $this->searchIcon =                 "<i class='material-icons'>search</i>";
         $this->screenShareIcon =            "<i class='material-icons'>screen_share</i>";
         $this->sendIcon =                   "<i class='material-icons'>send</i>";
@@ -44,6 +46,7 @@ class DefaultElements extends Model
         $this->transmitLargeIcon =          "<i class='material-icons large'>wifi_tethering</i>";
         $this->tvBlueIcon =                 "<i class='material-icons blue-text'>live_tv</i>";
         $this->tvIcon =                     "<i class='material-icons'>live_tv</i>";
+        $this->tvLargeIcon =                "<i class='material-icons large'>live_tv</i>";
         $this->tokenUsb =                   "<i class='material-icons left'>usb</i>";
         $this->userVideoBlueIcon =          "<i class='material-icons blue-text'>ondemand_video</i>";
         $this->videocamIcon =               "<i class='material-icons'>videocam</i>";
@@ -122,6 +125,21 @@ class DefaultElements extends Model
         // Ícone + texto para links
         $this->gobackLink =             "<i class='material-icons left'>keyboard_backspace</i>voltar";
         $this->homeLink =               "<i class='material-icons left'>undo</i>desfazer";
+
+        // Pre-Loader
+        $this->preLoader =              '<div class="preloader-wrapper big active">
+                                            <div class="spinner-layer spinner-teal-only">
+                                                <div class="circle-clipper left">
+                                                    <div class="circle"></div>
+                                                </div>
+                                                <div class="gap-patch">
+                                                    <div class="circle"></div>
+                                                </div>
+                                                <div class="circle-clipper right">
+                                                    <div class="circle"></div>
+                                                </div>
+                                            </div>
+                                        </div>';
         // Definição de UFs em array
         $this->ufs = ['AC'=>'Acre','AL'=>'Alagoas','AP'=>'Amapá','AM'=>'Amazonas','BA'=>'Bahia','CE'=>'Ceará',
         'DF'=>'Distrito Federal','ES'=>'Espírito Santo','GO'=>'Goiás','MA'=>'Maranhão','MT'=>'Mato Grosso',

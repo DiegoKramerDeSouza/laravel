@@ -50,6 +50,7 @@ class MediaController {
         this._spanMainVideo = doc.TAG(dom.VIDEO_MAIN);
         this._pageMainContainer = doc.TAG(dom.PAGE_MAIN_CONTENT);
         this._divIncomingVideo = doc.TAG(dom.DIV_INCOMING_VIDEO);
+        this.startTransmition = doc.TAG(dom.START_TRANSMITION);
         this._otherVideos = {
             screen: '',
             user: ''
@@ -130,8 +131,6 @@ class MediaController {
     }
 
     initiateVideo(targetVideo) {
-
-        //targetVideo.play();
 
         setTimeout(() => {
             let playPromise = targetVideo.play();
@@ -546,20 +545,33 @@ class MediaController {
             this.disableMute();
             this.disableShare();
             this.disableFileSharing();
-            this._mediaView.adjustEspect();
+            this._mediaView.adjustEspectador();
         }
+    }
+
+    initBroadcasterVideo(roomid) {
+
+        this._mediaView.initBroadcasterVideo(roomid);
+    }
+
+    initTransmition() {
+
+        this._mediaView.initPreVideo();
+    }
+
+    endPreTransmition() {
+
+        this._mediaView.endPreVideo();
     }
 
     displayElem(elem, delay) {
 
         this._mediaView.fadeInElem(elem, delay);
-        //delay != undefined ? this._mediaView.fadeInElem(elem, delay) : this._mediaView.displayElem(elem);
     }
 
     hideElem(elem, delay) {
 
         this._mediaView.fadeOutElem(elem, delay)
-            //delay != undefined ? this._mediaView.fadeOutElem(elem, delay) : this._mediaView.hideElem(elem);
     }
 
 

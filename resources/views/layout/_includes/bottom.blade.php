@@ -105,6 +105,9 @@
                 <script type="text/javascript" src="{!! asset('js/views/RoomView.js') !!}"></script>
                 <!-- Helpers -->
                 <script type="text/javascript" src="{!! asset('js/helpers/RoomHelper.js') !!}"></script>        
+                <!-- WebRTC Adapters -->
+                <script type="text/javascript" src="{!! asset('js/webrtc/webrtc_adaptor.js') !!}"></script>
+                <script type="text/javascript" src="{!! asset('js/webrtc/adapter-latest.js') !!}"></script>
                 <!-- WebRTC Modules -->
                 <script type="text/javascript" src="{!! asset('js/webrtc/socket.io.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/webrtc/getHTMLMediaElement.js') !!}"></script>

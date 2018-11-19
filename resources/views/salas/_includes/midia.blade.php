@@ -1,4 +1,4 @@
-
+  
     <!--Video Panel -->
     <div id='video-panel' class='d-none'>
         <div class='col s12'>
@@ -25,41 +25,95 @@
                             <div align='center' class='mt-50'>
                                 <h6 class='blue-text'>{!! $default->connecting !!}</h6>
                             </div>
-                            <div class="progress grey darken-4">
-                                <div class="indeterminate blue"></div>
+                            <div class='progress grey darken-4'>
+                                <div class='indeterminate blue'></div>
                             </div>
                         </div>
                          
                         <div class='row'>
                             <div id='room-status' class='col s12 m12 l2 blue-text d-none obj-invisible'>
+                                <div class='row'>
+                                    <div id='broadcastingInfo' class='col s12 d-none' align='center'>
+                                        <span class='p-5 rounded-borders blue darken-1 white-text'>Transmitindo</span>
+                                    </div>
+                                </div>
                                 <div class='row p-10' align='center'>
                                     <!-- STATUS DA SALA -->
-                                    <div class="col s5 m4 l12 push-s1" title='Tempo conectado'>
+                                    <div class='col s5 m4 l12 push-s1' title='Tempo conectado'>
                                         {!! $default->timeIconLeft !!} 
                                         <span id='current-time' class='white-text left'>
                                             <span id='currentHour'>--</span>:<span id='currentMin'>--</span>:<span id='currentSec'>--</span>
                                         </span>
                                     </div>
-                                    <div class="col s5 m4 l12 push-s1" title='Espectadores'>
+                                    <div class='col s5 m4 l12 push-s1' title='Espectadores'>
                                         {!! $default->peopleIconLeft !!} <span id='current-users' class='white-text left'>0</span>
                                     </div>
-                                    <div id="token_Detection" class="col m4 l12 hide-on-small-and-down d-none" align="left">
-                                        <span id="tokenOn" class="d-none blue-text" title='Token Conectado'>{!! $default->tokenUsb !!}<b>ON</b></span>
-                                        <span id="tokenOff" class="d-none red-text" title='Token Desconectado'>{!! $default->tokenUsb !!}<b>OFF</b></span>
+                                    <div id='token_Detection' class='col m4 l12 hide-on-small-and-down d-none' align='left'>
+                                        <span id='tokenOn' class='d-none blue-text' title='Token Conectado'>{!! $default->tokenUsb !!}<b>ON</b></span>
+                                        <span id='tokenOff' class='d-none red-text' title='Token Desconectado'>{!! $default->tokenUsb !!}<b>OFF</b></span>
                                     </div>
-                                    <div class="d-none">
+                                    <div class='d-none'>
                                         <!-- BOTÃO DE VALIDAÇÃO DO TOKEN DE ACESSO -->
                                         <a id='call-token' class='btn btn-floating blue waves-effect waves-light'><i class='material-icons'>usb</i></a>
                                     </div>
                                 </div>
-                            </div>                 
+                            </div>
+                            <div id='preVideo' class='col s12 d-none'>
+                                <div class='col s12 m8 l8 push-m2 push-l2 dark-grey rounded-borders'>
+                                    <div class='p-10 white-text center'>
+                                        {!! $default->playLargeIcon !!}
+                                        <br />
+                                        <div class='card-title'>
+                                            <p>Quando estiver pronto para iniciar sua transmissão</p>
+                                            <p>clique no botão abaixo</p>
+                                            <br />
+                                            <a id='start-transmition' class='btn-large blue darken-2 waves-light waves-effect p-10'>Iniciar transmissão</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id='preLoaderVideo' class='col s12 d-none'>
+                                    <div class='col s12 m8 l8 push-m2 push-l2 dark-grey rounded-borders'>
+                                        <div class='p-10 white-text center'>
+                                            <br />
+                                            <br />
+                                            <h4>Iniciando transmissão em <b id='countdown'>5</b></h4>
+                                            <br />
+                                            {!! $default->preLoader !!}
+                                            <br />
+                                            <br />
+                                        </div>
+                                    </div>
+                                </div>
+                            <div id='preApresentacao' class='col s12 d-none'>
+                                <div class='col s12 m8 l8 push-m2 push-l2 dark-grey rounded-borders'>
+                                    <div class='p-10 white-text center'>
+                                        <br />
+                                        <br />
+                                        <h4>Aguardando apresentador</h4>
+                                        <br />
+                                        {!! $default->tvLargeIcon !!}
+                                        <br />
+                                        <br />
+                                        <div class='card-title'>
+                                            <p>Seu vídeo iniciará em breve</p>
+                                            <br />
+                                            <button id='startView' class='d-none'>start</button>
+                                        </div>
+                                        <br />
+                                        <br />
+                                    </div>
+                                </div>
+                            </div>              
                             <div id='div-main-video' class='col s12 m8 l8 push-m2 d-none obj-invisible'>
                                 <div class=''>
                                     <div id='main-video' align='center' class='inroom mainView'>
+                                        <div id='embedded-container-iframe' align='center'>
+                                        </div>
                                         <div id='videos'>
                                             <!--VÍDEO PRINCIPAL-->
                                             <div id='span-video-preview' data-status='disabled' data-position='main' class='width-limit first-video'>
-                                                <video id="video-preview" class="responsive-video" preload="none" loop ></video>
+                                                <video id='video-preview' class='responsive-video' preload='none' loop ></video>
                                                 <div id='div-exit-fullscreen' class='fixed-action-btn d-none'>
                                                     <a id='exit-fullscreen' class='btn-floating btn-large blue darken-2'>
                                                         {!! $default->fullscreenExitLargeIcon !!}
@@ -73,15 +127,15 @@
                             <div id='div-incoming-videos' data-active='out' class='col s12 m2 l2 push-m2 d-none obj-invisible' align='center'>
                                 <div class='row'>
                                     <!--TERCEIRO VÍDEO-->
-                                    <div id='span-video-preview-3rd' align="center" data-status='disabled' data-position='second' class='col s12 d-none'>
-                                        <video id="thirdvideo-preview" draggable="false" preload="none" loop class='min-video responsive-video'></video>
+                                    <div id='span-video-preview-3rd' align='center' data-status='disabled' data-position='second' class='col s12 d-none'>
+                                        <video id='thirdvideo-preview' draggable='false' preload='none' loop class='min-video responsive-video'></video>
                                     </div>
                                     <!--SEGUNDO VÍDEO-->
-                                    <div id='span-video-preview-2nd' align="center" data-status='disabled' data-position='second' class='col s12 d-none'>
+                                    <div id='span-video-preview-2nd' align='center' data-status='disabled' data-position='second' class='col s12 d-none'>
                                         <a id='swap-video' title='Passar para vídeo principal' class='btn-floating blue darken-2 waves-effect waves-light obj-invisible'>
                                             {!! $default->swapIcon !!}
                                         </a>
-                                        <video id="secondvideo-preview" draggable="false" preload="none" loop class='min-video responsive-video'></video>
+                                        <video id='secondvideo-preview' draggable='false' preload='none' loop class='min-video responsive-video'></video>
                                     </div>
                                 </div>
                             </div>
@@ -92,13 +146,13 @@
 
                             <div class='row'>
                                 <!-- Controle de espectadores conectados -->
-                                <ul id="connected-users" class='collapsible popout d-none'>
+                                <ul id='connected-users' class='collapsible popout d-none'>
                                     <li>
-                                        <div class="collapsible-header white-text dark-grey">
-                                            <span class="blue-text">{!! $default->peopleIconLeft !!}</span>
-                                            <b> Espectadores: <span id="users-counter" data-target='{{ Auth::user()->type  }}' class="blue-text">0</span></b>
+                                        <div class='collapsible-header white-text dark-grey'>
+                                            <span class='blue-text'>{!! $default->peopleIconLeft !!}</span>
+                                            <b> Espectadores: <span id='users-counter' data-target='{{ Auth::user()->type  }}' class='blue-text'>0</span></b>
                                         </div>
-                                        <div id="connected-users-list" class="collapsible-body active white-text">
+                                        <div id='connected-users-list' class='collapsible-body active white-text'>
                                             <!-- Lista de espectadores ativos -->
                                         </div>
                                     </li>
@@ -112,7 +166,7 @@
     </div>
 
     <!-- Sidebar de painel de chat -->
-    <ul id="slide-out" class="sidenav grey lighten-4 z-depth-5">
+    <ul id='slide-out' class='sidenav grey lighten-4 z-depth-5'>
         <div class='row'>
             <div id='chat-textarea'>
                 <div id='chat-panel' class='white-text'>

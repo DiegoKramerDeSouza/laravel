@@ -29,10 +29,13 @@ class MediaView {
         this._fileListReceive = doc.TAG(dom.FILE_LIST_REICEIVED);
         this._fileListSend = doc.TAG(dom.FILE_LIST_SENDED);
         this._fileSideBar = doc.TAG(dom.FILE_EXP);
+        this._countdown = doc.TAG(dom.COUNTDOWN);
+        this._videoField = doc.TAG(dom.PRE_APRESENTACAO);
         this._listContent = '';
         this._countReceiveFiles = 0;
         this._countSendFiles = 0;
         this._otherVideos = false;
+
     }
 
     setInvisible(elem) {
@@ -360,29 +363,56 @@ class MediaView {
         this._solicitationList.innerHTML = this._listContent;
     }
 
-    _adjustMediaMenu() {
-
-        $(dom.DIV_CONNECT).hide();
-        $(dom.DIV_CONTROLLER).fadeIn(300);
-
-    }
-
     adjustBroadCaster() {
 
-        this._prepareFileMenu(dom.LI_PERDIR, dom.DIV_RECEIVE_FILES, dom.MIN_RECEIVE);
+        this._prepareFileMenu(dom.LI_PERDIR, dom.DIV_RECEIVE_FILES, dom.MIN_RECEIVE, dom.PRE_VIDEO);
     }
 
-    adjustEspect() {
+    adjustEspectador() {
 
-        this._prepareFileMenu(dom.CTL_PEDIR, dom.DIV_UPLOADED_FILES, dom.MIN_SEND);
+        this._prepareFileMenu(dom.CTL_PEDIR, dom.DIV_UPLOADED_FILES, dom.MIN_SEND, dom.PRE_APRESENTACAO);
     }
 
-    _prepareFileMenu(pedir, files, filesMin) {
+    _prepareFileMenu(pedir, files, filesMin, preview) {
 
-        this._adjustMediaMenu();
+        $(dom.DIV_CONNECT).hide();
         $(pedir).hide();
         $(files).hide();
         $(filesMin).hide();
+        $(preview).fadeIn(500);
+    }
+
+    initPreVideo() {
+
+        $(dom.PRE_VIDEO).hide();
+        $(dom.PRE_LOAD_VIDEO).fadeIn(300);
+        this._startCountDown();
+    }
+
+    endPreVideo() {
+
+        $(dom.PRE_LOAD_VIDEO).hide();
+        $(dom.DIV_CONTROLLER).fadeIn(300);
+    }
+
+    _startCountDown() {
+
+        let count = 4
+        let interval = setInterval(() => {
+            this._countdown.innerHTML = count;
+            count--;
+            if (count <= 0) clearInterval(interval);
+        }, 1000);
+    }
+
+    initBroadcasterVideo(roomid) {
+
+        $('#videos').hide();
+        $(dom.PRE_APRESENTACAO).hide();
+        let addr = `<iframe id="embedded_player" src="${ conf.con.SOCKET_PLAYER }${ btoa(roomid) }" frameborder="0" allowfullscreen></iframe>`;
+        doc.TAG(dom.EMBEDDED_FRAME).innerHTML = addr;
+        $(dom.DIV_MAIN_VIDEO).show(100);
+        doc.TAG(dom.DIV_MAIN_VIDEO).classList.remove("obj-invisible");
     }
 
     createProgressBar(file) {

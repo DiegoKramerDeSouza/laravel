@@ -251,8 +251,20 @@
     padding: 10px;
 }
 
+.p-20 {
+    padding: 20px;
+}
+
 .p-40 {
     padding: 40px;
+}
+
+.p-l-10 {
+    padding-left: 10px;
+}
+
+.p-r-10 {
+    padding-right: 10px;
 }
 
 .room-enter:hover {

@@ -115,9 +115,40 @@ body::-webkit-scrollbar-thumb:hover {
     transition-duration: 0.4s !important;
 }
 
+#embedded-container-iframe {
+    position: relative;
+    overflow: hidden;
+    padding-top: 56.25%;
+}
+
+#embedded_player {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    margin: auto;
+}
+
+#embedded-container-iframe1 {
+    position: relative;
+    padding-bottom: 56.25%;
+    /* 16:9 */
+    padding-top: 25px;
+    height: 0;
+}
+
+#embedded_player1 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
 #files-side-bar {
-    overflow-y: hidden;
-    overflow-x: hidden;
+    overflow: hidden;
 }
 
 #fglayer {

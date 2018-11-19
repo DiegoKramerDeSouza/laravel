@@ -25,7 +25,7 @@
             <nav class="nav-wrapper grey darken-4">
                 <div class="">
                     <a href='#!' class='sidenav-trigger white-text text-darken-3 right' data-target='side-bar' title='Menu'>{!! $default->menuIcon !!}</a>
-                    <a href='{{ route('home') }}' class='brand-logo load-cancel'><span class='white-text'>&nbsp;&nbsp;<b><span class='blue-text'>Web</span>Tv</b></span></a>
+                    <a href='{{ route('home') }}' class='brand-logo load-cancel'>&nbsp;&nbsp;{!! $default->mainLogo !!}</a>
                     <ul id='nav-mobile' class='right hide-on-med-and-down white-text'>
                         @if(! Auth::guest())
                             @if(Auth::user()->type == 0)

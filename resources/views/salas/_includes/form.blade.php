@@ -85,3 +85,29 @@
 <input type='hidden' id='broadcaster' name='broadcaster' disabled readonly />
 <input type='hidden' id='in-room' name='in-room' disabled readonly />
 <input type='hidden' id='in-screen' name='in-screen' disabled readonly />
+
+<!--
+<iframe id="embedded_player" style="width:100%;"
+    src="http://jitsitutorial443.com:5080/WebRTCApp/play.html?name=Mnw5ODYyc2R3cGplfDE1NDI2NDc1NDkxNzk=" frameborder="0" allowfullscreen>
+</iframe>
+
+<script>
+
+    let frame = document.getElementById('embedded_player');
+    
+    /*
+    setTimeout( () => {
+        let framePlay = document.getElementById('embedded_player').contentWindow.document.querySelector("button.vjs-big-play-button");
+        framePlay.onclick = () =>{
+            let viewerPlay = document.getElementById('embedded_player').contentWindow.document.getElementById("remoteVideo_html5_api");
+            setTimeout( () => {
+                console.log('===>', viewerPlay.videoHeight);
+            }, 500);
+        }
+    }, 5000);
+    */
+
+    frame.style.height = '480px';
+    
+</script>
+-->
