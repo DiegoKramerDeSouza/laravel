@@ -554,9 +554,26 @@ class MediaController {
         this._mediaView.initBroadcasterVideo(roomid);
     }
 
-    initTransmition() {
+    initTransmition(roomid, preVideo, preLoader, count) {
 
-        this._mediaView.initPreVideo();
+        this._mediaView.initPreVideo(preVideo, preLoader, count);
+        if (roomid) {
+            setTimeout(() => {
+                //this.getMediaServerStream(roomid);
+            }, 5000);
+        }
+
+    }
+
+    getMediaServerStream(roomid) {
+
+        $.ajax({
+            url: conf.con.SOCKET_PLAYER,
+            type: 'GET',
+            data: { name: btoa(roomid) },
+            success: (data) => console.log(data),
+            error: (data) => console.error(data)
+        });
     }
 
     endPreTransmition() {

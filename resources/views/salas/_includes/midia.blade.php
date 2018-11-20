@@ -73,18 +73,18 @@
                                 </div>
                             </div>
                             <div id='preLoaderVideo' class='col s12 d-none'>
-                                    <div class='col s12 m8 l8 push-m2 push-l2 dark-grey rounded-borders'>
-                                        <div class='p-10 white-text center'>
-                                            <br />
-                                            <br />
-                                            <h4>Iniciando transmissão em <b id='countdown'>5</b></h4>
-                                            <br />
-                                            {!! $default->preLoader !!}
-                                            <br />
-                                            <br />
-                                        </div>
+                                <div class='col s12 m8 l8 push-m2 push-l2 dark-grey rounded-borders'>
+                                    <div class='p-10 white-text center'>
+                                        <br />
+                                        <br />
+                                        <h4>Iniciando transmissão em <b id='countdown'>5</b></h4>
+                                        <br />
+                                        {!! $default->preLoader !!}
+                                        <br />
+                                        <br />
                                     </div>
                                 </div>
+                            </div>
                             <div id='preApresentacao' class='col s12 d-none'>
                                 <div class='col s12 m8 l8 push-m2 push-l2 dark-grey rounded-borders'>
                                     <div class='p-10 white-text center'>
@@ -104,11 +104,24 @@
                                         <br />
                                     </div>
                                 </div>
-                            </div>              
+                            </div>
+                            <div id='preLoaderPresentation' class='col s12 d-none'>
+                                    <div class='col s12 m8 l8 push-m2 push-l2 dark-grey rounded-borders'>
+                                        <div class='p-10 white-text center'>
+                                            <br />
+                                            <br />
+                                            <h4>Iniciando apresentação</h4>
+                                            <br />
+                                            {!! $default->preLoader !!}
+                                            <br />
+                                            <br />
+                                        </div>
+                                    </div>
+                                </div>              
                             <div id='div-main-video' class='col s12 m8 l8 push-m2 d-none obj-invisible'>
                                 <div class=''>
                                     <div id='main-video' align='center' class='inroom mainView'>
-                                        <div id='embedded-container-iframe' align='center'>
+                                        <div id='embedded-container-iframe' class="embedded-container d-none">
                                         </div>
                                         <div id='videos'>
                                             <!--VÍDEO PRINCIPAL-->
@@ -141,6 +154,12 @@
                             </div>
                         </div>
                         <div class='col s12'>
+                            <span id='broadcastingReady' class='d-none white-text' align='center' style="border: 1px solid red;">
+                                <h4>Apresentação iniciada</h4>
+                                <span id='readyToPlay' class='p-5 rounded-borders blue darken-1'>
+                                    Clique no botão acima para visualizar a apresentação
+                                </span>
+                            </span>
                             <!-- Controles de mídia -->
                             @include('salas._includes.controles')
 

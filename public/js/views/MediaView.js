@@ -35,6 +35,7 @@ class MediaView {
         this._countReceiveFiles = 0;
         this._countSendFiles = 0;
         this._otherVideos = false;
+        this._readyToPlay = false;
 
     }
 
@@ -382,16 +383,22 @@ class MediaView {
         $(preview).fadeIn(500);
     }
 
-    initPreVideo() {
+    initPreVideo(preVideo, preLoader, count) {
 
-        $(dom.PRE_VIDEO).hide();
-        $(dom.PRE_LOAD_VIDEO).fadeIn(300);
-        this._startCountDown();
+        $(preVideo).hide();
+        this.prepareToInitiate(preLoader, count);
+    }
+
+    prepareToInitiate(preLoader, count) {
+
+        $(preLoader).fadeIn(300);
+        if (count) this._startCountDown();
     }
 
     endPreVideo() {
 
         $(dom.PRE_LOAD_VIDEO).hide();
+        $(dom.EMBEDDED_FRAME).hide();
         $(dom.DIV_CONTROLLER).fadeIn(300);
     }
 
@@ -405,14 +412,33 @@ class MediaView {
         }, 1000);
     }
 
+    broadcasterReady() {
+
+        $(dom.BROADCASTING_READY).fadeIn(800, () => {
+            $(dom.BROADCASTING_READY).fadeOut(800, () => {
+                if (this._readyToPlay) this.broadcasterReady();
+            });
+        })
+    }
+
     initBroadcasterVideo(roomid) {
 
-        $('#videos').hide();
+        $(dom.VIDEOS).hide();
         $(dom.PRE_APRESENTACAO).hide();
-        let addr = `<iframe id="embedded_player" src="${ conf.con.SOCKET_PLAYER }${ btoa(roomid) }" frameborder="0" allowfullscreen></iframe>`;
-        doc.TAG(dom.EMBEDDED_FRAME).innerHTML = addr;
-        $(dom.DIV_MAIN_VIDEO).show(100);
+        $(dom.PRE_LOAD_APRESENTACAO).hide();
+
+        let addr = `<iframe id="embedded_player" class="embedded-video" src="${ conf.con.SOCKET_PLAYER }?name=${ btoa(roomid) }" frameborder="0" allowfullscreen></iframe>`;
+        let frame = doc.TAG(dom.EMBEDDED_FRAME);
+        frame.innerHTML = addr;
+
+        $(dom.DIV_MAIN_VIDEO).show();
         doc.TAG(dom.DIV_MAIN_VIDEO).classList.remove("obj-invisible");
+        $(dom.EMBEDDED_FRAME).fadeIn(300);
+
+        this._readyToPlay = true;
+        this.broadcasterReady();
+        frame.onclick = () => this._readyToPlay = false;
+
     }
 
     createProgressBar(file) {

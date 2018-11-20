@@ -6,10 +6,6 @@
  * const misc: elementos visuais de uso geral;
  */
 
-/*Configurações gerais carregadas via JSON */
-//const jFile = `http://localhost/js/conf/config.json`;
-//const cfg = $.getJSON(jFile);
-
 const doc = {
     /*Constantes de configuração de elementos do documento */
     ALL: document.querySelectorAll.bind(document),
@@ -78,9 +74,9 @@ const conf = {
         SET_BAND_LIMIT: false,
         SHARE_DENIED: 'permission-denied',
         SINGLE_CON: false,
-        SOCKET_PLAYER: "http://jitsitutorial443.com:5080/WebRTCApp/play.html?name=",
-        SOCKET_SSL: "wss://jitsitutorial443.com:5443/WebRTCApp/websocket",
-        SOCKET_URL: "ws://jitsitutorial443.com:5080/WebRTCApp/websocket",
+        SOCKET_PLAYER: "https://med.lrbtecnologia.com:5443/WebRTCApp/play.html",
+        SOCKET_SSL: "wss://med.lrbtecnologia.com:5443/WebRTCApp/websocket",
+        SOCKET_URL: "ws://med.lrbtecnologia.com:5080/WebRTCApp/websocket",
         TK_DETECT: false,
         TK_KEY: 'fhnfigfpkkijpcpfhjaeajmgeelkkila',
         TK_MSG: 'hello',
@@ -180,6 +176,7 @@ const dom = {
     BG_DARK: '#bgdark',
     BROADCASTER: '#broadcaster',
     BROADCASTING_INFO: '#broadcastingInfo',
+    BROADCASTING_READY: '#broadcastingReady',
     BTN_CONF_DEVICES: '#btn-conf-devices',
     BTN_FILE_SHARING: '#file-sharing',
     BTN_SEND_MSG: '#send-message-btn',
@@ -268,6 +265,7 @@ const dom = {
     PEDIR: '#pedir-vez',
     POSTAL: '#postal',
     PRE_APRESENTACAO: '#preApresentacao',
+    PRE_LOAD_APRESENTACAO: '#preLoaderPresentation',
     PRE_LOAD_VIDEO: '#preLoaderVideo',
     PRE_VIDEO: '#preVideo',
     PREVIEW: '#video-preview-broadcaster',
@@ -316,6 +314,7 @@ const dom = {
     VIDEO_MAIN: '#span-video-preview',
     VIDEO_SECOND: '#span-video-preview-2nd',
     VIDEO_THIRD: '#span-video-preview-3rd',
+    VIDEOS: '#videos',
     VIDEOS_PANEL: '#video-panel',
     VOL: '#toggle-volume'
 }
@@ -369,3 +368,7 @@ const misc = {
     ON_COLOR: 'blue',
     TURNOFF_COLOR: 'black'
 }
+
+/*Configurações gerais carregadas via JSON */
+//const jFile = `http://localhost/js/conf/config.json`;
+//const cfg = $.getJSON(jFile);

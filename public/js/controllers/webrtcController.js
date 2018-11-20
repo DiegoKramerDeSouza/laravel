@@ -22,6 +22,7 @@ class webrtcController {
         this._roomData;
         this._room;
 
+        this._startedStream = false;
         this._retransmiting = false;
         this._retransmitingWho;
         this._roomId;
@@ -765,21 +766,24 @@ class webrtcController {
             this._mediaController.adjustMediaMenu('local');
             this._mediaController.startTransmition.onclick = () => {
                 this._initAdaptor(roomid);
-                this._mediaController.initTransmition();
+                this._mediaController.initTransmition(false, dom.PRE_VIDEO, dom.PRE_LOAD_VIDEO, true);
                 setTimeout(() => {
                     this._mediaController.endPreTransmition();
                     this._startPublishing(roomid);
                     this._mediaController.initiateControls();
                     connection.extra.onair = true;
                     console.warn('Sala criada: ', btoa(roomid));
+
+                    // Informa início de stream para todos os participantes
                     let msgrash = this._mediaController.createSolicitationArray(
                         btoa(conf.req.NEW_ROOM),
                         this._roomInfo.currentUser.value,
                         roomid,
-                        false,
+                        this._startedStream,
                         false
                     );
                     connection.send(msgrash);
+                    this._startedStream = true;
                 }, 5300);
             }
 
@@ -1137,10 +1141,10 @@ class webrtcController {
                     btoa(conf.req.NEW_ROOM),
                     this._roomInfo.currentUser.value,
                     this._roomInfo.inRoom.value,
-                    false,
+                    this._startedStream,
                     false
                 );
-                if (userid) this._broadcaster.send(msgrash, userid);
+                if (userid && this._startedStream) this._broadcaster.send(msgrash, userid);
                 this._broadcaster.send(this._connectController.points);
                 this._updateUsersList();
             }
@@ -1289,9 +1293,12 @@ class webrtcController {
 
             } else if (chkrash[0] === btoa(conf.req.NEW_ROOM)) {
                 // Informativo de nova transmissão de sala iniciada
-                setTimeout(() => {
-                    this._mediaController.initBroadcasterVideo(chkrash[2]);
-                }, 5000)
+                if (chkrash[3] === true) this._initateRoomStream(chkrash[2]);
+                else {
+                    this._mediaController.initTransmition(chkrash[2], dom.PRE_APRESENTACAO, dom.PRE_LOAD_APRESENTACAO, false);
+                    // Reavaliar
+                    setTimeout(() => this._initateRoomStream(chkrash[2]), 5000);
+                }
             } else {
                 // Mensagem sistêmica não definida
                 return;
@@ -1300,6 +1307,18 @@ class webrtcController {
             // Tratamento de mensagens comuns (fora do padrão de mensagem com solicitação)    
             this._mediaController.writeMessage(text, remoto);
         }
+    }
+
+    /**
+     * Inicialização da apresentação do vídeo principal
+     * @param {String} room 
+     */
+    _initateRoomStream(room) {
+
+        this._mediaController.initBroadcasterVideo(room);
+        this._mediaController.initiateControls();
+        // TESTE
+        //document.getElementById('thirdvideo-preview').play();
     }
 
     /**
