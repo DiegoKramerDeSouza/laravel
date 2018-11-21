@@ -61,8 +61,8 @@ const conf = {
         MAX_RELAY: 0,
         MSG: 'Inicia-Apresentacao',
         ROOM_IDENTIFIER: 'class-room',
-        SESSION_AUDIO: true,
-        SESSION_VID: true,
+        SESSION_AUDIO: false,
+        SESSION_VID: false,
         SESSION_VIDEO: {
             mandatory: {
                 minFrameRate: 30
@@ -106,6 +106,7 @@ const conf = {
     },
     req: {
         /*Padrão de mensagens de chat com REQUISIÇÕES/RESPOSTAS a ações */
+        END_CONNECTION: '@Finaliza-Conexao',
         END_PARTICIPANT: '@Finaliza-Participante',
         END_PARTICIPATION: '@Finaliza-Participacao',
         END_SHARE: '@Finaliza-Share',
@@ -143,7 +144,7 @@ const conf = {
         DISCONNECT_USER: ['<i class="fa fa-times"></i>', 'foi desconectado!', apr.msg.ERROR_MSG_COLOR],
         CANCEL_SOLICITATION: ['<i class="fa fa-times"></i>', 'Solicitação cancelada.', apr.msg.ERROR_MSG_COLOR],
         NEW_SOLICITATION: ['<i class="material-icons">pan_tool</i>', 'solicita a vez!', apr.msg.LOCAL_MSG_COLOR],
-        ALERT_DISCONNECTION: ['<i class="fa fa-times"></i>', 'Você foi desconectado!', apr.msg.ERROR_MSG_COLOR],
+        ALERT_DISCONNECTION: ['<i class="fa fa-times"></i>', 'Conexão finalizada!', apr.msg.ERROR_MSG_COLOR],
         CAM_OFF: ['<i class="material-icons left">videocam_off</i>', 'Camera Desabilitada.', apr.msg.ERROR_MSG_COLOR],
         CAM_ON: ['<i class="material-icons left">videocam</i>', 'Camera Habilitada.', apr.msg.LOCAL_MSG_COLOR],
         MIC_OFF: ['<i class="material-icons left">mic_off</i>', 'Microfone Desabilitado.', apr.msg.ERROR_MSG_COLOR],
@@ -176,7 +177,6 @@ const dom = {
     BG_DARK: '#bgdark',
     BROADCASTER: '#broadcaster',
     BROADCASTING_INFO: '#broadcastingInfo',
-    BROADCASTING_READY: '#broadcastingReady',
     BTN_CONF_DEVICES: '#btn-conf-devices',
     BTN_FILE_SHARING: '#file-sharing',
     BTN_SEND_MSG: '#send-message-btn',
@@ -230,6 +230,7 @@ const dom = {
     FILE_MIN: '#min-files',
     FILE_SIDE_BAR: '#files-side-bar',
     FILE_TRANSFERING: '#file-transfering',
+    FINISH: '#finish_btn',
     FIRST_VIDEO: '#video-preview',
     FRAME_LAYER: '#embedded_player',
     IN_ROOM: '#in-room',
@@ -359,6 +360,9 @@ const misc = {
     ICON_SUCCESS: '<i class="fa fa-check fa-lg"></i>',
     ICON_VOL_OFF: '<i class="material-icons">volume_off</i>',
     ICON_VOL_ON: '<i class="material-icons">volume_up</i>',
+    /*Títulos */
+    TITLE_END_ROOM: "Finalizar sala",
+    TITLE_END_TRANSMITION: "Finalizar transmissão",
     /*Atribuição CSS */
     STYLE_HEIGHT_INHERIT: 'inherit',
     /*Cores */

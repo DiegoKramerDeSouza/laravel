@@ -33,10 +33,7 @@ class MediaController {
         this._fullsize = doc.TAG(dom.TOGGLE_VIDEO_SIZE);
         this._sharedFile = doc.TAG(dom.BTN_FILE_SHARING);
         this._spanSecondVideo = doc.TAG(dom.VIDEO_SECOND);
-        this._callMinReceiveFiles = doc.TAG(dom.CALL_RECEIVE);
-        this._callMinSendFiles = doc.TAG(dom.CALL_SEND);
-        this._callReceiveFiles = doc.TAG(dom.CALL_RECEIVE_MIN);
-        this._callSendFiles = doc.TAG(dom.CALL_SEND_MIN);
+        this._finish = doc.TAG(dom.FINISH);
 
         this._controlCam = true;
         this._controlVoice = true;
@@ -83,10 +80,7 @@ class MediaController {
             this._fullsize,
             this._sharedFile,
             this._spanSecondVideo,
-            this._callReceiveFiles,
-            this._callSendFiles,
-            this._callMinReceiveFiles,
-            this._callMinSendFiles
+            this._finish
         );
     }
 
@@ -132,20 +126,17 @@ class MediaController {
 
     initiateVideo(targetVideo) {
 
-        setTimeout(() => {
-            let playPromise = targetVideo.play();
-            if (playPromise !== undefined) {
-                playPromise.then(_ => {
-                        targetVideo.play();
-                    })
-                    .catch(error => {
-                        console.log('Erro ao inicializar vídeo...', error);
-                        this.initiateVideo(targetVideo);
-                    });
-                return;
-            }
-        }, 700);
-
+        let playPromise = targetVideo.play();
+        if (playPromise !== undefined) {
+            playPromise.then(_ => {
+                    targetVideo.play();
+                })
+                .catch(error => {
+                    console.log('Erro ao inicializar vídeo...', error);
+                    this.initiateVideo(targetVideo);
+                });
+            return;
+        }
     }
 
     controlVolume(currentStream) {
@@ -563,6 +554,11 @@ class MediaController {
             }, 5000);
         }
 
+    }
+
+    startAnimation(webRTCadpt, roomid) {
+
+        this._mediaView.startAnimation(webRTCadpt, roomid);
     }
 
     getMediaServerStream(roomid) {

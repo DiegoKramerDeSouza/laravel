@@ -28,6 +28,7 @@ class Media {
         fullsize,
         sharedFile,
         spanSecondVideo,
+        finish
     ) {
 
         this._videoPreview = videoPreview;
@@ -53,6 +54,7 @@ class Media {
         this._fullsize = fullsize;
         this._sharedFile = sharedFile;
         this._spanSecondVideo = spanSecondVideo;
+        this._finish = finish;
         Object.freeze(this);
     }
 
@@ -169,6 +171,11 @@ class Media {
     get spanSecondVideo() {
 
         return this._spanSecondVideo;
+    }
+
+    get finish() {
+
+        return this._finish;
     }
 
 }

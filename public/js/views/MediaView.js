@@ -412,13 +412,19 @@ class MediaView {
         }, 1000);
     }
 
-    broadcasterReady() {
+    startAnimation(webRTCadpt, roomid) {
 
-        $(dom.BROADCASTING_READY).fadeIn(800, () => {
-            $(dom.BROADCASTING_READY).fadeOut(800, () => {
-                if (this._readyToPlay) this.broadcasterReady();
+        $(dom.BROADCASTING_INFO).fadeIn(800, () => {
+            $(dom.BROADCASTING_INFO).fadeOut(800, () => {
+                let state = webRTCadpt.signallingState(btoa(roomid));
+                if (state != null && state != "closed") {
+                    let iceState = webRTCadpt.iceConnectionState(btoa(roomid));
+                    if (iceState != null && iceState != "failed" && iceState != "disconnected") {
+                        this.startAnimation(webRTCadpt, roomid);
+                    }
+                }
             });
-        })
+        });
     }
 
     initBroadcasterVideo(roomid) {
@@ -434,11 +440,6 @@ class MediaView {
         $(dom.DIV_MAIN_VIDEO).show();
         doc.TAG(dom.DIV_MAIN_VIDEO).classList.remove("obj-invisible");
         $(dom.EMBEDDED_FRAME).fadeIn(300);
-
-        this._readyToPlay = true;
-        this.broadcasterReady();
-        frame.onclick = () => this._readyToPlay = false;
-
     }
 
     createProgressBar(file) {

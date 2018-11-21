@@ -8,7 +8,7 @@
                 <div id='started_room' class='card-content rounded-borders'>
                     <div id='class-suptitle' class='dark-grey p-10 rounded-borders'>
                         <span class='right'>
-                            <a href='' title='Sair' class='red-text text-darken-4'>{!! $default->exitRoom !!}</a>
+                            <a id='finish_btn' href='#started_room' title='Finalizar sala' class='red-text text-darken-4'>{!! $default->exitRoom !!}</a>
                         </span>
                         <span id='screen-share-alert' title='Você está transmintindo a sua tela' class='d-none left'>
                             <a href='#started_room' id='alert-share' class='btn-floating red darken-4 pulse'>{!! $default->tvIcon !!}</a>
@@ -154,12 +154,7 @@
                             </div>
                         </div>
                         <div class='col s12'>
-                            <span id='broadcastingReady' class='d-none white-text' align='center' style="border: 1px solid red;">
-                                <h4>Apresentação iniciada</h4>
-                                <span id='readyToPlay' class='p-5 rounded-borders blue darken-1'>
-                                    Clique no botão acima para visualizar a apresentação
-                                </span>
-                            </span>
+                            
                             <!-- Controles de mídia -->
                             @include('salas._includes.controles')
 
