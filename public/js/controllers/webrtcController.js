@@ -212,7 +212,7 @@ class webrtcController {
                             $(dom.CALL_TK).click();
                         }
                         console.info("Sala criada com sucesso.", roomid);
-                        this._openPreStream(this._broadcaster, roomid, true);
+                        this._openPreStream(this._broadcaster, roomid, true, false);
                     }
                 });
             });
@@ -667,23 +667,10 @@ class webrtcController {
     _stopPublishing(roomid) {
 
         this._startedStream = false;
-        this._btnFinish.title = misc.TITLE_END_ROOM;
+        this._mediaController.changeTransmition(misc.TITLE_FINISH_ROOM, misc.ICON_END_ROOM);
         this._webRTCAdaptor.stop(btoa(roomid));
-    }
-
-    _startAnimation(roomid) {
-
-        $(dom.BROADCASTING_INFO).fadeIn(800, () => {
-            $(dom.BROADCASTING_INFO).fadeOut(800, () => {
-                let state = this._webRTCAdaptor.signallingState(btoa(roomid));
-                if (state != null && state != "closed") {
-                    let iceState = this._webRTCAdaptor.iceConnectionState(btoa(roomid));
-                    if (iceState != null && iceState != "failed" && iceState != "disconnected") {
-                        this._startAnimation(roomid);
-                    }
-                }
-            });
-        });
+        this._mediaController.stopTransmition(roomid);
+        this._media.previewVideo.pause();
     }
 
     _initAdaptor(roomid) {
@@ -707,14 +694,13 @@ class webrtcController {
             mediaConstraints: mediaConstraints,
             peerconnection_config: pc_config,
             sdp_constraints: sdpConstraints,
-            localVideoId: "video-preview",
+            localVideoId: dom.MAIN_VIDEO,
             debug: true,
             callback: (info, description) => {
                 if (info == "initialized") {
                     console.info("Conexão inicializada!");
                 } else if (info == "publish_started") {
                     console.info("Iniciando Transmissão");
-                    //this._startAnimation(roomid);
                     this._mediaController.startAnimation(this._webRTCAdaptor, roomid);
                 } else if (info == "publish_finished") {
                     console.warn("Finalizando Transmissão");
@@ -745,6 +731,7 @@ class webrtcController {
 
         this._btnFinish.onclick = () => {
             if (this._startedStream && connection.isInitiator) {
+                connection.extra.streamEnded = true;
                 this._stopPublishing(roomid);
                 return;
             }
@@ -753,9 +740,9 @@ class webrtcController {
         }
     }
 
-    _openPreStream(connection, roomid, isLocal) {
+    _openPreStream(connection, roomid, isLocal, isFinished) {
 
-        console.info('ABERTA A CONEXÃO: ', connection, roomid);
+        console.info('ABERTA A CONEXÃO: ', connection, roomid, connection.extra);
         this._roomInfo.inRoom.value = roomid;
         this._finishTransmition(connection, roomid);
 
@@ -782,20 +769,20 @@ class webrtcController {
                     this._startPublishing(roomid);
                     this._mediaController.initiateControls();
                     connection.extra.onair = true;
-                    console.warn('Sala criada: ', btoa(roomid));
+                    connection.extra.streamEnded = false;
+                    this._mediaController.changeTransmition(misc.TITLE_END_TRANSMITION, misc.ICON_END_TRANSMITION);
+                    console.warn('### SALA CRIADA: ', btoa(roomid));
 
                     // Informa início de stream para todos os participantes
                     let msgrash = this._mediaController.createSolicitationArray(
                         btoa(conf.req.NEW_ROOM),
                         this._roomInfo.currentUser.value,
                         roomid,
-                        this._startedStream,
-                        false
+                        this._startedStream
                     );
                     setTimeout(() => {
                         connection.send(msgrash);
                         this._startedStream = true;
-                        this._btnFinish.title = misc.TITLE_END_TRANSMITION;
                     }, 5000);
                 }, 5000);
             }
@@ -919,6 +906,8 @@ class webrtcController {
             };
         } else {
 
+            if (isFinished) console.warn('FINALIZADO!!!')
+
             // Identifica mídia do broadcaster
             let isBroadcasterMidia = true;
             // Valida dispositívos de áudio e vídeo
@@ -1019,8 +1008,9 @@ class webrtcController {
                 this._currentUsers = this._connectController.points;
                 this.setUsersInformation(event.userid);
             } else {
-                if (event.extra.onair === true) this._openPreStream(connection, event.userid, false, true);
-                else this._openPreStream(connection, event.userid, false, false);
+                console.log(event.extra);
+                if (event.extra.onair === true) this._openPreStream(connection, event.userid, false, true, event.extra.streamEnded);
+                else this._openPreStream(connection, event.userid, false, false, event.extra.streamEnded);
             }
 
             if (event.userid == this._roomId || connection.isInitiator)
@@ -1139,8 +1129,7 @@ class webrtcController {
                     btoa(conf.req.NEW_ROOM),
                     this._roomInfo.currentUser.value,
                     this._roomInfo.inRoom.value,
-                    this._startedStream,
-                    false
+                    this._startedStream
                 );
                 if (userid && this._startedStream) this._broadcaster.send(msgrash, userid);
                 this._broadcaster.send(this._connectController.points);
@@ -1300,7 +1289,7 @@ class webrtcController {
             } else if (chkrash[0] === btoa(conf.req.END_CONNECTION)) {
                 // Solicita a desconexão do usuário
                 this._disconnectionMessage = conf.message.ALERT_DISCONNECTION;
-                setTimeout(location.reload.bind(location), conf.con.DISCONNECTION_TIMER);
+
             } else {
                 // Mensagem sistêmica não definida
                 return;
@@ -1436,13 +1425,15 @@ class webrtcController {
 
             if (this._roomController.validade()) {
 
+                // Define o ID da sala que será criada
                 let broadcastId = this._room.hash.toString();
+                // Istancia a conexão para o broadcaster 
                 this._broadcaster = new RTCMultiConnection();
-                //this._broadcaster = this._connection;
                 this._broadcaster.extra.assunto = this._roomController._inputAssunto.value;
                 this._broadcaster.extra.materia = this._roomController._inputMateria.value;
                 this._broadcaster.extra.nome = this._roomController._inputName.value;
                 this._broadcaster.extra.onair = false;
+                this._broadcaster.extra.streamEnded = false;
 
                 this._initiatePersonalConnection(this._broadcaster);
                 this._broadcaster.publicRoomIdentifier = this._publicRoomIdentifier;
@@ -1656,9 +1647,7 @@ class webrtcController {
         let msgrash = this._mediaController.createSolicitationArray(
             btoa(conf.req.END_CONNECTION),
             this._roomInfo.currentUser.value,
-            this._roomInfo.inRoom.value,
-            false,
-            false
+            this._roomInfo.inRoom.value
         );
         connection.send(msgrash, disconnectId);
         setTimeout(() => {
@@ -1787,6 +1776,7 @@ class webrtcController {
 
         if (user === this._roomId) {
             message ? this._alerta.initiateMessage(this._disconnectionMessage) : null;
+            setTimeout(location.reload.bind(location), conf.con.DISCONNECTION_TIMER);
         }
     }
 

@@ -294,6 +294,19 @@ class MediaView {
         }, 800);
     }
 
+    hideControlElements() {
+
+        doc.TAG(dom.ROOM_STATUS).classList.add("obj-invisible");
+        doc.TAG(dom.DIV_MAIN_VIDEO).classList.add("obj-invisible");
+        doc.TAG(dom.DIV_INCOMING_VIDEO).classList.add("obj-invisible");
+        setTimeout(() => {
+            $(dom.ROOM_STATUS).hide();
+            $(dom.DIV_MAIN_VIDEO).hide();
+            $(dom.DIV_INCOMING_VIDEO).hide();
+            $(dom.DIV_CONTROLLER).hide();
+        }, 300);
+    }
+
     writeChatMessage(user, message) {
 
         let texto = `<b class='small'>${user}</b> :<br>${message}`;
@@ -393,6 +406,28 @@ class MediaView {
 
         $(preLoader).fadeIn(300);
         if (count) this._startCountDown();
+    }
+
+    changeTransmition(btn, title, icon) {
+
+        btn.title = title;
+        btn.innerHTML = icon;
+    }
+
+    stopTransmition(roomid) {
+
+        this.hideControlElements();
+        $(dom.PRE_VIDEO_FINISHED).fadeIn(1000);
+        this._createVideoLink(roomid);
+    }
+
+    _createVideoLink(roomid) {
+
+        setTimeout(() => {
+            let videoLink = doc.TAG(dom.DOWNLOAD_VIDEO);
+            videoLink.href = conf.con.SOCKET_DOWNLOAD + btoa(roomid) + '.mp4';
+            $(dom.DIV_DOWNLOAD_VIDEO).fadeIn(300);
+        }, 3000);
     }
 
     endPreVideo() {

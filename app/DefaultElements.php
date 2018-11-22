@@ -25,6 +25,8 @@ class DefaultElements extends Model
         $this->blueExtension =              "<i class='material-icons blue-text'>extension</i>";
         $this->chevronRightLeft =           "<i class='material-icons'>keyboard_arrow_right</i>";
         $this->chevronLeftLeft =            "<i class='material-icons left'>keyboard_arrow_left</i>";
+        $this->fileDownloadIcon =           "<i class='material-icons'>file_download</i>";
+        $this->fileDownloadLeftIcon =       "<i class='material-icons left'>file_download</i>";
         $this->forumIcon =                  "<i class='material-icons'>forum</i>";
         $this->fullscreenExitLargeIcon =    "<i class='material-icons large'>fullscreen_exit</i>";
         $this->fullscreenIcon =             "<i class='material-icons'>fullscreen</i>";
@@ -34,8 +36,9 @@ class DefaultElements extends Model
         $this->peopleIcon =                 "<i class='material-icons'>people_outline</i>";
         $this->peopleIconLeft =             "<i class='material-icons left'>people_outline</i>";
         $this->peopleLargeIcon =            "<i class='material-icons large'>people_outline</i>";
-        $this->playLargeIcon =               "<i class='material-icons large'>play_circle_outline</i>";
+        $this->playLargeIcon =              "<i class='material-icons large'>play_circle_outline</i>";
         $this->searchIcon =                 "<i class='material-icons'>search</i>";
+        $this->scheduleIcon =               "<i class='material-icons large'>schedule</i>";
         $this->screenShareIcon =            "<i class='material-icons'>screen_share</i>";
         $this->sendIcon =                   "<i class='material-icons'>send</i>";
         $this->shareIcon =                  "<i class='material-icons'>share</i>";
@@ -52,6 +55,8 @@ class DefaultElements extends Model
         $this->videocamIcon =               "<i class='material-icons'>videocam</i>";
         $this->videocamLargeIcon =          "<i class='material-icons large'>videocam</i>";
         $this->videocamoffLargeIcon =       "<i class='material-icons large'>videocam_off</i>";
+        $this->videocamoffLargeBlueIcon =   "<i class='material-icons large blue-text'>videocam_off</i>";
+        $this->videocamoffLargeRedIcon =    "<i class='material-icons large red-text text-darken-3'>videocam_off</i>";
         $this->volumeUpIcon =               "<i class='material-icons'>volume_up</i>";
         // FontAwesome Icons:
         $this->acessosIcon =            "<i class='fa fa-shield fa-lg'></i>";
@@ -69,6 +74,7 @@ class DefaultElements extends Model
         $this->chromeIcon =             "<i class='fa fa-chrome'></i>";
         $this->closeIcon =              "<i class='fa fa-times-circle'></i>";
         $this->closeLargeIcon =         "<i class='fa fa-times-circle fa-3x'></i>";
+        $this->downloadIcon =           "<i class='fa fa-download'></i>";
         $this->manageBlueIcon =         "<span class='fa fa-cogs fa-lg blue-text'></span>";
         $this->manageIcon =             "<span class='fa fa-cogs'></span>";
         $this->manageWhiteIcon =        "<span class='fa fa-cogs white-text'></span>";
@@ -82,7 +88,8 @@ class DefaultElements extends Model
         $this->editIcon =               "<i class='fa fa-pencil'></i>";
         $this->enderecoIcon =           "<i class='fa fa-map-marker fa-lg'></i>";
         $this->envelopeIcon =           "<i class='fa fa-envelope-o fa-lg'></i>";
-        $this->exitRoom =               "<i class='fa fa-times fa-2x'></i>";
+        $this->exitRoom =               "<i class='fa fa-sign-out fa-2x'></i>";
+        $this->exitTransmition =        "<i class='fa fa-times fa-2x'></i>";
         $this->firefoxIcon =            "<i class='fa fa-firefox'></i>";
         $this->globoIcon =              "<i class='fa fa-globe fa-lg'></i>";
         $this->homeBlueIcon =           "<span class='fa fa-home fa-lg blue-text'></span>";

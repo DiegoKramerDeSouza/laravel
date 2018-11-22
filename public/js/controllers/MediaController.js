@@ -572,6 +572,16 @@ class MediaController {
         });
     }
 
+    stopTransmition(roomid) {
+
+        this._mediaView.stopTransmition(roomid);
+    }
+
+    changeTransmition(title, icon) {
+
+        this._mediaView.changeTransmition(this._finish, title, icon);
+    }
+
     endPreTransmition() {
 
         this._mediaView.endPreVideo();

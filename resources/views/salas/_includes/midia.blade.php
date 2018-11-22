@@ -8,7 +8,7 @@
                 <div id='started_room' class='card-content rounded-borders'>
                     <div id='class-suptitle' class='dark-grey p-10 rounded-borders'>
                         <span class='right'>
-                            <a id='finish_btn' href='#started_room' title='Finalizar sala' class='red-text text-darken-4'>{!! $default->exitRoom !!}</a>
+                            <a id='finish_btn' href='#navigation' title='Finalizar sala' class='red-text text-darken-4'>{!! $default->exitRoom !!}</a>
                         </span>
                         <span id='screen-share-alert' title='Você está transmintindo a sua tela' class='d-none left'>
                             <a href='#started_room' id='alert-share' class='btn-floating red darken-4 pulse'>{!! $default->tvIcon !!}</a>
@@ -58,70 +58,14 @@
                                     </div>
                                 </div>
                             </div>
-                            <div id='preVideo' class='col s12 d-none'>
-                                <div class='col s12 m8 l8 push-m2 push-l2 dark-grey rounded-borders'>
-                                    <div class='p-10 white-text center'>
-                                        {!! $default->playLargeIcon !!}
-                                        <br />
-                                        <div class='card-title'>
-                                            <p>Quando estiver pronto para iniciar sua transmissão</p>
-                                            <p>clique no botão abaixo</p>
-                                            <br />
-                                            <a id='start-transmition' class='btn-large blue darken-2 waves-light waves-effect p-10'>Iniciar transmissão</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id='preLoaderVideo' class='col s12 d-none'>
-                                <div class='col s12 m8 l8 push-m2 push-l2 dark-grey rounded-borders'>
-                                    <div class='p-10 white-text center'>
-                                        <br />
-                                        <br />
-                                        <h4>Iniciando transmissão em <b id='countdown'>5</b></h4>
-                                        <br />
-                                        {!! $default->preLoader !!}
-                                        <br />
-                                        <br />
-                                    </div>
-                                </div>
-                            </div>
-                            <div id='preApresentacao' class='col s12 d-none'>
-                                <div class='col s12 m8 l8 push-m2 push-l2 dark-grey rounded-borders'>
-                                    <div class='p-10 white-text center'>
-                                        <br />
-                                        <br />
-                                        <h4>Aguardando apresentador</h4>
-                                        <br />
-                                        {!! $default->tvLargeIcon !!}
-                                        <br />
-                                        <br />
-                                        <div class='card-title'>
-                                            <p>Seu vídeo iniciará em breve</p>
-                                            <br />
-                                            <button id='startView' class='d-none'>start</button>
-                                        </div>
-                                        <br />
-                                        <br />
-                                    </div>
-                                </div>
-                            </div>
-                            <div id='preLoaderPresentation' class='col s12 d-none'>
-                                    <div class='col s12 m8 l8 push-m2 push-l2 dark-grey rounded-borders'>
-                                        <div class='p-10 white-text center'>
-                                            <br />
-                                            <br />
-                                            <h4>Iniciando apresentação</h4>
-                                            <br />
-                                            {!! $default->preLoader !!}
-                                            <br />
-                                            <br />
-                                        </div>
-                                    </div>
-                                </div>              
+
+                            <!-- Mensagens de apresentação -->
+                            @include('salas._includes.messages')
+
                             <div id='div-main-video' class='col s12 m8 l8 push-m2 d-none obj-invisible'>
                                 <div class=''>
                                     <div id='main-video' align='center' class='inroom mainView'>
-                                        <div id='embedded-container-iframe' class="embedded-container d-none">
+                                        <div id='embedded-container-iframe' class="embedded-container d-none rounded-borders z-depth-3">
                                         </div>
                                         <div id='videos'>
                                             <!--VÍDEO PRINCIPAL-->

@@ -27,11 +27,10 @@ class RoomView {
     }
 
     changeCounter(value) {
-        if (this._countUsers) {
-            if (this._countUsers.getAttribute('data-target') == '0') {
+
+        if (this._countUsers)
+            if (this._countUsers.getAttribute('data-target') == '0')
                 this._countUsers.innerHTML = value;
-            }
-        }
         this._currentUsers.innerHTML = value;
     }
 
