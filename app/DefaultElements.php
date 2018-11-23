@@ -31,6 +31,7 @@ class DefaultElements extends Model
         $this->fullscreenExitLargeIcon =    "<i class='material-icons large'>fullscreen_exit</i>";
         $this->fullscreenIcon =             "<i class='material-icons'>fullscreen</i>";
         $this->micIcon =                    "<i class='material-icons'>mic</i>";
+        $this->offLargeRedIcon =            "<i class='material-icons large red-text text-darken-3'>highlight_off</i>";
         $this->panToolBlueIcon =            "<i class='material-icons blue-text'>pan_tool</i>";
         $this->panToolIcon =                "<i class='material-icons'>pan_tool</i>";
         $this->peopleIcon =                 "<i class='material-icons'>people_outline</i>";

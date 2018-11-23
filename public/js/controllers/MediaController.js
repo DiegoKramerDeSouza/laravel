@@ -33,6 +33,7 @@ class MediaController {
         this._fullsize = doc.TAG(dom.TOGGLE_VIDEO_SIZE);
         this._sharedFile = doc.TAG(dom.BTN_FILE_SHARING);
         this._spanSecondVideo = doc.TAG(dom.VIDEO_SECOND);
+        this._downloadedFiles = doc.TAG(dom.DIV_FILE_SHARING);
         this._finish = doc.TAG(dom.FINISH);
 
         this._controlCam = true;
@@ -80,6 +81,7 @@ class MediaController {
             this._fullsize,
             this._sharedFile,
             this._spanSecondVideo,
+            this._downloadedFiles,
             this._finish
         );
     }
@@ -527,7 +529,7 @@ class MediaController {
 
     adjustMediaMenu(type) {
 
-        if (type === 'local') {
+        if (type === conf.con.STREAM_LOCAL) {
             this.disableVolume();
             if (DetectRTC.isMobileDevice) this.disableShare();
             this._mediaView.adjustBroadCaster();
@@ -559,6 +561,11 @@ class MediaController {
     startAnimation(webRTCadpt, roomid) {
 
         this._mediaView.startAnimation(webRTCadpt, roomid);
+    }
+
+    recordAnimation() {
+
+        this._mediaView.recordAnimation();
     }
 
     getMediaServerStream(roomid) {

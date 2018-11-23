@@ -249,6 +249,18 @@ class MediaView {
         this._spanMainVideo.style.height = (window.innerHeight) + 'px';
     }
 
+    fullScreamOff() {
+
+        $(dom.LI_SCREEN).hide();
+    }
+
+    pedirOff() {
+
+        this._pedir.classList.add(misc.OFF_COLOR);
+        this._pedir.disabled = true;
+        $(dom.PEDIR).hide();
+    }
+
     expandVideoSize() {
 
         this._pageMainContainer.classList.remove(misc.CLASS_MAIN_CONTAINER);
@@ -303,7 +315,7 @@ class MediaView {
             $(dom.ROOM_STATUS).hide();
             $(dom.DIV_MAIN_VIDEO).hide();
             $(dom.DIV_INCOMING_VIDEO).hide();
-            $(dom.DIV_CONTROLLER).hide();
+            //$(dom.DIV_CONTROLLER).hide();
         }, 300);
     }
 
@@ -462,6 +474,15 @@ class MediaView {
         });
     }
 
+    recordAnimation() {
+
+        $(dom.RECORD_INFO).fadeIn(800, () => {
+            $(dom.RECORD_INFO).fadeOut(800, () => {
+                this.recordAnimation();
+            });
+        });
+    }
+
     initBroadcasterVideo(roomid) {
 
         $(dom.VIDEOS).hide();
@@ -475,6 +496,7 @@ class MediaView {
         $(dom.DIV_MAIN_VIDEO).show();
         doc.TAG(dom.DIV_MAIN_VIDEO).classList.remove("obj-invisible");
         $(dom.EMBEDDED_FRAME).fadeIn(300);
+        $(dom.DIV_CONTROLLER).fadeIn(300);
     }
 
     createProgressBar(file) {

@@ -4,19 +4,33 @@
             <div id='nav-controller' class='container'>
                 <!-- Barra de controle de mídia -->
                 <div class='controllers-container blue-text center dark-grey'>
-                    <span id='li-toggle-camera'>
+
+                    
+                    <span id='li-toggle-camera' class='d-none'>
                         <a id='toggle-camera' data-active='enabled' class='media-control btn-floating btn-large' data-position='top' title='Camera'>
                             {!! $default->videocamIcon !!}
                         </a>
                     </span>
-                    <span id='li-toggle-mute'>
+                    <span id='li-toggle-mute' class='d-none'>
                         <a id='toggle-mute' data-active='enabled' class='media-control btn-floating btn-large' data-position='top' title='Microfone'>
                             {!! $default->micIcon !!}
                         </a>
                     </span>
-                    <span id='li-toggle-volume'>
+                    <span id='li-toggle-volume' class='d-none'>
                         <a id='toggle-volume' data-active='enabled' class='media-control btn-floating btn-large' data-position='top' title='Áudio'>
                             {!! $default->volumeUpIcon !!}
+                        </a>
+                    </span>
+                    <span id='li-toggle-screen' class='d-none'>
+                        <a id='toggle-screen' data-active='enabled' class='media-control btn-floating btn-large' data-position='top' title='Tela cheia'>
+                            {!! $default->fullscreenIcon !!}
+                        </a>
+                    </span>
+
+
+                    <span id='li-toggle-size'>
+                        <a id='toggle-size' data-active='enabled' class='media-control btn-floating btn-large' data-position='top' title='Expandir'>
+                            {!! $default->sizeIcon !!}
                         </a>
                     </span>
                     <span id='li-share-screen'>
@@ -24,16 +38,6 @@
                             {!! $default->screenShareIcon !!}
                         </a>
                     </span>
-                    <span id='li-toggle-screen'>
-                        <a id='toggle-screen' data-active='enabled' class='media-control btn-floating btn-large' data-position='top' title='Tela cheia'>
-                            {!! $default->fullscreenIcon !!}
-                        </a>
-                    </span>
-                    <span id='li-toggle-size'>
-                            <a id='toggle-size' data-active='enabled' class='media-control btn-floating btn-large' data-position='top' title='Expandir'>
-                                {!! $default->sizeIcon !!}
-                            </a>
-                        </span>
                     <span id='li-toggle-chat'>
                         <a id='toggle-chat' data-target='slide-out' class='media-control btn-floating btn-large sidenav-trigger' data-position='top' title='Chat'>
                             {!! $default->forumIcon !!}

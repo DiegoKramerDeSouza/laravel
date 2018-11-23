@@ -26,6 +26,7 @@ class webrtcController {
 
         this._startedStream = false;
         this._retransmiting = false;
+        this._autologout = true;
         this._retransmitingWho;
         this._roomId;
         this._currentUsers;
@@ -740,11 +741,13 @@ class webrtcController {
         }
     }
 
-    _openPreStream(connection, roomid, isLocal, isFinished) {
+    _openPreStream(connection, roomid, isLocal) {
 
         console.info('ABERTA A CONEXÃO: ', connection, roomid, connection.extra);
         this._roomInfo.inRoom.value = roomid;
         this._finishTransmition(connection, roomid);
+        // Marca container onde serão exibidos os arquivos enviados e recebidos
+        connection.filesContainer = this._media.downloadedFiles;
 
         if (connection.isInitiator && isLocal) {
 
@@ -760,7 +763,7 @@ class webrtcController {
             if (!connection.isInitiator) this._mediaController.disablePedir();
 
             // Ajusta elementos de exibição (define o menu de áudio e video para broadcaster)
-            this._mediaController.adjustMediaMenu('local');
+            this._mediaController.adjustMediaMenu(conf.con.STREAM_LOCAL);
             this._mediaController.startTransmition.onclick = () => {
                 this._initAdaptor(roomid);
                 this._mediaController.initTransmition(false, dom.PRE_VIDEO, dom.PRE_LOAD_VIDEO, true);
@@ -778,7 +781,8 @@ class webrtcController {
                         btoa(conf.req.NEW_ROOM),
                         this._roomInfo.currentUser.value,
                         roomid,
-                        this._startedStream
+                        this._startedStream,
+                        connection.extra.streamEnded
                     );
                     setTimeout(() => {
                         connection.send(msgrash);
@@ -906,8 +910,6 @@ class webrtcController {
             };
         } else {
 
-            if (isFinished) console.warn('FINALIZADO!!!')
-
             // Identifica mídia do broadcaster
             let isBroadcasterMidia = true;
             // Valida dispositívos de áudio e vídeo
@@ -920,7 +922,7 @@ class webrtcController {
 
             // Ajusta elementos de exibição (define o menu de áudio e video para espectadores)
             // Desabilita botão de ação para câmera/microfone/compartilhamento de tela
-            this._mediaController.adjustMediaMenu('remote');
+            this._mediaController.adjustMediaMenu(conf.con.STREAM_REMOTE);
             this._structure.viewers = connection.getAllParticipants().length;
 
             this._media.solPedir.onclick = () => {
@@ -954,6 +956,9 @@ class webrtcController {
                 this._alerta.initiateMessage(altText);
             };
         }
+
+        // Tratamento da função de ampliar e reduzir vídeo
+        this._media.fullsize.onclick = () => this._mediaController.toggleFullSize();
     }
 
     /**
@@ -1008,7 +1013,6 @@ class webrtcController {
                 this._currentUsers = this._connectController.points;
                 this.setUsersInformation(event.userid);
             } else {
-                console.log(event.extra);
                 if (event.extra.onair === true) this._openPreStream(connection, event.userid, false, true, event.extra.streamEnded);
                 else this._openPreStream(connection, event.userid, false, false, event.extra.streamEnded);
             }
@@ -1066,7 +1070,7 @@ class webrtcController {
     _onLeave(connection) {
 
         connection.onleave = (event) => {
-            console.warn('Deixando sala: ', event.userid);
+            console.warn('Deixando sala: ', event.userid, connection.extra);
             this.alertDisconnection(event.userid);
         };
     }
@@ -1129,9 +1133,10 @@ class webrtcController {
                     btoa(conf.req.NEW_ROOM),
                     this._roomInfo.currentUser.value,
                     this._roomInfo.inRoom.value,
-                    this._startedStream
+                    this._startedStream,
+                    this._broadcaster.extra.streamEnded
                 );
-                if (userid && this._startedStream) this._broadcaster.send(msgrash, userid);
+                if (userid && (this._startedStream || this._broadcaster.extra.streamEnded)) this._broadcaster.send(msgrash, userid);
                 this._broadcaster.send(this._connectController.points);
             }
             this._updateUsersList();
@@ -1200,7 +1205,7 @@ class webrtcController {
     }
 
     /**
-     * Tratamento de mensagens enviadas/recebidas a partir do seu conteúdo
+     * Tratamento de mensagens e requisições enviadas/recebidas a partir do seu conteúdo
      * @param {Obj} event 
      */
     _messageSetting(event) {
@@ -1281,15 +1286,15 @@ class webrtcController {
             } else if (chkrash[0] === btoa(conf.req.NEW_ROOM)) {
                 // Informativo de nova transmissão de sala iniciada
                 if (chkrash[3] === true) this._initateRoomStream(chkrash[2]);
+                else if (chkrash[4] === true) this._initateRoomStream(chkrash[2], true);
                 else {
                     this._mediaController.initTransmition(chkrash[2], dom.PRE_APRESENTACAO, dom.PRE_LOAD_APRESENTACAO, false);
-                    // Reavaliar
                     setTimeout(() => this._initateRoomStream(chkrash[2]), 5000);
                 }
             } else if (chkrash[0] === btoa(conf.req.END_CONNECTION)) {
                 // Solicita a desconexão do usuário
                 this._disconnectionMessage = conf.message.ALERT_DISCONNECTION;
-
+                setTimeout(location.reload.bind(location), conf.con.DISCONNECTION_TIMER);
             } else {
                 // Mensagem sistêmica não definida
                 return;
@@ -1303,13 +1308,14 @@ class webrtcController {
     /**
      * Inicialização da apresentação do vídeo principal
      * @param {String} room 
+     * @param {Boolean} isFinished 
      */
-    _initateRoomStream(room) {
+    _initateRoomStream(room, isFinished) {
 
         this._mediaController.initBroadcasterVideo(room);
         this._mediaController.initiateControls();
-        // TESTE
-        //document.getElementById('thirdvideo-preview').play();
+        this._autologout = false;
+        if (isFinished) this._mediaController.recordAnimation();
     }
 
     /**
@@ -1524,14 +1530,19 @@ class webrtcController {
     _checkRooms(rooms) {
 
         if (this._structure.onlobby) {
-            //Verifica a existência des salas públicas
+
+            // Limpa listagem de salas pré-existentes
+            this._roomController.cleanRoomList(this._structure.publicRoomsList);
+
+            // Verifica a existência des salas públicas, se não houver cancela operação
             if (rooms.length <= 0) {
-                this._structure.publicRoomsList.innerHTML = '';
                 this._roomController.noRooms();
                 return
             }
+
+            // Cria o card de cada sala disponível
             rooms.forEach((array) => {
-                this._structure.publicRoomsList.innerHTML = '';
+
                 let moderatorId = array.sessionid;
                 this._connection.getNumberOfBroadcastViewers(moderatorId, numberOfBroadcastViewers => this._structure.viewers = numberOfBroadcastViewers);
 
@@ -1553,7 +1564,7 @@ class webrtcController {
                     let card = this._roomController.constructAccessList(this._roomData.classe, this._roomData.assunto, this._roomData.apresentador, this._structure.viewers, moderatorId);
                     this._roomController.initiateRoomCard(moderatorId, card, divOpen, button);
 
-                    //Função de entrada na sala a partir do botão ENTRAR
+                    // Tratamento de ação de entrada na sala a partir do botão ENTRAR
                     button.onclick = () => {
                         this._roomId = moderatorId;
                         this._roomController.setRoomLabel(misc.ICON_FA_TV, this._roomData.classe, this._roomData.assunto);
@@ -1776,7 +1787,7 @@ class webrtcController {
 
         if (user === this._roomId) {
             message ? this._alerta.initiateMessage(this._disconnectionMessage) : null;
-            setTimeout(location.reload.bind(location), conf.con.DISCONNECTION_TIMER);
+            if (this._autologout) setTimeout(location.reload.bind(location), conf.con.DISCONNECTION_TIMER);
         }
     }
 

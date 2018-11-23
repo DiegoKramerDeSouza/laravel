@@ -24,7 +24,7 @@
                     <br>
                     <br>                                                
                 </div>
-                <!--Listagem de Salas disponíveis-->
+                <!-- Listagem de Salas disponíveis -->
             </div>
         </div>
         @if(Auth::user()->type == 0)

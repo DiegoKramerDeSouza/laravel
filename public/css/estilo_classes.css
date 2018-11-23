@@ -183,6 +183,10 @@
     transition-duration: 0.4s;
 }
 
+.ml-10 {
+    left: 10px;
+}
+
 .video-loading {
     max-width: 420px;
     -webkit-transition-duration: 0.4s;

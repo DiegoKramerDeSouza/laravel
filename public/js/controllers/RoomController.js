@@ -45,14 +45,20 @@ class RoomController {
         return new Room(this._inputName.value, this._inputMateria.value, this._inputAssunto.value, this.createList(), this._createHash());
     }
 
+    cleanRoomList(list) {
+
+        this._roomView.cleanRoomList(list);
+    }
+
     constructAccessList(classe, assunto, apresentador, viwer, moderador) {
 
-        return this._roomView.createRoomCard(classe, assunto, apresentador, viwer, moderador)
+        return this._roomView.createRoomCard(classe, assunto, apresentador, viwer, moderador);
     }
 
     initiateRoomCard(moderatorId, label, container, obj) {
 
-        this._roomView.setRoomCard(moderatorId, label, container, obj, this.checkViews());
+        //this._roomView.setRoomCard(moderatorId, label, container, obj, this.checkViews());
+        this._roomView.setRoomCard(moderatorId, label, container, obj);
     }
 
     noRooms() {

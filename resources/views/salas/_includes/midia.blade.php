@@ -32,11 +32,14 @@
                          
                         <div class='row'>
                             <div id='room-status' class='col s12 m12 l2 blue-text d-none obj-invisible'>
-                                <div class='row'>
-                                    <div id='broadcastingInfo' class='col s12 d-none' align='center'>
-                                        <span class='p-5 rounded-borders blue darken-1 white-text'>Transmitindo</span>
-                                    </div>
+                                
+                                <div id='broadcastingInfo' class='col s12 d-none' align='left'>
+                                    <span class='p-5 rounded-borders blue darken-1 white-text'>Transmitindo</span>
                                 </div>
+                                <div id='recordInfo' class='col s12 d-none' align='left'>
+                                    <span class='p-5 rounded-borders red darken-3 white-text'>Gravação</span>
+                                </div>
+                                <br />
                                 <div class='row p-10' align='center'>
                                     <!-- STATUS DA SALA -->
                                     <div class='col s5 m4 l12 push-s1' title='Tempo conectado'>

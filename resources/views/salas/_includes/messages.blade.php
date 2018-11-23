@@ -15,7 +15,7 @@
 <div id='preVideoFinished' class='col s12 d-none'>
     <div class='col s12 m8 l8 push-m2 push-l2 dark-grey rounded-borders'>
         <div class='p-10 white-text center'>
-            {!! $default->videocamoffLargeRedIcon !!}
+            {!! $default->offLargeRedIcon !!}
             <br />
             <div class='card-title red-text text-darken-3'>
                 <p>Transmissão Finalizada</p>
@@ -35,15 +35,12 @@
 <div id='preApresentacao' class='col s12 d-none'>
     <div class='col s12 m8 l8 push-m2 push-l2 dark-grey rounded-borders'>
         <div class='p-10 white-text center'>
-            <br />
+            {!! $default->scheduleIcon !!}
             <br />
             <h4><b>Aguardando apresentador</b></h4>
-            <br />
-            {!! $default->scheduleIcon !!}
             <div class='card-title'>
-                <p>Seu vídeo iniciará em breve</p>
+                <p>A apresentação iniciará em breve</p>
             </div>
-            <br />
             <br />
         </div>
     </div>
