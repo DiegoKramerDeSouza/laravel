@@ -86,9 +86,12 @@
                             </div>
                             <div id='div-incoming-videos' data-active='out' class='col s12 m2 l2 push-m2 d-none obj-invisible' align='center'>
                                 <div class='row'>
+                                    <div id='embedded-container-iframe-v3' class="embedded-container d-none rounded-borders z-depth-3">
+                                    </div>
+                                    <a id='publish_participant' href='#' class='d-none'>publicar</a>
                                     <!--TERCEIRO VÍDEO-->
                                     <div id='span-video-preview-3rd' align='center' data-status='disabled' data-position='second' class='col s12 d-none'>
-                                        <video id='thirdvideo-preview' draggable='false' preload='none' loop class='min-video responsive-video'></video>
+                                        <video id='thirdvideo-preview' preload='none' loop class='min-video responsive-video'></video>
                                     </div>
                                     <!--SEGUNDO VÍDEO-->
                                     <div id='span-video-preview-2nd' align='center' data-status='disabled' data-position='second' class='col s12 d-none'>

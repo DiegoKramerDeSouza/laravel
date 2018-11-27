@@ -28,6 +28,7 @@ class DevicesView {
 
     selectedAudio(id, label, selected) {
 
+        if (this._audioOption === misc.DEFAULT_SELECT_DEVICE) selected = true;
         selected ?
             this._audioOption += `<option value="${ id }" selected>${ label }</option>` :
             this._audioOption += `<option value="${ id }">${ label }</option>`;
@@ -35,6 +36,7 @@ class DevicesView {
 
     selectedVideo(id, label, selected) {
 
+        if (this._videoOption === misc.DEFAULT_SELECT_DEVICE) selected = true;
         selected ?
             this._videoOption += `<option value="${ id }" selected>${ label }</option>` :
             this._videoOption += `<option value="${ id }">${ label }</option>`;

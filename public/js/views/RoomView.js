@@ -79,7 +79,7 @@ class RoomView {
 
         container.innerHTML = label;
         container.className = "card-panel hoverable";
-        obj.id = btoa(moderatorId);
+        obj.id = moderatorId;
         obj.title = 'Acessar sala';
         obj.innerHTML = misc.ICON_PLAY;
         obj.className = 'btn-floating room-enter blue darken-1 modal-trigger';

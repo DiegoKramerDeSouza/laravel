@@ -308,15 +308,13 @@ class MediaView {
 
     hideControlElements() {
 
+        $(dom.ROOM_STATUS).hide();
+        $(dom.DIV_MAIN_VIDEO).hide();
+        $(dom.DIV_INCOMING_VIDEO).hide();
+
         doc.TAG(dom.ROOM_STATUS).classList.add("obj-invisible");
         doc.TAG(dom.DIV_MAIN_VIDEO).classList.add("obj-invisible");
         doc.TAG(dom.DIV_INCOMING_VIDEO).classList.add("obj-invisible");
-        setTimeout(() => {
-            $(dom.ROOM_STATUS).hide();
-            $(dom.DIV_MAIN_VIDEO).hide();
-            $(dom.DIV_INCOMING_VIDEO).hide();
-            //$(dom.DIV_CONTROLLER).hide();
-        }, 300);
     }
 
     writeChatMessage(user, message) {
@@ -497,6 +495,40 @@ class MediaView {
         doc.TAG(dom.DIV_MAIN_VIDEO).classList.remove("obj-invisible");
         $(dom.EMBEDDED_FRAME).fadeIn(300);
         $(dom.DIV_CONTROLLER).fadeIn(300);
+
+        doc.TAG('body').onclick = () => {
+            let framePlay = document.getElementById('embedded_player');
+            framePlay.contentWindow.postMessage('message', '*');
+        }
+    }
+
+    initParticipantVideo(roomid, participant, name) {
+
+        let rash = roomid + '|' + participant;
+        console.log(btoa(rash));
+        let addr = `<div class='right white-text'>${ name }</div>
+                    <iframe id="embedded_player_v3" class="embedded-video" src="${ conf.con.SOCKET_PLAYER }?name=${ btoa(rash) }" frameborder="0" allowfullscreen></iframe>`;
+        let frame = doc.TAG(dom.EMBEDDED_FRAME_III);
+        frame.innerHTML = addr;
+
+        $(dom.DIV_INCOMING_VIDEO).show();
+        doc.TAG(dom.DIV_INCOMING_VIDEO).classList.remove("obj-invisible");
+        $(dom.EMBEDDED_FRAME_III).fadeIn(300);
+    }
+
+    redirectVideoPreview() {
+
+        let video = doc.TAG(dom.FIRST_VIDEO);
+        video.parentNode.removeChild(video);
+
+        let node = doc.ADD('video');
+        node.id = 'video-preview';
+        node.className = 'responsive-video';
+        node.preload = 'none';
+        node.loop = true;
+
+        let third = doc.TAG(dom.VIDEO_THIRD);
+        third.appendChild(node);
     }
 
     createProgressBar(file) {

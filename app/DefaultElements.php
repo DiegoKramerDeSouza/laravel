@@ -18,6 +18,7 @@ class DefaultElements extends Model
         // Extensão de navegador para compartilhamento de tela
         $this->chromeExt = 'https://chrome.google.com/webstore/detail/screen-capturing/ajhifddimkapgcifgcodmmfdlknahffk';
         $this->firefoxExt = 'https://addons.mozilla.org/en-US/firefox/addon/enable-screen-capturing/';
+        $this->mediaChromeExt = 'https://chrome.google.com/webstore/detail/ant-media-server-screen-s/jaefaokkgpkkjijgddghhcncipkebpnb';
         // Definição de ícones para todas as views
         // -> Ícones utilizados: FontAwesome e MaterializeCSS
         // MaterializeCSS Icons:

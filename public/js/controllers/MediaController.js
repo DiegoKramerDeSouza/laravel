@@ -542,9 +542,19 @@ class MediaController {
         }
     }
 
+    redirectVideoPreview() {
+
+        this._mediaView.redirectVideoPreview();
+    }
+
     initBroadcasterVideo(roomid) {
 
         this._mediaView.initBroadcasterVideo(roomid);
+    }
+
+    initParticipantVideo(roomid, participant, name) {
+
+        this._mediaView.initParticipantVideo(roomid, participant, name);
     }
 
     initTransmition(roomid, preVideo, preLoader, count) {
