@@ -79,6 +79,12 @@
         @if(isset($streamPage))
             <!-- Formação de SALAS -->
             @if(! Auth::guest())
+                <!-- Inicializa o controle de mídia -->
+                <script type="text/javascript" src="{!! asset('js/player/flow/flowplayer.min.js') !!}"></script>
+                <script type="text/javascript" src="{!! asset('js/player/flow/flowplayer.hlsjs.light.min.js') !!}"></script>
+                <script type="text/javascript" src="{!! asset('js/fetch.js') !!}"></script>  
+                <script type="text/javascript" src="{!! asset('js/promise.min.js') !!}"></script>
+                <script type="text/javascript" src="{!! asset('js/helpers/MediaHelper.js') !!}"></script>
                 <!-- Inicializa o controle de dispositivos -->
                 <script type="text/javascript" src="{!! asset('js/controllers/DevicesController.js') !!}"></script>  
                 <script type="text/javascript" src="{!! asset('js/views/DevicesView.js') !!}"></script>

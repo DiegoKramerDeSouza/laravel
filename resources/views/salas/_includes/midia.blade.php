@@ -68,8 +68,9 @@
                             <div id='div-main-video' class='col s12 m8 l8 push-m2 d-none obj-invisible'>
                                 <div class=''>
                                     <div id='main-video' align='center' class='inroom mainView'>
-                                        <div id='embedded-container-iframe' class="embedded-container d-none rounded-borders z-depth-3">
+                                        <div id='embedded-container-iframe' class="embedded-container d-none rounded-borders z-depth-3 black">
                                         </div>
+                                        
                                         <div id='videos'>
                                             <!--VÍDEO PRINCIPAL-->
                                             <div id='span-video-preview' data-status='disabled' data-position='main' class='width-limit first-video'>

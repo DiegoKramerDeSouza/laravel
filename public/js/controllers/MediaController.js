@@ -38,7 +38,7 @@ class MediaController {
 
         this._controlCam = true;
         this._controlVoice = true;
-        this._controlVolume = true;
+        this._controlVolume = false;
         this._controlSharing = false;
         this._session = false;
         this._videoIsMain = false;
@@ -141,18 +141,14 @@ class MediaController {
         }
     }
 
-    controlVolume(currentStream) {
+    controlVolume() {
 
         if (this._controlVolume) {
-            currentStream.forEach((stream) => {
-                stream.mute('audio');
-            });
+            this._mediaView.embeddedMessage(dom.FRAME_LAYER, 'mute');
             this._mediaView.setVolumeOff();
             this._controlVolume = false;
         } else {
-            currentStream.forEach((stream) => {
-                stream.unmute('audio');
-            });
+            this._mediaView.embeddedMessage(dom.FRAME_LAYER, 'unmute');
             this._mediaView.setVolumeOn();
             this._controlVolume = true;
         }
@@ -341,7 +337,7 @@ class MediaController {
         this._mediaView.pedirOff();
     }
 
-    enterFullScreen() {
+    toggleFullScreenOn() {
 
         if (this._spanMainVideo.mozRequestFullScreen) {
             this._spanMainVideo.mozRequestFullScreen();
@@ -353,7 +349,7 @@ class MediaController {
         this._mediaView.enterFullscreen();
     }
 
-    exitFullScreen() {
+    toggleFullScreenOff() {
 
         if (document.fullscreen) {
             document.cancelFullScreen();
@@ -363,6 +359,16 @@ class MediaController {
             document.webkitCancelFullScreen();
         }
         this._mediaView.exitFullscreen();
+    }
+
+    enterFullScreen() {
+
+        this._mediaView.embeddedMessage('#embedded_player', 'fullscreen');
+    }
+
+    exitFullScreen() {
+
+        this._mediaView.embeddedMessage('#embedded_player', 'exitfullscreen');
     }
 
     escFullScreen() {
@@ -536,15 +542,11 @@ class MediaController {
         } else {
             this.disableCam();
             this.disableMute();
+
             this.disableShare();
             this.disableFileSharing();
             this._mediaView.adjustEspectador();
         }
-    }
-
-    redirectVideoPreview() {
-
-        this._mediaView.redirectVideoPreview();
     }
 
     initBroadcasterVideo(roomid) {

@@ -542,17 +542,19 @@ class webrtcController {
                         msgrash = [];
                     }
                 };
-                //===========================================================================
             }
 
             // Tratamento das funções MUTE e UNMUTE
             connection.onmute = event => event.mediaElement.setAttribute(misc.ATTR_POSTER, conf.str.POSTER_IMG);
             connection.onunmute = event => event.mediaElement.removeAttribute(misc.ATTR_POSTER);
+
             // Botão de maximizar o video -> toggle on:off
             this._media.screen.onclick = () => this._mediaController.enterFullScreen();
             this._media.exitscreen.onclick = () => this._mediaController.exitFullScreen();
+
             // Tratamento da função de ampliar e reduzir vídeo
             this._media.fullsize.onclick = () => this._mediaController.toggleFullSize();
+
             // Tratamento da função de chat da barra de controle de mídia
             this._media.toggleChat.onclick = () => this._media.textMessage.focus();
 
@@ -611,7 +613,6 @@ class webrtcController {
 
     _startPublishing(roomid) {
 
-        console.log('Sending 3.................');
         this._webRTCAdaptor.publish(btoa(roomid));
     }
 
@@ -683,8 +684,6 @@ class webrtcController {
                 console.error('Erro encontrado: ', errorMessage);
             }
         });
-
-        console.error(this._webRTCAdaptor);
     }
 
     _finishTransmition(connection, roomid) {
@@ -754,6 +753,12 @@ class webrtcController {
             this._mediaController.displayElem(dom.UL_CON_USERS, 300);
 
             // Tratamento de ação de controles de mídia==================================
+
+            // Tratamento para entrar e sair do modo fullscreen
+            this._media.screen.onclick = () => this._mediaController.toggleFullScreenOn();
+            this._media.exitscreen.onclick = () => this._mediaController.toggleFullScreenOff();
+
+            //Tratamento de controle de envio de arquivos
             this._media.sharedFile.onclick = () => this._mediaController.fileSharing(connection, this._structure.viewers);
 
             this._media.ctlPedir.onclick = () => {
@@ -828,7 +833,6 @@ class webrtcController {
                                         screen: true,
                                         oneway: true
                                     });
-                                    console.log("Renegociando com " + p);
                                 });
                                 this._screenStream(stream);
                             }, 2000);
@@ -873,7 +877,6 @@ class webrtcController {
             let isBroadcasterMidia = true;
 
             // Redefine id video-preview
-            //this._mediaController.redirectVideoPreview();
             this._media.videoPreview.muted = true;
 
             // Valida dispositívos de áudio e vídeo
@@ -888,6 +891,13 @@ class webrtcController {
             // Desabilita botão de ação para câmera/microfone/compartilhamento de tela
             this._mediaController.adjustMediaMenu(conf.con.STREAM_REMOTE);
             this._structure.viewers = connection.getAllParticipants().length;
+
+            // Tratamento para controle de mute e unmute
+            this._media.vol.onclick = () => this._mediaController.controlVolume();
+
+            // Tratamento para entrar e sair do modo fullscreen
+            this._media.screen.onclick = () => this._mediaController.enterFullScreen();
+            this._media.exitscreen.onclick = () => this._mediaController.exitFullScreen();
 
             this._media.solPedir.onclick = () => {
 
@@ -921,6 +931,7 @@ class webrtcController {
             };
         }
 
+        // Tratamento de controle geral =================================================
 
         // Tratamento da função de ampliar e reduzir vídeo
         this._media.fullsize.onclick = () => this._mediaController.toggleFullSize();

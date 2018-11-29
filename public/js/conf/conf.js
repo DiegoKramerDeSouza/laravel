@@ -276,6 +276,8 @@ const dom = {
     NUMBER: '#number',
     NUMBER_VIEWS: '#numViews',
     PAGE_MAIN_CONTENT: '#main-content',
+    PARTICIPATION_MUTE: '#participation-mute',
+    PARTICIPATION_SWAP: '#participation-swap',
     PEDIR: '#pedir-vez',
     POSTAL: '#postal',
     PRE_APRESENTACAO: '#preApresentacao',
@@ -340,6 +342,7 @@ const dom = {
 const misc = {
     /* Atributos gerais muito utilizados com funcionalidades variádas (MISCELÂNEA) */
     /*Atributos de elementos do DOM */
+    ATTR_ACTIVE: 'data-active',
     ATTR_POSTER: 'poster',
     ATTR_SOLICITATION: 'data-sender',
     ATTR_USER_ANNOUNCE: 'data-announced',
@@ -377,6 +380,7 @@ const misc = {
     ICON_SHARE_OFF: '<i class="material-icons">stop_screen_share</i>',
     ICON_SHARE_ON: '<i class="material-icons">screen_share</i>',
     ICON_SUCCESS: '<i class="fa fa-check fa-lg"></i>',
+    ICON_SWAP: '<i class="material-icons">swap_horiz</i>',
     ICON_VOL_OFF: '<i class="material-icons">volume_off</i>',
     ICON_VOL_ON: '<i class="material-icons">volume_up</i>',
     /*Títulos */

@@ -60,6 +60,7 @@ class DefaultElements extends Model
         $this->videocamoffLargeBlueIcon =   "<i class='material-icons large blue-text'>videocam_off</i>";
         $this->videocamoffLargeRedIcon =    "<i class='material-icons large red-text text-darken-3'>videocam_off</i>";
         $this->volumeUpIcon =               "<i class='material-icons'>volume_up</i>";
+        $this->volumeDownIcon =             "<i class='material-icons'>volume_off</i>";
         // FontAwesome Icons:
         $this->acessosIcon =            "<i class='fa fa-shield fa-lg'></i>";
         $this->applyIcon =              "<i class='fa fa-check'></i>";

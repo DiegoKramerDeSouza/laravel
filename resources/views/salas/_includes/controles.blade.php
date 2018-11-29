@@ -16,18 +16,18 @@
                             {!! $default->micIcon !!}
                         </a>
                     </span>
-                    <span id='li-toggle-volume' class='d-none'>
-                        <a id='toggle-volume' data-active='enabled' class='media-control btn-floating btn-large' data-position='top' title='Áudio'>
-                            {!! $default->volumeUpIcon !!}
+                    
+
+                    <span id='li-toggle-volume'>
+                        <a id='toggle-volume' data-active='enabled' class='media-control btn-floating btn-large red' data-position='top' title='Mudo'>
+                            {!! $default->volumeDownIcon !!}
                         </a>
                     </span>
-                    <span id='li-toggle-screen' class='d-none'>
+                    <span id='li-toggle-screen'>
                         <a id='toggle-screen' data-active='enabled' class='media-control btn-floating btn-large' data-position='top' title='Tela cheia'>
                             {!! $default->fullscreenIcon !!}
                         </a>
                     </span>
-
-
                     <span id='li-toggle-size'>
                         <a id='toggle-size' data-active='enabled' class='media-control btn-floating btn-large' data-position='top' title='Expandir'>
                             {!! $default->sizeIcon !!}

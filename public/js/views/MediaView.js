@@ -192,7 +192,7 @@ class MediaView {
             this.endParticipation();
             $(dom.SESSION_ACCESS).click();
             this._alerta.initiateMessage(conf.message.SEND_START_SOLICITATION);
-        }, 2500);
+        }, 2000);
     }
 
     denySolicitation() {
@@ -487,19 +487,20 @@ class MediaView {
         $(dom.PRE_APRESENTACAO).hide();
         $(dom.PRE_LOAD_APRESENTACAO).hide();
 
+        /*
         let addr = `<iframe id="embedded_player" class="embedded-video" src="${ conf.con.SOCKET_PLAYER }?name=${ btoa(roomid) }" frameborder="0" allowfullscreen></iframe>`;
         let frame = doc.TAG(dom.EMBEDDED_FRAME);
         frame.innerHTML = addr;
+        */
+
+        // Problemas com CORS
+        MediaHelper.setMediaPlayer(roomid);
 
         $(dom.DIV_MAIN_VIDEO).show();
         doc.TAG(dom.DIV_MAIN_VIDEO).classList.remove("obj-invisible");
         $(dom.EMBEDDED_FRAME).fadeIn(300);
         $(dom.DIV_CONTROLLER).fadeIn(300);
 
-        doc.TAG('body').onclick = () => {
-            let framePlay = document.getElementById('embedded_player');
-            framePlay.contentWindow.postMessage('message', '*');
-        }
     }
 
     initParticipantVideo(roomid, participant, name) {
@@ -507,28 +508,65 @@ class MediaView {
         let rash = roomid + '|' + participant;
         console.log(btoa(rash));
         let addr = `<div class='right white-text'>${ name }</div>
-                    <iframe id="embedded_player_v3" class="embedded-video" src="${ conf.con.SOCKET_PLAYER }?name=${ btoa(rash) }" frameborder="0" allowfullscreen></iframe>`;
+                    <iframe id="embedded_player_v3" data-active="participant" class="embedded-video" src="${ conf.con.SOCKET_PLAYER }?name=${ btoa(rash) }" frameborder="0" allowfullscreen></iframe>
+                    <div class="col s12">
+                        <a id='participation-mute' data-active='mute' class='media-control btn-floating red right' data-position='top' title='Mudo'>
+                            ${ misc.ICON_VOL_OFF }
+                        </a>
+                        <a id='participation-swap' class='media-control btn-floating blue right' data-position='top' title='Passar para principal'>
+                            ${ misc.ICON_SWAP }
+                        </a>
+                    </div>`;
+
+        this._controlEmbeddedVideo(addr);
+    }
+
+    _controlEmbeddedVideo(content) {
+
         let frame = doc.TAG(dom.EMBEDDED_FRAME_III);
-        frame.innerHTML = addr;
+        frame.innerHTML = content;
 
         $(dom.DIV_INCOMING_VIDEO).show();
         doc.TAG(dom.DIV_INCOMING_VIDEO).classList.remove("obj-invisible");
         $(dom.EMBEDDED_FRAME_III).fadeIn(300);
+
+        setTimeout(() => {
+            this._swapParticipant();
+            this._toggleMute();
+        }, 300);
     }
 
-    redirectVideoPreview() {
+    _swapParticipant() {
 
-        let video = doc.TAG(dom.FIRST_VIDEO);
-        video.parentNode.removeChild(video);
+        let swap = doc.TAG(dom.PARTICIPATION_SWAP);
+        swap.onclick = () => {
+            let main = doc.TAG(dom.EMBEDDED_FRAME);
+            let participant = doc.TAG(dom.EMBEDDED_FRAME_III);
+            let swap = main.src;
+            main.src = participant.src;
+            participant.src = swap.src;
+            let active = participant.getAttribute(misc.ATTR_ACTIVE);
 
-        let node = doc.ADD('video');
-        node.id = 'video-preview';
-        node.className = 'responsive-video';
-        node.preload = 'none';
-        node.loop = true;
+            active == 'participant' ?
+                participant.setAttribute(misc.ATTR_ACTIVE, 'main') :
+                participant.setAttribute(misc.ATTR_ACTIVE, 'participant');
+        };
+    }
 
-        let third = doc.TAG(dom.VIDEO_THIRD);
-        third.appendChild(node);
+    _toggleMute() {
+
+        let mute = doc.TAG(dom.PARTICIPATION_MUTE);
+        let active = mute.getAttribute(misc.ATTR_ACTIVE);
+        let value;
+        active == 'mute' ? value = 'unmute' : value = 'mute';
+        mute.onclick = () => this.embeddedMessage(dom.FRAME_LAYER_III, value);
+        mute.setAttribute(misc.ATTR_ACTIVE, value);
+    }
+
+    embeddedMessage(frameid, message) {
+
+        let framePlay = doc.TAG(frameid);
+        framePlay.contentWindow.postMessage(message, '*');
     }
 
     createProgressBar(file) {
