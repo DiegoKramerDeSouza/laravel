@@ -70,7 +70,6 @@
                                     <div id='main-video' align='center' class='inroom mainView'>
                                         <div id='embedded-container-iframe' class="embedded-container d-none rounded-borders z-depth-3 black">
                                         </div>
-                                        
                                         <div id='videos'>
                                             <!--VÍDEO PRINCIPAL-->
                                             <div id='span-video-preview' data-status='disabled' data-position='main' class='width-limit first-video'>
@@ -87,8 +86,19 @@
                             </div>
                             <div id='div-incoming-videos' data-active='out' class='col s12 m2 l2 push-m2 d-none obj-invisible' align='center'>
                                 <div class='row'>
-                                    <div id='embedded-container-iframe-v3' class="embedded-container d-none rounded-borders z-depth-3">
+
+                                    <span id='participation-name' class='white-text right ml-5'></span>
+                                    <br/>
+                                    <div id='embedded-container-iframe-v3' class="embedded-container d-none rounded-borders z-depth-3"></div>
+                                    <div id='participation-control' class='col s12 p-10 participant-control d-none right'>
+                                        <a id='participation-mute' class='media-control btn-floating red right' data-active='mute' data-position='top' title='Mudo'>
+                                            {!! $default->volumeDownIcon !!}
+                                        </a>
+                                        <a id='participation-swap' class='media-control btn-floating blue right' data-position='top' title='Passar para principal'>
+                                            {!! $default->swapIcon !!}
+                                        </a>
                                     </div>
+
                                     <a id='publish_participant' href='#' class='d-none'>publicar</a>
                                     <!--TERCEIRO VÍDEO-->
                                     <div id='span-video-preview-3rd' align='center' data-status='disabled' data-position='second' class='col s12 d-none'>

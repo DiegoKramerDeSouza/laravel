@@ -19,7 +19,7 @@
                     
 
                     <span id='li-toggle-volume'>
-                        <a id='toggle-volume' data-active='enabled' class='media-control btn-floating btn-large red' data-position='top' title='Mudo'>
+                        <a id='toggle-volume' data-active='mute' class='media-control btn-floating btn-large red' data-position='top' title='Mudo'>
                             {!! $default->volumeDownIcon !!}
                         </a>
                     </span>

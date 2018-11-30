@@ -75,6 +75,7 @@ class MediaView {
 
         this._vol.classList.remove(misc.OFF_COLOR);
         this._vol.innerHTML = misc.ICON_VOL_ON;
+        this._vol.setAttribute(misc.ATTR_ACTIVE, 'unmute');
         this._alerta.initiateMessage(conf.message.VOL_UP);
     }
 
@@ -82,6 +83,7 @@ class MediaView {
 
         this._vol.classList.add(misc.OFF_COLOR);
         this._vol.innerHTML = misc.ICON_VOL_OFF;
+        this._vol.setAttribute(misc.ATTR_ACTIVE, 'mute');
         this._alerta.initiateMessage(conf.message.VOL_DOWN);
     }
 
@@ -487,37 +489,28 @@ class MediaView {
         $(dom.PRE_APRESENTACAO).hide();
         $(dom.PRE_LOAD_APRESENTACAO).hide();
 
-        /*
+
         let addr = `<iframe id="embedded_player" class="embedded-video" src="${ conf.con.SOCKET_PLAYER }?name=${ btoa(roomid) }" frameborder="0" allowfullscreen></iframe>`;
         let frame = doc.TAG(dom.EMBEDDED_FRAME);
         frame.innerHTML = addr;
-        */
+
 
         // Problemas com CORS
-        MediaHelper.setMediaPlayer(roomid);
+        //MediaHelper.setMediaPlayer(roomid);
 
         $(dom.DIV_MAIN_VIDEO).show();
         doc.TAG(dom.DIV_MAIN_VIDEO).classList.remove("obj-invisible");
         $(dom.EMBEDDED_FRAME).fadeIn(300);
         $(dom.DIV_CONTROLLER).fadeIn(300);
-
     }
 
     initParticipantVideo(roomid, participant, name) {
 
         let rash = roomid + '|' + participant;
-        console.log(btoa(rash));
-        let addr = `<div class='right white-text'>${ name }</div>
-                    <iframe id="embedded_player_v3" data-active="participant" class="embedded-video" src="${ conf.con.SOCKET_PLAYER }?name=${ btoa(rash) }" frameborder="0" allowfullscreen></iframe>
-                    <div class="col s12">
-                        <a id='participation-mute' data-active='mute' class='media-control btn-floating red right' data-position='top' title='Mudo'>
-                            ${ misc.ICON_VOL_OFF }
-                        </a>
-                        <a id='participation-swap' class='media-control btn-floating blue right' data-position='top' title='Passar para principal'>
-                            ${ misc.ICON_SWAP }
-                        </a>
-                    </div>`;
-
+        let addr = `<iframe id="embedded_player_v3" data-active="participant" class="embedded-video" src="${ conf.con.SOCKET_PLAYER }?name=${ btoa(rash) }" frameborder="0" allowfullscreen></iframe>`;
+        let participantName = doc.TAG(dom.PARTICIPATION_NAME);
+        //participantName.innerHTML = name.split('-')[1];
+        participantName.innerHTML = name;
         this._controlEmbeddedVideo(addr);
     }
 
@@ -529,38 +522,64 @@ class MediaView {
         $(dom.DIV_INCOMING_VIDEO).show();
         doc.TAG(dom.DIV_INCOMING_VIDEO).classList.remove("obj-invisible");
         $(dom.EMBEDDED_FRAME_III).fadeIn(300);
+        $(dom.PARTICIPATION_CONTROL).fadeIn(300);
 
         setTimeout(() => {
-            this._swapParticipant();
-            this._toggleMute();
+            let swap = doc.TAG(dom.PARTICIPATION_SWAP);
+            let mute = doc.TAG(dom.PARTICIPATION_MUTE);
+            let mainMute = doc.TAG(dom.VOL);
+            this._swapParticipant(swap, mute, mainMute);
+            this._toggleMute(mute);
         }, 300);
     }
 
-    _swapParticipant() {
+    _swapParticipant(swap, mute, mainMute) {
 
-        let swap = doc.TAG(dom.PARTICIPATION_SWAP);
         swap.onclick = () => {
-            let main = doc.TAG(dom.EMBEDDED_FRAME);
-            let participant = doc.TAG(dom.EMBEDDED_FRAME_III);
+            let main = doc.TAG(dom.FRAME_LAYER);
+            let participant = doc.TAG(dom.FRAME_LAYER_III);
             let swap = main.src;
             main.src = participant.src;
-            participant.src = swap.src;
+            participant.src = swap;
             let active = participant.getAttribute(misc.ATTR_ACTIVE);
 
             active == 'participant' ?
                 participant.setAttribute(misc.ATTR_ACTIVE, 'main') :
                 participant.setAttribute(misc.ATTR_ACTIVE, 'participant');
+
+            setTimeout(() => {
+                let status = mute.getAttribute(misc.ATTR_ACTIVE);
+                if (status == 'unmute') this.embeddedMessage(dom.FRAME_LAYER_III, status);
+                status = mainMute.getAttribute(misc.ATTR_ACTIVE);
+                if (status == 'unmute') this.embeddedMessage(dom.FRAME_LAYER, status);
+            }, 1000);
+
         };
     }
 
-    _toggleMute() {
+    _toggleMute(mute) {
 
-        let mute = doc.TAG(dom.PARTICIPATION_MUTE);
-        let active = mute.getAttribute(misc.ATTR_ACTIVE);
-        let value;
-        active == 'mute' ? value = 'unmute' : value = 'mute';
-        mute.onclick = () => this.embeddedMessage(dom.FRAME_LAYER_III, value);
-        mute.setAttribute(misc.ATTR_ACTIVE, value);
+        mute.onclick = () => {
+            let active = mute.getAttribute(misc.ATTR_ACTIVE);
+            let value;
+            active == 'mute' ? value = 'unmute' : value = 'mute';
+            mute.setAttribute(misc.ATTR_ACTIVE, value);
+            this._targetVolumeToggle(mute, value);
+            this.embeddedMessage(dom.FRAME_LAYER_III, value);
+        }
+    }
+
+    _targetVolumeToggle(vol, status) {
+
+        if (status == 'unmute') {
+            vol.classList.remove(misc.OFF_COLOR);
+            vol.innerHTML = misc.ICON_VOL_ON;
+            this._alerta.initiateMessage(conf.message.VOL_UP);
+        } else {
+            vol.classList.add(misc.OFF_COLOR);
+            vol.innerHTML = misc.ICON_VOL_OFF;
+            this._alerta.initiateMessage(conf.message.VOL_DOWN);
+        }
     }
 
     embeddedMessage(frameid, message) {

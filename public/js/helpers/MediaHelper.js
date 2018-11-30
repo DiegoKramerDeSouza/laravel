@@ -79,7 +79,7 @@ class MediaHelper {
         /* Inicializa VideoJS */
         function startJSVideo(name, extension, type) {
 
-            // Cria elemento de vídeo com VideoJS
+            // Cria elemento do player
             player = videojs('embedded-container-iframe', {
                 html5: {
                     hls: {
@@ -96,10 +96,10 @@ class MediaHelper {
             });
         }
 
-        /* Inicializa VideoFlow */
+        /* Inicializa FlowPlayer */
         function startFlow(name, extension, type, liveStream) {
 
-            // Cria elemento de vídeo com Flowplayer
+            // Cria elemento do player
             player = flowplayer("#embedded-container-iframe", {
                 muted: false,
                 ratio: 9 / 16,
@@ -109,15 +109,18 @@ class MediaHelper {
                         type: type,
                         src: conf.con.SOCKET_DOWNLOAD + name + "." + extension
                     }]
-                },
-                autoplay: true
+                }
             });
 
             setTimeout(() => {
 
                 let fpMark = document.querySelector('div.fp-player');
-                console.log(fpMark.childNodes);
+                let fpPlay = document.querySelector('video.fp-engine');
+                fpPlay.setAttribute('crossOrigin', 'anonymous');
                 fpMark.removeChild(fpMark.childNodes[2]);
+                setTimeout(() => {
+                    player.play();
+                }, 300);
             }, 300);
         }
     }

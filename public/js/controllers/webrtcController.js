@@ -35,6 +35,7 @@ class webrtcController {
         this._audioConstraints;
         this._webRTCAdaptor;
         this._webRTCAdaptorScreen;
+        this._participantIs;
     }
 
     /**
@@ -280,7 +281,7 @@ class webrtcController {
 
                 if (this._retransmiting) return;
 
-                console.warn("EVENT RETRANSMITINDO: ", event, this._retransmiting);
+                console.warn("EVENT RETRANSMITINDO: ", event);
 
                 this._structure.incomingCon = event.stream.streamid;
                 this._media.thirdVideoPreview.srcObject = event.stream;
@@ -291,6 +292,7 @@ class webrtcController {
                 this._alerta.initiateMessage(conf.message.START_PARTICIPATION);
                 this._mediaController.displayElem(dom.VIDEO_THIRD, 300);
 
+                this._participantIs = event.extra.modifiedValue.split('-')[1];
                 this._retransmitingWho = event.userid;
                 this._retransmiting = true;
                 this._structure.streamVideos = event.stream;
@@ -300,7 +302,7 @@ class webrtcController {
 
                 let msgnewrash = this._mediaController.createSolicitationArray(
                     btoa(conf.req.NEW_PARTICIPATION),
-                    this._roomInfo.currentUser.value,
+                    this._participantIs,
                     this._roomInfo.inRoom.value,
                     this._structure.targetUser,
                     this._retransmitingWho
@@ -614,6 +616,7 @@ class webrtcController {
     _startPublishing(roomid) {
 
         this._webRTCAdaptor.publish(btoa(roomid));
+        console.log('Publicando...');
     }
 
     _stopPublishing(roomid, isBroadcaster) {
@@ -1035,7 +1038,7 @@ class webrtcController {
             if (connection.isInitiator) {
                 this._connectController.points.push(event.userid + '|' + event.extra.modifiedValue);
                 this._currentUsers = this._connectController.points;
-                this.setUsersInformation(event.userid);
+                this.setUsersInformation(event.userid, this._participantIs);
             } else {
                 if (event.extra.onair === true) this._openPreStream(connection, event.userid, false, true, event.extra.streamEnded);
                 else this._openPreStream(connection, event.userid, false, false, event.extra.streamEnded);
@@ -1149,7 +1152,7 @@ class webrtcController {
      * Informa espectadores conectados
      * @param {String} userid 
      */
-    setUsersInformation(userid) {
+    setUsersInformation(userid, participant) {
 
         if (this._broadcaster) {
             if (this._connectController.points.length > 1) {
@@ -1164,14 +1167,14 @@ class webrtcController {
 
                 let msgnewrash = this._mediaController.createSolicitationArray(
                     btoa(conf.req.NEW_PARTICIPATION),
-                    this._roomInfo.currentUser.value,
+                    participant,
                     this._roomInfo.inRoom.value,
                     this._structure.targetUser,
                     this._retransmitingWho
                 );
 
                 if (userid && (this._startedStream || this._broadcaster.extra.streamEnded)) this._broadcaster.send(msgrash, userid);
-                if (this._retransmiting) this._broadcaster.send(msgnewrash, userid);
+                if (this._retransmiting && participant) this._broadcaster.send(msgnewrash, userid);
                 this._broadcaster.send(this._connectController.points);
             }
             this._updateUsersList();
@@ -1431,11 +1434,14 @@ class webrtcController {
             this._self.attachStreams.forEach(function(localStream) {
                 localStream.stop();
             });
+            // VERIFICAR
+            /*
             let socket = io.connect(this._connect.urlSocket + '?userid=admin');
             socket.emit('admin', {
                 deleteUser: true,
                 userid: this._self.userid
             });
+            */
             this._media.previewVideo.pause();
             this._self = undefined;
         }
@@ -1798,10 +1804,14 @@ class webrtcController {
         let publishing = doc.TAG(dom.PUBLISH_PARTICIPANT);
         this._mediaController.displayElem(dom.VIDEO_THIRD, 300);
         this._initAdaptor(roomid, true);
-        publishing.onclick = () => this._startPublishing(roomid);
+        publishing.onclick = () => {
+            this._startPublishing(roomid);
+            console.log("Publicando participação...");
+        };
+
         setTimeout(() => {
             publishing.click();
-        }, 2000);
+        }, 3000);
     }
 
     /**
