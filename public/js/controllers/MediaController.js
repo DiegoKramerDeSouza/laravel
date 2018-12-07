@@ -134,7 +134,7 @@ class MediaController {
                     targetVideo.play();
                 })
                 .catch(error => {
-                    console.log('Erro ao inicializar vídeo...', error);
+                    //console.log('Erro ao inicializar vídeo...', error);
                     this.initiateVideo(targetVideo);
                 });
             return;
@@ -557,6 +557,11 @@ class MediaController {
     initParticipantVideo(roomid, participant, name) {
 
         this._mediaView.initParticipantVideo(roomid, participant, name);
+    }
+
+    initScreenVideo(screen) {
+
+        this._mediaView.initScreenVideo(screen);
     }
 
     initTransmition(roomid, preVideo, preLoader, count) {

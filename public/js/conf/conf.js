@@ -13,12 +13,27 @@ const doc = {
     ID: document.getElementById.bind(document),
     TAG: document.querySelector.bind(document),
     IDLE_TIME: 240,
-    COOKIE_AUDIO_DEVICE: "audioDevice",
+    COOKIE_AUDIO_DEVICE: 'audioDevice',
     COOKIE_LIFETIME: 365,
-    COOKIE_VIDEO_DEVICE: "videoDevice",
+    COOKIE_VIDEO_DEVICE: 'videoDevice',
+    SERVER: {
+        HOME: {
+            LOCAL: 'http://localhost',
+            SSL: 'https://wtv.lrbtecnologia.com',
+            URL: 'http://wtv.lrbtecnologia.com'
+        },
+        MEDIA: {
+            SSL: 'https://med.lrbtecnologia.com',
+            URL: 'http://med.lrbtecnologia.com'
+        },
+        SIG: {
+            SSL: 'https://sig.lrbtecnologia.com:443/',
+            URL: 'http://sig.lrbtecnologia.com:80/'
+        }
+    },
     URL_SALAS_SAVE: `${location.origin}/salas/salvar`,
     URL_SALAS_UPDATE: `${location.origin}/salas/update`,
-    VERSION: "1.1.0.90"
+    VERSION: "1.1.0.93"
 }
 
 const apr = {
@@ -74,13 +89,13 @@ const conf = {
         SET_BAND_LIMIT: false,
         SHARE_DENIED: 'permission-denied',
         SINGLE_CON: false,
-        SOCKET_DOWNLOAD: "https://med.lrbtecnologia.com:5443/WebRTCApp/streams/",
-        SOCKET_PLAYER: "http://med.lrbtecnologia.com:5080/WebRTCApp/play.html",
-        SOCKET_PLAYER_SSL: "https://med.lrbtecnologia.com:5443/WebRTCApp/play.html",
-        SOCKET_REST_SSL: "https://med.lrbtecnologia.com:5443/WebRTCApp/rest/broadcast/getList/0/10",
-        SOCKET_REST_URL: "http://med.lrbtecnologia.com:5080/WebRTCApp/rest/broadcast/getList/0/10",
-        SOCKET_SSL: "wss://med.lrbtecnologia.com:5443/WebRTCApp/websocket",
-        SOCKET_URL: "ws://med.lrbtecnologia.com:5080/WebRTCApp/websocket",
+        SOCKET_DOWNLOAD: doc.SERVER.MEDIA.SSL + ':5443/WebRTCApp/streams/',
+        SOCKET_PLAYER: doc.SERVER.MEDIA.URL + ':5080/WebRTCApp/play.html',
+        SOCKET_PLAYER_SSL: doc.SERVER.MEDIA.SSL + ':5443/WebRTCApp/play.html',
+        SOCKET_REST_SSL: doc.SERVER.MEDIA.SSL + ':5443/WebRTCApp/rest/broadcast/getList/0/10',
+        SOCKET_REST_URL: doc.SERVER.MEDIA.URL + ':5080/WebRTCApp/rest/broadcast/getList/0/10',
+        SOCKET_SSL: 'wss://med.lrbtecnologia.com:5443/WebRTCApp/websocket',
+        SOCKET_URL: 'ws://med.lrbtecnologia.com:5080/WebRTCApp/websocket',
         STREAM_LOCAL: 'local',
         STREAM_REMOTE: 'remote',
         TK_DETECT: false,
@@ -90,6 +105,7 @@ const conf = {
         TK_TIME_REQ: (1000 * 15),
         TK_URL: 'http://*/*',
         URL: 'https://sig.lrbtecnologia.com:443/',
+        URL_ADM: 'https://sig.lrbtecnologia.com:443/admin/',
         //URL: 'https://rtcmulticonnection.herokuapp.com:443/',
         //URL: 'https://webrtcweb.com:9001/'
     },
@@ -118,6 +134,7 @@ const conf = {
         END_SHARE: '@Finaliza-Share',
         NEW_PARTICIPATION: '@Nova-Participacao',
         NEW_ROOM: '@Nova-Sala-Aberta',
+        NEW_SHARE: '@Novo-Compartilhamento-Tela',
         PEDE_VEZ: '@PedeAVez',
         RECEIVE_FILE: '@Receive-File',
         REJOIN_ROOM: '@RejoinRoom',
@@ -173,6 +190,12 @@ const conf = {
         TK_FOUNDED: ['<i class="material-icons left">usb</i>', 'Token encontrado e validado com sucesso!', apr.msg.LOCAL_MSG_COLOR],
         TK_NOT_FOUND: ['<i class="material-icons left">usb</i>', 'Falha ao validar. Token não encontrado!', apr.msg.ERROR_MSG_COLOR],
         FILE_RECEIVED: ['<i class="fa fa-cloud-download fa-2x left"></i> Arquivo ', ' recebido.', apr.msg.LOCAL_MSG_COLOR],
+        DEVICES_MISSING: ['<i class="material-icons left">close</i>', ' Dispositívos de áudio e vídeo não encontrados ou não permitidos!', apr.msg.ERROR_MSG_COLOR],
+        DEVICES_BUSY: ['<i class="material-icons left">close</i>', ' Camera ou microfone sendo utilizados por outro processo!', apr.msg.ERROR_MSG_COLOR],
+        DEVICES_NOT_FOUND: ['<i class="material-icons left">close</i>', ' Dispositívo de áudio e/ou vídeo não encontrados!', apr.msg.ERROR_MSG_COLOR],
+        DEVICES_NOT_ALLOWED: ['<i class="material-icons left">close</i>', ' Acesso negado ao microfone e/ou à camera!', apr.msg.ERROR_MSG_COLOR],
+        DEVICES_REQUIRED: ['<i class="material-icons left">close</i>', ' Áudio/Vídeo requeridos', apr.msg.ERROR_MSG_COLOR],
+
     }
 }
 
@@ -230,6 +253,7 @@ const dom = {
     DOWNLOAD_VIDEO: '#download-video',
     DROPDOWN_TRG: '.dropdown-trigger',
     EMBEDDED_FRAME: '#embedded-container-iframe',
+    EMBEDDED_FRAME_II: '#embedded-container-iframe-v2',
     EMBEDDED_FRAME_III: '#embedded-container-iframe-v3',
     END_SESSION_ACCESS: '#end-session',
     ERROR_LEVEL: '#error_level',
@@ -243,9 +267,12 @@ const dom = {
     FINISH: '#finish_btn',
     FIRST_VIDEO: '#video-preview',
     FRAME_LAYER: '#embedded_player',
+    FRAME_LAYER_II: '#embedded_player_v2',
     FRAME_LAYER_III: '#embedded_player_v3',
     IN_ROOM: '#in-room',
     IN_SCREEN: '#in-screen',
+    INCOMMING_VIDEO_PARTICIPANT: '#incommingVideo-participant',
+    INCOMMING_VIDEO_SCREEN: '#incommingVideo-screen',
     INFORM_VIEWS: '#informViews',
     LABEL_USERS: '#users-counter',
     LI_CAM: '#li-toggle-camera',
@@ -264,7 +291,7 @@ const dom = {
     LOCATION: '#location',
     LOCK: '#lock',
     LOCK_CEP: '#lockcep',
-    MAIN_VIDEO: 'video-preview',
+    MAIN_VIDEO_ID: 'video-preview',
     MATERIA: '#tema',
     MIN_SEND: '#min-send-files',
     MIN_RECEIVE: '#min-receive-files',
@@ -297,9 +324,14 @@ const dom = {
     ROOM_STATUS: '#room-status',
     ROOM_TYPE: '#room-type',
     SCREEN: '#toggle-screen',
+    SCREEN_CONTROL: '#screen-control',
+    SCREEN_MUTE: '#screen-mute',
+    SCREEN_NAME: '#screen-name',
+    SCREEN_SWAP: '#screen-swap',
     SCRIPT: 'script',
     SEARCH: '#search-input',
     SECOND_VIDEO: '#secondvideo-preview',
+    SECOND_VIDEO_ID: 'secondvideo-preview',
     SELECT: 'select',
     SESSION_ACCESS: '#enter-session',
     SHARE: '#share-screen',
@@ -338,13 +370,15 @@ const dom = {
     VIDEO_THIRD: '#span-video-preview-3rd',
     VIDEOS: '#videos',
     VIDEOS_PANEL: '#video-panel',
-    VOL: '#toggle-volume'
+    VOL: '#toggle-volume',
+    WAITING_LINK: '#waitingLinkFile'
 }
 
 const misc = {
     /* Atributos gerais muito utilizados com funcionalidades variádas (MISCELÂNEA) */
     /*Atributos de elementos do DOM */
     ATTR_ACTIVE: 'data-active',
+    ATTR_CONDITION: 'data-condition',
     ATTR_POSTER: 'poster',
     ATTR_SOLICITATION: 'data-sender',
     ATTR_USER_ANNOUNCE: 'data-announced',
@@ -387,8 +421,8 @@ const misc = {
     ICON_VOL_ON: '<i class="material-icons">volume_up</i>',
     /*Títulos */
     TITLE_END_ROOM: "Sair da sala",
-    TITLE_END_TRANSMITION: "Finalizar transmissão",
-    TITLE_FINISH_ROOM: "Finalizar da sala: Todos os usuários serão desconectados",
+    TITLE_END_TRANSMITION: "Finalizar Transmissão",
+    TITLE_FINISH_ROOM: "Finalizar Sala",
     /*Atribuição CSS */
     STYLE_HEIGHT_INHERIT: 'inherit',
     /*Cores */

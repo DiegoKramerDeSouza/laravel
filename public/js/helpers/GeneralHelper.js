@@ -62,4 +62,17 @@ class GeneralHelper {
             return false;
         }
     }
+
+    static showit(elem, time) {
+
+        time ? $(elem).fadeIn(time) : $(elem).show();
+        doc.TAG(elem).setAttribute(misc.ATTR_CONDITION, 'alive');
+    }
+
+    static hideit(elem, time) {
+
+        time ? $(elem).fadeOut(time) : $(elem).hide();
+        doc.TAG(elem).setAttribute(misc.ATTR_CONDITION, 'dead');
+    }
+
 }

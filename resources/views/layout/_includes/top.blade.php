@@ -15,6 +15,9 @@
         <link href="{!! asset('css/raleway.css') !!}" rel="stylesheet" type="text/css">
         <link href="{!! asset('css/materialize.min.css') !!}" media="all" rel="stylesheet" type="text/css" />
         <link href="{!! asset('css/skin.css') !!}" media="all" rel="stylesheet" type="text/css" />
+        
+        <!--<link href="{!! asset('css/video-js.css') !!}" media="all" rel="stylesheet" type="text/css" />
+        <link href="{!! asset('css/player.css') !!}" media="all" rel="stylesheet" type="text/css" />-->
         @if(! Auth::guest() && Auth::user()->type == 0)
             <!--Instalação inline de extensão do chrome para compartilhamento de tela-->
             <!--<link rel="chrome-webstore-item" href="path $chromeExt">-->

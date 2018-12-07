@@ -15,5 +15,4 @@ class RoomHelper {
         }
         return false;
     }
-
 }

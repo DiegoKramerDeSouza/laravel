@@ -79,12 +79,13 @@
         @if(isset($streamPage))
             <!-- Formação de SALAS -->
             @if(! Auth::guest())
-                <!-- Inicializa o controle de mídia -->
-                <script type="text/javascript" src="{!! asset('js/player/flow/flowplayer.min.js') !!}"></script>
-                <script type="text/javascript" src="{!! asset('js/player/flow/flowplayer.hlsjs.light.min.js') !!}"></script>
-                <script type="text/javascript" src="{!! asset('js/fetch.js') !!}"></script>  
-                <script type="text/javascript" src="{!! asset('js/promise.min.js') !!}"></script>
-                <script type="text/javascript" src="{!! asset('js/helpers/MediaHelper.js') !!}"></script>
+                <!-- Inicializa player -->
+                <!--
+                <script type="text/javascript" src="{!! asset('js/player/videojs/video.js') !!}"></script>  
+                <script type="text/javascript" src="{!! asset('js/player/videojs/videojs-http-streaming.js') !!}"></script>
+                <script type="text/javascript" src="{!! asset('js/controllers/playerController.js') !!}"></script>  
+                <script type="text/javascript" src="{!! asset('js/controllers/newerPlayerController.js') !!}"></script>  
+                -->
                 <!-- Inicializa o controle de dispositivos -->
                 <script type="text/javascript" src="{!! asset('js/controllers/DevicesController.js') !!}"></script>  
                 <script type="text/javascript" src="{!! asset('js/views/DevicesView.js') !!}"></script>
@@ -112,6 +113,8 @@
                 <!-- Helpers -->
                 <script type="text/javascript" src="{!! asset('js/helpers/RoomHelper.js') !!}"></script>        
                 <!-- WebRTC Adapters -->
+                <!--<script type="text/javascript" src="{!! asset('js/player/webrtc_adaptor.js') !!}"></script>
+                <script type="text/javascript" src="{!! asset('js/player/adapter-latest.js') !!}"></script>-->
                 <script type="text/javascript" src="{!! asset('js/webrtc/webrtc_adaptor.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/webrtc/adapter-latest.js') !!}"></script>
                 <!-- WebRTC Modules -->

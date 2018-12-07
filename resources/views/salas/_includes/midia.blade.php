@@ -69,6 +69,9 @@
                                 <div class=''>
                                     <div id='main-video' align='center' class='inroom mainView'>
                                         <div id='embedded-container-iframe' class="embedded-container d-none rounded-borders z-depth-3 black">
+                                            <video id="remoteVideo" muted autoplay></video>
+                                            <br/>
+                                            <span id='playit' class='btn small'>Play</span>
                                         </div>
                                         <div id='videos'>
                                             <!--VÍDEO PRINCIPAL-->
@@ -86,19 +89,37 @@
                             </div>
                             <div id='div-incoming-videos' data-active='out' class='col s12 m2 l2 push-m2 d-none obj-invisible' align='center'>
                                 <div class='row'>
-
-                                    <span id='participation-name' class='white-text right ml-5'></span>
-                                    <br/>
-                                    <div id='embedded-container-iframe-v3' class="embedded-container d-none rounded-borders z-depth-3"></div>
-                                    <div id='participation-control' class='col s12 p-10 participant-control d-none right'>
-                                        <a id='participation-mute' class='media-control btn-floating red right' data-active='mute' data-position='top' title='Mudo'>
-                                            {!! $default->volumeDownIcon !!}
-                                        </a>
-                                        <a id='participation-swap' class='media-control btn-floating blue right' data-position='top' title='Passar para principal'>
-                                            {!! $default->swapIcon !!}
-                                        </a>
+                                    <div id='incommingVideo-screen' align='center' data-status='disabled' data-position='second' class='col s12 d-none'>
+                                        <span id='screen-name' class='white-text right ml-5'></span>
+                                        <br/>
+                                        <div id='embedded-container-iframe-v2' class="embedded-container d-none rounded-borders z-depth-3">
+                                        </div>
+                                        <div id='screen-control' class='col s12 p-10 participant-control d-none right'>
+                                            <a id='screen-mute' class='media-control btn-floating red right' data-active='mute' data-position='top' title='Mudo'>
+                                                {!! $default->volumeDownIcon !!}
+                                            </a>
+                                            <a id='screen-swap' class='media-control btn-floating blue right' data-active='screen' data-position='top' title='Passar para tela principal'>
+                                                {!! $default->swapIcon !!}
+                                            </a>
+                                        </div>
                                     </div>
-
+                                    <br />
+                                    <div id='incommingVideo-participant' align='center' data-status='disabled' data-position='second' class='col s12 d-none'>
+                                        <span id='participation-name' class='white-text right ml-5'></span>
+                                        <br/>
+                                        <div id='embedded-container-iframe-v3' class="embedded-container d-none rounded-borders z-depth-3">
+                                        </div>
+                                        <div id='participation-control' class='col s12 p-10 participant-control d-none right'>
+                                            <a id='participation-mute' class='media-control btn-floating red right' data-active='mute' data-position='top' title='Mudo'>
+                                                {!! $default->volumeDownIcon !!}
+                                            </a>
+                                            <a id='participation-swap' class='media-control btn-floating blue right' data-active='participant' data-position='top' title='Passar para tela principal'>
+                                                {!! $default->swapIcon !!}
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <br />
+                                    
                                     <a id='publish_participant' href='#' class='d-none'>publicar</a>
                                     <!--TERCEIRO VÍDEO-->
                                     <div id='span-video-preview-3rd' align='center' data-status='disabled' data-position='second' class='col s12 d-none'>

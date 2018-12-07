@@ -120,7 +120,7 @@ body::-webkit-scrollbar-thumb:hover {
     transition-duration: 0.4s !important;
 }
 
-#embedded-container-iframe1 {
+#embedded-container12 {
     position: relative;
     padding-bottom: 56.25%;
     /* 16:9 */
@@ -128,7 +128,8 @@ body::-webkit-scrollbar-thumb:hover {
     height: 0;
 }
 
-#embedded_player1 {
+#embedded-container12 object,
+#embedded-container12 embed {
     position: absolute;
     top: 0;
     left: 0;
@@ -228,4 +229,8 @@ video::-webkit-media-controls-enclosure {
 
 #video-preview-broadcaster {
     width: 50%;
+}
+
+#waitingLinkFile {
+    font-size: 18px;
 }

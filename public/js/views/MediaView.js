@@ -68,7 +68,7 @@ class MediaView {
         this._mute.classList.add(misc.DISABLED_COLOR);
         this._mute.innerHTML = misc.ICON_MUTE_MIC;
         this._mute.disabled = true;
-        $(dom.LI_MUTE).hide();
+        GeneralHelper.hideit(dom.LI_MUTE);
     }
 
     setVolumeOn() {
@@ -92,7 +92,7 @@ class MediaView {
         this._vol.classList.add(misc.DISABLED_COLOR);
         this._vol.innerHTML = misc.ICON_VOL_OFF;
         this._vol.disabled = true;
-        $(dom.LI_VOLUME).hide();
+        GeneralHelper.hideit(dom.LI_VOLUME);
     }
 
     setCamOn() {
@@ -114,7 +114,7 @@ class MediaView {
         this._cam.classList.add(misc.DISABLED_COLOR);
         this._cam.innerHTML = misc.ICON_CAM_OFF;
         this._cam.disabled = true;
-        $(dom.LI_CAM).hide();
+        GeneralHelper.hideit(dom.LI_CAM);
     }
 
     openIncomingVideos(mainVideo, inVideo) {
@@ -137,14 +137,14 @@ class MediaView {
 
     startShare() {
 
-        $(dom.SHARE).show();
+        GeneralHelper.showit(dom.SHARE);
         this._share.classList.add(misc.OFF_COLOR);
         this._share.innerHTML = misc.ICON_SHARE_OFF;
     }
 
     exitShare() {
 
-        $(dom.SHARE).show();
+        GeneralHelper.showit(dom.SHARE);
         this._share.classList.remove(misc.OFF_COLOR);
         this._share.innerHTML = misc.ICON_SHARE_ON;
     }
@@ -156,12 +156,12 @@ class MediaView {
         this._share.classList.add(misc.DISABLED_COLOR);
         this._share.innerHTML = misc.ICON_SHARE_ON;
         this._share.disabled = true;
-        $(dom.LI_SHARE).hide();
+        GeneralHelper.hideit(dom.LI_SHARE);
     }
 
     startParticipation() {
 
-        $(dom.DIV_ENTER).show();
+        GeneralHelper.showit(dom.DIV_ENTER);
         this._divParticipation.title = 'Finalizar participação';
         this._participation.classList.remove(misc.HILIGHT_COLOR);
         this._participation.classList.add(misc.OFF_COLOR);
@@ -170,7 +170,7 @@ class MediaView {
 
     endParticipation() {
 
-        $(dom.DIV_ENTER).show();
+        GeneralHelper.showit(dom.DIV_ENTER);
         this._divParticipation.title = 'Ingressar';
         this._participation.classList.remove(misc.OFF_COLOR);
         this._participation.classList.add(misc.HILIGHT_COLOR);
@@ -183,14 +183,14 @@ class MediaView {
         this._participation.classList.add(misc.OFF_COLOR);
         this._participation.innerHTML = misc.ICON_CAM_OFF;
         this._participation.disabled = true;
-        $(dom.DIV_ENTER).hide();
+        GeneralHelper.hideit(dom.DIV_ENTER);
     }
 
     allowSolicitation() {
 
         this._alerta.initiateMessage(conf.message.SEND_ACP_SOLICITATION);
         setTimeout(() => {
-            $(dom.DIV_ENTER).fadeIn(300);
+            GeneralHelper.showit(dom.DIV_ENTER, 300);
             this.endParticipation();
             $(dom.SESSION_ACCESS).click();
             this._alerta.initiateMessage(conf.message.SEND_START_SOLICITATION);
@@ -207,7 +207,7 @@ class MediaView {
 
         this._pedir.classList.add(misc.OFF_COLOR);
         this._pedir.disabled = true;
-        $(dom.PEDIR).hide();
+        GeneralHelper.hideit(dom.LI_PERDIR);
     }
 
     fileSharingOff() {
@@ -215,7 +215,7 @@ class MediaView {
         this._sharedFile.classList.remove(misc.HILIGHT_COLOR);
         this._sharedFile.classList.add(misc.OFF_COLOR);
         this._sharedFile.disabled = true;
-        $(dom.BTN_FILE_SHARING).hide();
+        GeneralHelper.hideit(dom.BTN_FILE_SHARING);
     }
 
     fileSharingListOff() {
@@ -226,7 +226,7 @@ class MediaView {
         this._fileListSend.classList.add(misc.OFF_COLOR);
         this._fileListReceive.disabled = true;
         this._fileListSend.disabled = true;
-        $(dom.FILE_LIST).hide();
+        GeneralHelper.hideit(dom.FILE_LIST);
     }
 
     noFileSharing() {
@@ -236,7 +236,7 @@ class MediaView {
 
     exitFullscreen() {
 
-        $(dom.DIV_EXIT_FSCREEN).fadeOut(500);
+        GeneralHelper.hideit(dom.DIV_EXIT_FSCREEN, 500);
         this._spanMainVideo.classList.remove(misc.TURNOFF_COLOR);
         this._spanMainVideo.classList.add(misc.CLASS_WIDTH_LIMIT);
         this._spanMainVideo.style.height = misc.STYLE_HEIGHT_INHERIT;
@@ -245,7 +245,7 @@ class MediaView {
 
     enterFullscreen() {
 
-        $(dom.DIV_EXIT_FSCREEN).fadeIn(500);
+        GeneralHelper.showit(dom.DIV_EXIT_FSCREEN, 500);
         this._spanMainVideo.classList.add(misc.TURNOFF_COLOR);
         this._spanMainVideo.classList.remove(misc.CLASS_WIDTH_LIMIT);
         this._spanMainVideo.style.height = (window.innerHeight) + 'px';
@@ -253,14 +253,14 @@ class MediaView {
 
     fullScreamOff() {
 
-        $(dom.LI_SCREEN).hide();
+        GeneralHelper.hideit(dom.LI_SCREEN);
     }
 
     pedirOff() {
 
         this._pedir.classList.add(misc.OFF_COLOR);
         this._pedir.disabled = true;
-        $(dom.PEDIR).hide();
+        GeneralHelper.hideit(dom.PEDIR);
     }
 
     expandVideoSize() {
@@ -281,7 +281,7 @@ class MediaView {
 
     adjustStreamScreen() {
 
-        $(dom.BG_DARK).fadeIn(500);
+        GeneralHelper.showit(dom.BG_DARK, 500);
         $(dom.ROOM_LOBBY).slideUp(500);
         $(dom.VIDEOS_PANEL).slideDown(500);
     }
@@ -298,9 +298,9 @@ class MediaView {
     showControlElements() {
 
         doc.TAG(dom.ALERT_SHARE).click();
-        $(dom.ROOM_STATUS).show(500);
-        $(dom.DIV_MAIN_VIDEO).show(500);
-        $(dom.DIV_INCOMING_VIDEO).show(500);
+        GeneralHelper.showit(dom.ROOM_STATUS, 500);
+        GeneralHelper.showit(dom.DIV_MAIN_VIDEO, 500);
+        GeneralHelper.showit(dom.DIV_INCOMING_VIDEO, 500);
         setTimeout(() => {
             doc.TAG(dom.ROOM_STATUS).classList.remove("obj-invisible");
             doc.TAG(dom.DIV_MAIN_VIDEO).classList.remove("obj-invisible");
@@ -310,9 +310,9 @@ class MediaView {
 
     hideControlElements() {
 
-        $(dom.ROOM_STATUS).hide();
-        $(dom.DIV_MAIN_VIDEO).hide();
-        $(dom.DIV_INCOMING_VIDEO).hide();
+        GeneralHelper.hideit(dom.ROOM_STATUS);
+        GeneralHelper.hideit(dom.DIV_MAIN_VIDEO);
+        GeneralHelper.hideit(dom.DIV_INCOMING_VIDEO);
 
         doc.TAG(dom.ROOM_STATUS).classList.add("obj-invisible");
         doc.TAG(dom.DIV_MAIN_VIDEO).classList.add("obj-invisible");
@@ -336,12 +336,12 @@ class MediaView {
     showSolicitation(val) {
 
         this._countPedirVez.innerHTML = val;
-        $(dom.COUNT_PEDIR).fadeIn(300);
+        GeneralHelper.showit(dom.COUNT_PEDIR, 300);
     }
 
     hideSolicitation() {
 
-        $(dom.COUNT_PEDIR).fadeOut(300);
+        GeneralHelper.hideit(dom.COUNT_PEDIR, 300);
     }
 
     listSolicitation(count, username, userid) {
@@ -401,22 +401,22 @@ class MediaView {
 
     _prepareFileMenu(pedir, files, filesMin, preview) {
 
-        $(dom.DIV_CONNECT).hide();
-        $(pedir).hide();
-        $(files).hide();
-        $(filesMin).hide();
-        $(preview).fadeIn(500);
+        GeneralHelper.hideit(dom.DIV_CONNECT);
+        GeneralHelper.hideit(pedir);
+        GeneralHelper.hideit(files);
+        GeneralHelper.hideit(filesMin);
+        GeneralHelper.showit(preview, 500);
     }
 
     initPreVideo(preVideo, preLoader, count) {
 
-        $(preVideo).hide();
+        GeneralHelper.hideit(preVideo);
         this.prepareToInitiate(preLoader, count);
     }
 
     prepareToInitiate(preLoader, count) {
 
-        $(preLoader).fadeIn(300);
+        GeneralHelper.showit(preLoader, 300);
         if (count) this._startCountDown();
     }
 
@@ -429,8 +429,15 @@ class MediaView {
     stopTransmition(roomid) {
 
         this.hideControlElements();
-        $(dom.PRE_VIDEO_FINISHED).fadeIn(1000);
         this._createVideoLink(roomid);
+        GeneralHelper.showit(dom.PRE_VIDEO_FINISHED, 1000);
+        GeneralHelper.hideit(dom.LI_SCREEN);
+        GeneralHelper.hideit(dom.LI_VOLUME);
+        GeneralHelper.hideit(dom.LI_SHARE);
+        GeneralHelper.hideit(dom.LI_PERDIR);
+        GeneralHelper.hideit(dom.SOL_PEDIR);
+        GeneralHelper.hideit(dom.CTL_PEDIR);
+        try { $(dom.FRAME_LAYER).remove() } catch (e) { /* Não faz nada */ };
     }
 
     _createVideoLink(roomid) {
@@ -438,20 +445,22 @@ class MediaView {
         setTimeout(() => {
             let videoLink = doc.TAG(dom.DOWNLOAD_VIDEO);
             videoLink.href = conf.con.SOCKET_DOWNLOAD + btoa(roomid) + '.mp4';
-            $(dom.DIV_DOWNLOAD_VIDEO).fadeIn(300);
+            videoLink.setAttribute('download', btoa(roomid));
+            GeneralHelper.hideit(dom.WAITING_LINK);
+            GeneralHelper.showit(dom.DIV_DOWNLOAD_VIDEO, 300);
         }, 3000);
     }
 
     endPreVideo() {
 
-        $(dom.PRE_LOAD_VIDEO).hide();
-        $(dom.EMBEDDED_FRAME).hide();
-        $(dom.DIV_CONTROLLER).fadeIn(300);
+        GeneralHelper.hideit(dom.PRE_LOAD_VIDEO);
+        GeneralHelper.hideit(dom.EMBEDDED_FRAME);
+        GeneralHelper.showit(dom.DIV_CONTROLLER, 300);
     }
 
     _startCountDown() {
 
-        let count = 4
+        let count = 3
         let interval = setInterval(() => {
             this._countdown.innerHTML = count;
             count--;
@@ -485,71 +494,112 @@ class MediaView {
 
     initBroadcasterVideo(roomid) {
 
-        $(dom.VIDEOS).hide();
-        $(dom.PRE_APRESENTACAO).hide();
-        $(dom.PRE_LOAD_APRESENTACAO).hide();
+        let name = btoa(roomid);
+        GeneralHelper.hideit(dom.VIDEOS);
+        GeneralHelper.hideit(dom.PRE_APRESENTACAO);
+        GeneralHelper.hideit(dom.PRE_LOAD_APRESENTACAO);
 
-
-        let addr = `<iframe id="embedded_player" class="embedded-video" src="${ conf.con.SOCKET_PLAYER }?name=${ btoa(roomid) }" frameborder="0" allowfullscreen></iframe>`;
+        //src = "https://test.antmedia.io:5443/WebRTCAppEE/play.html?name=${ name }"
+        let addr = `<iframe id="embedded_player" class="embedded-video" src="${ conf.con.SOCKET_PLAYER }?name=${ name }" frameborder="0" allowfullscreen></iframe>`;
         let frame = doc.TAG(dom.EMBEDDED_FRAME);
         frame.innerHTML = addr;
 
-
-        // Problemas com CORS
-        //MediaHelper.setMediaPlayer(roomid);
-
-        $(dom.DIV_MAIN_VIDEO).show();
+        GeneralHelper.showit(dom.DIV_MAIN_VIDEO);
         doc.TAG(dom.DIV_MAIN_VIDEO).classList.remove("obj-invisible");
-        $(dom.EMBEDDED_FRAME).fadeIn(300);
-        $(dom.DIV_CONTROLLER).fadeIn(300);
+        GeneralHelper.showit(dom.EMBEDDED_FRAME, 300);
+        GeneralHelper.showit(dom.DIV_CONTROLLER, 300);
+
+        /**Inicialização do player local */
+        //this._initPlayer(name);
+        //this._initNewPlayer(name);
+
     }
 
-    initParticipantVideo(roomid, participant, name) {
+    _initPlayer(name) {
 
-        let rash = roomid + '|' + participant;
-        let addr = `<iframe id="embedded_player_v3" data-active="participant" class="embedded-video" src="${ conf.con.SOCKET_PLAYER }?name=${ btoa(rash) }" frameborder="0" allowfullscreen></iframe>`;
+        let player = new PlayerController(name);
+        player.initFetch();
+    }
+
+    _initNewPlayer(name) {
+
+        let newplayer = new NewerPlayerController(name);
+        newplayer.startConfig();
+
+        doc.TAG('#playit').onclick = () => {
+            newplayer.startPlaying();
+        }
+    }
+
+    initParticipantVideo(participant, name) {
+
+        let rash = btoa(participant);
+        let addr = `<iframe id="embedded_player_v3" data-active="participant" class="embedded-video" src="${ conf.con.SOCKET_PLAYER }?name=${ rash }" frameborder="0" allowfullscreen></iframe>`;
+        //let addr = `<iframe id="embedded_player_v3" data-active="participant" class="embedded-video" src="https://test.antmedia.io:5443/WebRTCAppEE/play.html?name=${ btoa(rash) }" frameborder="0" allowfullscreen></iframe>`;
         let participantName = doc.TAG(dom.PARTICIPATION_NAME);
-        //participantName.innerHTML = name.split('-')[1];
         participantName.innerHTML = name;
-        this._controlEmbeddedVideo(addr);
+        this._controlEmbeddedVideo(
+            addr,
+            dom.EMBEDDED_FRAME_III,
+            dom.INCOMMING_VIDEO_PARTICIPANT,
+            dom.PARTICIPATION_CONTROL,
+            dom.PARTICIPATION_SWAP,
+            dom.PARTICIPATION_MUTE,
+            dom.FRAME_LAYER_III
+        );
     }
 
-    _controlEmbeddedVideo(content) {
+    initScreenVideo(screen) {
 
-        let frame = doc.TAG(dom.EMBEDDED_FRAME_III);
+        let addr = `<iframe id="embedded_player_v2" data-active="participant" class="embedded-video" src="${ conf.con.SOCKET_PLAYER }?name=${ screen }" frameborder="0" allowfullscreen></iframe>`;
+        this._controlEmbeddedVideo(
+            addr,
+            dom.EMBEDDED_FRAME_II,
+            dom.INCOMMING_VIDEO_SCREEN,
+            dom.SCREEN_CONTROL,
+            dom.SCREEN_SWAP,
+            dom.SCREEN_MUTE,
+            dom.FRAME_LAYER_II
+        );
+    }
+
+    _controlEmbeddedVideo(content, embedded, container, control, itemSwap, itemMute, layer) {
+
+        let frame = doc.TAG(embedded);
         frame.innerHTML = content;
 
-        $(dom.DIV_INCOMING_VIDEO).show();
+        GeneralHelper.showit(dom.DIV_INCOMING_VIDEO);
         doc.TAG(dom.DIV_INCOMING_VIDEO).classList.remove("obj-invisible");
-        $(dom.EMBEDDED_FRAME_III).fadeIn(300);
-        $(dom.PARTICIPATION_CONTROL).fadeIn(300);
+        GeneralHelper.showit(container, 300);
+        GeneralHelper.showit(embedded, 300);
+        GeneralHelper.showit(control, 300);
 
         setTimeout(() => {
-            let swap = doc.TAG(dom.PARTICIPATION_SWAP);
-            let mute = doc.TAG(dom.PARTICIPATION_MUTE);
+            let swap = doc.TAG(itemSwap);
+            let mute = doc.TAG(itemMute);
             let mainMute = doc.TAG(dom.VOL);
-            this._swapParticipant(swap, mute, mainMute);
-            this._toggleMute(mute);
+            this._swapParticipant(swap, mute, mainMute, layer);
+            this._toggleMute(mute, layer);
         }, 300);
     }
 
-    _swapParticipant(swap, mute, mainMute) {
+    _swapParticipant(swap, mute, mainMute, layer) {
 
         swap.onclick = () => {
             let main = doc.TAG(dom.FRAME_LAYER);
-            let participant = doc.TAG(dom.FRAME_LAYER_III);
-            let swap = main.src;
-            main.src = participant.src;
-            participant.src = swap;
-            let active = participant.getAttribute(misc.ATTR_ACTIVE);
+            let incomming = doc.TAG(layer);
+            let swapScr = main.src;
+            main.src = incomming.src;
+            incomming.src = swapScr;
+            let active = swap.getAttribute(misc.ATTR_ACTIVE);
 
-            active == 'participant' ?
-                participant.setAttribute(misc.ATTR_ACTIVE, 'main') :
-                participant.setAttribute(misc.ATTR_ACTIVE, 'participant');
+            active == 'other' ?
+                swap.setAttribute(misc.ATTR_ACTIVE, 'main') :
+                swap.setAttribute(misc.ATTR_ACTIVE, 'other');
 
             setTimeout(() => {
                 let status = mute.getAttribute(misc.ATTR_ACTIVE);
-                if (status == 'unmute') this.embeddedMessage(dom.FRAME_LAYER_III, status);
+                if (status == 'unmute') this.embeddedMessage(layer, status);
                 status = mainMute.getAttribute(misc.ATTR_ACTIVE);
                 if (status == 'unmute') this.embeddedMessage(dom.FRAME_LAYER, status);
             }, 1000);
@@ -557,7 +607,7 @@ class MediaView {
         };
     }
 
-    _toggleMute(mute) {
+    _toggleMute(mute, layer) {
 
         mute.onclick = () => {
             let active = mute.getAttribute(misc.ATTR_ACTIVE);
@@ -565,7 +615,7 @@ class MediaView {
             active == 'mute' ? value = 'unmute' : value = 'mute';
             mute.setAttribute(misc.ATTR_ACTIVE, value);
             this._targetVolumeToggle(mute, value);
-            this.embeddedMessage(dom.FRAME_LAYER_III, value);
+            this.embeddedMessage(layer, value);
         }
     }
 
@@ -640,22 +690,22 @@ class MediaView {
 
     displayElem(elem) {
 
-        $(elem).show();
+        GeneralHelper.showit(elem);
     }
 
     fadeInElem(elem, delay) {
 
-        $(elem).fadeIn(delay);
+        GeneralHelper.showit(elem, delay);
     }
 
     hideElem(elem) {
 
-        $(elem).hide();
+        GeneralHelper.hideit(elem);
     }
 
     fadeOutElem(elem, delay) {
 
-        $(elem).fadeOut(delay);
+        GeneralHelper.hideit(elem, delay);
     }
 
 }

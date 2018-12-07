@@ -22,6 +22,8 @@ $(document).ready(function() {
     webrtc.operateRoom();
     // Inicia listeners de tratamento de URI
     webrtc.formatRoom();
+    // Inicia listener de tratamento de mensagens de elementos aninhados
+    listenEmbeddedMessages();
 });
 
 /**
@@ -47,4 +49,21 @@ function checkAvaliableRooms() {
 function searchAvaliableRooms() {
 
     if (!webrtc.getPublicModerators()) clearInterval(instanceCheckInterval);
+}
+
+/**
+ * Cria listener para mensagens enviadas por páginas aninhadas
+ */
+function listenEmbeddedMessages() {
+
+    window.addEventListener('message', (event) => {
+
+        if (~event.origin.indexOf(doc.SERVER.MEDIA.URL) || ~event.origin.indexOf(doc.SERVER.HOME.LOCAL) || ~event.origin.indexOf(doc.SERVER.HOME.SSL)) {
+            if (~event.origin.indexOf(doc.SERVER.MEDIA.URL)) webrtc.checkEmbeddedMessages(event.data);
+        } else {
+            console.error('Origem não reconhecida', event.data, event.origin);
+            return;
+        }
+
+    });
 }

@@ -23,8 +23,11 @@
                 <span class='white-text'>O conteúdo desta transmissão está salvo e disponível para visualização e download no formato MP4</span>
             </div>
             <br />
+            <div id='waitingLinkFile' class='center'>
+                {!! $default->preLoaderSmall !!}
+            </div>
             <div id='div-download-video' class='d-none'>
-                <a id='download-video' class='blue p-10 rounded-borders white-text' href='' target='_blank' >
+                <a id='download-video' class='blue p-10 rounded-borders white-text' href='' target='_blank'>
                     {!! $default->downloadIcon !!} <u>Baixar esta aula</u>
                 </a>
             </div>
@@ -50,7 +53,7 @@
         <div class='p-10 white-text center'>
             <br />
             <br />
-            <h4>Iniciando transmissão em <b id='countdown'>5</b></h4>
+            <h4>Iniciando transmissão em <b id='countdown'>4</b></h4>
             <br />
             {!! $default->preLoader !!}
             <br />
