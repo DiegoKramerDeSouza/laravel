@@ -141,7 +141,7 @@ function WebRTCAdaptor(initialValues) {
             video: thiz.mediaConstraints.video == false ? false : true,
             audio: thiz.mediaConstraints.audio == false ? false : true,
         };
-        console.warn(jsCmd, 'publish');
+        console.warn(jsCmd, 'publish', thiz.webSocketAdaptor);
         thiz.webSocketAdaptor.send(JSON.stringify(jsCmd));
     }
 
@@ -309,6 +309,7 @@ function WebRTCAdaptor(initialValues) {
         if (onEndedCallback != null) {
             setTimeout(() => {
                 thiz.localVideo.play();
+                console.log('Publicando...');
                 this.publish(streamId);
             }, 300);
             stream.getVideoTracks()[0].onended = (event) => {

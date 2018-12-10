@@ -1,7 +1,9 @@
 class NewerPlayerController {
 
-    constructor(roomId) {
+    constructor(roomId, videoid, media) {
 
+        this._videoid = videoid;
+        this._media = media;
         this._token = "null";
         this._streamId = roomId;
         this._webRTCAdaptor;
@@ -34,17 +36,17 @@ class NewerPlayerController {
             audio: false
         };
 
-        /*
+
         location.protocol.startsWith("https") ?
             this._websocketURL = "wss://test.antmedia.io:5443/WebRTCAppEE/websocket" :
             this._websocketURL = "ws://test.antmedia.io:5080/WebRTCAppEE/websocket";
-        */
 
+        /*
         location.protocol.startsWith("https") ?
             this._websocketURL = "wss://med.lrbtecnologia.com:5443/WebRTCApp/websocket" :
             this._websocketURL = "ws://med.lrbtecnologia.com:5080/WebRTCApp/websocket";
 
-
+        */
         this._startVideo();
 
     }
@@ -56,32 +58,35 @@ class NewerPlayerController {
             mediaConstraints: this._mediaConstraints,
             peerconnection_config: this._pc_config,
             sdp_constraints: this._sdpConstraints,
-            remoteVideoId: "remoteVideo",
+            remoteVideoId: this._videoid,
             isPlayMode: true,
             debug: true,
-            callback: function(info, description) {
+            callback: (info, description) => {
                 if (info == "initialized") {
-                    console.log("initialized");
+                    console.log("Stream inicializada");
+                    this._media.controlVolume();
 
                 } else if (info == "play_started") {
-                    //joined the stream
-                    console.log("play started");
+                    console.log("Stream publicada");
 
                 } else if (info == "play_finished") {
-                    //leaved the stream
-                    console.log("play finished");
+                    console.log("Stream finalizada");
+                    this._media.stopTransmition(this._streamId);
 
                 } else if (info == "closed") {
-                    //console.log("Connection closed");
                     if (typeof description != "undefined") {
-                        console.log("Connecton closed: " + JSON.stringify(description));
+                        console.log("Conexão fechada: " + JSON.stringify(description));
                     }
                 }
             },
-            callbackError: function(error) {
-                //some of the possible errors, NotFoundError, SecurityError,PermissionDeniedError
-                console.log("error callback: " + JSON.stringify(error));
-                console.error(JSON.stringify(error));
+            callbackError: (error) => {
+                let errorType = JSON.stringify(error);
+                console.error("Erro encontrado: " + errorType, this._streamId);
+                if (errorType == 'no_stream_exist') {
+                    setTimeout(() => {
+                        this.startPlaying();
+                    }, 1000);
+                }
             }
         });
     }

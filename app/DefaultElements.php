@@ -81,6 +81,7 @@ class DefaultElements extends Model
         $this->manageBlueIcon =         "<span class='fa fa-cogs fa-lg blue-text'></span>";
         $this->manageIcon =             "<span class='fa fa-cogs'></span>";
         $this->manageWhiteIcon =        "<span class='fa fa-cogs white-text'></span>";
+        $this->circleRedIcon =          "<span class='fa fa-circle red-text'></span>";
         $this->copyRightIcon =          "<i class='fa fa-copyright'></i>";
         $this->configBlueIcon =         "<i class='fa fa-cog blue-text'></i>";
         $this->configIcon =             "<i class='fa fa-cog'></i>";

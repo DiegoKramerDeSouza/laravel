@@ -483,35 +483,36 @@ class MediaView {
         });
     }
 
-    recordAnimation() {
+    recordAnimation(elem) {
 
-        $(dom.RECORD_INFO).fadeIn(800, () => {
-            $(dom.RECORD_INFO).fadeOut(800, () => {
-                this.recordAnimation();
+        $(elem).fadeIn(800, () => {
+            $(elem).fadeOut(800, () => {
+                this.recordAnimation(elem);
             });
         });
     }
 
-    initBroadcasterVideo(roomid) {
+    initBroadcasterVideo(roomid, media) {
 
         let name = btoa(roomid);
+        let frame = doc.TAG(dom.EMBEDDED_FRAME);
         GeneralHelper.hideit(dom.VIDEOS);
         GeneralHelper.hideit(dom.PRE_APRESENTACAO);
         GeneralHelper.hideit(dom.PRE_LOAD_APRESENTACAO);
-
-        //src = "https://test.antmedia.io:5443/WebRTCAppEE/play.html?name=${ name }"
-        let addr = `<iframe id="embedded_player" class="embedded-video" src="${ conf.con.SOCKET_PLAYER }?name=${ name }" frameborder="0" allowfullscreen></iframe>`;
-        let frame = doc.TAG(dom.EMBEDDED_FRAME);
-        frame.innerHTML = addr;
-
+        if (!conf.con.LOW_LATENCY) {
+            let addr = `<iframe id="embedded_player" class="embedded-video" src="${ conf.con.SOCKET_PLAYER }?name=${ name }" frameborder="0" allowfullscreen></iframe>`;
+            //let addr = `<iframe id="embedded_player" class="embedded-video" src="https://test.antmedia.io:5443/WebRTCAppEE/play.html?name=${ name }" frameborder="0" allowfullscreen></iframe>`;
+            frame.innerHTML = addr;
+        }
         GeneralHelper.showit(dom.DIV_MAIN_VIDEO);
         doc.TAG(dom.DIV_MAIN_VIDEO).classList.remove("obj-invisible");
         GeneralHelper.showit(dom.EMBEDDED_FRAME, 300);
         GeneralHelper.showit(dom.DIV_CONTROLLER, 300);
 
-        /**Inicialização do player local */
+        if (conf.con.LOW_LATENCY) this._initNewPlayer(name, dom.REMOTE_VIDEO_ID, media);
+
+        /* Video executado no local */
         //this._initPlayer(name);
-        //this._initNewPlayer(name);
 
     }
 
@@ -521,14 +522,16 @@ class MediaView {
         player.initFetch();
     }
 
-    _initNewPlayer(name) {
+    _initNewPlayer(name, video, media) {
 
-        let newplayer = new NewerPlayerController(name);
+        let newplayer = new NewerPlayerController(name, video, media);
         newplayer.startConfig();
 
-        doc.TAG('#playit').onclick = () => {
-            newplayer.startPlaying();
-        }
+        doc.TAG(dom.PLAY_IT).onclick = () => newplayer.startPlaying(name);
+        setTimeout(() => {
+            $(dom.PLAY_IT).click();
+        }, 2000);
+
     }
 
     initParticipantVideo(participant, name) {
@@ -545,13 +548,16 @@ class MediaView {
             dom.PARTICIPATION_CONTROL,
             dom.PARTICIPATION_SWAP,
             dom.PARTICIPATION_MUTE,
-            dom.FRAME_LAYER_III
+            dom.FRAME_LAYER_III,
+            true
         );
     }
 
-    initScreenVideo(screen) {
+    initScreenVideo(screen, media) {
 
-        let addr = `<iframe id="embedded_player_v2" data-active="participant" class="embedded-video" src="${ conf.con.SOCKET_PLAYER }?name=${ screen }" frameborder="0" allowfullscreen></iframe>`;
+        let rash = btoa(screen);
+        let addr = `<iframe id="embedded_player_v2" data-active="participant" class="embedded-video" src="${ conf.con.SOCKET_PLAYER }?name=${ rash }" frameborder="0" allowfullscreen></iframe>`;
+        //let addr = `<iframe id="embedded_player_v2" data-active="participant" class="embedded-video" src="${ conf.con.SOCKET_PLAYER }?name=dW5kZWZpbmVk" frameborder="0" allowfullscreen></iframe>`;
         this._controlEmbeddedVideo(
             addr,
             dom.EMBEDDED_FRAME_II,
@@ -559,31 +565,39 @@ class MediaView {
             dom.SCREEN_CONTROL,
             dom.SCREEN_SWAP,
             dom.SCREEN_MUTE,
-            dom.FRAME_LAYER_II
+            dom.FRAME_LAYER_II,
+            false
         );
+        if (conf.con.LOW_LATENCY) {
+            this._initNewPlayer(rash, dom.THIRD_VIDEO_ID, media);
+            GeneralHelper.showit(dom.VIDEO_THIRD, 300);
+        }
     }
 
-    _controlEmbeddedVideo(content, embedded, container, control, itemSwap, itemMute, layer) {
+    _controlEmbeddedVideo(content, embedded, container, control, itemSwap, itemMute, layer, isParticipant) {
 
-        let frame = doc.TAG(embedded);
-        frame.innerHTML = content;
+        if (!conf.con.LOW_LATENCY) {
+            let frame = doc.TAG(embedded);
+            frame.innerHTML = content;
 
+            GeneralHelper.showit(container, 300);
+            GeneralHelper.showit(embedded, 300);
+            GeneralHelper.showit(control, 300);
+        }
         GeneralHelper.showit(dom.DIV_INCOMING_VIDEO);
         doc.TAG(dom.DIV_INCOMING_VIDEO).classList.remove("obj-invisible");
-        GeneralHelper.showit(container, 300);
-        GeneralHelper.showit(embedded, 300);
-        GeneralHelper.showit(control, 300);
 
         setTimeout(() => {
             let swap = doc.TAG(itemSwap);
             let mute = doc.TAG(itemMute);
             let mainMute = doc.TAG(dom.VOL);
-            this._swapParticipant(swap, mute, mainMute, layer);
-            this._toggleMute(mute, layer);
+            this._swapParticipant(swap, mute, mainMute, layer, isParticipant);
+            if (isParticipant) this._toggleMute(mute, layer);
+            else GeneralHelper.hideit(itemMute);
         }, 300);
     }
 
-    _swapParticipant(swap, mute, mainMute, layer) {
+    _swapParticipant(swap, mute, mainMute, layer, isParticipant) {
 
         swap.onclick = () => {
             let main = doc.TAG(dom.FRAME_LAYER);
@@ -592,18 +606,18 @@ class MediaView {
             main.src = incomming.src;
             incomming.src = swapScr;
             let active = swap.getAttribute(misc.ATTR_ACTIVE);
+            if (isParticipant) {
+                active == 'other' ?
+                    swap.setAttribute(misc.ATTR_ACTIVE, 'main') :
+                    swap.setAttribute(misc.ATTR_ACTIVE, 'other');
 
-            active == 'other' ?
-                swap.setAttribute(misc.ATTR_ACTIVE, 'main') :
-                swap.setAttribute(misc.ATTR_ACTIVE, 'other');
-
-            setTimeout(() => {
-                let status = mute.getAttribute(misc.ATTR_ACTIVE);
-                if (status == 'unmute') this.embeddedMessage(layer, status);
-                status = mainMute.getAttribute(misc.ATTR_ACTIVE);
-                if (status == 'unmute') this.embeddedMessage(dom.FRAME_LAYER, status);
-            }, 1000);
-
+                setTimeout(() => {
+                    let status = mute.getAttribute(misc.ATTR_ACTIVE);
+                    if (status == 'unmute') this.embeddedMessage(layer, status);
+                    status = mainMute.getAttribute(misc.ATTR_ACTIVE);
+                    if (status == 'unmute') this.embeddedMessage(dom.FRAME_LAYER, status);
+                }, 1000);
+            }
         };
     }
 
@@ -615,7 +629,7 @@ class MediaView {
             active == 'mute' ? value = 'unmute' : value = 'mute';
             mute.setAttribute(misc.ATTR_ACTIVE, value);
             this._targetVolumeToggle(mute, value);
-            this.embeddedMessage(layer, value);
+            if (!conf.con.LOW_LATENCY) this.embeddedMessage(layer, value);
         }
     }
 
@@ -634,8 +648,16 @@ class MediaView {
 
     embeddedMessage(frameid, message) {
 
-        let framePlay = doc.TAG(frameid);
-        framePlay.contentWindow.postMessage(message, '*');
+        if (conf.con.LOW_LATENCY) {
+            let setvolume;
+            message == 'unmute' ?
+                setvolume = false :
+                setvolume = true;
+            doc.TAG(dom.REMOTE_VIDEO).muted = setvolume;
+        } else {
+            let framePlay = doc.TAG(frameid);
+            framePlay.contentWindow.postMessage(message, '*');
+        }
     }
 
     createProgressBar(file) {

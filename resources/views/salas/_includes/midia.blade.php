@@ -36,9 +36,6 @@
                                 <div id='broadcastingInfo' class='col s12 d-none' align='left'>
                                     <span class='p-5 rounded-borders blue darken-1 white-text'>Transmitindo</span>
                                 </div>
-                                <div id='recordInfo' class='col s12 d-none' align='left'>
-                                    <span class='p-5 rounded-borders red darken-3 white-text'>Gravação</span>
-                                </div>
                                 <br />
                                 <div class='row p-10' align='center'>
                                     <!-- STATUS DA SALA -->
@@ -69,9 +66,11 @@
                                 <div class=''>
                                     <div id='main-video' align='center' class='inroom mainView'>
                                         <div id='embedded-container-iframe' class="embedded-container d-none rounded-borders z-depth-3 black">
-                                            <video id="remoteVideo" muted autoplay></video>
+                                            <video id='remoteVideo' autoplay muted></video>
                                             <br/>
-                                            <span id='playit' class='btn small'>Play</span>
+                                            <div class='d-none'>
+                                                <span id='playit' class='btn small'>Play</span>
+                                            </div>
                                         </div>
                                         <div id='videos'>
                                             <!--VÍDEO PRINCIPAL-->
@@ -121,6 +120,7 @@
                                     <br />
                                     
                                     <a id='publish_participant' href='#' class='d-none'>publicar</a>
+
                                     <!--TERCEIRO VÍDEO-->
                                     <div id='span-video-preview-3rd' align='center' data-status='disabled' data-position='second' class='col s12 d-none'>
                                         <video id='thirdvideo-preview' preload='none' loop class='min-video responsive-video'></video>
@@ -130,7 +130,10 @@
                                         <a id='swap-video' title='Passar para vídeo principal' class='btn-floating blue darken-2 waves-effect waves-light obj-invisible'>
                                             {!! $default->swapIcon !!}
                                         </a>
-                                        <video id='secondvideo-preview' draggable='false' preload='none' loop class='min-video responsive-video'></video>
+                                        <div class='white-text'>
+                                            <span id='recording'>{!! $default->circleRedIcon !!}</span> Tela:
+                                        </div>
+                                        <video id='secondvideo-preview' draggable='false' preload='none' loop class='min-video responsive-video' muted></video>
                                     </div>
                                 </div>
                             </div>

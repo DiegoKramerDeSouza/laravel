@@ -549,9 +549,9 @@ class MediaController {
         }
     }
 
-    initBroadcasterVideo(roomid) {
+    initBroadcasterVideo(roomid, media) {
 
-        this._mediaView.initBroadcasterVideo(roomid);
+        this._mediaView.initBroadcasterVideo(roomid, media);
     }
 
     initParticipantVideo(roomid, participant, name) {
@@ -559,9 +559,9 @@ class MediaController {
         this._mediaView.initParticipantVideo(roomid, participant, name);
     }
 
-    initScreenVideo(screen) {
+    initScreenVideo(screen, media) {
 
-        this._mediaView.initScreenVideo(screen);
+        this._mediaView.initScreenVideo(screen, media);
     }
 
     initTransmition(roomid, preVideo, preLoader, count) {
@@ -580,9 +580,9 @@ class MediaController {
         this._mediaView.startAnimation(webRTCadpt, roomid);
     }
 
-    recordAnimation() {
+    recordAnimation(elem) {
 
-        this._mediaView.recordAnimation();
+        this._mediaView.recordAnimation(elem);
     }
 
     getMediaServerStream(roomid) {
