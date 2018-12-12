@@ -110,6 +110,11 @@ class MediaController {
         return value ? false : true;
     }
 
+    removeElement(elem) {
+
+        this._mediaView.removeElement(elem);
+    }
+
     initiateStream() {
 
         this._mediaView.adjustStreamScreen();
@@ -296,7 +301,14 @@ class MediaController {
     switchShare() {
 
         this._controlSharing = this._switchValue(this._controlSharing);
+        console.log(this._controlSharing);
         this._controlSharing ? this._mediaView.startShare() : this._mediaView.exitShare();
+    }
+
+    setShareEnabled() {
+
+        this._controlSharing = false;
+        this._mediaView.shareEnabled();
     }
 
     disableShare() {

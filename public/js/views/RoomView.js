@@ -16,14 +16,17 @@ class RoomView {
         this._roomList = doc.TAG(dom.PUBLIC_CONFERENCE);
         this._connectionList = doc.TAG(dom.CONNECTION_LIST);
         this._connectList = doc.TAG(dom.USERS_LIST);
+        this._hours = doc.TAG(dom.CURRENT_HOUR);
+        this._minutes = doc.TAG(dom.CURRENT_MIN);
+        this._seconds = doc.TAG(dom.CURRENT_SEC);
         this._listOfConCards = '';
     }
 
     setCurrentTime(...time) {
 
-        doc.TAG(dom.CURRENT_HOUR).innerHTML = time[0];
-        doc.TAG(dom.CURRENT_MIN).innerHTML = time[1];
-        doc.TAG(dom.CURRENT_SEC).innerHTML = time[2];
+        this._hours.innerHTML = time[0];
+        this._minutes.innerHTML = time[1];
+        this._seconds.innerHTML = time[2];
     }
 
     changeCounter(value) {

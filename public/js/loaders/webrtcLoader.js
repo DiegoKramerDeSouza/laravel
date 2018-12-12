@@ -60,6 +60,14 @@ function listenEmbeddedMessages() {
 
         if (~event.origin.indexOf(doc.SERVER.MEDIA.URL) || ~event.origin.indexOf(doc.SERVER.HOME.LOCAL) || ~event.origin.indexOf(doc.SERVER.HOME.SSL)) {
             if (~event.origin.indexOf(doc.SERVER.MEDIA.URL)) webrtc.checkEmbeddedMessages(event.data);
+            if (~event.origin.indexOf(doc.SERVER.HOME.LOCAL) || ~event.origin.indexOf(doc.SERVER.HOME.SSL)) {
+                //console.warn(event.data);
+                if (event.data.sourceId && event.data != 'PermissionDeniedError') {
+                    webrtc.startDesktopCapture();
+                } else if (event.data === 'stopDesktopCapture' || event.data === 'PermissionDeniedError') {
+                    webrtc.returnDesktopCapture();
+                }
+            }
         } else {
             console.error('Origem não reconhecida', event.data, event.origin);
             return;

@@ -141,7 +141,7 @@ function WebRTCAdaptor(initialValues) {
             video: thiz.mediaConstraints.video == false ? false : true,
             audio: thiz.mediaConstraints.audio == false ? false : true,
         };
-        console.warn(jsCmd, 'publish');
+        //console.warn(jsCmd, 'publish');
         thiz.webSocketAdaptor.send(JSON.stringify(jsCmd));
     }
 
@@ -150,12 +150,12 @@ function WebRTCAdaptor(initialValues) {
         thiz.roomName = roomName;
 
         var jsCmd = {
-            command: "joinRoom",
-            room: roomName,
-            //video: thiz.mediaConstraints.video,
-            //audio: thiz.mediaConstraints.audio == false ? false : true,
-        }
-        console.warn(jsCmd, 'joinRoom');
+                command: "joinRoom",
+                room: roomName,
+                //video: thiz.mediaConstraints.video,
+                //audio: thiz.mediaConstraints.audio == false ? false : true,
+            }
+            //console.warn(jsCmd, 'joinRoom');
         thiz.webSocketAdaptor.send(JSON.stringify(jsCmd));
 
     }
@@ -164,13 +164,13 @@ function WebRTCAdaptor(initialValues) {
 
         thiz.playStreamId.push(streamId);
         var jsCmd = {
-            command: "play",
-            streamId: streamId,
-            token: token,
-            //video: thiz.mediaConstraints.video,
-            //audio: thiz.mediaConstraints.audio == false ? false : true,
-        }
-        console.warn(jsCmd, 'play');
+                command: "play",
+                streamId: streamId,
+                token: token,
+                //video: thiz.mediaConstraints.video,
+                //audio: thiz.mediaConstraints.audio == false ? false : true,
+            }
+            //console.warn(jsCmd, 'play');
         thiz.webSocketAdaptor.send(JSON.stringify(jsCmd));
     }
 
@@ -183,7 +183,7 @@ function WebRTCAdaptor(initialValues) {
             //video: thiz.mediaConstraints.video,
             //audio: thiz.mediaConstraints.audio == false ? false : true,
         };
-        console.warn(jsCmd, 'stop');
+        //console.warn(jsCmd, 'stop');
         thiz.webSocketAdaptor.send(JSON.stringify(jsCmd));
     }
 
@@ -194,8 +194,7 @@ function WebRTCAdaptor(initialValues) {
             //video: thiz.mediaConstraints.video,
             //audio: thiz.mediaConstraints.audio == false ? false : true,
         };
-        console.warn(jsCmd, 'join');
-
+        //console.warn(jsCmd, 'join');
         thiz.webSocketAdaptor.send(JSON.stringify(jsCmd));
     }
 
@@ -207,7 +206,7 @@ function WebRTCAdaptor(initialValues) {
             //video: thiz.mediaConstraints.video,
             //audio: thiz.mediaConstraints.audio == false ? false : true,
         };
-        console.warn(jsCmd, 'leave');
+        //console.warn(jsCmd, 'leave');
         thiz.webSocketAdaptor.send(JSON.stringify(jsCmd));
         thiz.closePeerConnection(streamId);
     }
@@ -262,13 +261,13 @@ function WebRTCAdaptor(initialValues) {
 
             if (message.data == "rtcmulticonnection-extension-loaded") {
                 console.log("rtcmulticonnection-extension-loaded parameter is received");
-
                 window.postMessage("get-sourceId", "*");
+
             } else if (message.data == "PermissionDeniedError") {
-                console.log("Permission denied error")
+                console.log("Permission denied error");
+
             } else if (message.data && message.data.sourceId) {
                 console.log("received source id");
-
                 console.debug("source id: " + message.data.sourceId);
                 console.debug("canRequestAudio: ");
                 console.debug(message.data.options.canRequestAudioTrack);
@@ -295,9 +294,7 @@ function WebRTCAdaptor(initialValues) {
         };
         //add event listener for desktop capture
         window.addEventListener("message", callback, false);
-
         window.postMessage("are-you-there", "*");
-
     }
 
     thiz.arrangeStreams = (stream, onEndedCallback, streamId) => {
@@ -314,6 +311,7 @@ function WebRTCAdaptor(initialValues) {
             stream.getVideoTracks()[0].onended = (event) => {
                 onEndedCallback(event);
                 this.stop(streamId);
+                window.postMessage("stopDesktopCapture", "*");
             }
         }
     }
@@ -605,6 +603,7 @@ function WebRTCAdaptor(initialValues) {
         }
 
         this.isConnected = function() {
+            console.warn('Connected!!!');
             return connected;
         }
 

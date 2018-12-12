@@ -321,6 +321,11 @@
     padding-right: 10px;
 }
 
+.participant-control {
+    position: relative;
+    bottom: 25px;
+}
+
 .room-enter:hover {
     cursor: pointer;
 }

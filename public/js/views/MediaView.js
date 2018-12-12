@@ -155,8 +155,16 @@ class MediaView {
         this._share.disabled = true;
         this._share.classList.add(misc.DISABLED_COLOR);
         this._share.innerHTML = misc.ICON_SHARE_ON;
-        this._share.disabled = true;
         GeneralHelper.hideit(dom.LI_SHARE);
+    }
+
+    shareEnabled() {
+
+        this._share.disabled = false;
+        this._share.classList.add(misc.ON_COLOR);
+        this._share.classList.remove(misc.OFF_COLOR);
+        this._share.classList.remove(misc.DISABLED_COLOR);
+        GeneralHelper.showit(dom.LI_SHARE);
     }
 
     startParticipation() {
@@ -426,8 +434,15 @@ class MediaView {
         btn.innerHTML = icon;
     }
 
+    removeElement(elem) {
+
+        $(elem).remove();
+    }
+
     stopTransmition(roomid) {
 
+        try { roomid = atob(roomid) } catch (e) { /* Não faz nada */ }
+        if (roomid.startsWith('screen') || roomid.startsWith('participant')) return;
         this.hideControlElements();
         this._createVideoLink(roomid);
         GeneralHelper.showit(dom.PRE_VIDEO_FINISHED, 1000);
@@ -437,7 +452,7 @@ class MediaView {
         GeneralHelper.hideit(dom.LI_PERDIR);
         GeneralHelper.hideit(dom.SOL_PEDIR);
         GeneralHelper.hideit(dom.CTL_PEDIR);
-        try { $(dom.FRAME_LAYER).remove() } catch (e) { /* Não faz nada */ };
+        try { this.removeElement(dom.FRAME_LAYER) } catch (e) { /* Não faz nada */ };
     }
 
     _createVideoLink(roomid) {
@@ -509,7 +524,7 @@ class MediaView {
         GeneralHelper.showit(dom.EMBEDDED_FRAME, 300);
         GeneralHelper.showit(dom.DIV_CONTROLLER, 300);
 
-        if (conf.con.LOW_LATENCY) this._initNewPlayer(name, dom.REMOTE_VIDEO_ID, media);
+        if (conf.con.LOW_LATENCY) this._initNewPlayer(name, dom.REMOTE_VIDEO_ID, media, dom.PLAY_IT);
 
         /* Video executado no local */
         //this._initPlayer(name);
@@ -522,14 +537,14 @@ class MediaView {
         player.initFetch();
     }
 
-    _initNewPlayer(name, video, media) {
+    _initNewPlayer(name, video, media, btnPlay) {
 
         let newplayer = new NewerPlayerController(name, video, media);
         newplayer.startConfig();
 
-        doc.TAG(dom.PLAY_IT).onclick = () => newplayer.startPlaying(name);
+        doc.TAG(btnPlay).onclick = () => newplayer.startPlaying(name);
         setTimeout(() => {
-            $(dom.PLAY_IT).click();
+            //$(btnPlay).click();
         }, 2000);
 
     }
@@ -548,8 +563,7 @@ class MediaView {
             dom.PARTICIPATION_CONTROL,
             dom.PARTICIPATION_SWAP,
             dom.PARTICIPATION_MUTE,
-            dom.FRAME_LAYER_III,
-            true
+            dom.FRAME_LAYER_III
         );
     }
 
@@ -564,17 +578,16 @@ class MediaView {
             dom.INCOMMING_VIDEO_SCREEN,
             dom.SCREEN_CONTROL,
             dom.SCREEN_SWAP,
-            dom.SCREEN_MUTE,
-            dom.FRAME_LAYER_II,
-            false
+            false,
+            dom.FRAME_LAYER_II
         );
         if (conf.con.LOW_LATENCY) {
-            this._initNewPlayer(rash, dom.THIRD_VIDEO_ID, media);
+            this._initNewPlayer(rash, dom.THIRD_VIDEO_ID, media, dom.PLAY_SCREEN);
             GeneralHelper.showit(dom.VIDEO_THIRD, 300);
         }
     }
 
-    _controlEmbeddedVideo(content, embedded, container, control, itemSwap, itemMute, layer, isParticipant) {
+    _controlEmbeddedVideo(content, embedded, container, control, itemSwap, itemMute, layer) {
 
         if (!conf.con.LOW_LATENCY) {
             let frame = doc.TAG(embedded);
@@ -588,16 +601,19 @@ class MediaView {
         doc.TAG(dom.DIV_INCOMING_VIDEO).classList.remove("obj-invisible");
 
         setTimeout(() => {
+            let mute;
+            if (itemMute) {
+                mute = doc.TAG(itemMute);
+                this._toggleMute(mute, layer);
+            }
             let swap = doc.TAG(itemSwap);
-            let mute = doc.TAG(itemMute);
             let mainMute = doc.TAG(dom.VOL);
-            this._swapParticipant(swap, mute, mainMute, layer, isParticipant);
-            if (isParticipant) this._toggleMute(mute, layer);
-            else GeneralHelper.hideit(itemMute);
+            this._swapParticipant(swap, mute, mainMute, layer, itemMute);
+
         }, 300);
     }
 
-    _swapParticipant(swap, mute, mainMute, layer, isParticipant) {
+    _swapParticipant(swap, mute, mainMute, layer, audioEnabled) {
 
         swap.onclick = () => {
             let main = doc.TAG(dom.FRAME_LAYER);
@@ -606,11 +622,11 @@ class MediaView {
             main.src = incomming.src;
             incomming.src = swapScr;
             let active = swap.getAttribute(misc.ATTR_ACTIVE);
-            if (isParticipant) {
-                active == 'other' ?
-                    swap.setAttribute(misc.ATTR_ACTIVE, 'main') :
-                    swap.setAttribute(misc.ATTR_ACTIVE, 'other');
+            active == 'other' ?
+                swap.setAttribute(misc.ATTR_ACTIVE, 'main') :
+                swap.setAttribute(misc.ATTR_ACTIVE, 'other');
 
+            if (audioEnabled) {
                 setTimeout(() => {
                     let status = mute.getAttribute(misc.ATTR_ACTIVE);
                     if (status == 'unmute') this.embeddedMessage(layer, status);

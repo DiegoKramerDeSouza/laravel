@@ -84,8 +84,8 @@ class NewerPlayerController {
                 console.error("Erro encontrado: " + errorType, this._streamId);
                 if (errorType == 'no_stream_exist') {
                     setTimeout(() => {
-                        this.startPlaying();
-                    }, 1000);
+                        //this.startPlaying();
+                    }, 2000);
                 }
             }
         });

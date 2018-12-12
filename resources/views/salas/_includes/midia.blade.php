@@ -68,8 +68,9 @@
                                         <div id='embedded-container-iframe' class="embedded-container d-none rounded-borders z-depth-3 black">
                                             <video id='remoteVideo' autoplay muted></video>
                                             <br/>
-                                            <div class='d-none'>
+                                            <div class='d-none1'>
                                                 <span id='playit' class='btn small'>Play</span>
+                                                <span id='playscreen' class='btn small'>Play Screen</span>
                                             </div>
                                         </div>
                                         <div id='videos'>
@@ -93,11 +94,8 @@
                                         <br/>
                                         <div id='embedded-container-iframe-v2' class="embedded-container d-none rounded-borders z-depth-3">
                                         </div>
-                                        <div id='screen-control' class='col s12 p-10 participant-control d-none right'>
-                                            <a id='screen-mute' class='media-control btn-floating red right' data-active='mute' data-position='top' title='Mudo'>
-                                                {!! $default->volumeDownIcon !!}
-                                            </a>
-                                            <a id='screen-swap' class='media-control btn-floating blue right' data-active='screen' data-position='top' title='Passar para tela principal'>
+                                        <div id='screen-control' class='col s12 p-10 participant-control d-none'>
+                                            <a id='screen-swap' class='media-control btn-floating blue left' data-active='other' data-position='top' title='Passar para tela principal'>
                                                 {!! $default->swapIcon !!}
                                             </a>
                                         </div>
@@ -108,11 +106,11 @@
                                         <br/>
                                         <div id='embedded-container-iframe-v3' class="embedded-container d-none rounded-borders z-depth-3">
                                         </div>
-                                        <div id='participation-control' class='col s12 p-10 participant-control d-none right'>
-                                            <a id='participation-mute' class='media-control btn-floating red right' data-active='mute' data-position='top' title='Mudo'>
+                                        <div id='participation-control' class='col s12 p-10 participant-control d-none'>
+                                            <a id='participation-mute' class='media-control btn-floating red left' data-active='mute' data-position='top' title='Mudo'>
                                                 {!! $default->volumeDownIcon !!}
                                             </a>
-                                            <a id='participation-swap' class='media-control btn-floating blue right' data-active='participant' data-position='top' title='Passar para tela principal'>
+                                            <a id='participation-swap' class='media-control btn-floating blue left' data-active='other' data-position='top' title='Passar para tela principal'>
                                                 {!! $default->swapIcon !!}
                                             </a>
                                         </div>

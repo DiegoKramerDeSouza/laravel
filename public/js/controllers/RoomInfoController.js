@@ -34,6 +34,26 @@ class RoomInfoController {
         );
     }
 
+    setInitialTime(day, hour, min, sec) {
+
+        let timeNow = new Date();
+        let thisDay = timeNow.getDay();
+        let thisHour = timeNow.getHours();
+        let thisMin = timeNow.getMinutes();
+        let thisSec = timeNow.getSeconds();
+
+        console.log('Criada: ' + hour + ':' + min + ':' + sec, 'Acessada: ' + thisHour + ':' + thisMin + ':' + thisSec);
+        sec > thisSec ? this._seconds = (60 - sec) + thisSec : this._seconds = thisSec - sec;
+        min > thisMin ? this._minutes = (60 - min) + thisMin : this._minutes = thisMin - min;
+        if (hour > thisHour) {
+            this._hours = (24 - hour) + thisHour;
+        } else {
+            this._hours = thisHour - hour;
+        }
+        if (day != thisDay) hour <= thisHour ? this._hours += 24 : null;
+        this.initiateClock();
+    }
+
     initiateClock() {
 
         setTimeout(() => {
@@ -54,18 +74,18 @@ class RoomInfoController {
             if (this._minutes >= 60) {
                 this._minutes = 0;
                 this._hours++;
-                this._formH = this._formatTime(this._hours);
             }
-            this._formM = this._formatTime(this._minutes);
         }
         this._formS = this._formatTime(this._seconds);
+        this._formM = this._formatTime(this._minutes);
+        this._formH = this._formatTime(this._hours);
+        if (this._hours > 24) this._formH = '+24';
         return [this._formH, this._formM, this._formS];
     }
 
     _formatTime(value) {
 
-        if (value.toString().length <= 1) return '0' + value;
-        return '' + value;
+        return (value < 10 ? '0' : '') + value;
     }
 
 }
