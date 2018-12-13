@@ -26,6 +26,10 @@ const doc = {
             SSL: 'https://med.lrbtecnologia.com',
             URL: 'http://med.lrbtecnologia.com'
         },
+        MEDIA2: {
+            SSL: 'https://med2.lrbtecnologia.com',
+            URL: 'http://med2.lrbtecnologia.com'
+        },
         SIG: {
             SSL: 'https://sig.lrbtecnologia.com:443/',
             URL: 'http://sig.lrbtecnologia.com:80/'
@@ -33,7 +37,7 @@ const doc = {
     },
     URL_SALAS_SAVE: `${location.origin}/salas/salvar`,
     URL_SALAS_UPDATE: `${location.origin}/salas/update`,
-    VERSION: "1.1.0.93"
+    VERSION: "1.1.0.94"
 }
 
 const apr = {
@@ -88,10 +92,18 @@ const conf = {
         SOCKET_DOWNLOAD: doc.SERVER.MEDIA.SSL + ':5443/WebRTCApp/streams/',
         SOCKET_PLAYER: doc.SERVER.MEDIA.URL + ':5080/WebRTCApp/play.html',
         SOCKET_PLAYER_SSL: doc.SERVER.MEDIA.SSL + ':5443/WebRTCApp/play.html',
+
+        SOCKET_PLAYER_2: doc.SERVER.MEDIA2.URL + ':5080/WebRTCApp/play.html',
+        SOCKET_PLAYER_2_SSL: doc.SERVER.MEDIA2.SSL + ':5443/WebRTCApp/play.html',
+
         SOCKET_REST_SSL: doc.SERVER.MEDIA.SSL + ':5443/WebRTCApp/rest/broadcast/getList/0/10',
         SOCKET_REST_URL: doc.SERVER.MEDIA.URL + ':5080/WebRTCApp/rest/broadcast/getList/0/10',
         SOCKET_SSL: 'wss://med.lrbtecnologia.com:5443/WebRTCApp/websocket',
         SOCKET_URL: 'ws://med.lrbtecnologia.com:5080/WebRTCApp/websocket',
+
+        SOCKET_2_SSL: 'wss://med2.lrbtecnologia.com:5443/WebRTCApp/websocket',
+        SOCKET_2_URL: 'ws://med2.lrbtecnologia.com:5080/WebRTCApp/websocket',
+
         STREAM_LOCAL: 'local',
         STREAM_REMOTE: 'remote',
         TK_DETECT: false,
@@ -307,6 +319,7 @@ const dom = {
     PEDIR: '#pedir-vez',
     PLAY_IT: '#playit',
     PLAY_SCREEN: '#playscreen',
+    PLAY_PARTICIPANT: '#playparticipant',
     POSTAL: '#postal',
     PRE_APRESENTACAO: '#preApresentacao',
     PRE_LOAD_APRESENTACAO: '#preLoaderPresentation',

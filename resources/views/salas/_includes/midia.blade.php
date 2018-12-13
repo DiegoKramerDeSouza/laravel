@@ -71,6 +71,7 @@
                                             <div class='d-none1'>
                                                 <span id='playit' class='btn small'>Play</span>
                                                 <span id='playscreen' class='btn small'>Play Screen</span>
+                                                <span id='playparticipant' class='btn small'>Play Participant</span>
                                             </div>
                                         </div>
                                         <div id='videos'>

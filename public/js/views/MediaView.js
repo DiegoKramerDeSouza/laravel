@@ -562,7 +562,7 @@ class MediaView {
     initParticipantVideo(participant, name) {
 
         let rash = btoa(participant);
-        let addr = `<iframe id="embedded_player_v3" data-active="participant" class="embedded-video" src="${ conf.con.SOCKET_PLAYER }?name=${ rash }" frameborder="0" allowfullscreen></iframe>`;
+        let addr = `<iframe id="embedded_player_v3" data-active="participant" class="embedded-video" src="${ conf.con.SOCKET_PLAYER_2 }?name=${ rash }" frameborder="0" allowfullscreen></iframe>`;
         //let addr = `<iframe id="embedded_player_v3" data-active="participant" class="embedded-video" src="https://test.antmedia.io:5443/WebRTCAppEE/play.html?name=${ btoa(rash) }" frameborder="0" allowfullscreen></iframe>`;
         let participantName = doc.TAG(dom.PARTICIPATION_NAME);
         participantName.innerHTML = name;
@@ -575,12 +575,16 @@ class MediaView {
             dom.PARTICIPATION_MUTE,
             dom.FRAME_LAYER_III
         );
+        if (conf.con.LOW_LATENCY) {
+            this._initNewPlayer(rash, dom.SECOND_VIDEO_ID, media, dom.PLAY_PARTICIPANT);
+            GeneralHelper.showit(dom.VIDEO_SECOND, 300);
+        }
     }
 
     initScreenVideo(screen, media) {
 
         let rash = btoa(screen);
-        let addr = `<iframe id="embedded_player_v2" data-active="participant" class="embedded-video" src="${ conf.con.SOCKET_PLAYER }?name=${ rash }" frameborder="0" allowfullscreen></iframe>`;
+        let addr = `<iframe id="embedded_player_v2" data-active="participant" class="embedded-video" src="${ conf.con.SOCKET_PLAYER_2 }?name=${ rash }" frameborder="0" allowfullscreen></iframe>`;
         //let addr = `<iframe id="embedded_player_v2" data-active="participant" class="embedded-video" src="${ conf.con.SOCKET_PLAYER }?name=dW5kZWZpbmVk" frameborder="0" allowfullscreen></iframe>`;
         this._controlEmbeddedVideo(
             addr,
