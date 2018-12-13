@@ -42,7 +42,7 @@
                                     <div class='col s5 m4 l12 push-s1' title='Tempo conectado'>
                                         {!! $default->timeIconLeft !!} 
                                         <span id='current-time' class='white-text left'>
-                                            <span id='currentHour'>--</span>:<span id='currentMin'>--</span>:<span id='currentSec'>--</span>
+                                            <span id='currentHour'>00</span>:<span id='currentMin'>00</span>:<span id='currentSec'>00</span>
                                         </span>
                                     </div>
                                     <div class='col s5 m4 l12 push-s1' title='Espectadores'>

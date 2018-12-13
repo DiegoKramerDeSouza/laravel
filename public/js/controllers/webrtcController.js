@@ -793,12 +793,16 @@ class webrtcController {
                     this._mediaController.changeTransmition(misc.TITLE_END_TRANSMITION, misc.ICON_END_TRANSMITION);
 
                     // Controles de tempo de transmissão
+                    this._roomInfoController.stoped = false;
                     let timestamp = new Date();
                     let parsed = Date.parse(timestamp);
                     this._startedAt = parsed;
-                    this._roomInfoController.initiateClock();
-                    this._roomInfoController.stoped = false;
-
+                    this._roomInfoController.initiateClock(
+                        //timestamp.getHours(),
+                        //timestamp.getMinutes(),
+                        //timestamp.getSeconds(),
+                        this._startedAt
+                    );
                     // Informa início de stream para todos os participantes
                     let msgrash = this._mediaController.createSolicitationArray(
                         btoa(conf.req.NEW_ROOM),
@@ -1417,15 +1421,9 @@ class webrtcController {
             } else if (checkrash[0] === btoa(conf.req.NEW_ROOM)) {
                 // Informativo de nova transmissão de sala iniciada
                 // tratamento de tempo de transmissão
-                this._startedAt = new Date(checkrash[1]);
-                this._roomInfoController.setInitialTime(
-                    this._startedAt.getDay(),
-                    this._startedAt.getHours(),
-                    this._startedAt.getMinutes(),
-                    this._startedAt.getSeconds()
-                );
-                // Inicia contagem de tempo
                 this._roomInfoController.stoped = false;
+                this._startedAt = new Date(checkrash[1]);
+                this._roomInfoController.initiateClock(this._startedAt);
                 // Tratamento de apresentação de telas
                 if (checkrash[3] === true) this._initateRoomStream(checkrash[2]);
                 else if (checkrash[4] === true) this._initateRoomStream(checkrash[2], true);
