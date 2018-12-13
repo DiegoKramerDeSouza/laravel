@@ -6,11 +6,12 @@ class NewerPlayerController {
         this._media = media;
         this._token = "null";
         this._streamId = roomId;
+        this._pcconfig = null;
         this._webRTCAdaptor;
-        this._pc_config;
         this._sdpConstraints;
         this._mediaConstraints;
         this._websocketURL;
+        this._test = true;
     }
 
     startPlaying() {
@@ -25,30 +26,24 @@ class NewerPlayerController {
 
     startConfig() {
 
-        this._pc_config = null;
         this._sdpConstraints = {
             OfferToReceiveAudio: true,
             OfferToReceiveVideo: true
-
         };
         this._mediaConstraints = {
             video: false,
             audio: false
         };
 
-
+        let url;
+        let ssl;
+        this._test ? url = "test.antmedia.io:5080/WebRTCAppEE" : url = "med.lrbtecnologia.com:5080/WebRTCApp";
+        this._test ? ssl = "test.antmedia.io:5443/WebRTCAppEE" : ssl = "med.lrbtecnologia.com:5443/WebRTCApp";
         location.protocol.startsWith("https") ?
-            this._websocketURL = "wss://test.antmedia.io:5443/WebRTCAppEE/websocket" :
-            this._websocketURL = "ws://test.antmedia.io:5080/WebRTCAppEE/websocket";
+            this._websocketURL = "wss://" + ssl + "/websocket" :
+            this._websocketURL = "ws://" + url + "/websocket";
 
-        /*
-        location.protocol.startsWith("https") ?
-            this._websocketURL = "wss://med.lrbtecnologia.com:5443/WebRTCApp/websocket" :
-            this._websocketURL = "ws://med.lrbtecnologia.com:5080/WebRTCApp/websocket";
-
-        */
         this._startVideo();
-
     }
 
     _startVideo() {
@@ -56,7 +51,7 @@ class NewerPlayerController {
         this._webRTCAdaptor = new WebRTCAdaptor({
             websocket_url: this._websocketURL,
             mediaConstraints: this._mediaConstraints,
-            peerconnection_config: this._pc_config,
+            peerconnection_config: this._pcconfig,
             sdp_constraints: this._sdpConstraints,
             remoteVideoId: this._videoid,
             isPlayMode: true,
@@ -84,6 +79,7 @@ class NewerPlayerController {
                 console.error("Erro encontrado: " + errorType, this._streamId);
                 if (errorType == 'no_stream_exist') {
                     setTimeout(() => {
+                        console.warn("Stream não encontrada!!!");
                         //this.startPlaying();
                     }, 2000);
                 }

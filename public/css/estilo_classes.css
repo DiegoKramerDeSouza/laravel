@@ -345,6 +345,45 @@
     padding-bottom: 20px;
 }
 
+.tooltip-item {
+    cursor: default;
+}
+
+.tooltip-body-top {
+    position: absolute;
+    transform: translate(-25%, -120%);
+    z-index: 5;
+}
+
+.tooltip-body-left {
+    position: absolute;
+    z-index: 5;
+}
+
+.tooltip-red-arrow-bottom {
+    position: absolute;
+    width: 0px;
+    height: 0px;
+    transform: translate(30%, -50%);
+    border-top: 20px solid rgb(198, 40, 40);
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+    z-index: 4;
+}
+
+.tooltip-red-arrow-right {
+    position: absolute;
+    width: 0px;
+    height: 0px;
+    transform: translateX(400%);
+    border-left: 20px solid rgb(198, 40, 40);
+    border-top: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+    z-index: 4;
+}
+
 .valign-wrapper {
     margin: -10px !important;
 }

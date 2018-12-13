@@ -34,7 +34,7 @@
                             <div id='room-status' class='col s12 m12 l2 blue-text d-none obj-invisible'>
                                 
                                 <div id='broadcastingInfo' class='col s12 d-none' align='left'>
-                                    <span class='p-5 rounded-borders blue darken-1 white-text'>Transmitindo</span>
+                                    <span class='p-5 white-text'>{!! $default->circleRedIcon !!} Transmitindo</span>
                                 </div>
                                 <br />
                                 <div class='row p-10' align='center'>
@@ -107,11 +107,11 @@
                                         <div id='embedded-container-iframe-v3' class="embedded-container d-none rounded-borders z-depth-3">
                                         </div>
                                         <div id='participation-control' class='col s12 p-10 participant-control d-none'>
-                                            <a id='participation-mute' class='media-control btn-floating red left' data-active='mute' data-position='top' title='Mudo'>
-                                                {!! $default->volumeDownIcon !!}
-                                            </a>
                                             <a id='participation-swap' class='media-control btn-floating blue left' data-active='other' data-position='top' title='Passar para tela principal'>
                                                 {!! $default->swapIcon !!}
+                                            </a>
+                                            <a id='participation-mute' class='media-control btn-floating red left' data-active='mute' data-position='top' title='Mudo'>
+                                                {!! $default->volumeDownIcon !!}
                                             </a>
                                         </div>
                                     </div>

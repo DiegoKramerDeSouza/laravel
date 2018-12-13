@@ -295,6 +295,7 @@ class webrtcController {
                 this._mediaController.openIncomingVideos(event.stream);
 
                 this._mediaController.displayElem(dom.DIV_BTN_END, 300);
+                GeneralHelper.showit(dom.CLOSE_PARTICIPATION, 300);
 
                 console.log('Recebendo video em ', event, event.file);
 
@@ -314,6 +315,7 @@ class webrtcController {
                     this._closeParticipantStream(connection);
 
                     this._mediaController.hideElem(dom.DIV_BTN_END);
+                    GeneralHelper.hideit(dom.CLOSE_PARTICIPATION, 300);
                     this._structure.emptyStreamVideos();
                     this._structure.incomingCon = '';
                     this._mediaController.closeIncomingVideos(event.stream);
@@ -859,6 +861,7 @@ class webrtcController {
                                     this._structure.targetUser = admResponse[1];
                                     this._media.divEndBtn.setAttribute('data-target', admResponse[1]);
                                     this._mediaController.displayElem(dom.DIV_BTN_END, 300);
+                                    GeneralHelper.showit(dom.CLOSE_PARTICIPATION, 300);
                                 }
                             }
                             msgrash = [];
@@ -871,6 +874,7 @@ class webrtcController {
                     this._closeParticipantStream(connection);
 
                     this._mediaController.hideElem(dom.DIV_BTN_END);
+                    GeneralHelper.hideit(dom.CLOSE_PARTICIPATION, 300);
                     this._structure.emptyStreamVideos();
                     this._structure.incomingCon = '';
                     let targetId = this._structure.targetUser;
@@ -1166,6 +1170,7 @@ class webrtcController {
             } else if (event.streamid == this._structure.userVideo.streamid) {
                 if (connection.isInitiator) {
                     this._mediaController.hideElem(dom.DIV_BTN_END, 300);
+                    GeneralHelper.hideit(dom.CLOSE_PARTICIPATION, 300);
                     this._closeParticipantStream(connection);
                 };
                 this._mediaController.hideElem(dom.VIDEO_THIRD);
@@ -1411,6 +1416,7 @@ class webrtcController {
             } else if (checkrash[0] === btoa(conf.req.END_PARTICIPANT)) {
                 // Finalização de participação (Remoto)
                 this._mediaController.hideElem(dom.DIV_BTN_END);
+                GeneralHelper.hideit(dom.CLOSE_PARTICIPATION, 300);
                 this._retransmiting = false;
                 this._retransmitingWho = undefined;
 
@@ -1419,12 +1425,11 @@ class webrtcController {
                 this._mediaController.createProgressBar(checkrash[1]);
 
             } else if (checkrash[0] === btoa(conf.req.NEW_ROOM)) {
-                // Informativo de nova transmissão de sala iniciada
-                // tratamento de tempo de transmissão
+                // Informativo de nova transmissão de sala iniciada e tratamento de tempo de transmissão
                 this._roomInfoController.stoped = false;
                 this._startedAt = new Date(checkrash[1]);
                 this._roomInfoController.initiateClock(this._startedAt);
-                // Tratamento de apresentação de telas
+
                 if (checkrash[3] === true) this._initateRoomStream(checkrash[2]);
                 else if (checkrash[4] === true) this._initateRoomStream(checkrash[2], true);
                 else {

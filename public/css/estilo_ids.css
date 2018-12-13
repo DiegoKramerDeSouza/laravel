@@ -82,6 +82,12 @@ body::-webkit-scrollbar-thumb:hover {
     font-size: 26px;
 }
 
+#close-participation {
+    position: fixed;
+    right: 275px;
+    bottom: 70px;
+}
+
 #connected-users-list {
     overflow-y: auto;
     max-height: 380px;

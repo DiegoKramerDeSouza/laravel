@@ -19,6 +19,12 @@
                     
 
                     <span id='li-toggle-volume'>
+                        <span id='enable-sound' class='tooltip-item'>
+                            <span id='mute-tooltip' class='p-10 red darken-3 white-text rounded-borders tooltip-body-top'>
+                                <b class='tooltip-text truncate'>Habilite o som</b>
+                            </span>
+                            <span class='tooltip-red-arrow-bottom center'></span>
+                        </span>
                         <a id='toggle-volume' data-active='mute' class='media-control btn-floating btn-large red' data-position='top' title='Mudo'>
                             {!! $default->volumeDownIcon !!}
                         </a>
@@ -80,6 +86,12 @@
         </div>
     </div>
     <!-- Controle de acesso de usuários à transmissão -->
+    <span id='close-participation' class='tooltip-item hide-on-med-and-down d-none'>
+        <span id='close-tooltip' class='p-10 red darken-3 white-text rounded-borders tooltip-body-left'>
+            <b class='tooltip-text truncate'>Finalizar participação</b>
+        </span>
+        <span class='tooltip-red-arrow-right'></span>
+    </span>
     @if(Auth::user()->type == 0)
         <!-- Botão de desconexão de usuário em transmissão -->
         <div id='div-end' class='fixed-action-btn d-none' title='Finalizar participação'>

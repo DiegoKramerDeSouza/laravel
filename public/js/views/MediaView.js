@@ -36,6 +36,7 @@ class MediaView {
         this._countSendFiles = 0;
         this._otherVideos = false;
         this._readyToPlay = false;
+        this._stop = false;
 
     }
 
@@ -170,6 +171,7 @@ class MediaView {
     startParticipation() {
 
         GeneralHelper.showit(dom.DIV_ENTER);
+        GeneralHelper.showit(dom.CLOSE_PARTICIPATION, 300);
         this._divParticipation.title = 'Finalizar participação';
         this._participation.classList.remove(misc.HILIGHT_COLOR);
         this._participation.classList.add(misc.OFF_COLOR);
@@ -179,6 +181,7 @@ class MediaView {
     endParticipation() {
 
         GeneralHelper.showit(dom.DIV_ENTER);
+        GeneralHelper.showit(dom.CLOSE_PARTICIPATION, 300);
         this._divParticipation.title = 'Ingressar';
         this._participation.classList.remove(misc.OFF_COLOR);
         this._participation.classList.add(misc.HILIGHT_COLOR);
@@ -192,6 +195,7 @@ class MediaView {
         this._participation.innerHTML = misc.ICON_CAM_OFF;
         this._participation.disabled = true;
         GeneralHelper.hideit(dom.DIV_ENTER);
+        GeneralHelper.hideit(dom.CLOSE_PARTICIPATION, 300);
     }
 
     allowSolicitation() {
@@ -199,6 +203,7 @@ class MediaView {
         this._alerta.initiateMessage(conf.message.SEND_ACP_SOLICITATION);
         setTimeout(() => {
             GeneralHelper.showit(dom.DIV_ENTER, 300);
+            GeneralHelper.showit(dom.CLOSE_PARTICIPATION, 300);
             this.endParticipation();
             $(dom.SESSION_ACCESS).click();
             this._alerta.initiateMessage(conf.message.SEND_START_SOLICITATION);
@@ -507,6 +512,21 @@ class MediaView {
         });
     }
 
+    _blinkControl(elem, triggerElem, trigger) {
+
+        let stop = false;
+        $(triggerElem).on(trigger, () => stop = true);
+        blink();
+
+        function blink() {
+            $(elem).fadeIn(800, () => {
+                $(elem).fadeOut(800, () => {
+                    if (!stop) blink();
+                });
+            });
+        }
+    }
+
     initBroadcasterVideo(roomid, media) {
 
         let name = btoa(roomid);
@@ -523,18 +543,9 @@ class MediaView {
         doc.TAG(dom.DIV_MAIN_VIDEO).classList.remove("obj-invisible");
         GeneralHelper.showit(dom.EMBEDDED_FRAME, 300);
         GeneralHelper.showit(dom.DIV_CONTROLLER, 300);
+        this._blinkControl(dom.TOOLTIP_ENABLE_SOUND, dom.VOL, 'mouseenter');
 
         if (conf.con.LOW_LATENCY) this._initNewPlayer(name, dom.REMOTE_VIDEO_ID, media, dom.PLAY_IT);
-
-        /* Video executado no local */
-        //this._initPlayer(name);
-
-    }
-
-    _initPlayer(name) {
-
-        let player = new PlayerController(name);
-        player.initFetch();
     }
 
     _initNewPlayer(name, video, media, btnPlay) {
@@ -546,7 +557,6 @@ class MediaView {
         setTimeout(() => {
             //$(btnPlay).click();
         }, 2000);
-
     }
 
     initParticipantVideo(participant, name) {
