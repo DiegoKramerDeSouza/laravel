@@ -19,7 +19,7 @@
                 <!-- Loading de conteúdo -->
                 <div class="center blue-text text-darken-2" align='center'>
                     <h5>Encontrando salas...</h5>
-                    <a class="btn-floating btn-large blue pulse">{!! $default->searchIcon !!}</a>
+                    <a class="btn-floating btn-large blue pulse cursor-default">{!! $default->searchIcon !!}</a>
                     <br>
                     <br>
                     <br>                                                
@@ -111,3 +111,5 @@
     
 </script>
 -->
+
+

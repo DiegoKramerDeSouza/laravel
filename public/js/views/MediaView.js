@@ -75,14 +75,17 @@ class MediaView {
     setVolumeOn() {
 
         this._vol.classList.remove(misc.OFF_COLOR);
+        this._vol.classList.remove(misc.DISABLED_COLOR);
         this._vol.innerHTML = misc.ICON_VOL_ON;
         this._vol.setAttribute(misc.ATTR_ACTIVE, 'unmute');
         this._alerta.initiateMessage(conf.message.VOL_UP);
+        GeneralHelper.showit(dom.LI_VOLUME);
     }
 
     setVolumeOff() {
 
         this._vol.classList.add(misc.OFF_COLOR);
+        this._vol.classList.remove(misc.DISABLED_COLOR);
         this._vol.innerHTML = misc.ICON_VOL_OFF;
         this._vol.setAttribute(misc.ATTR_ACTIVE, 'mute');
         this._alerta.initiateMessage(conf.message.VOL_DOWN);
@@ -92,7 +95,6 @@ class MediaView {
 
         this._vol.classList.add(misc.DISABLED_COLOR);
         this._vol.innerHTML = misc.ICON_VOL_OFF;
-        this._vol.disabled = true;
         GeneralHelper.hideit(dom.LI_VOLUME);
     }
 

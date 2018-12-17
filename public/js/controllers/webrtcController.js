@@ -1,7 +1,7 @@
 class webrtcController {
 
     /**
-     * Dependencias:
+     * Dependências:
      * 
      * ConnectController
      * MediaController
@@ -28,6 +28,7 @@ class webrtcController {
         this._connection = new RTCMultiConnection();
         this._broadcaster;
         this._espectador;
+        this._caller;
 
         this._publicRoomIdentifier = conf.con.ROOM_IDENTIFIER;
         this._disconnectionMessage = conf.message.END_TRANSMITION;
@@ -52,10 +53,11 @@ class webrtcController {
         this._roomId;
         this._currentUsers;
         this._self;
-        this._videoConstraints;
-        this._audioConstraints;
+        this._videoConstraints = true;
+        this._audioConstraints = true;
         this._webRTCAdaptor;
         this._participantIs;
+        this._imParticipant = false;
         this._screenId;
     }
 
@@ -153,42 +155,45 @@ class webrtcController {
             socket.on(conf.socket.MSG_JOIN, (hintsToJoinBroadcast) => {
 
                 console.log('join-broadcaster', hintsToJoinBroadcast);
+                let connection = this._espectador;
                 this._structure.broadcastStatus = 1;
-                this._espectador.session = hintsToJoinBroadcast.typeOfStreams;
-                this._espectador.sdpConstraints.mandatory = {
+                connection.session = hintsToJoinBroadcast.typeOfStreams;
+                connection.sdpConstraints.mandatory = {
                     OfferToReceiveVideo: true,
                     OfferToReceiveAudio: true
                 };
-                this._espectador.extra.modifiedValue = this._roomInfo.currentRoomId.value + '-' + this._roomInfo.currentUser.value;
-                this._espectador.broadcastId = hintsToJoinBroadcast.broadcastId;
+                connection.extra.modifiedValue = this._roomInfo.currentRoomId.value + '-' + this._roomInfo.currentUser.value;
+                connection.broadcastId = hintsToJoinBroadcast.broadcastId;
 
-                this._onStream(this._espectador);
-                this._espectador.join(hintsToJoinBroadcast.userid);
+                this._onStream(connection);
+                connection.join(hintsToJoinBroadcast.userid);
                 this._alerta.initiateMessage(conf.message.START_TRANSMITION);
             });
 
             // Socket - Broadcaster (apresentador) inicia uma nova sala
             socket.on(conf.socket.MSG_BROADCAST_START, (typeOfStreams) => {
-                console.log('start-broadcasting', typeOfStreams);
 
-                this._broadcaster.direction = this._connect.direction;
-                this._structure.broadcastStatus = 1;
-                this._broadcaster.sdpConstraints.mandatory = {
+                console.log('start-broadcasting', typeOfStreams);
+                let connection = this._broadcaster;
+                connection.direction = this._connect.direction;
+                connection.sdpConstraints.mandatory = {
                     OfferToReceiveVideo: true,
                     OfferToReceiveAudio: true
                 };
-                this._broadcaster.session = typeOfStreams;
+                connection.session = typeOfStreams;
 
-                this._onStream(this._broadcaster);
-                this._broadcaster.open(this._broadcaster.userid, (isRoomOpened, roomid, error) => {
+                this._onStream(connection);
+                connection.open(connection.userid, (isRoomOpened, roomid, error) => {
                     if (error) {
-                        console.error("Falha ao iniciar a sala", error);
+                        console.error("Falha ao iniciar a sala: ", error, e);
                         return;
                     } else {
+                        this._structure.broadcastStatus = 1;
                         let cursos = this._roomController.createList();
                         let $postData = { author: this._room.name, name: this._room.tema, theme: this._room.assunto, hash: this._room.hash, courses: cursos }
                         let $resource = doc.URL_SALAS_SAVE;
                         this._saveRoom($postData, $resource);
+                        this._openPreStream(connection, roomid, true, false);
 
                         // Inicializa verificação de token caso não seja um dispositivo Mobile
                         if (!DetectRTC.isMobileDevice && conf.con.TK_DETECT) {
@@ -196,7 +201,6 @@ class webrtcController {
                             $(dom.CALL_TK).click();
                         }
                         console.info("Sala criada com sucesso.", roomid);
-                        this._openPreStream(this._broadcaster, roomid, true, false);
                     }
                 });
             });
@@ -265,7 +269,6 @@ class webrtcController {
      */
     _onStream(connection) {
 
-        let counter = 0;
         // Inicia listener para abertura de conexão
         this._onOpen(connection);
 
@@ -332,6 +335,8 @@ class webrtcController {
                     this._structure.incomingCon = '';
                     this._mediaController.closeIncomingVideos(event.stream);
 
+                    this._removeStreams(connection);
+
                     let msgrash = this._mediaController.createSolicitationArray(
                         btoa(conf.req.END_PARTICIPATION),
                         this._roomInfo.currentUser.value,
@@ -348,9 +353,21 @@ class webrtcController {
 
                 console.log('REMOTO COM SCREEN --> ', event.stream);
 
-            } else if (!this._structure.onParticipation && (event.type === 'remote' && !event.stream.isScreen)) {
+            } else if (event.type === 'remote') {
 
-                console.log('REMOTO SEM SCREEN --> ', event, event.stream, event.extra.remote, event.stream.streamid);
+                console.warn('REMOTO SEM SCREEN --> ', event, event.stream, event.extra.remote, event.stream.streamid, connection.userid, this._imParticipant);
+
+                if (this._imParticipant) {
+                    GeneralHelper.hideit(dom.EMBEDDED_FRAME, 300);
+                    this._mediaController.removeElement(dom.FRAME_LAYER);
+                    GeneralHelper.hideit(dom.FIRST_VIDEO, 300);
+                    GeneralHelper.showit(dom.VIDEOS);
+                    GeneralHelper.showit(dom.INCOMMING_VIDEO, 300);
+
+                    let incommingVideo = doc.TAG(dom.INCOMMING_VIDEO);
+                    incommingVideo.srcObject = event.stream;
+                    this._mediaController.initiateVideo(incommingVideo);
+                }
 
             } else if (!this._structure.onParticipation && (event.type === 'local' && (!event.stream.isScreen && !event.extra.self))) {
 
@@ -611,37 +628,41 @@ class webrtcController {
             this._media.ctlPedir.onclick = () => {
                 // Tratamento de respostas (permitir / negar)
                 let response = doc.ALL(dom.CLASS_RESPONSES);
+                let userid;
+                let username;
                 for (var j = 0; j < response.length; j++) {
                     let thisId = response[j].id;
                     response[j].onclick = () => {
 
                         console.log(thisId);
-                        setTimeout(() => {
-                            let admResponse = thisId.split('_');
-                            let msgrash = this._mediaController.createSolicitationArray(
-                                btoa(conf.req.RESP_PEDE_VEZ + admResponse[0]),
-                                this._roomInfo.currentUser.value,
-                                admResponse[1],
-                                this._roomInfo.inRoom.value,
-                                this._roomInfo.currentRoomId.value
-                            );
-                            if (admResponse[0] == conf.req.REQ_ALLOW && this._structure.lockSolicitation) {
-                                this._alerta.initiateMessage(conf.message.ACCEPT_SOLICITATION);
-                            } else {
-                                this._structure.solicita -= 1;
-                                connection.send(msgrash);
-                                this._mediaController.reconstructList(admResponse[1]);
-                                this._mediaController.trataSolicitacao(this._structure.solicita);
-                                if (admResponse[0] == conf.req.REQ_ALLOW) {
-                                    this._structure.lockSolicitation = true
-                                    this._structure.targetUser = admResponse[1];
-                                    this._media.divEndBtn.setAttribute('data-target', admResponse[1]);
-                                    this._mediaController.displayElem(dom.DIV_BTN_END, 300);
-                                    GeneralHelper.showit(dom.CLOSE_PARTICIPATION, 300);
-                                }
+                        let admResponse = thisId.split('_');
+                        userid = admResponse[0];
+                        username = admResponse[1];
+                        let msgrash = this._mediaController.createSolicitationArray(
+                            btoa(conf.req.RESP_PEDE_VEZ + userid),
+                            this._roomInfo.currentUser.value,
+                            username,
+                            this._roomInfo.inRoom.value,
+                            this._roomInfo.currentRoomId.value
+                        );
+                        if (userid == conf.req.REQ_ALLOW && this._structure.lockSolicitation) {
+                            this._alerta.initiateMessage(conf.message.ACCEPT_SOLICITATION);
+                        } else {
+                            this._structure.solicita -= 1;
+                            connection.send(msgrash);
+                            this._mediaController.reconstructList(username);
+                            this._mediaController.trataSolicitacao(this._structure.solicita);
+                            if (userid == conf.req.REQ_ALLOW) {
+                                this._receiveNewParticipant();
+                                this._structure.lockSolicitation = true
+                                this._structure.targetUser = username;
+                                this._media.divEndBtn.setAttribute('data-target', username);
+                                this._mediaController.displayElem(dom.DIV_BTN_END, 300);
+                                GeneralHelper.showit(dom.CLOSE_PARTICIPATION, 300);
                             }
-                            msgrash = [];
-                        }, 1000);
+                        }
+                        msgrash = [];
+
                     }
                 }
                 this._media.endSessionAccess.onclick = () => {
@@ -691,9 +712,6 @@ class webrtcController {
                 }
             };
         } else if (!connection.isInitiator && !isLocal) {
-
-            // Identifica mídia do broadcaster
-            let isBroadcasterMidia = true;
 
             // Redefine id video-preview
             this._media.videoPreview.muted = true;
@@ -750,8 +768,6 @@ class webrtcController {
             };
         }
 
-        // Tratamento de controle geral =================================================
-
         // Tratamento da função de ampliar e reduzir vídeo
         this._media.fullsize.onclick = () => {
             this._mediaController.toggleFullSize();
@@ -772,17 +788,18 @@ class webrtcController {
                     this._structure.onParticipation = false;
                 }
             } else if (this._mediaController._session && this._structure.onParticipation) {
+
+                this._imParticipant = false;
+                GeneralHelper.hideit(dom.EMBEDDED_FRAME, 300);
+                this._mediaController.initBroadcasterVideo(roomid, this._mediaController);
+                GeneralHelper.hideit(dom.VIDEOS);
+                GeneralHelper.hideit(dom.INCOMMING_VIDEO, 300);
+
                 this._mediaController.disableParticipation();
                 this._structure.onParticipation = false;
                 this._stopPublishing(roomid, false, this._webRTCAdaptor);
                 try {
-                    connection.attachStreams.forEach((stream) => {
-                        connection.getAllParticipants().forEach((p) => {
-                            let peer = connection.peers[p].peer;
-                            stream.stop();
-                            peer.removeStream(stream);
-                        });
-                    });
+                    this._removeStreams(connection);
                     let msgrash = this._mediaController.createSolicitationArray(
                         btoa(conf.req.END_PARTICIPANT),
                         this._roomInfo.currentUser.value,
@@ -806,6 +823,30 @@ class webrtcController {
                 }
             }
         };
+    }
+
+
+    _removeStreams(connection) {
+
+        connection.attachStreams.forEach((stream) => {
+            connection.getAllParticipants().forEach((p) => {
+                let peer = connection.peers[p].peer;
+                stream.stop();
+                peer.removeStream(stream);
+            });
+        });
+    }
+
+    _redefineStream() {
+
+        if (this._broadcaster) {
+            this._broadcaster.session = {
+                video: this._videoConstraints,
+                audio: this._audioConstraints,
+                oneway: true
+            }
+
+        }
     }
 
     /**
@@ -1150,6 +1191,7 @@ class webrtcController {
             } else if (checkrash[0] === btoa(conf.req.RESP_PEDE_VEZ + conf.req.REQ_ALLOW)) {
                 // Permissão de participação concedida
                 if (checkrash[2] === myRoom) {
+                    this._imParticipant = true;
                     this._structure.solicita -= 1;
                     this._mediaController.allow();
                     this._structure.lockSolicitation = true;
@@ -1189,6 +1231,7 @@ class webrtcController {
 
             } else if (checkrash[0] === btoa(conf.req.END_PARTICIPANT)) {
                 // Finalização de participação (Remoto)
+                if (this._broadcaster) this._removeStreams(this._broadcaster);
                 this._mediaController.hideElem(dom.DIV_BTN_END);
                 GeneralHelper.hideit(dom.CLOSE_PARTICIPATION, 300);
                 this._retransmiting = false;
@@ -1314,6 +1357,97 @@ class webrtcController {
             obj.srcObject = event.stream;
             obj.muted = true;
             this._mediaController.initiateVideo(obj);
+        }
+    }
+
+    _afterJoinCallVideo(connection) {
+
+        connection.onstream = (event) => {
+
+            if (event.type === 'local') {
+
+                GeneralHelper.hideit(dom.EMBEDDED_FRAME, 300);
+                this._mediaController.removeElement(dom.FRAME_LAYER);
+                GeneralHelper.hideit(dom.FIRST_VIDEO, 300);
+                GeneralHelper.showit(dom.VIDEOS);
+                GeneralHelper.showit(dom.INCOMMING_VIDEO, 300);
+                // Apresenta o vídeo do usuário
+                this._media.thirdVideoPreview.srcObject = event.stream;
+                this._media.thirdVideoPreview.muted = true;
+                this._mediaController.initiateVideo(this._media.thirdVideoPreview);
+                GeneralHelper.showit(dom.VIDEO_THIRD, 300);
+
+            } else if (event.type === 'remote') {
+
+                let incommingVideo = doc.TAG(dom.INCOMMING_VIDEO);
+                incommingVideo.srcObject = event.stream;
+                incommingVideo.muted = true;
+                this._mediaController.initiateVideo(incommingVideo);
+            }
+        }
+    }
+
+    _afterOpenCallVideo(connection) {
+
+        connection.onstream = (event) => {
+
+            if (event.type === 'local') return;
+            if (this._retransmiting) return;
+
+            this._structure.incomingCon = event.stream.streamid;
+            this._media.thirdVideoPreview.srcObject = event.stream;
+            this._structure.userVideo = event.stream;
+            this._broadcaster.extra.remote = event.stream.streamid;
+
+            this._mediaController.initiateVideo(this._media.thirdVideoPreview);
+            this._alerta.initiateMessage(conf.message.START_PARTICIPATION);
+            this._mediaController.displayElem(dom.VIDEO_THIRD, 300);
+
+            this._participantIs = event.extra.modifiedValue.split('-')[1];
+            this._retransmitingWho = 'participant' + event.userid;
+            this._retransmiting = true;
+            this._structure.streamVideos = event.stream;
+            this._mediaController.openIncomingVideos(event.stream);
+
+            this._mediaController.displayElem(dom.DIV_BTN_END, 300);
+            GeneralHelper.showit(dom.CLOSE_PARTICIPATION, 300);
+
+            console.log('Recebendo video em ', event, event.file);
+
+            let msgnewrash = this._mediaController.createSolicitationArray(
+                btoa(conf.req.NEW_PARTICIPATION),
+                this._participantIs,
+                this._roomInfo.inRoom.value,
+                this._structure.targetUser,
+                this._retransmitingWho
+            );
+            this._broadcaster.send(msgnewrash);
+
+            this._media.endSessionAccess.onclick = () => {
+                console.log('---> REMOTO', event.userid, this._structure.targetUser);
+
+                // Remoção da stream do usuário
+                this._closeParticipantStream(this._broadcaster);
+
+                this._mediaController.hideElem(dom.DIV_BTN_END);
+                GeneralHelper.hideit(dom.CLOSE_PARTICIPATION, 300);
+                this._structure.emptyStreamVideos();
+                this._structure.incomingCon = '';
+                this._mediaController.closeIncomingVideos(event.stream);
+
+                this._removeStreams(this._broadcaster);
+
+                let msgrash = this._mediaController.createSolicitationArray(
+                    btoa(conf.req.END_PARTICIPATION),
+                    this._roomInfo.currentUser.value,
+                    this._structure.targetUser,
+                    this._roomInfo.inRoom.value,
+                    event.userid
+                );
+                this._broadcaster.send(msgrash);
+                msgrash = [];
+                this._structure.lockSolicitation = false;
+            };
         }
     }
 
@@ -1646,7 +1780,6 @@ class webrtcController {
 
         // Inicia instância de conexão
         this._espectador = new RTCMultiConnection();
-        //this._espectador = this._connection;
 
         this._initiatePersonalConnection(this._espectador);
         this._espectador.publicRoomIdentifier = this._publicRoomIdentifier;
@@ -1672,7 +1805,6 @@ class webrtcController {
 
         // Inicializa verificação de token caso não seja um dispositivo Mobile
         if (!DetectRTC.isMobileDevice && conf.con.TK_DETECT) {
-            //$(dom.TK_DETEC).show();
             GeneralHelper.showit(dom.TK_DETEC);
             $(dom.CALL_TK).click();
         }
@@ -1684,18 +1816,120 @@ class webrtcController {
      */
     _startParticipation(connection) {
 
+        let caller = new RTCMultiConnection();
+        caller.userid = this._roomInfo.currentRoomId.value;
+        let targetRoomId = 'call' + this._roomId;
+        this._initiatePersonalConnection(caller);
+        this._afterJoinCallVideo(caller);
+
+        // Define elementos de inicialização da sessão criada
+        caller.session = {
+            audio: true,
+            video: true
+        };
+        caller.mediaConstraints = {
+            video: true,
+            audio: true
+        };
+        caller.sdpConstraints.mandatory = {
+            OfferToReceiveVideo: true,
+            OfferToReceiveAudio: true
+        };
+        caller.extra.caller = caller.userid;
+        caller.extra.modifiedValue = caller.userid + '-' + this._roomInfo.currentUser.value;
+        caller.checkPresence(targetRoomId, (isRoomExist, roomid) => {
+            if (isRoomExist) {
+                caller.join(targetRoomId, (stream) => {
+                    this._roomData.transmiting = true;
+                    this._sendParticipation(caller);
+                    console.log("Compartilhando vídeo ------>", stream);
+                });
+                this._caller = caller;
+            } else {
+                console.warn('Sala requisitada não encontrada!', targetRoomId);
+            }
+        });
+
+        /*
         connection.addStream({
             audio: false,
             video: true,
-            type: 'local',
             streamCallback: (stream) => {
                 this._participateScreen(stream);
                 this._media.thirdVideoPreview.muted = true;
                 this._roomData.transmiting = true;
                 console.log("Compartilhando vídeo ------>", stream);
                 this._sendParticipation(connection);
+                this._mediaController.initiateVideo(this._media.thirdVideoPreview);
             }
         });
+        */
+    }
+
+    /**
+     * Inicia uma chamada com um participante
+     */
+    _receiveNewParticipant() {
+
+        let room = 'call' + this._broadcaster.userid;
+        let caller = new RTCMultiConnection();
+
+        this._initiatePersonalConnection(caller);
+        this._setConnectionDevices(caller);
+        this._afterOpenCallVideo(caller);
+
+        caller.session = {
+            audio: true,
+            video: true
+        };
+
+        caller.mediaConstraints = {
+            audio: this._audioConstraints,
+            video: this._videoConstraints
+        };
+
+        caller.sdpConstraints.mandatory = {
+            OfferToReceiveVideo: true,
+            OfferToReceiveAudio: true
+        };
+
+        caller.extra.receiver = true;
+        caller.open(room);
+        this._caller = caller;
+
+        /*
+
+        // Define o ID da sala de chamada que será criada
+        let broadcastId;
+        broadcastId = 'call' + this._broadcaster.userid;
+        // Istancia a conexão para o broadcaster 
+        this._caller = new RTCMultiConnection();
+        this._caller.userid = broadcastId;
+        this._caller.extra.chamada = true;
+        this._caller.extra.streamEnded = false;
+        this._initiatePersonalConnection(this._caller);
+        // Define configuração de sessão, stream, dispositívos e uso de banda
+        this._caller.session = {
+            audio: conf.con.SESSION_AUDIO,
+            video: conf.con.SESSION_VIDEO
+        };
+        this._caller.direction = 'one-to-one';
+        this._caller.mediaConstraints = {
+            video: this._videoConstraints,
+            audio: this._audioConstraints
+        };
+        this._caller.bandwidth = {
+            audio: conf.con.BAND_AUDIO,
+            video: conf.con.BAND_VIDEO
+        };
+        this._caller.checkPresence(broadcastId, (isRoomExist, broadcastId) => {
+            isRoomExist ?
+                console.error('A sala informada já existe.') :
+                this._caller.open(broadcastId, () => {
+                    console.warn('Camada criada com sucesso!', broadcastId);
+                });
+        })
+        */
     }
 
     /**

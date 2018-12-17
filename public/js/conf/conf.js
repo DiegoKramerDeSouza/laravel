@@ -280,6 +280,7 @@ const dom = {
     FRAME_LAYER_III: '#embedded_player_v3',
     IN_ROOM: '#in-room',
     IN_SCREEN: '#in-screen',
+    INCOMMING_VIDEO: '#video-preview-incoming',
     INCOMMING_VIDEO_PARTICIPANT: '#incommingVideo-participant',
     INCOMMING_VIDEO_SCREEN: '#incommingVideo-screen',
     INFORM_VIEWS: '#informViews',

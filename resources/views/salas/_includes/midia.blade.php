@@ -78,6 +78,7 @@
                                             <!--VÍDEO PRINCIPAL-->
                                             <div id='span-video-preview' data-status='disabled' data-position='main' class='width-limit first-video'>
                                                 <video id='video-preview' class='responsive-video' preload='none' loop ></video>
+                                                <video id='video-preview-incoming' class='responsive-video d-none' preload='none' style='border: 1px solid red;' loop ></video>
                                                 <div id='div-exit-fullscreen' class='fixed-action-btn d-none'>
                                                     <a id='exit-fullscreen' class='btn-floating btn-large blue darken-2'>
                                                         {!! $default->fullscreenExitLargeIcon !!}
