@@ -1,7 +1,8 @@
 /**
+ * Classe voltada a inicialização, tratamento e gerenciamento de todos os métodos e atribuições 
+ * referentes a publicação e interação entre usuários e mídias utilizando WebRTC e Websocket
  * 
  * Dependências:
- * 
  * ConnectController
  * MediaController
  * StructureController
