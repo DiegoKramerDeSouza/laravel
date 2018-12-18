@@ -95,7 +95,7 @@
     @if(Auth::user()->type == 0)
         <!-- Botão de desconexão de usuário em transmissão -->
         <div id='div-end' class='fixed-action-btn d-none' title='Finalizar participação'>
-            <a id='end-session' class='btn-floating btn-large waves-effect waves-light red darken-2' data-active='disabled'>
+            <a id='end-session' class='btn-floating btn-large waves-effect waves-light red pulse' data-active='disabled'>
                 {!! $default->videocamoffLargeIcon !!}
             </a>
         </div>
