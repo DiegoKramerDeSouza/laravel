@@ -1,3 +1,11 @@
+/**
+ * Classe voltada ao tratamento das APIs de consulta de CEP e Geolocalização 
+ * no cadastro de Instituições
+ * 
+ * Instancia:
+ * FormInstitutionView
+ * MessageController
+ */
 class FormInstitutionController {
 
     constructor() {

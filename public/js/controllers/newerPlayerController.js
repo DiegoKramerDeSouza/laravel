@@ -1,3 +1,9 @@
+/**
+ * Classe voltada ao tratamento e controle de publicação de streams de vídeos utilizando webRTCAdaptor
+ *  
+ * Instancia:
+ * WebRTCAdaptor
+ */
 class NewerPlayerController {
 
     constructor(roomId, videoid, media) {

@@ -1,3 +1,11 @@
+/**
+ * Classe voltada à definição de dados específicos de salas criadas por um apresentador
+ * -> Trata a quantidade de espectadores e os grupos permitidos a vizualizar e acessar a sala
+ * 
+ * Instancia:
+ * RoomData
+ * RoomView
+ */
 class RoomDataController {
 
     constructor() {

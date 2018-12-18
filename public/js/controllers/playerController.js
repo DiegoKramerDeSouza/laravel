@@ -1,3 +1,10 @@
+/**
+ * Classe voltada ao tratamento e controle de streams de mídia para utilização dos players web flowplayer e videojs
+ *  
+ * Instancia:
+ * flowplayer
+ * videojs
+ */
 class PlayerController {
 
     constructor(name) {

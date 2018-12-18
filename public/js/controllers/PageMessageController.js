@@ -1,3 +1,9 @@
+/**
+ * Classe voltada ao tratamento de mensagens em tela a partir da respostas de requests
+ *  
+ * Instancia:
+ * MessageController
+ */
 class PageMessageController {
 
     constructor() {

@@ -1,3 +1,9 @@
+/**
+ * Classe voltada ao tratamento da estrutura da sala aberta
+ * 
+ * Instancia:
+ * Structure
+ */
 class StructureController {
 
     constructor() {

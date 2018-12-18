@@ -1,6 +1,9 @@
 /**
- *  Classe voltada ao controle de requisições AJAX para coletar dados cadastrados no módulo informado
- *  e criar uma listagem para consulta para formação de Autocomplete;
+ * Classe voltada ao controle de requisições AJAX para coletar dados cadastrados no módulo informado
+ * e criar uma listagem para consulta para formação de Autocomplete;
+ * 
+ * Instancia:
+ * Autocomplete
  */
 class AutocompleteController {
 

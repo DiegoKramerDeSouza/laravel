@@ -1,3 +1,10 @@
+/**
+ *  Classe voltada ao tratamento dos dispositívos de áudio e vídeo detectados
+ * 
+ * Instancia:
+ * MessageController
+ * RoomController
+ */
 class DevicesController {
 
     constructor() {

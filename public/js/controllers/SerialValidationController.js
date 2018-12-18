@@ -1,3 +1,10 @@
+/**
+ * Classe voltada à validação e controle do dispositívo de token 
+ * 
+ * Instancia:
+ * MessageController
+ * SerialValidation
+ */
 class SerialValidationController {
 
     constructor() {

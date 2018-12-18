@@ -1,20 +1,20 @@
+/**
+ * 
+ * Dependências:
+ * 
+ * ConnectController
+ * MediaController
+ * StructureController
+ * RoomInfoController
+ * MessageController
+ * RoomController
+ * RoomDataController
+ * RTCMultiConnection
+ * WebRTCAdaptor
+ * DevicesController
+ */
 class webrtcController {
 
-    /**
-     * Dependências:
-     * 
-     * ConnectController
-     * MediaController
-     * StructureController
-     * RoomInfoController
-     * MessageController
-     * RoomController
-     * RoomDataController
-     * RoomView
-     * RTCMultiConnection
-     * WebRTCAdaptor
-     * DevicesController
-     */
     constructor() {
 
         this._connectController = new ConnectController();
@@ -1722,7 +1722,8 @@ class webrtcController {
                 this._roomController.inputConList();
                 GeneralHelper.showit(dom.UL_CON_USERS, 300);
             }
-            this._roomView.changeCounter(this._structure.viewers);
+            //this._roomView.changeCounter(this._structure.viewers);
+            this._roomController.changeCounter(this._structure.viewers);
             let btnDisconnect = doc.ALL(dom.DISCONNECT_BTN);
             for (var j = 0; j < btnDisconnect.length; j++) {
                 let thisId = doc.TAG('#' + btnDisconnect[j].id);

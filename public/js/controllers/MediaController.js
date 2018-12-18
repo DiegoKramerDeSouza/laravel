@@ -1,7 +1,11 @@
 /**
- * Controla mecanismos de elementos de mídia como vídeos, volume e câmeras
+ * Classe voltada ao controle de mecanismos de elementos de mídia como vídeos, volume e câmeras
  *  ->  Controla também as funções de operações relativas às mídias como
  *      pedir a vez e compartilhamento de tela
+ * 
+ * Instancia:
+ * MediaView
+ * Media
  */
 class MediaController {
 

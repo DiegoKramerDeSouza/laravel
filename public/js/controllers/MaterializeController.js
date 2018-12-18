@@ -1,5 +1,5 @@
 /**
- * Todos os elementos do Materialize CSS devem ser inicializados aqui
+ * Classe voltada à inicialização de todos os elementos do Materialize CSS
  */
 class MaterializeController {
 

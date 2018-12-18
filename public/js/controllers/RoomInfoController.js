@@ -1,3 +1,10 @@
+/**
+ * Classe voltada à definição de informações apresentadas ao espectadores
+ * 
+ * Instancia:
+ * RoomInfo
+ * RoomView
+ */
 class RoomInfoController {
 
     constructor() {

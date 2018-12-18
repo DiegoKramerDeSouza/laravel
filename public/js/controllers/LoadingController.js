@@ -1,3 +1,9 @@
+/**
+ * Classe voltada ao tratamento de chamadas de carregamento de tela
+ * 
+ * Instancia:
+ * LoadingView
+ */
 class LoadingController {
 
     constructor() {

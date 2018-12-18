@@ -1,3 +1,9 @@
+/**
+ * Classe voltada ao tratamento de mensagens para exibição
+ *  
+ * Instancia:
+ * MessageView
+ */
 class MessageController {
 
     constructor() {

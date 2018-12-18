@@ -1,3 +1,9 @@
+/**
+ *  Classe voltada a definir os padrões de conexão websocket e as configurações padrões para abertura de salas
+ * 
+ * Instancia:
+ * Connect
+ */
 class ConnectController {
     constructor() {
 

@@ -1,3 +1,9 @@
+/**
+ * Classe voltada à definição básica de salas criadas pelo apresentador
+ * 
+ * Instancia:
+ * RoomView
+ */
 class RoomController {
 
     constructor() {
@@ -111,6 +117,11 @@ class RoomController {
     checkViews() {
 
         return this._numberOfViewers.value != "" && this.validateViews();
+    }
+
+    changeCounter(viwers) {
+
+        this._roomView.changeCounter(viwers);
     }
 
 }
