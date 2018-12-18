@@ -446,12 +446,9 @@ class MediaView {
         $(elem).remove();
     }
 
-    stopTransmition(roomid) {
+    stopTransmition() {
 
-        try { roomid = atob(roomid) } catch (e) { /* Não faz nada */ }
-        if (roomid.startsWith('screen') || roomid.startsWith('participant')) return;
         this.hideControlElements();
-        this._createVideoLink(roomid);
         GeneralHelper.showit(dom.PRE_VIDEO_FINISHED, 1000);
         GeneralHelper.hideit(dom.LI_SCREEN);
         GeneralHelper.hideit(dom.LI_VOLUME);
@@ -462,15 +459,13 @@ class MediaView {
         try { this.removeElement(dom.FRAME_LAYER) } catch (e) { /* Não faz nada */ };
     }
 
-    _createVideoLink(roomid) {
+    createVideoLink(roomid) {
 
-        setTimeout(() => {
-            let videoLink = doc.TAG(dom.DOWNLOAD_VIDEO);
-            videoLink.href = conf.con.SOCKET_DOWNLOAD + btoa(roomid) + '.mp4';
-            videoLink.setAttribute('download', btoa(roomid));
-            GeneralHelper.hideit(dom.WAITING_LINK);
-            GeneralHelper.showit(dom.DIV_DOWNLOAD_VIDEO, 300);
-        }, 3000);
+        let videoLink = doc.TAG(dom.DOWNLOAD_VIDEO);
+        videoLink.href = conf.con.SOCKET_DOWNLOAD + btoa(roomid) + '.mp4';
+        videoLink.setAttribute('download', btoa(roomid));
+        GeneralHelper.hideit(dom.WAITING_LINK);
+        GeneralHelper.showit(dom.DIV_DOWNLOAD_VIDEO, 300);
     }
 
     endPreVideo() {
@@ -741,25 +736,5 @@ class MediaView {
         let i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
         return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
     };
-
-    displayElem(elem) {
-
-        GeneralHelper.showit(elem);
-    }
-
-    fadeInElem(elem, delay) {
-
-        GeneralHelper.showit(elem, delay);
-    }
-
-    hideElem(elem) {
-
-        GeneralHelper.hideit(elem);
-    }
-
-    fadeOutElem(elem, delay) {
-
-        GeneralHelper.hideit(elem, delay);
-    }
 
 }

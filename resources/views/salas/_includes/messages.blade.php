@@ -20,7 +20,7 @@
             <div class='card-title red-text text-darken-3'>
                 <p>Transmissão Finalizada</p>
                 <br />
-                <span class='white-text'>O conteúdo desta transmissão está salvo e disponível para visualização e download no formato MP4</span>
+                <span class='white-text'>Esta transmissão foi finalizada pelo apresentador</span>
             </div>
             <br />
             <div id='waitingLinkFile' class='center'>

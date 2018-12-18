@@ -608,9 +608,14 @@ class MediaController {
         });
     }
 
-    stopTransmition(roomid) {
+    stopTransmition(roomid, broadcaster) {
 
-        this._mediaView.stopTransmition(roomid);
+        try { roomid = atob(roomid) } catch (e) { /* Não faz nada */ }
+        if (roomid.startsWith('screen') || roomid.startsWith('participant')) return;
+        this._mediaView.stopTransmition();
+        if (broadcaster)
+            setTimeout(() => this._mediaView.createVideoLink(roomid), 3000);
+        else GeneralHelper.hideit(dom.WAITING_LINK);
     }
 
     changeTransmition(title, icon) {
@@ -622,17 +627,5 @@ class MediaController {
 
         this._mediaView.endPreVideo();
     }
-
-    displayElem(elem, delay) {
-
-        this._mediaView.fadeInElem(elem, delay);
-    }
-
-    hideElem(elem, delay) {
-
-        this._mediaView.fadeOutElem(elem, delay)
-    }
-
-
 
 }
