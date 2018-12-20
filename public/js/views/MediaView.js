@@ -549,11 +549,8 @@ class MediaView {
 
         let newplayer = new NewerPlayerController(name, video, media);
         newplayer.startConfig();
-
         doc.TAG(btnPlay).onclick = () => newplayer.startPlaying(name);
-        setTimeout(() => {
-            //$(btnPlay).click();
-        }, 2000);
+        setTimeout(() => $(btnPlay).click(), 2000);
     }
 
     initParticipantVideo(participant, name) {

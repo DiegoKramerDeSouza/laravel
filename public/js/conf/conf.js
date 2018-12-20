@@ -155,7 +155,7 @@ const conf = {
         /*Tempo padrão de exibição das MENSAGENS de toast */
         TIMEOUT: 2000,
         /*Atributos para formação de MENSAGENS padronizadas: array[ícone(html), texto(html), cor de fundo(classes MaterializeCSS)] */
-        CHAT_MESSAGE: ['<div align="right"><i class="fa fa-comment-o white-text"></i>', '</div>', 'grey darken-2'],
+        CHAT_MESSAGE: ['<div align="right"><i class="fa fa-comment-o white-text"></i>', '</div>', 'cyan'],
         START_TRANSMITION: ['<i class="fa fa-play-circle fa-lg"></i>', 'Transmissão iniciada!', apr.msg.LOCAL_MSG_COLOR],
         END_TRANSMITION: ['<i class="material-icons left">highlight_off</i>', 'Sala fechada!', apr.msg.ERROR_MSG_COLOR],
         START_PARTICIPATION: ['<i class="material-icons">videocam</i>', 'Participação iniciada!', apr.msg.LOCAL_MSG_COLOR],
@@ -408,8 +408,8 @@ const misc = {
     CLASS_WIDTH_LIMIT: 'width-limit',
     CLASS_WIDTH_LIMIT_NO: 'width-no-limit',
     /*Elementos HTML para caixas de mensagens */
-    DEFAULT_MSGBOX_IN: '<p class="chat-out grey" align="right">',
-    DEFAULT_MSGBOX_OUT: '<p class="chat-in blue">',
+    DEFAULT_MSGBOX_IN: '<p class="chat-out blue" align="right">',
+    DEFAULT_MSGBOX_OUT: '<p class="chat-in cyan">',
     /* Elementos vizuais padrões */
     DEFAULT_SELECT_DEVICE: '<option value="" disabled selected>Selecione um dispositivo</option>',
     /*Ícones */
