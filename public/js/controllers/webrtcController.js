@@ -1469,18 +1469,19 @@ class webrtcController {
     _finishVideo(target, video) {
 
         if (target != undefined) {
-            if (target.extra.self) target.extra.self = false;
-            target.attachStreams.forEach(function(localStream) {
-                localStream.stop();
-            });
+            let userId = target.userid;
             let socket = io.connect(`${ conf.con.URL }?userid=admin`);
+            target.attachStreams.forEach(localStream => localStream.stop());
+            if (target.extra.self) {
+                target.extra.self = false;
+                this._self = undefined;
+            }
+            target.sessionid.startsWith("call") ? GeneralHelper.hideit('#' + video.id, 300) : null;
             socket.emit('admin', {
                 deleteUser: true,
-                userid: target.userid
+                userid: userId
             });
             video.pause();
-            GeneralHelper.hideit('#' + video.id);
-            target = undefined;
         }
     }
 
