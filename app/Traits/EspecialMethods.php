@@ -16,6 +16,8 @@ use App\DefaultMessages;
 
 trait EspecialMethods{
 
+    private $arrayChamada = [];
+
     /**
      * Carrega definições básicas de configuração da aplicação
      */
@@ -91,6 +93,11 @@ trait EspecialMethods{
     public function forgetSession(){
 
         if(session()->has('viewers')) session()->forget('viewers');
+        if(session()->has('classList')) session()->forget('classList');
+        if(session()->has('turmaId')) session()->forget('turmaId');
+        if(session()->has('turmaName')) session()->forget('turmaName');
+        if(session()->has('aula')) session()->forget('aula');
+        if(session()->has('allClassList')) session()->forget('allClassList');
     }
 
 }

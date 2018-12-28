@@ -103,3 +103,21 @@
         <button id='informViews' type='submit' class='btn-flat blue-text text-darken-2 waves-effect waves-teal modal-close'> {!! $default->applyIcon !!} Ok </button>
     </div>
 </div>
+
+<div id='listaChamada' class='modal '>
+    <div class='modal-content'>
+        <h5>
+            {!! $default->usuariosBlueIcon !!} Espectadores Presentes:
+            <span class='right'>
+                <a class='modal-close'>
+                    {!! $default->cancelRedIcon !!}
+                </a>
+            </span>
+        </h5>
+        <div class='divider'></div>
+        <div id='chamada'>
+            <!-- Gera listagem de presença -->
+        </div>
+        <br>
+    </div>
+</div>

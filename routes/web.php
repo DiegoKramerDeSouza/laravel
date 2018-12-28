@@ -16,7 +16,7 @@ Route::get('/', function () {
 });
 
 /*
- *  Rotas Iniciais  
+ *  Rotas de validação do status da aplicação
  */
 if(env('APP_ENV') == 'offline') {
     Route::get('/', ['as' => 'home', 'uses' => 'Site\OfflineController@index']);
@@ -26,18 +26,32 @@ if(env('APP_ENV') == 'offline') {
     Route::get('/login', ['as' => 'login', 'uses' => 'Site\LoginController@index']);
 }
 
+/**
+ * Rotas de acesso ao sistema
+ */
 Route::post('/login/access', ['as' => 'login.access', 'uses' => 'Site\LoginController@access']);
 Route::get('/login/destroy', ['as' => 'login.destroy', 'uses' => 'Site\LoginController@logout']);
 
 /**
  *  Rota de verificação do plugin de compartilhamento de tela
  */
-
 Route::get('/getSourceId', function() {
     return File::get(public_path() . '/html/getScreenId.html');
 });
 
 
+/**
+ *  Rota para Rest de turmas e registro de presença
+ */
+Route::get('/rest/listaTurmas', ['as' => 'listaTurmas', 'uses' => 'Site\RestController@listaTurmas']);
+Route::post('/rest/listaPresenca', ['as' => 'listaPresenca', 'uses' => 'Site\RestController@listaPresenca']);
+Route::get('/rest/confirmaListaPresenca', ['as' => 'confirmaListaPresenca', 'uses' => 'Site\RestController@confirmaListaPresenca']);
+
+Route::get('/rest/chamada', ['as' => 'chamada', 'uses' => 'Site\RestController@index']);
+
+/**
+ * Grupo de rotas pós autenticação
+ */
 Route::group(['middleware' => 'auth'], function(){
     /**
      *  Rota de acesso negado
@@ -45,15 +59,14 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('/denied', ['as' => 'denied', 'uses' => 'Site\AccessController@index']);
 
     /**
-     *  Rota de Salas
+     *  Rota de Salas/CRUD de Salas
      */
-
     Route::get('/salas', ['as' => 'salas', 'uses' => 'Site\RoomController@index']);
     Route::post('/salas/salvar', ['as' => 'salas.salva', 'uses' => 'Site\RoomController@save']);
-    Route::post('/salas/update', ['as' => 'salas.update', 'uses' => 'Site\RoomController@update']);
+    Route::post('/salas/update', ['as' => 'salas.update', 'uses' => 'Site\RoomController@update']);    
 
     /**
-     *  Rota de Cadastros
+     *  Rota de CRUD dos recursos gerenciáveis do sistema
      */
 
     //Rotas para o formulário de cadastro de usuários e instituições

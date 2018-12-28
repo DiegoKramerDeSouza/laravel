@@ -532,8 +532,7 @@ class MediaView {
         GeneralHelper.hideit(dom.PRE_APRESENTACAO);
         GeneralHelper.hideit(dom.PRE_LOAD_APRESENTACAO);
         if (!conf.con.LOW_LATENCY) {
-            let addr = `<iframe id="embedded_player" class="embedded-video" src="${ conf.con.SOCKET_PLAYER }?name=${ name }" frameborder="0" allowfullscreen></iframe>`;
-            //let addr = `<iframe id="embedded_player" class="embedded-video" src="https://test.antmedia.io:5443/WebRTCAppEE/play.html?name=${ name }" frameborder="0" allowfullscreen></iframe>`;
+            let addr = `<iframe id="embedded_player" class="embedded-video" src="${ conf.con.SOCKET_PLAYER_SSL }?name=${ name }" frameborder="0" allowfullscreen></iframe>`;
             frame.innerHTML = addr;
         }
         GeneralHelper.showit(dom.DIV_MAIN_VIDEO);
@@ -545,19 +544,10 @@ class MediaView {
         if (conf.con.LOW_LATENCY) this._initNewPlayer(name, dom.REMOTE_VIDEO_ID, media, dom.PLAY_IT);
     }
 
-    _initNewPlayer(name, video, media, btnPlay) {
-
-        let newplayer = new NewerPlayerController(name, video, media);
-        newplayer.startConfig();
-        doc.TAG(btnPlay).onclick = () => newplayer.startPlaying(name);
-        setTimeout(() => $(btnPlay).click(), 2000);
-    }
-
     initParticipantVideo(participant, name) {
 
         let rash = btoa(participant);
-        let addr = `<iframe id="embedded_player_v3" data-active="participant" class="embedded-video" src="${ conf.con.SOCKET_PLAYER_2 }?name=${ rash }" frameborder="0" allowfullscreen></iframe>`;
-        //let addr = `<iframe id="embedded_player_v3" data-active="participant" class="embedded-video" src="https://test.antmedia.io:5443/WebRTCAppEE/play.html?name=${ btoa(rash) }" frameborder="0" allowfullscreen></iframe>`;
+        let addr = `<iframe id="embedded_player_v3" data-active="participant" class="embedded-video" src="${ conf.con.SOCKET_PLAYER_2_SSL }?name=${ rash }" frameborder="0" allowfullscreen></iframe>`;
         let participantName = doc.TAG(dom.PARTICIPATION_NAME);
         participantName.innerHTML = name;
         this._controlEmbeddedVideo(
@@ -578,8 +568,7 @@ class MediaView {
     initScreenVideo(screen, media) {
 
         let rash = btoa(screen);
-        let addr = `<iframe id="embedded_player_v2" data-active="participant" class="embedded-video" src="${ conf.con.SOCKET_PLAYER_2 }?name=${ rash }" frameborder="0" allowfullscreen></iframe>`;
-        //let addr = `<iframe id="embedded_player_v2" data-active="participant" class="embedded-video" src="${ conf.con.SOCKET_PLAYER }?name=dW5kZWZpbmVk" frameborder="0" allowfullscreen></iframe>`;
+        let addr = `<iframe id="embedded_player_v2" data-active="participant" class="embedded-video" src="${ conf.con.SOCKET_PLAYER_2_SSL }?name=${ rash }" frameborder="0" allowfullscreen></iframe>`;
         this._controlEmbeddedVideo(
             addr,
             dom.EMBEDDED_FRAME_II,
@@ -593,6 +582,14 @@ class MediaView {
             this._initNewPlayer(rash, dom.THIRD_VIDEO_ID, media, dom.PLAY_SCREEN);
             GeneralHelper.showit(dom.VIDEO_THIRD, 300);
         }
+    }
+
+    _initNewPlayer(name, video, media, btnPlay) {
+
+        let newplayer = new NewerPlayerController(name, video, media);
+        newplayer.startConfig();
+        doc.TAG(btnPlay).onclick = () => newplayer.startPlaying(name);
+        setTimeout(() => $(btnPlay).click(), 2000);
     }
 
     _controlEmbeddedVideo(content, embedded, container, control, itemSwap, itemMute, layer) {

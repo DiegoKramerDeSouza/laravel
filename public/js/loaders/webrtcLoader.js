@@ -58,9 +58,17 @@ function listenEmbeddedMessages() {
 
     window.addEventListener('message', (event) => {
 
-        if (~event.origin.indexOf(doc.SERVER.MEDIA.URL) || ~event.origin.indexOf(doc.SERVER.MEDIA2.URL) || ~event.origin.indexOf(doc.SERVER.HOME.LOCAL) || ~event.origin.indexOf(doc.SERVER.HOME.SSL)) {
+        if (~event.origin.indexOf(doc.SERVER.MEDIA.URL) ||
+            ~event.origin.indexOf(doc.SERVER.MEDIA2.URL) ||
+            ~event.origin.indexOf(doc.SERVER.MEDIA.SSL) ||
+            ~event.origin.indexOf(doc.SERVER.MEDIA2.SSL) ||
+            ~event.origin.indexOf(doc.SERVER.HOME.LOCAL) ||
+            ~event.origin.indexOf(doc.SERVER.HOME.SSL)) {
 
-            if (~event.origin.indexOf(doc.SERVER.MEDIA.URL) || ~event.origin.indexOf(doc.SERVER.MEDIA2.URL))
+            if (~event.origin.indexOf(doc.SERVER.MEDIA.URL) ||
+                ~event.origin.indexOf(doc.SERVER.MEDIA2.URL) ||
+                ~event.origin.indexOf(doc.SERVER.MEDIA.SSL) ||
+                ~event.origin.indexOf(doc.SERVER.MEDIA2.SSL))
                 webrtc.checkEmbeddedMessages(event.data);
 
             if (~event.origin.indexOf(doc.SERVER.HOME.LOCAL) || ~event.origin.indexOf(doc.SERVER.HOME.SSL)) {

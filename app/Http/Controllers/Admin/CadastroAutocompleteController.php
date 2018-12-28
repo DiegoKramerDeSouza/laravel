@@ -39,7 +39,7 @@ class CadastroAutocompleteController extends Controller
             $result[$value->name] = null;
         }
         header('Content-Type: application/json; charset=utf-8');
-        echo json_encode($result, JSON_UNESCAPED_UNICODE);
+        return json_encode($result, JSON_UNESCAPED_UNICODE);
     }
 
     public function resultAutocomplete($module, $data){

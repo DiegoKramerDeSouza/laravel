@@ -16,6 +16,7 @@ const doc = {
     COOKIE_AUDIO_DEVICE: 'audioDevice',
     COOKIE_LIFETIME: 365,
     COOKIE_VIDEO_DEVICE: 'videoDevice',
+    /* Servidores de mídia med e med2 estão invertidos */
     SERVER: {
         HOME: {
             LOCAL: 'http://localhost',
@@ -23,12 +24,16 @@ const doc = {
             URL: 'http://wtv.lrbtecnologia.com'
         },
         MEDIA: {
-            SSL: 'https://med.lrbtecnologia.com',
-            URL: 'http://med.lrbtecnologia.com'
+            SSL: 'https://med2.lrbtecnologia.com',
+            URL: 'http://med2.lrbtecnologia.com',
+            WS: 'ws://med2.lrbtecnologia.com:5080/WebRTCApp/websocket',
+            WSS: 'wss://med2.lrbtecnologia.com:5443/WebRTCApp/websocket'
         },
         MEDIA2: {
-            SSL: 'https://med2.lrbtecnologia.com',
-            URL: 'http://med2.lrbtecnologia.com'
+            SSL: 'https://med.lrbtecnologia.com',
+            URL: 'http://med.lrbtecnologia.com',
+            WS: 'ws://med.lrbtecnologia.com:5080/WebRTCApp/websocket',
+            WSS: 'wss://med.lrbtecnologia.com:5443/WebRTCApp/websocket'
         },
         SIG: {
             SSL: 'https://sig.lrbtecnologia.com:443/',
@@ -37,7 +42,7 @@ const doc = {
     },
     URL_SALAS_SAVE: `${location.origin}/salas/salvar`,
     URL_SALAS_UPDATE: `${location.origin}/salas/update`,
-    VERSION: "1.1.0.94"
+    VERSION: "1.1.0.95"
 }
 
 const apr = {
@@ -89,6 +94,7 @@ const conf = {
         SET_BAND_LIMIT: false,
         SHARE_DENIED: 'permission-denied',
         SINGLE_CON: false,
+
         SOCKET_DOWNLOAD: doc.SERVER.MEDIA.SSL + ':5443/WebRTCApp/streams/',
         SOCKET_PLAYER: doc.SERVER.MEDIA.URL + ':5080/WebRTCApp/play.html',
         SOCKET_PLAYER_SSL: doc.SERVER.MEDIA.SSL + ':5443/WebRTCApp/play.html',
@@ -98,22 +104,23 @@ const conf = {
 
         SOCKET_REST_SSL: doc.SERVER.MEDIA.SSL + ':5443/WebRTCApp/rest/broadcast/getList/0/10',
         SOCKET_REST_URL: doc.SERVER.MEDIA.URL + ':5080/WebRTCApp/rest/broadcast/getList/0/10',
-        SOCKET_SSL: 'wss://med.lrbtecnologia.com:5443/WebRTCApp/websocket',
-        SOCKET_URL: 'ws://med.lrbtecnologia.com:5080/WebRTCApp/websocket',
+        SOCKET_SSL: doc.SERVER.MEDIA.WSS,
+        SOCKET_URL: doc.SERVER.MEDIA.WS,
 
-        SOCKET_2_SSL: 'wss://med2.lrbtecnologia.com:5443/WebRTCApp/websocket',
-        SOCKET_2_URL: 'ws://med2.lrbtecnologia.com:5080/WebRTCApp/websocket',
+        SOCKET_2_SSL: doc.SERVER.MEDIA2.WSS,
+        SOCKET_2_URL: doc.SERVER.MEDIA2.WS,
 
         STREAM_LOCAL: 'local',
         STREAM_REMOTE: 'remote',
         TK_DETECT: false,
         TK_KEY: 'fhnfigfpkkijpcpfhjaeajmgeelkkila',
-        TK_MSG: 'hello',
+        TK_MSG: 'MSG',
         TK_MSG_SEND: 'test',
         TK_TIME_REQ: (1000 * 15),
         TK_URL: 'http://*/*',
         URL: 'https://sig.lrbtecnologia.com:443/',
-        URL_ADM: 'https://sig.lrbtecnologia.com:443/admin/',
+        URL_ADM: 'https://sig.lrbtecnologia.com:443/admin/'
+
         //URL: 'https://rtcmulticonnection.herokuapp.com:443/',
         //URL: 'https://webrtcweb.com:9001/'
     },
@@ -226,6 +233,8 @@ const dom = {
     CALL_RECEIVE_MIN: '#call-receive-min',
     CALL_TK: '#call-token',
     CAM: '#toggle-camera',
+    CHAMADA: '#chamada',
+    CLASS_LIST: '#btn-open-classlist',
     CITY: '#city',
     CHAT_PANEL: '#chat-panel',
     CHAT_TEXTAREA: '#chat-textarea',

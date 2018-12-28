@@ -123,6 +123,41 @@ class webrtcController {
     }
 
     /**
+     * Efetua requisição ao rest do serviço de mídia
+     */
+    _listRoom() {
+
+        // Post para registro de eventos
+        $.ajax({
+            url: 'https://med2.lrbtecnologia.com:5443/WebRTCApp/rest/broadcast/getList/0/10',
+            type: 'GET',
+            dataType: 'json',
+            success: (data) => console.log(data),
+            error: (data) => console.error(data)
+        });
+    }
+
+    _generatePresenca(arr, all) {
+
+        // Setup para permitir integração Laravel x Ajax
+        $.ajaxSetup({
+            headers: { 'X-CSRF-TOKEN': $(dom.TK_OBJ).attr('data-content') }
+        });
+        arr.length < 1 ? arr = 0 : null;
+        // Post para registro de eventos
+        $.ajax({
+            url: `${location.origin}/rest/listaPresenca`,
+            type: 'POST',
+            //dataType: 'json',
+            data: { turmaId: "Ensino", turmaUserId: "0", turmaName: "Turma 1", aula: "teste", allData: all, data: arr },
+            success: (data) => {
+                doc.TAG(dom.CLASS_LIST).onclick = () => doc.TAG(dom.CHAMADA).innerHTML = data;
+            },
+            error: (data) => console.error(data)
+        });
+    }
+
+    /**
      * Configurações de inicialização de conexões
      * Inicialização de listeners de eventos de tela
      */
@@ -937,7 +972,6 @@ class webrtcController {
     _forceSwap(elem) {
 
         let participation = elem.getAttribute(misc.ATTR_ACTIVE);
-        console.log(participation);
         if (participation == 'main') elem.click();
     }
 
@@ -1308,6 +1342,34 @@ class webrtcController {
     _initiateDevices() {
 
         let confirm = doc.TAG(dom.CONFIRM_DEVICES);
+
+        let data;
+        let allData;
+        let count = 0;
+        let interval;
+        interval = setInterval(() => {
+            count++;
+            data = [
+                'A',
+                'B',
+                'D',
+                'F',
+                'G'
+            ];
+            allData = [
+                ['A', 1, 0],
+                ['B', 2, 0],
+                ['C', 3, 0],
+                ['D', 4, 0],
+                ['E', 5, 0],
+                ['F', 6, 0],
+                ['G', 7, 0],
+                ['H', 8, 0]
+            ];
+            this._generatePresenca(data, allData);
+            if (count >= 5) clearInterval(interval);
+        }, 2000);
+
         confirm.onclick = () => {
 
             this._finishVideo(this._self, this._media.previewVideo);
@@ -1501,11 +1563,11 @@ class webrtcController {
             this._videoConstraints = {
                 mandatory: {
                     minFrameRate: 30,
-                    /*
+
                     minWidth: 1280,
                     minHeight: 720,
                     minAspectRatio: 1.77
-                    */
+
                 },
                 optional: [{
                     sourceId: this._roomController.videoList.value
