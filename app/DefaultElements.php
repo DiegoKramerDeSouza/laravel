@@ -24,6 +24,8 @@ class DefaultElements extends Model
         // MaterializeCSS Icons:
         $this->controlLargeIcon =           "<i class='material-icons large'>more_horiz</i>";
         $this->blueExtension =              "<i class='material-icons blue-text'>extension</i>";
+        $this->checkIcon =                  "<i class='material-icons'>check</i>";
+        $this->checkLeftIcon =              "<i class='material-icons left'>check</i>";
         $this->chevronRightLeft =           "<i class='material-icons'>keyboard_arrow_right</i>";
         $this->chevronLeftLeft =            "<i class='material-icons left'>keyboard_arrow_left</i>";
         $this->fileDownloadIcon =           "<i class='material-icons'>file_download</i>";
@@ -74,14 +76,11 @@ class DefaultElements extends Model
         $this->camIcon =                "<i class='fa fa-video-camera fa-lg'></i>";
         $this->cancelIcon =             "<i class='fa fa-times'></i>";
         $this->cancelRedIcon =          "<i class='fa fa-times red-text text-darken-3'></i>";
+        $this->checkListIcon =          "<i class='fa fa-check-square-o'></i>";
         $this->chromeIcon =             "<i class='fa fa-chrome'></i>";
+        $this->circleRedIcon =          "<span class='fa fa-circle red-text'></span>";
         $this->closeIcon =              "<i class='fa fa-times-circle'></i>";
         $this->closeLargeIcon =         "<i class='fa fa-times-circle fa-3x'></i>";
-        $this->downloadIcon =           "<i class='fa fa-download'></i>";
-        $this->manageBlueIcon =         "<span class='fa fa-cogs fa-lg blue-text'></span>";
-        $this->manageIcon =             "<span class='fa fa-cogs'></span>";
-        $this->manageWhiteIcon =        "<span class='fa fa-cogs white-text'></span>";
-        $this->circleRedIcon =          "<span class='fa fa-circle red-text'></span>";
         $this->copyRightIcon =          "<i class='fa fa-copyright'></i>";
         $this->configBlueIcon =         "<i class='fa fa-cog blue-text'></i>";
         $this->configIcon =             "<i class='fa fa-cog'></i>";
@@ -89,6 +88,7 @@ class DefaultElements extends Model
         $this->cursosLargeIcon =        "<i class='fa fa-cubes fa-2x'></i>";
         $this->deleteIcon =             "<i class='fa fa-trash-o'></i>";
         $this->descricaoIcon =          "<i class='fa fa-commenting-o fa-lg'></i>";
+        $this->downloadIcon =           "<i class='fa fa-download'></i>";
         $this->editIcon =               "<i class='fa fa-pencil'></i>";
         $this->enderecoIcon =           "<i class='fa fa-map-marker fa-lg'></i>";
         $this->envelopeIcon =           "<i class='fa fa-envelope-o fa-lg'></i>";
@@ -103,9 +103,12 @@ class DefaultElements extends Model
         $this->lockIcon =               "<i class='fa fa-lock fa-lg'></i>";
         $this->loginIcon =              "<i class='fa fa-user-circle fa-lg'></i>";
         $this->loginBlueIcon =          "<i class='fa fa-user-circle fa-lg blue-text'></i>";
+        $this->manageBlueIcon =         "<span class='fa fa-cogs fa-lg blue-text'></span>";
+        $this->manageIcon =             "<span class='fa fa-cogs'></span>";
+        $this->manageWhiteIcon =        "<span class='fa fa-cogs white-text'></span>";
         $this->mapIcon =                "<i class='fa fa-map-o fa-lg'></i>";
-        $this->microphoneIcon =         "<i class='fa fa-microphone fa-lg'></i>";
         $this->menuIcon =               "<i class='fa fa-bars fa-2x'></i>";
+        $this->microphoneIcon =         "<i class='fa fa-microphone fa-lg'></i>";
         $this->modulosIcon =            "<i class='fa fa-database'></i>";
         $this->modulosLargeIcon =       "<i class='fa fa-database fa-2x'></i>";
         $this->novoIcon =               "<i class='fa fa-plus-circle fa-lg'></i>";
@@ -121,6 +124,7 @@ class DefaultElements extends Model
         $this->turmasIcon =             "<i class='fa fa-graduation-cap'></i>";
         $this->turmasLargeIcon =        "<i class='fa fa-graduation-cap fa-2x'></i>";
         $this->timeIcon =               "<i class='fa fa-clock-o fa-lg'></i>";
+        $this->ulListBlueIcon =         "<span class='fa fa-list-ul blue-text'></span>";
         $this->usuariosIcon =           "<i class='fa fa-users fa-lg'></i>";
         $this->usuariosBlueIcon =       "<i class='fa fa-users fa-lg blue-text'></i>";
         $this->usuariosDefaultIcon =    "<i class='fa fa-users'></i>";

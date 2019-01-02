@@ -23,12 +23,20 @@ class RoomController extends Controller
         $streamPage = true;
         $userid = Auth::user()->id;
         $escolas = Escola::all();
-        if(Auth::user()->type == 1) $turmas = Turma::where('user_id', $userid)->first();
-        else $turmas = Turma::all();
+        if(Auth::user()->type == 1){
+            $turmas = Turma::where('user_id', $userid)->first();
+            $turmaId = $turmas->id;
+        } else {
+            $turmas = Turma::all();
+            $turmaId = $userid;
+        }
         
         $allmodulos = Modulo::all()->toArray();
         $modulos = array();
         foreach($allmodulos as $modulo) $modulos[$modulo['id']] = $modulo['name'];
+        
+        session(['turmaId' => $turmaId]);
+        session(['turmaName' => Auth::user()->name]);
         
         $cursos = Curso::all();
         if(session()->has('viewers')){

@@ -37,6 +37,7 @@
     opacity: 1;
 }
 
+#listaChamada,
 #chat-textarea,
 #exp-files {
     overflow-y: auto;
@@ -44,6 +45,7 @@
     overflow-x: hidden;
 }
 
+#listaChamada::-webkit-scrollbar-track,
 #chat-textarea::-webkit-scrollbar-track,
 #connected-users-list::-webkit-scrollbar-track,
 #exp-files::-webkit-scrollbar-track,
@@ -53,6 +55,7 @@ body::-webkit-scrollbar-track {
     transition-duration: 0.4s;
 }
 
+#listaChamada::-webkit-scrollbar,
 #chat-textarea::-webkit-scrollbar,
 #connected-users-list::-webkit-scrollbar,
 #exp-files::-webkit-scrollbar,
@@ -63,6 +66,7 @@ body::-webkit-scrollbar {
     background: transparent;
 }
 
+#listaChamada::-webkit-scrollbar-thumb,
 #chat-textarea::-webkit-scrollbar-thumb,
 #connected-users-list::-webkit-scrollbar-thumb,
 #exp-files::-webkit-scrollbar-thumb,
@@ -73,6 +77,7 @@ body::-webkit-scrollbar-thumb {
     transition-duration: 0.4s;
 }
 
+#listaChamada::-webkit-scrollbar-thumb:hover,
 #chat-textarea::-webkit-scrollbar-thumb:hover,
 #connected-users-list::-webkit-scrollbar-thumb:hover,
 #exp-files::-webkit-scrollbar-thumb:hover,

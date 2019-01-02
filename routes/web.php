@@ -43,11 +43,10 @@ Route::get('/getSourceId', function() {
 /**
  *  Rota para Rest de turmas e registro de presença
  */
+Route::post('/rest/chamada', ['as' => 'chamada', 'uses' => 'Site\RestController@index']);
 Route::get('/rest/listaTurmas', ['as' => 'listaTurmas', 'uses' => 'Site\RestController@listaTurmas']);
 Route::post('/rest/listaPresenca', ['as' => 'listaPresenca', 'uses' => 'Site\RestController@listaPresenca']);
-Route::get('/rest/confirmaListaPresenca', ['as' => 'confirmaListaPresenca', 'uses' => 'Site\RestController@confirmaListaPresenca']);
-
-Route::get('/rest/chamada', ['as' => 'chamada', 'uses' => 'Site\RestController@index']);
+Route::post('/rest/confirmaPresenca', ['as' => 'confirmaPresenca', 'uses' => 'Site\RestController@confirmaPresenca']);
 
 /**
  * Grupo de rotas pós autenticação

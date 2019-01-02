@@ -106,16 +106,17 @@
 
 <div id='listaChamada' class='modal '>
     <div class='modal-content'>
-        <h5>
-            {!! $default->usuariosBlueIcon !!} Espectadores Presentes:
-            <span class='right'>
-                <a class='modal-close'>
-                    {!! $default->cancelRedIcon !!}
-                </a>
-            </span>
-        </h5>
-        <div class='divider'></div>
-        <div id='chamada'>
+        <div class='row'>
+            <h5>
+                {!! $default->ulListBlueIcon !!} Lista de Espectadores:
+                <span class='right'>
+                    <a class='modal-close'>
+                        {!! $default->cancelRedIcon !!}
+                    </a>
+                </span>
+            </h5>
+        </div>
+        <div id='attendance' class='d-none'>
             <!-- Gera listagem de presença -->
         </div>
         <br>

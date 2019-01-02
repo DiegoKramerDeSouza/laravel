@@ -11,6 +11,7 @@ class RoomController {
         this._roomView = new RoomView();
 
         this._roomId = doc.TAG(dom.ROOM);
+        this._roomConId = doc.TAG(dom.CON_ID);
         this._inputMateria = doc.TAG(dom.MATERIA);
         this._inputAssunto = doc.TAG(dom.ASSUNTO);
         this._inputName = doc.TAG(dom.NAME);
@@ -48,7 +49,7 @@ class RoomController {
 
     initiateRoom() {
 
-        return new Room(this._inputName.value, this._inputMateria.value, this._inputAssunto.value, this.createList(), this._createHash());
+        return new Room(this._inputName.value, this._roomConId.value, this._inputMateria.value, this._inputAssunto.value, this.createList(), this._createHash());
     }
 
     cleanRoomList(list) {

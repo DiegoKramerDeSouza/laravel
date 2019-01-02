@@ -107,19 +107,12 @@ class webrtcController {
      */
     _saveRoom(postData, targetUrl) {
 
-        // Setup para permitir integração Laravel x Ajax 
-        $.ajaxSetup({
-            headers: { 'X-CSRF-TOKEN': $(dom.TK_OBJ).attr('data-content') }
-        });
-        // Post para registro de eventos
-        $.ajax({
-            url: targetUrl,
-            type: 'POST',
-            data: postData,
-            dataType: 'json',
-            success: (data) => this._alerta.initiateMessage(conf.message.SUCCESS_SAVE_CLASS),
-            error: (data) => this._alerta.initiateMessage(conf.message.FAIL_SAVE_CLASS)
-        });
+        let url = targetUrl;
+        let type = 'POST';
+        let data = postData;
+        let dataType = 'json';
+        let req = new RequestController(url, type, data, dataType);
+        req.saveRoom();
     }
 
     /**
@@ -127,34 +120,63 @@ class webrtcController {
      */
     _listRoom() {
 
-        // Post para registro de eventos
-        $.ajax({
-            url: 'https://med2.lrbtecnologia.com:5443/WebRTCApp/rest/broadcast/getList/0/10',
-            type: 'GET',
-            dataType: 'json',
-            success: (data) => console.log(data),
-            error: (data) => console.error(data)
-        });
+        let url = 'https://med2.lrbtecnologia.com:5443/WebRTCApp/rest/broadcast/getList/0/10';
+        let type = 'GET';
+        let dataType = 'json';
+        let req = new RequestController(url, type, null, dataType);
+        req.listRoom();
     }
 
-    _generatePresenca(arr, all) {
+    /**
+     * Efetua a requisição para a construção da lista de espectadores presentes na apresentação
+     * @param { Array Int } arr 
+     * @param { Array list } all 
+     * @param { Int } turmaId 
+     * @param { Int } aula 
+     */
+    _generateAttendance(arr, all, turmaId, aula) {
 
-        // Setup para permitir integração Laravel x Ajax
-        $.ajaxSetup({
-            headers: { 'X-CSRF-TOKEN': $(dom.TK_OBJ).attr('data-content') }
-        });
-        arr.length < 1 ? arr = 0 : null;
-        // Post para registro de eventos
-        $.ajax({
-            url: `${location.origin}/rest/listaPresenca`,
-            type: 'POST',
-            //dataType: 'json',
-            data: { turmaId: "Ensino", turmaUserId: "0", turmaName: "Turma 1", aula: "teste", allData: all, data: arr },
-            success: (data) => {
-                doc.TAG(dom.CLASS_LIST).onclick = () => doc.TAG(dom.CHAMADA).innerHTML = data;
-            },
-            error: (data) => console.error(data)
-        });
+        GeneralHelper.hideit(dom.CHAMADA);
+        let url = `${location.origin}/rest/listaPresenca`;
+        let type = 'POST';
+        let data = { turmaId: turmaId, aula: aula, allData: all, presentes: arr };
+        let req = new RequestController(url, type, data, null);
+        req.generateAttendance();
+    }
+
+    /**
+     * Simula requisições Ajax
+     */
+    _simulaRequest() {
+
+        doc.TAG(dom.CLASS_LIST).onclick = () => {
+
+            let especPresentes;
+            let total;
+            let turmaId;
+            let aula;
+
+            if (this._room) {
+                aula = this._room.assunto;
+                turmaId = this._room.con;
+            } else {
+                aula = 'Aula de teste';
+                turmaId = 11;
+            }
+
+            especPresentes = [];
+            total = [
+                ['Aasdfg', 1],
+                ['Basdfg', 2],
+                ['Casdfg', 3],
+                ['Dasdfg', 4],
+                ['Easdfg', 9],
+                ['Fasdfg', 6],
+                ['Gasdfg', 7],
+                ['Hasdfg', 5]
+            ];
+            this._generateAttendance(especPresentes, total, turmaId, aula);
+        }
     }
 
     /**
@@ -593,6 +615,8 @@ class webrtcController {
     _openPreStream(connection, roomid, isLocal) {
 
         console.info('ABERTA A CONEXÃO: ', connection, roomid, connection.extra);
+
+        this._simulaRequest();
 
         let index;
         this._roomInfo.inRoom.value = roomid;
@@ -1343,32 +1367,7 @@ class webrtcController {
 
         let confirm = doc.TAG(dom.CONFIRM_DEVICES);
 
-        let data;
-        let allData;
-        let count = 0;
-        let interval;
-        interval = setInterval(() => {
-            count++;
-            data = [
-                'A',
-                'B',
-                'D',
-                'F',
-                'G'
-            ];
-            allData = [
-                ['A', 1, 0],
-                ['B', 2, 0],
-                ['C', 3, 0],
-                ['D', 4, 0],
-                ['E', 5, 0],
-                ['F', 6, 0],
-                ['G', 7, 0],
-                ['H', 8, 0]
-            ];
-            this._generatePresenca(data, allData);
-            if (count >= 5) clearInterval(interval);
-        }, 2000);
+        this._simulaRequest();
 
         confirm.onclick = () => {
 

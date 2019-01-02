@@ -40,6 +40,8 @@ const doc = {
             URL: 'http://sig.lrbtecnologia.com:80/'
         }
     },
+    URL_ATTENDANCE_SEND: 'URL PARA REGISTRO DE CHAMADA!',
+    URL_ATTENDANCE_UPDATE: `${location.origin}/rest/confirmaPresenca`,
     URL_SALAS_SAVE: `${location.origin}/salas/salvar`,
     URL_SALAS_UPDATE: `${location.origin}/salas/update`,
     VERSION: "1.1.0.95"
@@ -210,7 +212,9 @@ const conf = {
         DEVICES_NOT_FOUND: ['<i class="material-icons left">close</i>', ' Dispositívo de áudio e/ou vídeo não encontrados!', apr.msg.ERROR_MSG_COLOR],
         DEVICES_NOT_ALLOWED: ['<i class="material-icons left">close</i>', ' Acesso negado ao microfone e/ou à camera!', apr.msg.ERROR_MSG_COLOR],
         DEVICES_REQUIRED: ['<i class="material-icons left">close</i>', ' Áudio/Vídeo requeridos', apr.msg.ERROR_MSG_COLOR],
-
+        ATTENDANCE_CONFIRM: ['<i class="fa fa-check-square-o"></i>', 'Confirme os espectadores presentes!', apr.msg.LOCAL_MSG_COLOR],
+        ATTENDANCE_SEND_SUCCESS: ['<i class="fa fa-check"></i>', 'Lista enviada com sucesso!', apr.msg.DB_MSG_COLOR],
+        ATTENDANCE_CONFIRM_SUCCESS: ['<i class="fa fa-check"></i>', 'Confirmação realizada com sucesso!', apr.msg.LOCAL_MSG_COLOR],
     }
 }
 
@@ -219,6 +223,9 @@ const dom = {
     ADDRESS: '#address',
     ALERT_SHARE: '#alert-share',
     ASSUNTO: '#assunto',
+    ATTENDANCE_ATTEND: '.attendance_list_attend',
+    ATTENDANCE_CLASS: '.attendance_list_class',
+    ATTENDANCE_ID: '.attendance_list_id',
     BG_DARK: '#bgdark',
     BROADCASTER: '#broadcaster',
     BROADCASTING_INFO: '#broadcastingInfo',
@@ -233,7 +240,8 @@ const dom = {
     CALL_RECEIVE_MIN: '#call-receive-min',
     CALL_TK: '#call-token',
     CAM: '#toggle-camera',
-    CHAMADA: '#chamada',
+    CHAMADA: '#attendance',
+    CHANGE_ATTEND: '.changeAttend',
     CLASS_LIST: '#btn-open-classlist',
     CITY: '#city',
     CHAT_PANEL: '#chat-panel',
@@ -242,6 +250,9 @@ const dom = {
     CLASS_TITLE: '#class-title',
     CLOSE_PARTICIPATION: '#close-participation',
     COLLAPSIBLE: '.collapsible',
+    CON_ID: '#con-id',
+    CONFIRM_ATTENDANCE: '#confirmAttendance',
+    CONFIRM_ATTENDANCE_ID: 'confirmAttendance',
     CONFIRM_DEVICES: '#confirmDevices',
     CONNECTION_LIST: '#connection-list',
     COUNT_RECEIVE_FILES: '#count-receive-files',
@@ -454,7 +465,10 @@ const misc = {
     HILIGHT_COLOR: 'cyan',
     OFF_COLOR: 'red',
     ON_COLOR: 'blue',
-    TURNOFF_COLOR: 'black'
+    TURNOFF_COLOR: 'black',
+    /*Elementos HTML */
+    ATTEND_IN: '<span class="green-text">Presente</span>',
+    ATTEND_OUT: '<span class="red-text text-darken-3">Ausente</span>'
 }
 
 /*Configurações gerais carregadas via JSON */
