@@ -77,8 +77,6 @@
     </div>
 </div>
 
-<button id='btn-open-classlist' class='btn teal white-text waves-effect waves-light modal-trigger' href='#listaChamada'>Chamada</button>
-
 <!-- Nome da conexão, tipo e nome do usuário -->
 <input type='hidden' id='con-id' name='con-id' value='{{ session()->get('turmaId') }}' disabled readonly />
 <input type='hidden' id='room-id' name='room-id' value='{{ Auth::user()->login }}-{{ Auth::user()->name }}-{!! rand(0,999) !!}' disabled readonly />

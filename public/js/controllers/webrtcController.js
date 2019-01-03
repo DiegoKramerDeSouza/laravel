@@ -128,54 +128,39 @@ class webrtcController {
     }
 
     /**
-     * Efetua a requisição para a construção da lista de espectadores presentes na apresentação
-     * @param { Array Int } arr 
-     * @param { Array list } all 
+     * Procedimento de solicitação do gerenciador de listas de espectadores
      * @param { Int } turmaId 
-     * @param { Int } aula 
+     * @param { String } aula 
      */
-    _generateAttendance(arr, all, turmaId, aula) {
+    _requestAttendance(turmaId, aula) {
 
         GeneralHelper.hideit(dom.CHAMADA);
-        let url = `${location.origin}/rest/listaPresenca`;
+        let url = `${location.origin}/rest/testaPresenca`;
         let type = 'POST';
-        let data = { turmaId: turmaId, aula: aula, allData: all, presentes: arr };
-        let req = new RequestController(url, type, data, null);
-        req.generateAttendance();
+        let dataType = 'json';
+        let data = { turmaId: turmaId, aula: aula };
+        let req = new RequestController(url, type, data, dataType);
+        req.requestAttendance(turmaId, aula);
     }
 
     /**
-     * Simula requisições Ajax
+     * Listener de controle de requisições para lista de espectadores presentes
      */
-    _simulaRequest() {
+    _controlAttendanceRequest() {
 
         doc.TAG(dom.CLASS_LIST).onclick = () => {
 
-            let especPresentes;
-            let total;
-            let turmaId;
-            let aula;
+            //if (!this._room) return;
+            //let aula = this._room.assunto;
+            //let turmaId = this._room.con;
 
+            let aula = 'Aula de teste';
+            let turmaId = 11;
             if (this._room) {
                 aula = this._room.assunto;
                 turmaId = this._room.con;
-            } else {
-                aula = 'Aula de teste';
-                turmaId = 11;
             }
-
-            especPresentes = [];
-            total = [
-                ['Aasdfg', 1],
-                ['Basdfg', 2],
-                ['Casdfg', 3],
-                ['Dasdfg', 4],
-                ['Easdfg', 9],
-                ['Fasdfg', 6],
-                ['Gasdfg', 7],
-                ['Hasdfg', 5]
-            ];
-            this._generateAttendance(especPresentes, total, turmaId, aula);
+            this._requestAttendance(turmaId, aula);
         }
     }
 
@@ -616,7 +601,7 @@ class webrtcController {
 
         console.info('ABERTA A CONEXÃO: ', connection, roomid, connection.extra);
 
-        this._simulaRequest();
+        this._controlAttendanceRequest();
 
         let index;
         this._roomInfo.inRoom.value = roomid;
@@ -1367,7 +1352,7 @@ class webrtcController {
 
         let confirm = doc.TAG(dom.CONFIRM_DEVICES);
 
-        this._simulaRequest();
+        this._controlAttendanceRequest();
 
         confirm.onclick = () => {
 

@@ -106,3 +106,4 @@
             {!! $default->videocamLargeIcon !!}
         </a>
     </div>
+    

@@ -47,6 +47,7 @@ Route::post('/rest/chamada', ['as' => 'chamada', 'uses' => 'Site\RestController@
 Route::get('/rest/listaTurmas', ['as' => 'listaTurmas', 'uses' => 'Site\RestController@listaTurmas']);
 Route::post('/rest/listaPresenca', ['as' => 'listaPresenca', 'uses' => 'Site\RestController@listaPresenca']);
 Route::post('/rest/confirmaPresenca', ['as' => 'confirmaPresenca', 'uses' => 'Site\RestController@confirmaPresenca']);
+Route::post('/rest/testaPresenca', ['as' => 'testaPresenca', 'uses' => 'Site\RestController@testaPresenca']);
 
 /**
  * Grupo de rotas pós autenticação

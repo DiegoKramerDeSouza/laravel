@@ -40,6 +40,7 @@ const doc = {
             URL: 'http://sig.lrbtecnologia.com:80/'
         }
     },
+    URL_ATTENDANCE_REQ: 'URL PARA REQUISITAR A CHAMADA!',
     URL_ATTENDANCE_SEND: 'URL PARA REGISTRO DE CHAMADA!',
     URL_ATTENDANCE_UPDATE: `${location.origin}/rest/confirmaPresenca`,
     URL_SALAS_SAVE: `${location.origin}/salas/salvar`,
@@ -215,6 +216,8 @@ const conf = {
         ATTENDANCE_CONFIRM: ['<i class="fa fa-check-square-o"></i>', 'Confirme os espectadores presentes!', apr.msg.LOCAL_MSG_COLOR],
         ATTENDANCE_SEND_SUCCESS: ['<i class="fa fa-check"></i>', 'Lista enviada com sucesso!', apr.msg.DB_MSG_COLOR],
         ATTENDANCE_CONFIRM_SUCCESS: ['<i class="fa fa-check"></i>', 'Confirmação realizada com sucesso!', apr.msg.LOCAL_MSG_COLOR],
+        ATTENDANCE_SEND_FAIL: ['<i class="material-icons left">close</i>', 'Falha ao enviar listagem!', apr.msg.ERROR_MSG_COLOR],
+        ATTENDANCE_CONFIRM_FAIL: ['<i class="material-icons left">close</i>', 'Falha ao confirmar lstagem!', apr.msg.ERROR_MSG_COLOR],
     }
 }
 

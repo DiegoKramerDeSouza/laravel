@@ -80,4 +80,24 @@ class RestController extends Controller
         return json_encode(session()->get('classList'), JSON_UNESCAPED_UNICODE);
     }
 
+    public function testaPresenca(Request $req){
+
+        $turma = $req->turmaId;
+        $aula = $req->aula;
+        // Dados coletados
+        $especPresentes = [];
+        $total = [
+                    ['Aasdfg', 1],
+                    ['Basdfg', 2],
+                    ['Casdfg', 3],
+                    ['Dasdfg', 4],
+                    ['Easdfg', 9],
+                    ['Fasdfg', 6],
+                    ['Gasdfg', 7],
+                    ['Hasdfg', 5]
+                ];
+        $json = ['presentes' => $especPresentes, 'total' => $total];
+        return json_encode($json, JSON_UNESCAPED_UNICODE);;
+    }
+
 }
