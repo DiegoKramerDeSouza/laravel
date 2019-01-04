@@ -78,15 +78,18 @@ class RoomView {
         return this._roomCard;
     }
 
-    setRoomCard(moderatorId, label, container, obj, valid) {
+    setRoomCard(moderatorId, label, container, obj, type) {
 
         container.innerHTML = label;
         container.className = "card-panel hoverable";
         obj.id = moderatorId;
         obj.title = 'Acessar sala';
         obj.innerHTML = misc.ICON_PLAY;
-        obj.className = 'btn-floating room-enter blue darken-1 modal-trigger';
-        obj.href = "#msg-informa-espectadores";
+        obj.className = 'btn-floating room-enter blue darken-1 ';
+        if (type == 0) {
+            obj.className += 'modal-trigger';
+            obj.href = "#msg-informa-espectadores";
+        }
         this._roomList.appendChild(container);
         doc.ID('_' + moderatorId).appendChild(obj);
     }

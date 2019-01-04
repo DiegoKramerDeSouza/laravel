@@ -62,8 +62,8 @@ Route::group(['middleware' => 'auth'], function(){
      *  Rota de Salas/CRUD de Salas
      */
     Route::get('/salas', ['as' => 'salas', 'uses' => 'Site\RoomController@index']);
-    Route::post('/salas/salvar', ['as' => 'salas.salva', 'uses' => 'Site\RoomController@save']);
-    Route::post('/salas/update', ['as' => 'salas.update', 'uses' => 'Site\RoomController@update']);    
+    Route::post('/rest/salas/salvar', ['as' => 'salas.salva', 'uses' => 'Site\RoomController@save']);
+    Route::post('/rest/salas/update', ['as' => 'salas.update', 'uses' => 'Site\RoomController@update']);    
 
     /**
      *  Rota de CRUD dos recursos gerenciáveis do sistema

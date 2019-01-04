@@ -19,16 +19,17 @@ class RestController extends Controller
         $turmaName = session()->get('turmaName');
         $aula = session()->get('aula');
         $data = session()->get('classList');
+        $tema = session()->get('tema');
         $allData = session()->get('allClassList');
         
-        return view('salas.chamada', compact('turmaId', 'turmaName', 'aula', 'allData', 'found'));
+        return view('salas.chamada', compact('turmaId', 'turmaName', 'aula', 'tema', 'allData', 'found'));
     }
 
     public function listaTurmas(){
 
         $turmas = Turma::all();
         $json = json_encode($turmas, JSON_UNESCAPED_UNICODE);
-        dd(session()->get('classList'));
+        //dd(session()->get('classList'));
         return $json;
     }
 
@@ -38,6 +39,7 @@ class RestController extends Controller
         $turmaId = $req->turmaId;
         $aula = $req->aula;
         $data = $req->presentes;
+        $tema = $req->tema;
         $allData = $req->allData;
 
         $userid = Auth::user()->id;
@@ -46,8 +48,7 @@ class RestController extends Controller
             $turma = Turma::where('user_id', $userid)->first();
             $turmaUserId = $turma->id;
         } else {
-            //$turmaUserId = -1;
-            $turmaUserId = $userid;
+            $turmaUserId = -1;
         }
         $turmaName = $user->name;
         
@@ -67,10 +68,11 @@ class RestController extends Controller
             
             $found = true;
             session(['aula' => $aula]);
+            session(['tema' => $tema]);
             session(['allClassList' => $allData]);
         }
 
-        $htmlView = view('salas.chamada', compact('turmaId', 'turmaName', 'aula', 'allData', 'found'));
+        $htmlView = view('salas.chamada', compact('turmaId', 'turmaName', 'aula', 'tema', 'allData', 'found'));
         return $htmlView->render();
     }
 
@@ -84,7 +86,7 @@ class RestController extends Controller
 
         $turma = $req->turmaId;
         $aula = $req->aula;
-        // Dados coletados
+        // Simulação de Dados coletados
         $especPresentes = [];
         $total = [
                     ['Aasdfg', 1],
@@ -97,7 +99,7 @@ class RestController extends Controller
                     ['Hasdfg', 5]
                 ];
         $json = ['presentes' => $especPresentes, 'total' => $total];
-        return json_encode($json, JSON_UNESCAPED_UNICODE);;
+        return json_encode($json, JSON_UNESCAPED_UNICODE);
     }
 
 }

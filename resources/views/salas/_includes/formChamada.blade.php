@@ -7,8 +7,13 @@
                     <span class='card-title'>
                         <b class='blue-text'>Turma:</b> {{ $turmaName }}
                     </span>
-                    <b class='blue-text'>Aula:</b> {{ $aula }}
-                    <div class='divider'></div>
+                    <div class='col s12 m6 truncate' title='{{ $tema }}'>
+                        <b class='blue-text'>Tema:</b> {{ $tema }}
+                    </div>
+                    <div class='col s12 m6 truncate' title='{{ $aula }}'>
+                        <b class='blue-text'>Aula:</b> {{ $aula }}
+                    </div>
+                    <div class='col s12 divider'></div>
                 </div>
                 <div class='card-content col s12'>
                     <table class='striped'>

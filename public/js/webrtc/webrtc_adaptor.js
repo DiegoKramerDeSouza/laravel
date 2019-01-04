@@ -552,7 +552,7 @@ function WebRTCAdaptor(initialValues) {
         thiz.remotePeerConnection[streamId].addIceCandidate(candidate)
             .then(function(response) {
                 if (thiz.debug) {
-                    console.log("Candidate is added for stream " + streamId);
+                    console.log("Candidate is added for stream " + streamId, thiz.mediaConstraints.video);
                 }
             })
             .catch(function(error) {

@@ -16,7 +16,9 @@ class RequestController {
     /**
      * Chamada de procedimento de inserção/atualização de dados de salas criadas
      */
-    saveRoom() {
+    saveRoom(req) {
+
+        if (req) this._request = req;
 
         // Setup para permitir integração Laravel x Ajax 
         $.ajaxSetup({
@@ -49,15 +51,14 @@ class RequestController {
 
     /**
      * Chamada de procedimento para criação da lista de espectadores presentes
-     * @param { Int } turmaId 
-     * @param { String } aula 
      */
-    requestAttendance(turmaId, aula) {
+    requestAttendance() {
 
         // Setup para permitir integração Laravel x Ajax
         $.ajaxSetup({
             headers: this._request.header
         });
+        console.log(this._request.data);
         // Post para registro de eventos
         $.ajax({
             url: this._request.url,
@@ -66,7 +67,7 @@ class RequestController {
             data: this._request.data,
             success: (data) => {
                 console.log(data);
-                this._createAttendance(data.presentes, data.total, turmaId, aula);
+                this._createAttendance(data.presentes, data.total, this._request.data.turmaId, this._request.data.aula, this._request.data.tema);
             },
             error: (data) => {
                 console.error(data);
@@ -82,12 +83,12 @@ class RequestController {
      * @param { Int } turmaId 
      * @param { Int } aula 
      */
-    _createAttendance(arr, all, turmaId, aula) {
+    _createAttendance(arr, all, turmaId, aula, tema) {
 
         GeneralHelper.hideit(dom.CHAMADA);
         let url = `${location.origin}/rest/listaPresenca`;
         let type = 'POST';
-        let data = { turmaId: turmaId, aula: aula, allData: all, presentes: arr };
+        let data = { turmaId: turmaId, aula: aula, tema: tema, allData: all, presentes: arr };
         let req = new Request(url, type, data, null);
         this._generateAttendance(req);
     }
@@ -105,7 +106,7 @@ class RequestController {
             headers: req.header
         });
         data.presentes.length < 1 ? data.presentes = [null] : null;
-        console.log(data.presentes);
+        console.log(data);
         // Post para registro de eventos
         $.ajax({
             url: req.url,
@@ -154,16 +155,27 @@ class RequestController {
             allUsers.push(item);
             if (attend) attendUsers.push(id);
         }
-        console.log(allUsers, attendUsers);
-
-        let url = doc.URL_ATTENDANCE_UPDATE;
+        let req;
+        let url;
+        let data;
         let type = 'POST';
         let dataType = 'json';
-        let data = { presentes: attendUsers };
+        let count = attendUsers.length;
+        let moderator = doc.TAG(dom.IN_ROOM).value;
 
-        let req = new Request(url, type, data, dataType);
+        // Atualiza lista de presença
+        url = doc.URL_ATTENDANCE_UPDATE;
+        data = { presentes: attendUsers };
+        req = new Request(url, type, data, dataType);
         this._confirmSendList(req, false);
 
+        // Atualiza quantidade de espectadores
+        url = doc.URL_SALAS_UPDATE;
+        data = { turmaHash: moderator, numViews: count };
+        req = new Request(url, type, data, dataType);
+        this.saveRoom(req);
+
+        // Envia listagem de espectadores
         url = doc.URL_ATTENDANCE_SEND;
         data = { turmaId: turma, data: allUsers };
         req = new Request(url, type, data, dataType);

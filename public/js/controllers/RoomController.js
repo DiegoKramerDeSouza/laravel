@@ -62,10 +62,9 @@ class RoomController {
         return this._roomView.createRoomCard(classe, assunto, apresentador, viwer, moderador);
     }
 
-    initiateRoomCard(moderatorId, label, container, obj) {
+    initiateRoomCard(moderatorId, label, container, obj, type) {
 
-        //this._roomView.setRoomCard(moderatorId, label, container, obj, this.checkViews());
-        this._roomView.setRoomCard(moderatorId, label, container, obj);
+        this._roomView.setRoomCard(moderatorId, label, container, obj, type);
     }
 
     noRooms() {

@@ -120,7 +120,7 @@ class webrtcController {
      */
     _listRoom() {
 
-        let url = 'https://med2.lrbtecnologia.com:5443/WebRTCApp/rest/broadcast/getList/0/10';
+        let url = conf.con.SOCKET_REST_SSL;
         let type = 'GET';
         let dataType = 'json';
         let req = new RequestController(url, type, null, dataType);
@@ -132,36 +132,32 @@ class webrtcController {
      * @param { Int } turmaId 
      * @param { String } aula 
      */
-    _requestAttendance(turmaId, aula) {
+    _requestAttendance(turmaId, aula, classe) {
 
         GeneralHelper.hideit(dom.CHAMADA);
         let url = `${location.origin}/rest/testaPresenca`;
         let type = 'POST';
         let dataType = 'json';
-        let data = { turmaId: turmaId, aula: aula };
+        let data = { turmaId: turmaId, aula: aula, tema: classe };
         let req = new RequestController(url, type, data, dataType);
-        req.requestAttendance(turmaId, aula);
+        req.requestAttendance();
     }
 
     /**
      * Listener de controle de requisições para lista de espectadores presentes
+     * Gerada apenas para espectadores
      */
-    _controlAttendanceRequest() {
+    _controlAttendanceRequest(auto) {
 
+        if (this._structure.roomType == 0) return;
         doc.TAG(dom.CLASS_LIST).onclick = () => {
-
-            //if (!this._room) return;
-            //let aula = this._room.assunto;
-            //let turmaId = this._room.con;
-
-            let aula = 'Aula de teste';
-            let turmaId = 11;
-            if (this._room) {
-                aula = this._room.assunto;
-                turmaId = this._room.con;
-            }
-            this._requestAttendance(turmaId, aula);
+            if (!this._room) return;
+            let turmaId = this._room.con;
+            let aula = this._room.assunto;
+            let classe = this._room.classe;
+            this._requestAttendance(turmaId, aula, classe);
         }
+        auto ? $(dom.CLASS_LIST).click() : null;
     }
 
     /**
@@ -601,8 +597,6 @@ class webrtcController {
 
         console.info('ABERTA A CONEXÃO: ', connection, roomid, connection.extra);
 
-        this._controlAttendanceRequest();
-
         let index;
         this._roomInfo.inRoom.value = roomid;
         this._finishTransmition(connection, roomid);
@@ -954,8 +948,10 @@ class webrtcController {
         let mid;
         try { mid = atob(msg[1]) } catch (e) { return };
         // Vídeo principal
-        if (cmd === 'ended' && mid == roomid) this._mediaController.stopTransmition(roomid, this._broadcaster);
-        else if (cmd === 'ended' && mid.startsWith("screen")) {
+        if (cmd === 'ended' && mid == roomid) {
+            this._controlAttendanceRequest(true);
+            this._mediaController.stopTransmition(roomid, this._broadcaster);
+        } else if (cmd === 'ended' && mid.startsWith("screen")) {
             // Compartilhamento de tela
             this._forceSwap(doc.TAG(dom.SCREEN_SWAP));
             GeneralHelper.hideit(dom.INCOMMING_VIDEO_SCREEN);
@@ -1341,6 +1337,7 @@ class webrtcController {
         this._autologout = false;
         if (isFinished) {
             this._mediaController.stopTransmition(room, this._broadcaster);
+            this._controlAttendanceRequest();
             return;
         }
     }
@@ -1351,8 +1348,6 @@ class webrtcController {
     _initiateDevices() {
 
         let confirm = doc.TAG(dom.CONFIRM_DEVICES);
-
-        this._controlAttendanceRequest();
 
         confirm.onclick = () => {
 
@@ -1552,6 +1547,7 @@ class webrtcController {
                     minHeight: 720,
                     minAspectRatio: 1.77
 
+
                 },
                 optional: [{
                     sourceId: this._roomController.videoList.value
@@ -1622,7 +1618,7 @@ class webrtcController {
                 this._structure.usuario = this._room.name;
                 this._structure.onlobby = false;
                 // Verificação de dispositivos de entrada de áudio e vídeo
-                if (!GeneralHelper.detectmob() && this._structure.roomType.value == 0) {
+                if (!GeneralHelper.detectmob() && this._structure.roomType == 0) {
                     if (!this._roomController.checkDevices()) {
                         this._alerta.initiateMessage(conf.message.DEVICE_ALERT);
                         this._structure.configDev.click();
@@ -1713,11 +1709,16 @@ class webrtcController {
                     let divOpen = doc.ADD('div');
                     let button = doc.ADD('a');
                     let card = this._roomController.constructAccessList(this._roomData.classe, this._roomData.assunto, this._roomData.apresentador, this._structure.viewers, moderatorId);
-                    this._roomController.initiateRoomCard(moderatorId, card, divOpen, button);
+                    this._roomController.initiateRoomCard(moderatorId, card, divOpen, button, this._structure.roomType);
 
                     // Tratamento de ação de entrada na sala a partir do botão ENTRAR
                     button.onclick = () => {
                         this._roomId = moderatorId;
+                        this._room = {
+                            con: doc.TAG(dom.CON_ID).value,
+                            assunto: this._roomData.assunto,
+                            classe: this._roomData.classe
+                        }
                         this._roomController.setRoomLabel(misc.ICON_FA_TV, this._roomData.classe, this._roomData.assunto);
                         // Trata botão de modal de espectadores presentes
                         doc.TAG(dom.INFORM_VIEWS).onclick = () => {
@@ -1726,6 +1727,7 @@ class webrtcController {
                             else this._alerta.initiateMessage(conf.message.INVALID_VALUE);
                         }
                         setTimeout(() => doc.TAG(dom.NUMBER_VIEWS).focus(), 300);
+                        if (this._structure.roomType == 1) $(dom.INFORM_VIEWS).click();
                     }
                 }
                 if (this._structure.countRooms == 0) this._roomController.noRooms();

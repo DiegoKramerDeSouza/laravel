@@ -26,6 +26,16 @@
             <div id='waitingLinkFile' class='center'>
                 {!! $default->preLoaderSmall !!}
             </div>
+            @if(Auth::user()->type == 1)
+                <!-- Botão para controle de chamada -->
+                <div class='center'>
+                    <button id='btn-open-classlist' class='btn blue white-text waves-effect waves-light modal-trigger' href='#listaChamada'>{!! $default->ulListLeftIcon !!} Lista de presença</button>
+                </div>
+            @else
+                <div class='d-none'>
+                    <button id='btn-open-classlist' class='btn'></button>
+                </div>
+            @endif
             <div id='div-download-video' class='d-none'>
                 <a id='download-video' class='blue p-10 rounded-borders white-text' href='' target='_blank'>
                     {!! $default->downloadIcon !!} <u>Baixar esta aula</u>

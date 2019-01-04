@@ -97,6 +97,7 @@ trait EspecialMethods{
         if(session()->has('turmaId')) session()->forget('turmaId');
         if(session()->has('turmaName')) session()->forget('turmaName');
         if(session()->has('aula')) session()->forget('aula');
+        if(session()->has('tema')) session()->forget('tema');
         if(session()->has('allClassList')) session()->forget('allClassList');
     }
 

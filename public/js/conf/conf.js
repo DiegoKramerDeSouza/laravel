@@ -43,8 +43,8 @@ const doc = {
     URL_ATTENDANCE_REQ: 'URL PARA REQUISITAR A CHAMADA!',
     URL_ATTENDANCE_SEND: 'URL PARA REGISTRO DE CHAMADA!',
     URL_ATTENDANCE_UPDATE: `${location.origin}/rest/confirmaPresenca`,
-    URL_SALAS_SAVE: `${location.origin}/salas/salvar`,
-    URL_SALAS_UPDATE: `${location.origin}/salas/update`,
+    URL_SALAS_SAVE: `${location.origin}/rest/salas/salvar`,
+    URL_SALAS_UPDATE: `${location.origin}/rest/salas/update`,
     VERSION: "1.1.0.95"
 }
 
