@@ -1542,12 +1542,11 @@ class webrtcController {
             this._videoConstraints = {
                 mandatory: {
                     minFrameRate: 30,
-
+                    /*
                     minWidth: 1280,
                     minHeight: 720,
                     minAspectRatio: 1.77
-
-
+                    */
                 },
                 optional: [{
                     sourceId: this._roomController.videoList.value
