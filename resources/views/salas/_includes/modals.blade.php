@@ -109,7 +109,7 @@
         <div class='row'>
             <div class='col s12'>
                 <h5>
-                    {!! $default->ulListBlueIcon !!} Lista de Espectadores:
+                    {!! $default->ulListBlueIcon !!} Lista de Presença:
                     <span class='right'>
                         <a class='modal-close'>
                             {!! $default->cancelRedIcon !!}

@@ -16,7 +16,7 @@ class RestController extends Controller
 
         $found = true;
         $turmaId = session()->get('turmaId');
-        $turmaName = session()->get('turmaName');
+        $turmaName = session()->get('className');
         $aula = session()->get('aula');
         $data = session()->get('classList');
         $tema = session()->get('tema');
@@ -30,12 +30,15 @@ class RestController extends Controller
         $turmas = Turma::all();
         $json = json_encode($turmas, JSON_UNESCAPED_UNICODE);
         //dd(session()->get('classList'));
+        $data = session()->all();
+        dd($data);
         return $json;
     }
 
     public function listaPresenca(Request $req){
 
         $found = false;
+        $classe = null;
         $turmaId = $req->turmaId;
         $aula = $req->aula;
         $data = $req->presentes;
@@ -54,25 +57,27 @@ class RestController extends Controller
         
         if($turmaId == $turmaUserId){
             if(session()->has('classList')){
-                $arrayAttend = array_merge(session()->get('classList'), $data);
+                $old = session()->get('classList');
+                $arrayAttend = array_merge($old, $data);
                 $arrayAttend = array_unique($arrayAttend);
             } else {
                 $arrayAttend = $data;
             }
-            session(['classList' => $arrayAttend]);
-            
+
             for($i = 0; $i < count($allData); $i++){
                 $key = array_search($allData[$i][1], $arrayAttend);
                 $key === false ? $allData[$i][2] = 0 : $allData[$i][2] = 1;
             }
             
             $found = true;
+            session(['classList' => $arrayAttend]);
             session(['aula' => $aula]);
             session(['tema' => $tema]);
             session(['allClassList' => $allData]);
+            $classe = session()->get('classList');
         }
 
-        $htmlView = view('salas.chamada', compact('turmaId', 'turmaName', 'aula', 'tema', 'allData', 'found'));
+        $htmlView = view('salas.chamada', compact('turmaId', 'turmaName', 'aula', 'tema', 'allData', 'found', 'classe'));
         return $htmlView->render();
     }
 
@@ -96,9 +101,54 @@ class RestController extends Controller
                     ['Easdfg', 9],
                     ['Fasdfg', 6],
                     ['Gasdfg', 7],
-                    ['Hasdfg', 5]
+                    ['Hasdfg', 5],
+                    ['Iasdfg', 8],
+                    ['Jasdfg', 10],
+                    ['Kasdfg', 11],
+                    ['Lasdfg', 12],
+                    ['Masdfg', 13],
+                    ['Nasdfg', 14],
+                    ['Oasdfg', 15],
+                    ['Pasdfg', 16],
+                    ['Qasdfg', 17],
+                    ['Rasdfg', 18],
+                    ['Sasdfg', 19],
+                    ['Tasdfg', 20],
+                    ['Uasdfg', 21],
+                    ['Vasdfg', 22],
+                    ['Wasdfg', 23],
+                    ['Xasdfg', 24],
+                    ['Yasdfg', 25],
+                    ['Zasdfg', 26],
+                    ['1asdfg', 27],
+                    ['2asdfg', 28],
+                    ['3asdfg', 29],
+                    ['4asdfg', 30],
+                    ['5asdfg', 31],
+                    ['6asdfg', 32],
+                    ['7asdfg', 33],
+                    ['8asdfg', 34],
+                    ['9asdfg', 35],
+                    ['10asdfg', 36],
+                    ['11asdfg', 37],
+                    ['12asdfg', 38],
+                    ['13asdfg', 39],
+                    ['14asdfg', 40],
+                    ['15asdfg', 41],
+                    ['16asdfg', 42],
+                    ['17asdfg', 43],
                 ];
         $json = ['presentes' => $especPresentes, 'total' => $total];
+        return json_encode($json, JSON_UNESCAPED_UNICODE);
+    }
+
+    public function testaReceivePhoto(Request $req){
+
+        // Simulação de recebimento de fotos de turmas para reconhecimento facial
+        $pic = $req->picture;
+        $turma = $req->turmaId;
+        $hash = $req->aulaHash;
+        $json = [$turma, $hash, $pic];
         return json_encode($json, JSON_UNESCAPED_UNICODE);
     }
 

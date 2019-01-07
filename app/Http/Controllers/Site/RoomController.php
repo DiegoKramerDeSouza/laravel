@@ -36,7 +36,7 @@ class RoomController extends Controller
         foreach($allmodulos as $modulo) $modulos[$modulo['id']] = $modulo['name'];
         
         session(['turmaId' => $turmaId]);
-        session(['turmaName' => Auth::user()->name]);
+        session(['className' => Auth::user()->name]);
         
         $cursos = Curso::all();
         if(session()->has('viewers')){

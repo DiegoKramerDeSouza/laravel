@@ -44,11 +44,11 @@ class webrtcController {
 
         this._startedStream = false;
         this._retransmiting = false;
-        this._desktopShared = false;
         this._autologout = true;
         this._isLowLatency = true;
         this._adaptors = [];
         this._streams = [];
+        this._classList = [];
 
         this._retransmitingWho;
         this._roomId;
@@ -135,7 +135,7 @@ class webrtcController {
     _requestAttendance(turmaId, aula, classe) {
 
         GeneralHelper.hideit(dom.CHAMADA);
-        let url = `${location.origin}/rest/testaPresenca`;
+        let url = doc.URL_ATTENDANCE_REQ;
         let type = 'POST';
         let dataType = 'json';
         let data = { turmaId: turmaId, aula: aula, tema: classe };
@@ -158,6 +158,7 @@ class webrtcController {
             this._requestAttendance(turmaId, aula, classe);
         }
         auto ? $(dom.CLASS_LIST).click() : null;
+
     }
 
     /**
@@ -437,7 +438,8 @@ class webrtcController {
         } else {
             location.protocol.startsWith("https") ? websocketURL = conf.con.SOCKET_SSL : websocketURL = conf.con.SOCKET_URL;
             if (connection || videoLayer)
-                location.protocol.startsWith("https") ? websocketURL = conf.con.SOCKET_2_SSL : websocketURL = conf.con.SOCKET_2_URL;
+                websocketURL = conf.con.SOCKET_2_URL;
+            //location.protocol.startsWith("https") ? websocketURL = conf.con.SOCKET_2_SSL : websocketURL = conf.con.SOCKET_2_URL;
         }
         if (videoLayer || connection) {
             mediaConstraints = {
@@ -949,6 +951,7 @@ class webrtcController {
         try { mid = atob(msg[1]) } catch (e) { return };
         // Vídeo principal
         if (cmd === 'ended' && mid == roomid) {
+            this._startedStream = false;
             this._controlAttendanceRequest(true);
             this._mediaController.stopTransmition(roomid, this._broadcaster);
         } else if (cmd === 'ended' && mid.startsWith("screen")) {
@@ -1297,12 +1300,17 @@ class webrtcController {
                 this._startedAt = new Date(checkrash[1]);
                 this._roomInfoController.initiateClock(this._startedAt);
 
-                if (checkrash[3] === true) this._initateRoomStream(checkrash[2]);
-                else if (checkrash[4] === true) this._initateRoomStream(checkrash[2], true);
-                else {
+                if (checkrash[3] === true) {
+                    this._initateRoomStream(checkrash[2]);
+                } else if (checkrash[4] === true) {
+                    this._initateRoomStream(checkrash[2], true);
+                } else {
                     this._mediaController.initTransmition(checkrash[2], dom.PRE_APRESENTACAO, dom.PRE_LOAD_APRESENTACAO, false);
-                    setTimeout(() => this._initateRoomStream(checkrash[2]), 4000);
+                    setTimeout(() => {
+                        this._initateRoomStream(checkrash[2]);
+                    }, 4000);
                 }
+                this._forceShot();
 
             } else if (checkrash[0] === btoa(conf.req.END_CONNECTION)) {
                 // Solicita a desconexão do usuário
@@ -1332,14 +1340,18 @@ class webrtcController {
      */
     _initateRoomStream(room, isFinished) {
 
+        this._startedStream = true;
+        console.log('STATUS DA STREAM: ', this._startedStream);
         this._mediaController.initBroadcasterVideo(room, this._mediaController);
         this._mediaController.initiateControls();
         this._autologout = false;
         if (isFinished) {
+            this._startedStream = false;
             this._mediaController.stopTransmition(room, this._broadcaster);
             this._controlAttendanceRequest();
-            return;
         }
+        this._initShotInterval();
+        return;
     }
 
     /**
@@ -1360,7 +1372,8 @@ class webrtcController {
                         video: true,
                         type: 'local'
                     };
-                    this._startRTCLocal(dom.SHOW_PREVIEW, true, this._media.previewVideo, session);
+                    GeneralHelper.showit(dom.SHOW_PREVIEW, 300);
+                    this._self = this._startRTCLocal(session.video, this._media.previewVideo, session);
                 }
             }, 500);
 
@@ -1374,16 +1387,15 @@ class webrtcController {
      * @param {Obj HTML} videoObj 
      * @param {Obj RTCMultiConnection} session 
      */
-    _startRTCLocal(preview, isVideo, videoObj, session) {
+    _startRTCLocal(isVideo, videoObj, session, shot) {
 
-        GeneralHelper.showit(preview, 300);
         let timestamp = +new Date();
         let room = 'self' + timestamp;
         let self = new RTCMultiConnection();
 
         this._initiatePersonalConnection(self);
         if (isVideo) this._setConnectionDevices(self);
-        this._afterOpenSelfVideo(self, videoObj);
+        videoObj ? this._afterOpenSelfVideo(self, videoObj) : null;
 
         self.session = session;
 
@@ -1394,7 +1406,7 @@ class webrtcController {
 
         self.extra.self = true;
         self.open(room);
-        this._self = self;
+        return self;
     }
 
     /**
@@ -1865,11 +1877,118 @@ class webrtcController {
             typeOfStreams: this._espectador.session
         });
 
+        // Inicializa chamada de fotos da classe
+        this._classSelfPicture();
+
         // Inicializa verificação de token caso não seja um dispositivo Mobile
         if (!DetectRTC.isMobileDevice && conf.con.TK_DETECT) {
             GeneralHelper.showit(dom.TK_DETEC);
             $(dom.CALL_TK).click();
         }
+    }
+
+    /**
+     * Efetua a chamada de snapshot de espectadores
+     */
+    _forceShot() {
+
+        if (!this._startedStream || this._structure.roomType != 1) return;
+        $(dom.PIC_CLASS_TAKE_SHOT).click();
+    }
+
+    /**
+     * Ciclo de snapshots com tempo pré-definido de 10 minutos
+     */
+    _initShotInterval() {
+
+        if (this._structure.roomType != 1) return;
+
+        let shot = conf.str.TAKE_PIC_START;
+        let finish = conf.str.TAKE_PIC_STOP;
+        let interval;
+        interval = setInterval(() => {
+            shot++;
+            this._forceShot();
+            if (shot > finish) clearInterval(interval);
+        }, conf.str.TAKE_PIC_INTERVAL);
+    }
+
+    /**
+     * Inicializa dispositivos de vídeo para coletar espectadores presentes
+     */
+    _classSelfPicture() {
+
+        if (this._structure.roomType != 1) return;
+
+        let video = doc.TAG(dom.PIC_CLASS_VIDEO);
+        let session = { audio: false, video: true };
+        navigator.mediaDevices.getUserMedia(session)
+            .then(stream => {
+                video.srcObject = stream;
+                video.play();
+                this._initPhoto(video);
+            }).catch(err => {
+                console.error(err);
+            });
+    }
+
+    /**
+     * Trata chamadas para captura de imagem do espectador
+     * @param { HTML elem } video 
+     */
+    _initPhoto(video) {
+
+        let photo = doc.TAG(dom.PIC_CLASS_IMG);
+        let canvas = doc.TAG(dom.PIC_CLASS_PHOTO);
+        doc.TAG(dom.PIC_CLASS_TAKE_SHOT).onclick = () => {
+            try { this._clearPhoto(canvas, photo, video) } catch (err) { /* Não faz nada */ }
+            this._takePic(canvas, photo, video);
+        }
+    }
+
+    /**
+     * Prepara canvas para recebimento de imagem capturada a partir do vídeo local
+     * @param { HTML elem } canvas 
+     * @param { HTML elem } photo 
+     * @param { HTML elem } video 
+     */
+    _clearPhoto(canvas, photo, video) {
+
+        let context = canvas.getContext('2d');
+        context.fillStyle = "#AAA";
+        canvas.setAttribute('width', video.videoWidth);
+        canvas.setAttribute('height', video.videoHeight);
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        let data = canvas.toDataURL('image/png');
+        photo.setAttribute('src', data);
+    }
+
+    /**
+     * Efetua o snapshot do video local
+     * @param { HTML elem } canvas 
+     * @param { HTML elem } photo 
+     * @param { HTML elem } video  
+     */
+    _takePic(canvas, photo, video) {
+
+        let context = canvas.getContext('2d');
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        let data = canvas.toDataURL('image/png');
+        photo.setAttribute('src', data);
+        this._sendPic(data);
+    }
+
+    _sendPic(picture) {
+
+        let hash = doc.TAG(dom.IN_ROOM).value;
+        let turma = this._room.con;
+
+        let url = doc.URL_PHOTO_SEND;
+        let type = 'POST';
+        let dataType = 'json';
+        let data = { picture: picture, aulaHash: hash, turmaId: turma };
+        let req = new RequestController(url, type, data, dataType);
+        req.sendPhoto();
     }
 
     /**
@@ -1912,21 +2031,6 @@ class webrtcController {
                 this._media.sessionAccess.click();
             }
         });
-
-        /*
-        connection.addStream({
-            audio: false,
-            video: true,
-            streamCallback: (stream) => {
-                this._participateScreen(stream);
-                this._media.thirdVideoPreview.muted = true;
-                this._roomData.transmiting = true;
-                console.log("Compartilhando vídeo ------>", stream);
-                this._sendParticipation(connection);
-                this._mediaController.initiateVideo(this._media.thirdVideoPreview);
-            }
-        });
-        */
     }
 
     /**
@@ -1960,39 +2064,6 @@ class webrtcController {
         caller.open(room);
         this._caller = caller;
 
-        /*
-
-        // Define o ID da sala de chamada que será criada
-        let broadcastId;
-        broadcastId = 'call' + this._broadcaster.userid;
-        // Istancia a conexão para o broadcaster 
-        this._caller = new RTCMultiConnection();
-        this._caller.userid = broadcastId;
-        this._caller.extra.chamada = true;
-        this._caller.extra.streamEnded = false;
-        this._initiatePersonalConnection(this._caller);
-        // Define configuração de sessão, stream, dispositívos e uso de banda
-        this._caller.session = {
-            audio: conf.con.SESSION_AUDIO,
-            video: conf.con.SESSION_VIDEO
-        };
-        this._caller.direction = 'one-to-one';
-        this._caller.mediaConstraints = {
-            video: this._videoConstraints,
-            audio: this._audioConstraints
-        };
-        this._caller.bandwidth = {
-            audio: conf.con.BAND_AUDIO,
-            video: conf.con.BAND_VIDEO
-        };
-        this._caller.checkPresence(broadcastId, (isRoomExist, broadcastId) => {
-            isRoomExist ?
-                console.error('A sala informada já existe.') :
-                this._caller.open(broadcastId, () => {
-                    console.warn('Camada criada com sucesso!', broadcastId);
-                });
-        })
-        */
     }
 
     /**

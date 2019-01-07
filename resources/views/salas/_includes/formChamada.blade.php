@@ -28,7 +28,7 @@
                             @foreach($allData as $users)
                                 <tr>
                                     <td title='{{ $users[0] }}'>
-                                        <b class='truncate'>{{ $users[0] }}</b>
+                                    <b class='truncate'>{{ $users[0] }}</b>
                                         <input type='hidden' class='attendance_list_id' id='{{ $users[1] }}' name='{{ $users[1] }}' disabled readonly value='{{ $users[1] }}' />
                                     </td>
                                     <td>

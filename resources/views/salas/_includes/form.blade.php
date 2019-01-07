@@ -86,6 +86,20 @@
 <input type='hidden' id='broadcaster' name='broadcaster' disabled readonly />
 <input type='hidden' id='in-room' name='in-room' disabled readonly />
 <input type='hidden' id='in-screen' name='in-screen' disabled readonly />
+<!-- Tratamento de imagens de captura -->
+<div class='row d-none'>
+    <video id='classVideo' class='responsive-video' preload='none' loop ></video>
+    <div class='col s12 m6 d-none'>
+        <canvas id='classPhoto'>
+        </canvas>
+    </div>
+    <div class='col s12 m6'>
+        <img id='classImg'>
+    </div>
+    <div class='col s12 center'>
+        <span id='takeShot' class='btn blue'>Foto</span>
+    </div>
+</div>
 
 <!--
 <iframe id="embedded_player" style="width:100%;"

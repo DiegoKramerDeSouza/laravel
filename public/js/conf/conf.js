@@ -40,9 +40,12 @@ const doc = {
             URL: 'http://sig.lrbtecnologia.com:80/'
         }
     },
-    URL_ATTENDANCE_REQ: 'URL PARA REQUISITAR A CHAMADA!',
-    URL_ATTENDANCE_SEND: 'URL PARA REGISTRO DE CHAMADA!',
+    URL_ATTENDANCE_LIST: `${location.origin}/rest/listaPresenca`,
+    /** APENAS TESTE */
+    URL_ATTENDANCE_REQ: `${location.origin}/rest/testaPresenca`,
     URL_ATTENDANCE_UPDATE: `${location.origin}/rest/confirmaPresenca`,
+    /** APENAS TESTE */
+    URL_PHOTO_SEND: `${location.origin}/rest/testaPhoto`,
     URL_SALAS_SAVE: `${location.origin}/rest/salas/salvar`,
     URL_SALAS_UPDATE: `${location.origin}/rest/salas/update`,
     VERSION: "1.1.0.95"
@@ -73,6 +76,9 @@ const conf = {
         ON_PARTICIPATION: false,
         POSTER_IMG: '/img/bg.jpg',
         SOLICITA: 0,
+        TAKE_PIC_INTERVAL: (10 * (60 * 1000)),
+        TAKE_PIC_START: 1,
+        TAKE_PIC_STOP: 4,
         USER: '',
         VIEWER: 'Calculando...',
         WAITING_FOR_VIDEO: 'waiting'
@@ -341,6 +347,10 @@ const dom = {
     PARTICIPATION_NAME: '#participation-name',
     PARTICIPATION_SWAP: '#participation-swap',
     PEDIR: '#pedir-vez',
+    PIC_CLASS_IMG: '#classImg',
+    PIC_CLASS_PHOTO: '#classPhoto',
+    PIC_CLASS_TAKE_SHOT: '#takeShot',
+    PIC_CLASS_VIDEO: '#classVideo',
     PLAY_IT: '#playit',
     PLAY_SCREEN: '#playscreen',
     PLAY_PARTICIPANT: '#playparticipant',

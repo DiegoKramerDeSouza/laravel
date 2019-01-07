@@ -16,7 +16,7 @@ class RequestController {
     /**
      * Chamada de procedimento de inserção/atualização de dados de salas criadas
      */
-    saveRoom(req) {
+    saveRoom(req, response) {
 
         if (req) this._request = req;
 
@@ -30,8 +30,45 @@ class RequestController {
             type: this._request.type,
             data: this._request.data,
             dataType: this._request.dataType,
-            success: () => this._alerta.initiateMessage(conf.message.SUCCESS_SAVE_CLASS),
-            error: () => this._alerta.initiateMessage(conf.message.FAIL_SAVE_CLASS)
+            success: () => {
+                if (response) {
+                    /* Envia resposta para API de chamadas 
+                     * {aulaHash: this._request.data.turmaHash, turmaId: this._request.data.turmaId, presentes: this._request.data.presentes}
+                     */
+                    console.info('ENVIANDO PARA API DE CHAMADA {aulaHash, turmaId, presentes}: ', this._request.data.turmaHash, this._request.data.turmaId, this._request.data.presentes);
+                    this._alerta.initiateMessage(conf.message.ATTENDANCE_SEND_SUCCESS);
+                }
+                this._alerta.initiateMessage(conf.message.SUCCESS_SAVE_CLASS);
+            },
+            error: () => {
+                if (response) this._alerta.initiateMessage(conf.message.ATTENDANCE_SEND_FAIL);
+                this._alerta.initiateMessage(conf.message.FAIL_SAVE_CLASS);
+
+            }
+        });
+    }
+
+    sendPhoto() {
+
+        // Setup para permitir integração Laravel x Ajax 
+        $.ajaxSetup({
+            headers: this._request.header
+        });
+        // Post para registro de eventos
+        $.ajax({
+            url: this._request.url,
+            type: this._request.type,
+            data: this._request.data,
+            dataType: this._request.dataType,
+            success: (data) => {
+                /* Envia photos para API de reconhecimento facial
+                 * {picture: this._request.data.picture, aulaHash: this._request.data.aulaHash, turmaId: this._request.turmaId} 
+                 */
+                console.info(data);
+            },
+            error: (error) => {
+                console.error(error);
+            }
         });
     }
 
@@ -58,7 +95,6 @@ class RequestController {
         $.ajaxSetup({
             headers: this._request.header
         });
-        console.log(this._request.data);
         // Post para registro de eventos
         $.ajax({
             url: this._request.url,
@@ -66,7 +102,6 @@ class RequestController {
             dataType: this._request.dataType,
             data: this._request.data,
             success: (data) => {
-                console.log(data);
                 this._createAttendance(data.presentes, data.total, this._request.data.turmaId, this._request.data.aula, this._request.data.tema);
             },
             error: (data) => {
@@ -86,7 +121,7 @@ class RequestController {
     _createAttendance(arr, all, turmaId, aula, tema) {
 
         GeneralHelper.hideit(dom.CHAMADA);
-        let url = `${location.origin}/rest/listaPresenca`;
+        let url = doc.URL_ATTENDANCE_LIST;
         let type = 'POST';
         let data = { turmaId: turmaId, aula: aula, tema: tema, allData: all, presentes: arr };
         let req = new Request(url, type, data, null);
@@ -101,18 +136,20 @@ class RequestController {
 
         let data = req.data;
         let turma = data.turmaId;
+
         // Setup para permitir integração Laravel x Ajax
         $.ajaxSetup({
             headers: req.header
         });
         data.presentes.length < 1 ? data.presentes = [null] : null;
-        console.log(data);
         // Post para registro de eventos
         $.ajax({
             url: req.url,
             type: req.type,
             data: data,
-            success: (data) => this._manageAttendanceList(data, turma),
+            success: (data) => {
+                this._manageAttendanceList(data, turma);
+            },
             error: (data) => console.error(data)
         });
     }
@@ -165,21 +202,9 @@ class RequestController {
 
         // Atualiza lista de presença
         url = doc.URL_ATTENDANCE_UPDATE;
-        data = { presentes: attendUsers };
+        data = { presentes: attendUsers, turmaId: turma, moderator: moderator, count: count };
         req = new Request(url, type, data, dataType);
-        this._confirmSendList(req, false);
-
-        // Atualiza quantidade de espectadores
-        url = doc.URL_SALAS_UPDATE;
-        data = { turmaHash: moderator, numViews: count };
-        req = new Request(url, type, data, dataType);
-        this.saveRoom(req);
-
-        // Envia listagem de espectadores
-        url = doc.URL_ATTENDANCE_SEND;
-        data = { turmaId: turma, data: allUsers };
-        req = new Request(url, type, data, dataType);
-        //this._confirmSendList(req, true);
+        this._confirmSendList(req);
     }
 
     /**
@@ -187,7 +212,16 @@ class RequestController {
      * @param { Obj Request } req 
      * @param { Boolean } send 
      */
-    _confirmSendList(req, send) {
+    _confirmSendList(req) {
+
+        let rqUrl = req.url;
+        let rqData = req.data;
+        let rqType = req.type;
+        let rqDtType = req.dataType;
+        let turmaId = rqData.turmaId;
+        let presentes = rqData.presentes;
+        let moderator = rqData.moderator;
+        let count = rqData.count;
 
         // Setup para permitir integração Laravel x Ajax
         $.ajaxSetup({
@@ -195,20 +229,19 @@ class RequestController {
         });
         // Post para registro de eventos
         $.ajax({
-            url: req.url,
-            type: req.type,
-            data: req.data,
-            dataType: req.dataType,
-            success: (data) => {
-                send ?
-                    this._alerta.initiateMessage(conf.message.ATTENDANCE_SEND_SUCCESS) :
-                    this._alerta.initiateMessage(conf.message.ATTENDANCE_CONFIRM_SUCCESS);
-                console.log(data);
+            url: rqUrl,
+            type: rqType,
+            data: rqData,
+            dataType: rqDtType,
+            success: (response) => {
+                // Atualiza quantidade de espectadores
+                let data = { turmaHash: moderator, numViews: count, turmaId: turmaId, presentes: presentes };
+                let request = new Request(doc.URL_SALAS_UPDATE, rqType, data, rqDtType);
+                this.saveRoom(request, true);
+                this._alerta.initiateMessage(conf.message.ATTENDANCE_CONFIRM_SUCCESS);
             },
             error: (error) => {
-                send ?
-                    this._alerta.initiateMessage(conf.message.ATTENDANCE_SEND_FAIL) :
-                    this._alerta.initiateMessage(conf.message.ATTENDANCE_CONFIRM_FAIL);
+                this._alerta.initiateMessage(conf.message.ATTENDANCE_CONFIRM_FAIL);
                 console.error(error);
             }
         });
