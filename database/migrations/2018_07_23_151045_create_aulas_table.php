@@ -21,9 +21,6 @@ class CreateAulasTable extends Migration
                 $table->string('theme');
                 $table->integer('author')->unsigned();
                 $table->timestamps();
-                $table->foreign('author')
-                    ->references('id')->on('users')
-                    ->onDelete('cascade');
             });
         }
     }

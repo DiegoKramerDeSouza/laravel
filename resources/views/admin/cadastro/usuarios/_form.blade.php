@@ -30,10 +30,10 @@
     </div>
     <div class='input-field col s12 m6'>
         <select id='group' required name='group'>
-            @if(isset($userdata->group))
+            @if(isset($userdata->perfils_id))
                 <option value="" >Selecione um grupo</option>
                 @foreach($perfis as $perfil)
-                    <option value="{{ $perfil->id }}" {{ ($userdata->group == $perfil->id) ? 'selected' : ''}}>{{ $perfil->name }}</option>
+                    <option value="{{ $perfil->id }}" {{ ($userdata->perfils_id == $perfil->id) ? 'selected' : ''}}>{{ $perfil->name }}</option>
                 @endforeach
             @else
                 <option value="" selected >Selecione um grupo</option>

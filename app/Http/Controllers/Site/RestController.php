@@ -29,9 +29,8 @@ class RestController extends Controller
 
         $turmas = Turma::all();
         $json = json_encode($turmas, JSON_UNESCAPED_UNICODE);
-        //dd(session()->get('classList'));
-        $data = session()->all();
-        dd($data);
+        //$json = json_encode(session()->all(), JSON_UNESCAPED_UNICODE);
+        //$json = json_encode(session()->get('classList'), JSON_UNESCAPED_UNICODE);
         return $json;
     }
 

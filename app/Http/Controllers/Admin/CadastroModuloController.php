@@ -73,7 +73,8 @@ class CadastroModuloController extends Controller
             
             $modulos = [
                 '_token'=>$req->_token,
-                'name'=>$req->name
+                'name'=>$req->name,
+                'description'=>$req->description
             ];
             Modulo::create($modulos);
 
@@ -118,7 +119,8 @@ class CadastroModuloController extends Controller
 
             $modulos = [
                 '_token'=>$req->_token,
-                'name'=>$req->name
+                'name'=>$req->name,
+                'description'=>$req->description
             ];
             Modulo::find($id)->update($modulos);
 

@@ -96,7 +96,7 @@ class CadastroUsuarioController extends Controller
             $userdata = [
                 '_token'=>$req->_token,
                 'user_id'=>$created->id,
-                'perfils_id'=>4,
+                'perfils_id'=>$req->group,
                 'group'=>$req->group
             ];
             UserDado::create($userdata);
@@ -161,6 +161,7 @@ class CadastroUsuarioController extends Controller
 
             $userdata = [
                 '_token'=>$req->_token,
+                'perfils_id'=>$req->group,
                 'group'=>$req->group
             ];
             UserDado::where('user_id', $id)->first()->update($userdata);
@@ -180,7 +181,7 @@ class CadastroUsuarioController extends Controller
 
         if($this->validade($this->module)){
             User::find($id)->delete();
-            UserDado::where('user_id', $id)->first()->delete();
+            //UserDado::where('user_id', $id)->first()->delete();
             return redirect()->route('admin.cadastro.usuarios', ['success' => '3']);
         } else {
 

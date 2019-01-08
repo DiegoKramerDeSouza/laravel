@@ -16,10 +16,13 @@ class CreateUserDadosTable extends Migration
         if(!Schema::hasTable('user_dados')){
             Schema::create('user_dados', function (Blueprint $table) {
                 $table->increments('id');
-                $table->integer('user_id');
-                $table->integer('perfils_id');
+                $table->integer('user_id')->unsigned();
+                $table->integer('perfils_id')->unsigned();
                 $table->integer('group');
                 $table->timestamps();
+                $table->foreign('user_id')
+                    ->references('id')->on('users')
+                    ->onDelete('cascade');
                 $table->foreign('perfils_id')
                     ->references('id')->on('perfils')
                     ->onDelete('cascade');

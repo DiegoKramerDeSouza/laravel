@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Traits\EspecialMethods;
 use App\Perfil;
 use App\Componente;
+use App\Perfils_has_componente;
 
 class CadastroPerfilController extends Controller
 {
@@ -86,7 +87,17 @@ class CadastroPerfilController extends Controller
                 'description'=>$req->description
             ];
             
-            Perfil::create($perfis);
+            $created = Perfil::create($perfis);
+            if($grantList != '0'){
+                foreach($req->grantList as $comp){
+                    $perfilComponent = [
+                        '_token'=>$req->_token,
+                        'perfils_id'=>$created->id,
+                        'componentes_id'=>$comp
+                    ];
+                    Perfils_has_componente::create($perfilComponent);
+                }
+            }
             return redirect()->route('admin.cadastro.perfis', ['success' => '1']);
         } else {
 
@@ -105,9 +116,9 @@ class CadastroPerfilController extends Controller
             $grant = true;
             $perfis = Perfil::find($id);
             $componentes = Componente::all();
-            if($perfis->grant != '0'){
-                $granted = explode(';', $perfis->grant);
-                $html = $this->constructGrantList($componentes, $granted);
+            $perfilComp = Perfils_has_componente::where('perfils_id', $perfis->id)->get();
+            if($perfilComp->count() > 0){
+                $html = $this->constructGrantList($componentes, $perfilComp);
                 return view('admin.cadastro.perfis.editar', compact('perfis', 'grant', 'html')); 
             } else {
                 return view('admin.cadastro.perfis.editar', compact('perfis', 'grant', 'componentes'));
@@ -149,7 +160,38 @@ class CadastroPerfilController extends Controller
                 'description'=>$req->description
             ];
             Perfil::find($id)->update($perfis);
+            $finding = Perfils_has_componente::where('perfils_id', $id)->get();
+            $count = $finding->count();
+            if($count > 0 && $grantList != '0'){
+                foreach($finding as $comp){
+                    Perfils_has_componente::where('perfils_id', $id)
+                                            ->where('componentes_id', $comp->componentes_id)->delete();
+                }
+                foreach($req->grantList as $comp){
+                    $perfilComponent = [
+                        '_token'=>$req->_token,
+                        'perfils_id'=>$id,
+                        'componentes_id'=>$comp
+                    ];
+                    Perfils_has_componente::create($perfilComponent);
+                }
 
+            } elseif($count > 0 && $grantList == '0'){
+                foreach($finding as $comp){
+                    Perfils_has_componente::where('perfils_id', $id)
+                                            ->where('componentes_id', $comp->componentes_id)->delete();
+                }
+
+            } elseif($count < 1 && $grantList != '0'){
+                foreach($req->grantList as $comp){
+                    $perfilComponent = [
+                        '_token'=>$req->_token,
+                        'perfils_id'=>$id,
+                        'componentes_id'=>$comp
+                    ];
+                    Perfils_has_componente::create($perfilComponent);
+                }
+            }
             return redirect()->route('admin.cadastro.perfis', ['success' => '2']);
         } else {
 
@@ -180,7 +222,8 @@ class CadastroPerfilController extends Controller
         foreach($componentes as $tag){
             $checked = false;
             foreach($granted as $allow){
-                if("$tag->id" == $allow) $checked = true;
+                //if("$tag->id" == $allow) $checked = true;
+                if("$tag->id" == $allow->componentes_id) $checked = true;
                 elseif($checked) break;
             }
             array_push($grantArr, ["id" => $tag->id, "name" => $tag->name, "selected" => $checked]);

@@ -9,4 +9,9 @@ class Perfil extends Model
     protected $fillable = [
         'id', 'name', 'grant', 'description',
     ];
+
+    public function userDado(){
+
+        return $this->hasMany('App\UserDado');
+    }
 }

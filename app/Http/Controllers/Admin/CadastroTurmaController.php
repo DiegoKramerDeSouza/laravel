@@ -219,7 +219,7 @@ class CadastroTurmaController extends Controller
         if($this->validade($this->module)){
             $turmas = Turma::find($id);
             User::find($turmas->user_id)->delete();
-            $turmas->delete();
+            //$turmas->delete();
             return redirect()->route('admin.cadastro.turmas', ['success' => '3']);
         } else {
 

@@ -8,6 +8,7 @@ use App\Common;
 use App\Componente;
 use App\DefaultConfig;
 use App\DefaultMessages;
+use App\Perfils_has_componente;
 
 /**
  * Traits para reutilização de métodos criadas para os acessos administrativos;
@@ -46,7 +47,10 @@ trait EspecialMethods{
             $userid = Auth::user()->id;
             $userGroup = UserDado::where('user_id', $userid)->first();
             $access = Perfil::find($userGroup->group);
-            if(strpos($access->grant, "$id") !== false) return true; 
+            $finding = Perfils_has_componente::where('perfils_id', $access->id)
+                                            ->where('componentes_id', $id)->count();
+            if($finding > 0) return true;
+            //if(strpos($access->grant, "$id") !== false) return true; 
             else return false;
         } else {
             return false;
@@ -60,7 +64,8 @@ trait EspecialMethods{
 
         $dados = UserDado::where('user_id', $userid)->first();
         $granted = Perfil::find($dados->group);
-        return $granted->grant;
+        $finding = Perfils_has_componente::where('perfils_id', $granted->id)->count();
+        return $finding;
     }
 
     /**

@@ -209,7 +209,7 @@ class CadastroEscolaController extends Controller
                 $deleteTurma->delete();
             }
             Escola::find($id)->delete();
-            EnderecoEscola::where('school_id', $id)->first()->delete();
+            //EnderecoEscola::where('school_id', $id)->first()->delete();
             return redirect()->route('admin.cadastro.escolas', ['success' => '3']);
         } else {
             return redirect()->route('denied');
