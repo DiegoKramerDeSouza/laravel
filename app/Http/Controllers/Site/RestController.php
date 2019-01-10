@@ -57,14 +57,14 @@ class RestController extends Controller
         if($turmaId == $turmaUserId){
             if(session()->has('classList')){
                 $old = session()->get('classList');
-                $arrayAttend = array_merge($old, $data);
+                $data == [] ? $arrayAttend = $old : $arrayAttend = array_merge($old, $data);
                 $arrayAttend = array_unique($arrayAttend);
             } else {
                 $arrayAttend = $data;
             }
 
             for($i = 0; $i < count($allData); $i++){
-                $key = array_search($allData[$i][1], $arrayAttend);
+                $arrayAttend == null ? $key = false : $key = array_search($allData[$i][1], $arrayAttend);
                 $key === false ? $allData[$i][2] = 0 : $allData[$i][2] = 1;
             }
             
@@ -75,7 +75,6 @@ class RestController extends Controller
             session(['allClassList' => $allData]);
             $classe = session()->get('classList');
         }
-
         $htmlView = view('salas.chamada', compact('turmaId', 'turmaName', 'aula', 'tema', 'allData', 'found', 'classe'));
         return $htmlView->render();
     }
@@ -132,10 +131,7 @@ class RestController extends Controller
                     ['11asdfg', 37],
                     ['12asdfg', 38],
                     ['13asdfg', 39],
-                    ['14asdfg', 40],
-                    ['15asdfg', 41],
-                    ['16asdfg', 42],
-                    ['17asdfg', 43],
+                    ['14asdfg', 40]
                 ];
         $json = ['presentes' => $especPresentes, 'total' => $total];
         return json_encode($json, JSON_UNESCAPED_UNICODE);

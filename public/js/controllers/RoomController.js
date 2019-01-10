@@ -111,7 +111,7 @@ class RoomController {
 
     validateViews() {
 
-        return this._numberOfViewers.value > 0 && this._numberOfViewers.value < 99999;
+        return this._numberOfViewers.value >= 0 && this._numberOfViewers.value < 99999;
     }
 
     checkViews() {

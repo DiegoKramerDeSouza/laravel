@@ -399,7 +399,7 @@ const dom = {
     TEXT_MESSAGE: '#text-message',
     THIRD_VIDEO: '#thirdvideo-preview',
     THIRD_VIDEO_ID: 'thirdvideo-preview',
-    TK_DETEC: '#token_Detection',
+    TK_DETECT: '#token_Detection',
     TK_OBJ: '#token',
     TK_ON: '#tokenOn',
     TK_OFF: '#tokenOff',

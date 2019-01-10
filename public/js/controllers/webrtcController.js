@@ -29,7 +29,7 @@ class webrtcController {
         this._connection = new RTCMultiConnection();
         this._broadcaster;
         this._espectador;
-        this._caller;
+        this._chamada;
 
         this._publicRoomIdentifier = conf.con.ROOM_IDENTIFIER;
         this._disconnectionMessage = conf.message.END_TRANSMITION;
@@ -53,12 +53,12 @@ class webrtcController {
         this._retransmitingWho;
         this._roomId;
         this._currentUsers;
-        this._self;
+        this._selfConnection;
         this._videoConstraints = true;
         this._audioConstraints = true;
         this._webRTCAdaptor;
         this._participantIs;
-        this._imParticipant = false;
+        this._imAParticipant = false;
         this._screenId;
     }
 
@@ -152,7 +152,7 @@ class webrtcController {
         if (this._structure.roomType == 0) return;
         doc.TAG(dom.CLASS_LIST).onclick = () => {
             if (!this._room) return;
-            let turmaId = this._room.con;
+            let turmaId = this._room.connection;
             let aula = this._room.assunto;
             let classe = this._room.classe;
             this._requestAttendance(turmaId, aula, classe);
@@ -237,7 +237,7 @@ class webrtcController {
 
                         // Inicializa verificação de token caso não seja um dispositivo Mobile
                         if (!DetectRTC.isMobileDevice && conf.con.TK_DETECT) {
-                            GeneralHelper.showit(dom.TK_DETEC);
+                            GeneralHelper.showit(dom.TK_DETECT);
                             $(dom.CALL_TK).click();
                         }
                         console.info("Sala criada com sucesso.", roomid);
@@ -255,10 +255,10 @@ class webrtcController {
     _getScreenConstraints(connection) {
 
         connection.getScreenConstraints = (callback) => {
-            getScreenConstraints((error, screen_constraints) => {
+            getScreenConstraints((error, screenConstraints) => {
                 if (!error) {
-                    screen_constraints = connection.modifyScreenConstraints(screen_constraints);
-                    callback(error, screen_constraints);
+                    screenConstraints = connection.modifyScreenConstraints(screenConstraints);
+                    callback(error, screenConstraints);
                     $(dom.SHARE_ALERT).slideDown(300);
                     this._mediaController.switchShare();
                     return;
@@ -282,17 +282,17 @@ class webrtcController {
     _closeParticipantStream(connection) {
 
         let streamToRemove = null;
-        let newArray = [];
+        let newStreamsArray = [];
         connection.attachStreams.forEach((stream) => {
             console.info(stream.streamid, this._structure.userVideo.streamid);
             if (stream.streamid === this._structure.userVideo.streamid) {
                 streamToRemove = stream;
                 stream.stop();
-            } else newArray.push(stream);
+            } else newStreamsArray.push(stream);
         });
         if (streamToRemove != null) {
             this._retransmiting = false;
-            connection.attachStreams = newArray;
+            connection.attachStreams = newStreamsArray;
             connection.getAllParticipants().forEach((p) => {
                 let peer = connection.peers[p].peer;
                 try {
@@ -354,14 +354,14 @@ class webrtcController {
 
                 console.log('Recebendo video em ', event, event.file);
 
-                let msgnewrash = this._mediaController.createSolicitationArray(
+                let messageArray = this._mediaController.createSolicitationArray(
                     btoa(conf.req.NEW_PARTICIPATION),
                     this._participantIs,
                     this._roomInfo.inRoom.value,
                     this._structure.targetUser,
                     this._retransmitingWho
                 );
-                connection.send(msgnewrash);
+                connection.send(messageArray);
 
                 this._media.endSessionAccess.onclick = () => {
                     console.log('---> REMOTO', event.userid, this._structure.targetUser);
@@ -377,15 +377,15 @@ class webrtcController {
 
                     this._removeStreams(connection);
 
-                    let msgrash = this._mediaController.createSolicitationArray(
+                    let messageArray = this._mediaController.createSolicitationArray(
                         btoa(conf.req.END_PARTICIPATION),
                         this._roomInfo.currentUser.value,
                         this._structure.targetUser,
                         this._roomInfo.inRoom.value,
                         event.userid
                     );
-                    connection.send(msgrash);
-                    msgrash = [];
+                    connection.send(messageArray);
+                    messageArray = [];
                     this._structure.lockSolicitation = false;
                 };
 
@@ -395,9 +395,9 @@ class webrtcController {
 
             } else if (event.type === 'remote') {
 
-                console.warn('REMOTO SEM SCREEN --> ', event, event.stream, event.extra.remote, event.stream.streamid, connection.userid, this._imParticipant);
+                console.warn('REMOTO SEM SCREEN --> ', event, event.stream, event.extra.remote, event.stream.streamid, connection.userid, this._imAParticipant);
 
-                if (this._imParticipant) {
+                if (this._imAParticipant) {
                     GeneralHelper.hideit(dom.EMBEDDED_FRAME, 300);
                     this._mediaController.removeElement(dom.FRAME_LAYER);
                     GeneralHelper.hideit(dom.FIRST_VIDEO, 300);
@@ -829,7 +829,7 @@ class webrtcController {
                 }
             } else if (this._mediaController._session && this._structure.onParticipation) {
 
-                this._imParticipant = false;
+                this._imAParticipant = false;
                 GeneralHelper.hideit(dom.EMBEDDED_FRAME, 300);
                 this._mediaController.initBroadcasterVideo(roomid, this._mediaController);
                 GeneralHelper.hideit(dom.VIDEOS);
@@ -841,16 +841,16 @@ class webrtcController {
                 this._stopPublishing(roomid, false, this._webRTCAdaptor);
                 try {
                     //this._removeStreams(connection);
-                    let msgrash = this._mediaController.createSolicitationArray(
+                    let messageArray = this._mediaController.createSolicitationArray(
                         btoa(conf.req.END_PARTICIPANT),
                         this._roomInfo.currentUser.value,
                         connection.userid,
                         this._roomInfo.inRoom.value,
                         this._roomInfo.currentRoomId.value
                     );
-                    connection.send(msgrash, this._roomInfo.inRoom.value);
+                    connection.send(messageArray, this._roomInfo.inRoom.value);
                     this._structure.lockSolicitation = false;
-                    msgrash = [];
+                    messageArray = [];
                     connection.extra.alteredValue = false;
                     connection.updateExtraData();
                     this._alerta.initiateMessage(conf.message.END_PARTICIPATION);
@@ -945,21 +945,21 @@ class webrtcController {
     checkEmbeddedMessages(data) {
 
         let roomid = this._roomInfo.inRoom.value;
-        let msg = data.split('|');
-        let cmd = msg[0];
-        let mid;
-        try { mid = atob(msg[1]) } catch (e) { return };
+        let message = data.split('|');
+        let command = message[0];
+        let midiaId;
+        try { midiaId = atob(message[1]) } catch (e) { return };
         // Vídeo principal
-        if (cmd === 'ended' && mid == roomid) {
+        if (command === 'ended' && midiaId == roomid) {
             this._startedStream = false;
             this._controlAttendanceRequest(true);
             this._mediaController.stopTransmition(roomid, this._broadcaster);
-        } else if (cmd === 'ended' && mid.startsWith("screen")) {
+        } else if (command === 'ended' && midiaId.startsWith("screen")) {
             // Compartilhamento de tela
             this._forceSwap(doc.TAG(dom.SCREEN_SWAP));
             GeneralHelper.hideit(dom.INCOMMING_VIDEO_SCREEN);
             this._mediaController.removeElement(dom.FRAME_LAYER_II);
-        } else if (cmd === 'ended' && mid.startsWith("participant")) {
+        } else if (command === 'ended' && midiaId.startsWith("participant")) {
             // Participantes
             this._forceSwap(doc.TAG(dom.PARTICIPATION_SWAP));
             if (!this._structure.onParticipation) {
@@ -1114,7 +1114,7 @@ class webrtcController {
         if (this._broadcaster) {
             if (this._connectController.points.length > 1) {
 
-                let msgrash = this._mediaController.createSolicitationArray(
+                let messageRash = this._mediaController.createSolicitationArray(
                     btoa(conf.req.NEW_ROOM),
                     this._startedAt,
                     this._roomInfo.inRoom.value,
@@ -1122,7 +1122,7 @@ class webrtcController {
                     this._broadcaster.extra.streamEnded
                 );
 
-                let msgnewrash = this._mediaController.createSolicitationArray(
+                let messageArray = this._mediaController.createSolicitationArray(
                     btoa(conf.req.NEW_PARTICIPATION),
                     participant,
                     this._roomInfo.inRoom.value,
@@ -1130,7 +1130,7 @@ class webrtcController {
                     this._retransmitingWho
                 );
 
-                let msgscnrash = this._mediaController.createSolicitationArray(
+                let messageSolicitationArray = this._mediaController.createSolicitationArray(
                     btoa(conf.req.NEW_SHARE),
                     this._roomInfo.currentUser.value,
                     screen,
@@ -1138,9 +1138,9 @@ class webrtcController {
                     this._roomInfo.currentRoomId.value
                 );
 
-                if (userid && (this._startedStream || this._broadcaster.extra.streamEnded)) this._broadcaster.send(msgrash, userid);
-                if (this._retransmiting && participant) this._broadcaster.send(msgnewrash, userid);
-                if (screen) this._broadcaster.send(msgscnrash, userid);
+                if (userid && (this._startedStream || this._broadcaster.extra.streamEnded)) this._broadcaster.send(messageRash, userid);
+                if (this._retransmiting && participant) this._broadcaster.send(messageArray, userid);
+                if (screen) this._broadcaster.send(messageSolicitationArray, userid);
                 this._broadcaster.send(this._connectController.points);
             }
             this._updateUsersList();
@@ -1171,8 +1171,8 @@ class webrtcController {
             return;
         } else if ((connection.isInitiator && (event.data && !event.data.userRemoved))) {
             if (!Array.isArray(event.data)) {
-                connection.getAllParticipants().forEach((p) => {
-                    if (p + '' != event.userid + '') connection.send(event.data, p);
+                connection.getAllParticipants().forEach((peer) => {
+                    if (peer + '' != event.userid + '') connection.send(event.data, peer);
                 });
             }
             this._messageSetting(event);
@@ -1240,7 +1240,7 @@ class webrtcController {
             } else if (checkrash[0] === btoa(conf.req.RESP_PEDE_VEZ + conf.req.REQ_ALLOW)) {
                 // Permissão de participação concedida
                 if (checkrash[2] === myRoom) {
-                    this._imParticipant = true;
+                    this._imAParticipant = true;
                     this._structure.solicita -= 1;
                     this._mediaController.allow();
                     this._structure.lockSolicitation = true;
@@ -1280,9 +1280,8 @@ class webrtcController {
 
             } else if (checkrash[0] === btoa(conf.req.END_PARTICIPANT)) {
                 // Finalização de participação (Remoto)
-                //if (this._broadcaster) this._removeStreams(this._broadcaster);
                 if (this._broadcaster) {
-                    this._finishVideo(this._caller, this._media.thirdVideoPreview);
+                    this._finishVideo(this._chamada, this._media.thirdVideoPreview);
                     this._structure.lockSolicitation = false;
                 }
                 GeneralHelper.hideit(dom.DIV_BTN_END);
@@ -1319,9 +1318,7 @@ class webrtcController {
 
             } else if (checkrash[0] === btoa(conf.req.NEW_PARTICIPATION)) {
                 // Participação de um espectador na transmissão
-                if (checkrash[3] != myRoom) {
-                    setTimeout(() => this._mediaController.initParticipantVideo(checkrash[4], checkrash[1]), 2000);
-                }
+                if (checkrash[3] != myRoom) setTimeout(() => this._mediaController.initParticipantVideo(checkrash[4], checkrash[1]), 2000);
 
             } else {
                 // Mensagem sistêmica não definida
@@ -1363,17 +1360,17 @@ class webrtcController {
 
         confirm.onclick = () => {
 
-            this._finishVideo(this._self, this._media.previewVideo);
+            this._finishVideo(this._selfConnection, this._media.previewVideo);
 
             setTimeout(() => {
-                if (this._roomController.checkDevices() && this._self == undefined) {
+                if (this._roomController.checkDevices() && this._selfConnection == undefined) {
                     let session = {
                         audio: false,
                         video: true,
                         type: 'local'
                     };
                     GeneralHelper.showit(dom.SHOW_PREVIEW, 300);
-                    this._self = this._startRTCLocal(session.video, this._media.previewVideo, session);
+                    this._selfConnection = this._startRTCLocal(session.video, this._media.previewVideo, session);
                 }
             }, 500);
 
@@ -1384,29 +1381,29 @@ class webrtcController {
      * Inicializa dos dispositivos selecionados para exibição local, para o próprio usuário em forma de vídeo de preview
      * @param {String} preview 
      * @param {Boolean} isVideo 
-     * @param {Obj HTML} videoObj 
+     * @param {Obj HTML} videoObject 
      * @param {Obj RTCMultiConnection} session 
      */
-    _startRTCLocal(isVideo, videoObj, session, shot) {
+    _startRTCLocal(isVideo, videoObject, session) {
 
         let timestamp = +new Date();
-        let room = 'self' + timestamp;
-        let self = new RTCMultiConnection();
+        let roomId = 'self' + timestamp;
+        let selfConnection = new RTCMultiConnection();
 
-        this._initiatePersonalConnection(self);
-        if (isVideo) this._setConnectionDevices(self);
-        videoObj ? this._afterOpenSelfVideo(self, videoObj) : null;
+        this._initiatePersonalConnection(selfConnection);
+        if (isVideo) this._setConnectionDevices(selfConnection);
+        videoObject ? this._afterOpenSelfVideo(selfConnection, videoObject) : null;
 
-        self.session = session;
+        selfConnection.session = session;
 
-        self.sdpConstraints.mandatory = {
+        selfConnection.sdpConstraints.mandatory = {
             OfferToReceiveVideo: false,
             OfferToReceiveAudio: false
         };
 
-        self.extra.self = true;
-        self.open(room);
-        return self;
+        selfConnection.extra.self = true;
+        selfConnection.open(roomId);
+        return selfConnection;
     }
 
     /**
@@ -1479,14 +1476,14 @@ class webrtcController {
 
             console.log('Recebendo video em ', event, event.file);
 
-            let msgnewrash = this._mediaController.createSolicitationArray(
+            let messageArray = this._mediaController.createSolicitationArray(
                 btoa(conf.req.NEW_PARTICIPATION),
                 this._participantIs,
                 this._roomInfo.inRoom.value,
                 this._structure.targetUser,
                 this._retransmitingWho
             );
-            this._broadcaster.send(msgnewrash);
+            this._broadcaster.send(messageArray);
 
             this._media.endSessionAccess.onclick = () => {
                 console.log('---> REMOTO', event.userid, this._structure.targetUser);
@@ -1527,7 +1524,7 @@ class webrtcController {
             target.attachStreams.forEach(localStream => localStream.stop());
             if (target.extra.self) {
                 target.extra.self = false;
-                this._self = undefined;
+                this._selfConnection = undefined;
             }
             target.sessionid.startsWith("call") ? GeneralHelper.hideit('#' + video.id, 300) : null;
             socket.emit('admin', {
@@ -1625,7 +1622,7 @@ class webrtcController {
                     }
                 }
 
-                this._finishVideo(this._self, this._media.previewVideo);
+                this._finishVideo(this._selfConnection, this._media.previewVideo);
                 this._structure.usuario = this._room.name;
                 this._structure.onlobby = false;
                 // Verificação de dispositivos de entrada de áudio e vídeo
@@ -1726,19 +1723,24 @@ class webrtcController {
                     button.onclick = () => {
                         this._roomId = moderatorId;
                         this._room = {
-                            con: doc.TAG(dom.CON_ID).value,
+                            connection: doc.TAG(dom.CON_ID).value,
                             assunto: this._roomData.assunto,
                             classe: this._roomData.classe
                         }
                         this._roomController.setRoomLabel(misc.ICON_FA_TV, this._roomData.classe, this._roomData.assunto);
-                        // Trata botão de modal de espectadores presentes
-                        doc.TAG(dom.INFORM_VIEWS).onclick = () => {
-                            let validate = this._roomController.validateViews();
-                            if (validate) this._roomEntered(moderatorId, this._roomData.whois, this._connection);
-                            else this._alerta.initiateMessage(conf.message.INVALID_VALUE);
+
+                        if (this._structure.roomType == 1) {
+                            this._roomEntered(moderatorId, this._roomData.whois, this._connection);
+                        } else {
+                            // Trata botão de modal de espectadores presentes
+                            doc.TAG(dom.INFORM_VIEWS).onclick = () => {
+                                let validate = this._roomController.validateViews();
+                                validate ?
+                                    this._roomEntered(moderatorId, this._roomData.whois, this._connection) :
+                                    this._alerta.initiateMessage(conf.message.INVALID_VALUE);
+                            }
+                            setTimeout(() => doc.TAG(dom.NUMBER_VIEWS).focus(), 300);
                         }
-                        setTimeout(() => doc.TAG(dom.NUMBER_VIEWS).focus(), 300);
-                        if (this._structure.roomType == 1) $(dom.INFORM_VIEWS).click();
                     }
                 }
                 if (this._structure.countRooms == 0) this._roomController.noRooms();
@@ -1839,7 +1841,7 @@ class webrtcController {
     _roomEntered(moderator, whois) {
 
         try {
-            this._finishVideo(this._self, this._media.previewVideo);
+            this._finishVideo(this._selfConnection, this._media.previewVideo);
         } catch (e) { /* Ignora erro */ }
         this._mediaController.initiateStream();
         this._structure.onlobby = false;
@@ -1882,7 +1884,7 @@ class webrtcController {
 
         // Inicializa verificação de token caso não seja um dispositivo Mobile
         if (!DetectRTC.isMobileDevice && conf.con.TK_DETECT) {
-            GeneralHelper.showit(dom.TK_DETEC);
+            GeneralHelper.showit(dom.TK_DETECT);
             $(dom.CALL_TK).click();
         }
     }
@@ -1981,7 +1983,7 @@ class webrtcController {
     _sendPic(picture) {
 
         let hash = doc.TAG(dom.IN_ROOM).value;
-        let turma = this._room.con;
+        let turma = this._room.connection;
 
         let url = doc.URL_PHOTO_SEND;
         let type = 'POST';
@@ -2025,7 +2027,7 @@ class webrtcController {
                     this._sendParticipation(caller);
                     console.log("Compartilhando vídeo ------>", stream);
                 });
-                this._caller = caller;
+                this._chamada = caller;
             } else {
                 console.warn('Sala requisitada não encontrada!', targetRoomId);
                 this._media.sessionAccess.click();
@@ -2062,7 +2064,7 @@ class webrtcController {
 
         caller.extra.receiver = true;
         caller.open(room);
-        this._caller = caller;
+        this._chamada = caller;
 
     }
 
