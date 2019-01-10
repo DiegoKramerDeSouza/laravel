@@ -14,9 +14,4 @@ class Componente extends Model
 
         return $this->hasMany('App\Perfils_has_componente');
     }
-
-    public function userDado(){
-
-        return $this->hasMany('App\UserDado');
-    }
 }

@@ -50,7 +50,7 @@ trait EspecialMethods{
             $componenteId = $this->getComponentId($module);
             $userid = Auth::user()->id;
             $userGroup = UserDado::where('user_id', $userid)->first();
-            $access = Perfil::find($userGroup->group);
+            $access = Perfil::find($userGroup->perfils_id);
             $finding = Perfils_has_componente::where('perfils_id', $access->id)
                                             ->where('componentes_id', $componenteId)->count();
             if($finding > 0) return true;
@@ -65,7 +65,7 @@ trait EspecialMethods{
     public function adminAccess($userid){
 
         $dados = UserDado::where('user_id', $userid)->first();
-        $granted = Perfil::find($dados->group);
+        $granted = Perfil::find($dados->perfils_id);
         $finding = Perfils_has_componente::where('perfils_id', $granted->id)->count();
         return $finding;
     }
@@ -91,9 +91,8 @@ trait EspecialMethods{
             elseif($req->success == '2') $response = $message->updated[$target];
             else $response = $message->deleted[$target];
             return $response;
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**
