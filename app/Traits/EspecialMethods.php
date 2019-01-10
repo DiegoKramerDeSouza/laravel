@@ -17,7 +17,8 @@ use App\Perfils_has_componente;
 
 trait EspecialMethods{
 
-    private $arrayChamada = [];
+    // Teste de contabilização
+    private static $initiator = 0;
 
     /**
      * Carrega definições básicas de configuração da aplicação
@@ -29,36 +30,37 @@ trait EspecialMethods{
     }
 
     /**
-     * Coleta o ID do componente que está sendo acessado;
+     * Coleta o ID do componente que está sendo acessado
+     * {String} $module 
      */
     public function getComponentId($module){
 
-        $moduleId = Componente::where('model', $module)->first();
-        return $moduleId->id;
+        $componente = Componente::where('model', $module)->first();
+        return $componente->id;
     }
 
     /**
-     * Valida o componente acessado com as permissões do usuário;
+     * Valida o componente acessado com as permissões do usuário
+     * {String} $module 
      */
     public function validade($module){
 
-        $id = $this->getComponentId($module);
+        //self::$initiator++;
         if(Auth::user()->type == 0){
+            $componenteId = $this->getComponentId($module);
             $userid = Auth::user()->id;
             $userGroup = UserDado::where('user_id', $userid)->first();
             $access = Perfil::find($userGroup->group);
             $finding = Perfils_has_componente::where('perfils_id', $access->id)
-                                            ->where('componentes_id', $id)->count();
+                                            ->where('componentes_id', $componenteId)->count();
             if($finding > 0) return true;
-            //if(strpos($access->grant, "$id") !== false) return true; 
-            else return false;
-        } else {
-            return false;
-        }    
+        }
+        return false;
     }
     
     /**
-     * Verifica o tipo de acesso do usuário;
+     * Verifica o tipo de acesso do usuário
+     * {Int} $userId 
      */
     public function adminAccess($userid){
 
@@ -78,15 +80,17 @@ trait EspecialMethods{
 
     /**
      * Trata mensagem de retorno de operações de banco
+     * {Obj post request} $req
+     * {String} target 
      */
     public function returnMessages($req, $target){
 
         if(isset($req->success)) {
             $message = new DefaultMessages();
-            if($req->success == '1') $msg = $message->created[$target];
-            elseif($req->success == '2') $msg = $message->updated[$target];
-            else $msg = $message->deleted[$target];
-            return $msg;
+            if($req->success == '1') $response = $message->created[$target];
+            elseif($req->success == '2') $response = $message->updated[$target];
+            else $response = $message->deleted[$target];
+            return $response;
         } else {
             return null;
         }

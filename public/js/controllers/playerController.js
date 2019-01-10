@@ -16,8 +16,8 @@ class PlayerController {
         this._muted = true;
         this._ratio = '16:9';
         this._player;
-        this._local = 'http://localhost';
-        this._url = 'https://wtv.lrbtecnologia.com';
+        this._local = doc.SERVER.HOME.LOCAL;
+        this._url = doc.SERVER.HOME.SSL;
     }
 
     /* Inicializa player de Video */

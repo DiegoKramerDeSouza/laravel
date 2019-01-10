@@ -35,9 +35,8 @@ class CadastroPerfilController extends Controller
                 return view('admin.cadastro.perfis.index', compact('perfis', 'isAutocomplete', 'success'));
             }
             return view('admin.cadastro.perfis.index', compact('perfis', 'isAutocomplete'));
-        } else {
-            return $this->accessDenied();
         }
+        return $this->accessDenied();
     }
 
     /**
@@ -52,9 +51,8 @@ class CadastroPerfilController extends Controller
             $perfis = Perfil::all();
             $componentes = Componente::all();
             return view('admin.cadastro.perfis.adicionar', compact('perfis', 'grant', 'componentes'));
-        } else {
-            return $this->accessDenied();
         }
+        return $this->accessDenied();
     }
 
     /**
@@ -83,7 +81,7 @@ class CadastroPerfilController extends Controller
             $perfis = [
                 '_token'=>$req->_token,
                 'name'=>$req->name,
-                'grant'=>$grantList,
+                //'grant'=>$grantList,
                 'description'=>$req->description
             ];
             
@@ -99,10 +97,8 @@ class CadastroPerfilController extends Controller
                 }
             }
             return redirect()->route('admin.cadastro.perfis', ['success' => '1']);
-        } else {
-
-            return $this->accessDenied();
         }
+        return $this->accessDenied();
     }
 
     /**
@@ -156,7 +152,7 @@ class CadastroPerfilController extends Controller
             $perfis = [
                 '_token'=>$req->_token,
                 'name'=>$req->name,
-                'grant'=>$grantList,
+                //'grant'=>$grantList,
                 'description'=>$req->description
             ];
             Perfil::find($id)->update($perfis);

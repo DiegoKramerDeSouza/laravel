@@ -31,7 +31,6 @@ class RoomDataController {
     validateRoomName(labelRoom, roomsArray) {
 
         try {
-            //labelRoom = atob(labelRoom);
             if (!(labelRoom.split('|').length === 3)) return false;
         } catch (exp) {
             let roomView = new RoomView();

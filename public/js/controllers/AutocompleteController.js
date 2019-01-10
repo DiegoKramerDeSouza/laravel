@@ -12,7 +12,6 @@ class AutocompleteController {
         this._origin = location.origin;
         this._admModule = location.pathname.split('/')[3];
         this._searched = false;
-
         this._search = doc.TAG(dom.SEARCH);
     }
 

@@ -26,6 +26,5 @@
         <input class='validate' required type='text' name='description' id='description' value='{{ isset($perfis->description) ? $perfis->description : ''}}'>
         <label for='description'>{!! $default->descricaoIcon !!} Descrição</label>
     </div>
-    <input class='validate' required type='hidden' readonly name='grant' id='grant' value='{{ isset($perfis->grant) ? $perfis->grant : ''}}'>
 
 </div>

@@ -29,8 +29,6 @@ class RestController extends Controller
 
         $turmas = Turma::all();
         $json = json_encode($turmas, JSON_UNESCAPED_UNICODE);
-        //$json = json_encode(session()->all(), JSON_UNESCAPED_UNICODE);
-        //$json = json_encode(session()->get('classList'), JSON_UNESCAPED_UNICODE);
         return $json;
     }
 
@@ -87,9 +85,9 @@ class RestController extends Controller
 
     public function testaPresenca(Request $req){
 
+        // Simula resposta de rest de Chamada de turma
         $turma = $req->turmaId;
         $aula = $req->aula;
-        // Simulação de Dados coletados
         $especPresentes = [];
         $total = [
                     ['Aasdfg', 1],

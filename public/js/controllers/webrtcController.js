@@ -1749,7 +1749,9 @@ class webrtcController {
         return this._structure.onlobby;
     }
 
-
+    /**
+     * Atualiza dados de usuários, participações e compartilhamentos de tela para todas as novas conexões
+     */
     _updateUsersList() {
 
         // Tratamento de conexões de espectadores ao entrar em uma sala

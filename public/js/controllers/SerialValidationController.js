@@ -58,13 +58,11 @@ class SerialValidationController {
 
                 if (this._index > 1) {
                     if (this._atual == "1" || this._anterior == "1") {
-                        //this._alerta.initiateMessage(conf.message.TK_FOUNDED);
                         $(dom.TK_OFF).hide();
                         $(dom.TK_ON).fadeIn(100);
                     } else {
                         $(dom.TK_ON).hide();
                         $(dom.TK_OFF).fadeIn(100);
-                        //this._alerta.initiateMessage(conf.message.TK_NOT_FOUND);
                     }
                     this._index = 0;
                 }

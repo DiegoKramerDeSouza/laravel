@@ -1,5 +1,5 @@
 /**
- * Classe voltada ao tratamento de requisições Ajax
+ * Classe voltada ao tratamento de chamadas de requisições Ajax
  *  
  * Instancia:
  * MessageController
@@ -13,6 +13,16 @@ class RequestController {
         this._request = new Request(url, type, data, dataType);
     }
 
+    /**
+     * Chamada de procedimento com estrutura Ajax básica 
+     * @param { Laravel Token } header 
+     * @param { String } url 
+     * @param { String } type 
+     * @param { Post Request data } data 
+     * @param { String } dataType 
+     * @param { function } callback 
+     * @param { function } callbackError 
+     */
     _basicRequest(header, url, type, data, dataType, callback, callbackError) {
 
         let configuration;
@@ -27,6 +37,8 @@ class RequestController {
 
     /**
      * Chamada de procedimento de inserção/atualização de dados de salas criadas
+     * @param { Obj Request } req 
+     * @param { Boolean } response 
      */
     saveRoom(req, response) {
 
@@ -48,6 +60,9 @@ class RequestController {
         this._basicRequest(this._request.header, this._request.url, this._request.type, this._request.data, this._request.dataType, callback, error);
     }
 
+    /**
+     * Chamada de procedimento para envio de photo de sala
+     */
     sendPhoto() {
 
         let callback = (data) => {
@@ -177,7 +192,6 @@ class RequestController {
     /**
      * Chamada de procedimento para confirmação e envio da lista de espectadores presentes
      * @param { Obj Request } req 
-     * @param { Boolean } send 
      */
     _confirmSendList(req) {
 

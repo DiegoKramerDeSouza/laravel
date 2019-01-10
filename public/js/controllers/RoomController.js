@@ -15,9 +15,10 @@ class RoomController {
         this._inputMateria = doc.TAG(dom.MATERIA);
         this._inputAssunto = doc.TAG(dom.ASSUNTO);
         this._inputName = doc.TAG(dom.NAME);
+        this._numberOfViewers = doc.TAG(dom.NUMBER_VIEWS);
+
         this.audioList = doc.TAG(dom.LIST_AUDIO);
         this.videoList = doc.TAG(dom.LIST_VIDEO);
-        this._numberOfViewers = doc.TAG(dom.NUMBER_VIEWS);
     }
 
     createList() {
