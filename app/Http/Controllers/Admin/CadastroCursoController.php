@@ -28,7 +28,6 @@ class CadastroCursoController extends Controller
     public function index(Request $req){
 
         if($this->validade($this->module)){
-            
             $resultado = Curso::orderBy('name', 'asc')->paginate($this->pagination);
             $allmodulos = Modulo::all()->toArray();
             $modulos = array();
@@ -39,10 +38,8 @@ class CadastroCursoController extends Controller
                 return view('admin.cadastro.cursos.index', compact('resultado', 'modulos', 'isAutocomplete', 'success'));
             }
             return view('admin.cadastro.cursos.index', compact('resultado', 'modulos', 'isAutocomplete'));
-        } else {
-
-            return $this->accessDenied();
         }
+        return $this->accessDenied();
     }
 
     /**
@@ -56,9 +53,8 @@ class CadastroCursoController extends Controller
             $resultado = Curso::all();
             $modulos = Modulo::all();
             return view('admin.cadastro.cursos.adicionar', compact('resultado', 'modulos'));
-        } else {
-            return $this->accessDenied();
-        }
+        } 
+        return $this->accessDenied();
     }
 
     /**
@@ -79,7 +75,6 @@ class CadastroCursoController extends Controller
                             ->withErrors($validator)
                             ->withInput();
             }
-
             $cursos = [
                 '_token'=>$req->_token,
                 'name'=>$req->name,
@@ -88,10 +83,8 @@ class CadastroCursoController extends Controller
             Curso::create($cursos);
 
             return redirect()->route('admin.cadastro.cursos', ['success' => '1']);
-        } else {
-
-            return $this->accessDenied();
         }
+        return $this->accessDenied();
     }
 
     /**
@@ -105,10 +98,8 @@ class CadastroCursoController extends Controller
             $resultado = Curso::find($id);
             $modulos = Modulo::all();
             return view('admin.cadastro.cursos.editar', compact('resultado', 'modulos'));
-        } else {
-
-            return $this->accessDenied();
         }
+        return $this->accessDenied();
     }
 
     /**
@@ -129,7 +120,6 @@ class CadastroCursoController extends Controller
                             ->withErrors($validator)
                             ->withInput();
             }
-
             $cursos = [
                 '_token'=>$req->_token,
                 'name'=>$req->name,
@@ -138,10 +128,8 @@ class CadastroCursoController extends Controller
             Curso::find($id)->update($cursos);
 
             return redirect()->route('admin.cadastro.cursos', ['success' => '2']);
-        } else {
-
-            return $this->accessDenied();
-        }
+        } 
+        return $this->accessDenied();
     }
 
     /**
@@ -153,8 +141,7 @@ class CadastroCursoController extends Controller
         if($this->validade($this->module)){
             Curso::find($id)->delete();
             return redirect()->route('admin.cadastro.cursos', ['success' => '3']);
-        } else {
-            return $this->accessDenied();
         }
+        return $this->accessDenied();
     }
 }

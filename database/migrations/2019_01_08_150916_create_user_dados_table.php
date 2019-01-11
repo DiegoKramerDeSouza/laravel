@@ -20,11 +20,10 @@ class CreateUserDadosTable extends Migration
                 $table->integer('perfils_id')->unsigned();
                 $table->integer('group');
                 $table->timestamps();
+                $table->foreign('perfils_id')
+                    ->references('id')->on('perfils');
                 $table->foreign('user_id')
                     ->references('id')->on('users')
-                    ->onDelete('cascade');
-                $table->foreign('perfils_id')
-                    ->references('id')->on('perfils')
                     ->onDelete('cascade');
             });
         }
