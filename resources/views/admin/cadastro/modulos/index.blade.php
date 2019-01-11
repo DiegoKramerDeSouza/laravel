@@ -18,13 +18,13 @@
                     <label for="search-input">Pesquisar</label>
                 </div>
                 <div class="input-field col s12 m6" align='right'>
-                    Módulos encontrados: <b>{{ $modulos->total() }}</b>
+                    Módulos encontrados: <b>{{ $resultado->total() }}</b>
                     <h6><a class='load green-text text-darken-1' href='{{ route('admin.cadastro.modulos.adiciona') }}'>{!! $default->novoIcon !!} Novo Módulo</a></h6>
                 </div>
                 <div class='col s12 divider'></div>
             </div>
             <div class='row'>
-                @if(count($modulos) > 0)
+                @if(count($resultado) > 0)
                     <table class='striped'>
                         <thead>
                             <tr>
@@ -34,7 +34,7 @@
                         </thead>
 
                         <tbody>
-                            @foreach($modulos as $modulo)
+                            @foreach($resultado as $modulo)
                                 <tr>
                                     <td><b> {{ $modulo->name }}</b></td>
                                     <td> {{ $modulo->created_at }}</td>
@@ -47,7 +47,7 @@
                         </tbody>
                     </table>
                     <div class='row center'>
-                        {{ $modulos->links() }}
+                        {{ $resultado->links() }}
                     </div>
                 @else
                     <div class='grey-text center' style='margin-top:40px; margin-bottom:40px;'>
@@ -64,7 +64,7 @@
             @endif
         </div>
     </div>
-    @foreach($modulos as $modulo)
+    @foreach($resultado as $modulo)
         <div id='confirm-message-{{$modulo->id}}' class='modal'>
             <div class='modal-content'>
                 <h5>Deseja remover o módulo <b>{{$modulo->name}}</b>?</h5>

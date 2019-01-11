@@ -30,16 +30,16 @@ class CadastroTurmaController extends Controller
     public function index(Request $req){
 
         if($this->validade($this->module)){
-            $turmas = Turma::orderBy('name', 'asc')->paginate($this->pagination);
+            $resultado = Turma::orderBy('name', 'asc')->paginate($this->pagination);
             $accounts = User::where('type', 1)->get()->toArray();
             $users = array();
             foreach($accounts as $account) $users[$account['id']] = $account['login'];
             $isAutocomplete = true;
             if(isset($req->success)) {
                 $success = $this->returnMessages($req, $this->module);
-                return view('admin.cadastro.turmas.index', compact('turmas', 'users', 'isAutocomplete', 'success'));
+                return view('admin.cadastro.turmas.index', compact('resultado', 'users', 'isAutocomplete', 'success'));
             }
-            return view('admin.cadastro.turmas.index', compact('turmas', 'users', 'isAutocomplete'));
+            return view('admin.cadastro.turmas.index', compact('resultado', 'users', 'isAutocomplete'));
         } else {
             return $this->accessDenied();
         }
@@ -138,8 +138,8 @@ class CadastroTurmaController extends Controller
 
         if($this->validade($this->module)){
             $classroom = true;
-            $turmas = Turma::find($id);
-            $users = User::find($turmas->user_id);
+            $resultado = Turma::find($id);
+            $users = User::find($resultado->user_id);
             $escolas = Escola::all();
             $cursos = Curso::all();
 
@@ -148,9 +148,9 @@ class CadastroTurmaController extends Controller
             foreach($allmodulos as $modulo){
                 $modulos[$modulo['id']] = $modulo['name'];
             }
-            $html = $this->constructCursosList($cursos, $turmas->curso_id, $modulos);
+            $html = $this->constructCursosList($cursos, $resultado->curso_id, $modulos);
 
-            return view('admin.cadastro.turmas.editar', compact('users', 'turmas', 'escolas', 'cursos', 'modulos', 'html', 'classroom'));
+            return view('admin.cadastro.turmas.editar', compact('users', 'resultado', 'escolas', 'cursos', 'modulos', 'html', 'classroom'));
         } else {
 
             return $this->accessDenied();
@@ -219,7 +219,6 @@ class CadastroTurmaController extends Controller
         if($this->validade($this->module)){
             $turmas = Turma::find($id);
             User::find($turmas->user_id)->delete();
-            //$turmas->delete();
             return redirect()->route('admin.cadastro.turmas', ['success' => '3']);
         } else {
 

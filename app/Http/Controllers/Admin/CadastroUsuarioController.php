@@ -29,13 +29,13 @@ class CadastroUsuarioController extends Controller
     public function index(Request $req){
         
         if($this->validade($this->module)){
-            $users = User::where('type', 0)->orderBy('name', 'asc')->paginate($this->pagination);
+            $resultado = User::where('type', 0)->orderBy('name', 'asc')->paginate($this->pagination);
             $isAutocomplete = true;
             if(isset($req->success)) {
                 $success = $this->returnMessages($req, $this->module);
-                return view('admin.cadastro.usuarios.index', compact('users', 'isAutocomplete', 'success'));
+                return view('admin.cadastro.usuarios.index', compact('resultado', 'isAutocomplete', 'success'));
             }
-            return view('admin.cadastro.usuarios.index', compact('users', 'isAutocomplete'));
+            return view('admin.cadastro.usuarios.index', compact('resultado', 'isAutocomplete'));
         } else {
             return $this->accessDenied();
         }
@@ -114,11 +114,11 @@ class CadastroUsuarioController extends Controller
     public function edit($id){
 
         if($this->validade($this->module)){
-            $user = User::find($id);
+            $resultado = User::find($id);
             $userdata = UserDado::where('user_id', $id)->first();
             $escolas = Escola::all();
             $perfis = Perfil::all();
-            return view('admin.cadastro.usuarios.editar', compact('user', 'userdata', 'escolas', 'perfis'));
+            return view('admin.cadastro.usuarios.editar', compact('resultado', 'userdata', 'escolas', 'perfis'));
         } else {
 
             return $this->accessDenied();

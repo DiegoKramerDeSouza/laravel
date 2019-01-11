@@ -28,13 +28,13 @@ class CadastroPerfilController extends Controller
     public function index(Request $req){
 
         if($this->validade($this->module)){
-            $perfis = Perfil::orderBy('name', 'asc')->paginate($this->pagination);
+            $resultado = Perfil::orderBy('name', 'asc')->paginate($this->pagination);
             $isAutocomplete = true;
             if(isset($req->success)) {
                 $success = $this->returnMessages($req, $this->module);
-                return view('admin.cadastro.perfis.index', compact('perfis', 'isAutocomplete', 'success'));
+                return view('admin.cadastro.perfis.index', compact('resultado', 'isAutocomplete', 'success'));
             }
-            return view('admin.cadastro.perfis.index', compact('perfis', 'isAutocomplete'));
+            return view('admin.cadastro.perfis.index', compact('resultado', 'isAutocomplete'));
         }
         return $this->accessDenied();
     }
@@ -48,9 +48,9 @@ class CadastroPerfilController extends Controller
 
         if($this->validade($this->module)){
             $grant = true;
-            $perfis = Perfil::all();
+            $resultado = Perfil::all();
             $componentes = Componente::all();
-            return view('admin.cadastro.perfis.adicionar', compact('perfis', 'grant', 'componentes'));
+            return view('admin.cadastro.perfis.adicionar', compact('resultado', 'grant', 'componentes'));
         }
         return $this->accessDenied();
     }
@@ -81,7 +81,6 @@ class CadastroPerfilController extends Controller
             $perfis = [
                 '_token'=>$req->_token,
                 'name'=>$req->name,
-                //'grant'=>$grantList,
                 'description'=>$req->description
             ];
             
@@ -110,14 +109,14 @@ class CadastroPerfilController extends Controller
 
         if($this->validade($this->module)){
             $grant = true;
-            $perfis = Perfil::find($id);
+            $resultado = Perfil::find($id);
             $componentes = Componente::all();
-            $perfilComp = Perfils_has_componente::where('perfils_id', $perfis->id)->get();
+            $perfilComp = Perfils_has_componente::where('perfils_id', $resultado->id)->get();
             if($perfilComp->count() > 0){
                 $html = $this->constructGrantList($componentes, $perfilComp);
-                return view('admin.cadastro.perfis.editar', compact('perfis', 'grant', 'html')); 
+                return view('admin.cadastro.perfis.editar', compact('resultado', 'grant', 'html')); 
             } else {
-                return view('admin.cadastro.perfis.editar', compact('perfis', 'grant', 'componentes'));
+                return view('admin.cadastro.perfis.editar', compact('resultado', 'grant', 'componentes'));
             }
         } else {
 
@@ -152,7 +151,6 @@ class CadastroPerfilController extends Controller
             $perfis = [
                 '_token'=>$req->_token,
                 'name'=>$req->name,
-                //'grant'=>$grantList,
                 'description'=>$req->description
             ];
             Perfil::find($id)->update($perfis);

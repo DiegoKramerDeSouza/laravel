@@ -18,13 +18,13 @@
                     <label for="search-input">Procurar</label>
                 </div>
                 <div class="input-field col s12 m6" align='right'>
-                    Perfis encontrados: <b>{{ $perfis->total() }}</b>
+                    Perfis encontrados: <b>{{ $resultado->total() }}</b>
                     <h6><a class='load green-text text-darken-1' href='{{ route('admin.cadastro.perfis.adiciona') }}'>{!! $default->novoIcon !!} Novo Perfil</a></h6>
                 </div>
             </div>
             <div class='divider'></div>
             <div class='row'>
-                @if(count($perfis) > 0)
+                @if(count($resultado) > 0)
                     <table class='striped'>
                         <thead>
                             <tr>
@@ -35,7 +35,7 @@
                         </thead>
 
                         <tbody>
-                            @foreach($perfis as $perfil)
+                            @foreach($resultado as $perfil)
                                 <tr>
                                     <td><b> {{ $perfil->name }}</b></td>
                                     <td> {{ $perfil->description }}</td>
@@ -49,7 +49,7 @@
                         </tbody>
                     </table>
                     <div class='row center'>
-                        {{ $perfis->links() }}
+                        {{ $resultado->links() }}
                     </div>
                 @else
                     <div class='grey-text center' style='margin-top:40px; margin-bottom:40px;'>
@@ -66,7 +66,7 @@
             @endif
         </div>
     </div>
-    @foreach($perfis as $perfil)
+    @foreach($resultado as $perfil)
         <div id='confirm-message-{{$perfil->id}}' class='modal'>
             <div class='modal-content'>
                 <h5>Deseja remover o perfil <b>{{$perfil->name}}</b>?</h5>

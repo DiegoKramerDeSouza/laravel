@@ -29,16 +29,16 @@ class CadastroCursoController extends Controller
 
         if($this->validade($this->module)){
             
-            $cursos = Curso::orderBy('name', 'asc')->paginate($this->pagination);
+            $resultado = Curso::orderBy('name', 'asc')->paginate($this->pagination);
             $allmodulos = Modulo::all()->toArray();
             $modulos = array();
             foreach($allmodulos as $modulo) $modulos[$modulo['id']] = $modulo['name'];
             $isAutocomplete = true;
             if(isset($req->success)) {
                 $success = $this->returnMessages($req, $this->module);
-                return view('admin.cadastro.cursos.index', compact('cursos', 'modulos', 'isAutocomplete', 'success'));
+                return view('admin.cadastro.cursos.index', compact('resultado', 'modulos', 'isAutocomplete', 'success'));
             }
-            return view('admin.cadastro.cursos.index', compact('cursos', 'modulos', 'isAutocomplete'));
+            return view('admin.cadastro.cursos.index', compact('resultado', 'modulos', 'isAutocomplete'));
         } else {
 
             return $this->accessDenied();
@@ -53,9 +53,9 @@ class CadastroCursoController extends Controller
     public function add(){
 
         if($this->validade($this->module)){
-            $cursos = Curso::all();
+            $resultado = Curso::all();
             $modulos = Modulo::all();
-            return view('admin.cadastro.cursos.adicionar', compact('cursos', 'modulos'));
+            return view('admin.cadastro.cursos.adicionar', compact('resultado', 'modulos'));
         } else {
             return $this->accessDenied();
         }
@@ -102,9 +102,9 @@ class CadastroCursoController extends Controller
     public function edit($id){
 
         if($this->validade($this->module)){
-            $cursos = Curso::find($id);
+            $resultado = Curso::find($id);
             $modulos = Modulo::all();
-            return view('admin.cadastro.cursos.editar', compact('cursos', 'modulos'));
+            return view('admin.cadastro.cursos.editar', compact('resultado', 'modulos'));
         } else {
 
             return $this->accessDenied();

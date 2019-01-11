@@ -35,14 +35,23 @@ class CadastroController extends Controller
             $users = User::where('type', 0)->count();
             $dados = UserDado::where('user_id', $userid)->first();
             $componentes = Perfils_has_componente::where('perfils_id', $dados->perfils_id)->get();
-            $grid = (12/$cadastro);
-            if($grid <= 3) $grid = (24/$cadastro);
-            $grid = (int) $grid;
-
+            // Definição de padrão de exibição do Grid do MaterializeCss de acordo com o
+            // número de componentes possíveis para aquele usuário:
+            // (tamanho do grid: 12; no máximo 4 grids/row; tamanho mínimo do grid: 3)
+            $row = 0;
+            $grid = 0;
+            while($grid < 3){
+                $row += 12;
+                $grid = ($row/$cadastro);
+                $grid = (int) $grid;
+            }
             foreach($componentes as $module){
                 $comp = Componente::find($module->componentes_id);
                 $model = 'App\\' . $comp->model;
-                $comp->id == 5 ? $count = $model::where('type', 0)->count() : $count = $model::count();
+                //Particularidade para a pesquisa de usuários(componente id 5)
+                $comp->id == 5 ? 
+                    $count = $model::where('type', 0)->count() : 
+                    $count = $model::count();
                 array_push($granted, ['name'=>$comp->name, 'cadastrado'=>$comp->cadastrado, 'icon'=>$comp->icon, 'count'=>$count]);
             }
             return view('admin.cadastro.index', compact('granted', 'grid'));

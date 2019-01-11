@@ -31,13 +31,13 @@ class CadastroEscolaController extends Controller
     public function index(Request $req){
 
         if($this->validade($this->module)){
-            $escolas = Escola::orderBy('name', 'asc')->paginate($this->pagination);
+            $resultado = Escola::orderBy('name', 'asc')->paginate($this->pagination);
             $isAutocomplete = true;
             if(isset($req->success)) {
                 $success = $this->returnMessages($req, $this->module);
-                return view('admin.cadastro.escolas.index', compact('escolas', 'isAutocomplete', 'success'));
+                return view('admin.cadastro.escolas.index', compact('resultado', 'isAutocomplete', 'success'));
             }
-            return view('admin.cadastro.escolas.index', compact('escolas', 'isAutocomplete'));
+            return view('admin.cadastro.escolas.index', compact('resultado', 'isAutocomplete'));
         } else {
             return $this->accessDenied();
         }
@@ -125,9 +125,9 @@ class CadastroEscolaController extends Controller
         if($this->validade($this->module)){
             $api = RecursoApi::where('name', 'Google Maps Geolocation')->first();
             $apicep = RecursoApi::where('name', 'ViaCEP Consulta')->first();
-            $escolas = Escola::find($id);
+            $resultado = Escola::find($id);
             $endereco = EnderecoEscola::where('school_id', $id)->first();
-            return view('admin.cadastro.escolas.editar', compact('api', 'apicep', 'escolas', 'endereco'));
+            return view('admin.cadastro.escolas.editar', compact('api', 'apicep', 'resultado', 'endereco'));
         } else {
             return $this->accessDenied();
         }
