@@ -1,5 +1,5 @@
 /**
- * Todos os elementos do Materialize CSS devem ser inicializados aqui
+ * Classe voltada à inicialização de todos os elementos do Materialize CSS
  */
 class MaterializeController {
 
@@ -43,7 +43,7 @@ class MaterializeController {
 
     _initSidenav() {
 
-        this._sidenavInstance = M.Sidenav.init(this._sidenav);
+        this._sidenavInstance = M.Sidenav.init(this._sidenav, { edge: conf.str.NAV_EDGE });
     }
 
     _initSelect() {

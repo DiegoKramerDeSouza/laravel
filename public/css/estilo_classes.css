@@ -20,23 +20,29 @@
     margin: 2px;
 }
 
+.blockquoted-grey {
+    border-left: 5px solid rgb(35, 35, 35);
+    padding: 5px;
+    margin: 2px;
+}
+
 .chat-in,
 .chat-out {
     padding: 8px;
     margin: 5px;
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
     -webkit-transition-duration: 0.4s;
     transition-duration: 0.4s;
     max-width: 320px;
 }
 
 .chat-in {
-    border-bottom-right-radius: 8px;
+    border-top-right-radius: 8px;
 }
 
 .chat-out {
-    border-bottom-left-radius: 8px;
+    border-top-left-radius: 8px;
 }
 
 .constructed-videos {
@@ -54,17 +60,80 @@
     padding: 5px;
 }
 
+.cursor-default {
+    cursor: default !important;
+}
+
 .d-none {
     display: none;
+}
+
+.dark-grey {
+    background-color: rgb(22, 22, 22) !important;
+}
+
+.destaque {
+    border: 1px solid red;
 }
 
 .disconnect-btn:hover {
     cursor: pointer;
 }
 
+
+/*
+@media screen and (min-width: 768px) {
+    
+    .header,
+    .marketing,
+    .footer {
+        padding-right: 0;
+        padding-left: 0;
+    }
+    .header {
+        margin-bottom: 30px;
+    }
+}
+*/
+
+.embedded-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    /* 16:9 */
+    padding-top: 25px;
+    height: 0;
+}
+
+.embedded-container iframe,
+.embedded-container object,
+.embedded-container embed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.embedded-containerOLD {
+    position: relative;
+    overflow: hidden;
+    padding-top: 56.25%;
+}
+
+.embedded-videoOLD {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    margin: auto;
+}
+
 .files-pool {
     overflow-y: auto;
-    max-height: 170px;
+    /*max-height: 250px;*/
+    overflow-x: hidden;
 }
 
 .files-pool::-webkit-scrollbar-track {
@@ -124,6 +193,17 @@
     width: 20%;
 }
 
+.informative {
+    text-decoration: bold;
+    font-size: 12px;
+}
+
+.inform-files {
+    position: absolute;
+    z-index: 10;
+    transform: translate(-90%, 0%);
+}
+
 .li-disconnect {
     -webkit-transition-duration: 0.4s;
     transition-duration: 0.4s;
@@ -158,8 +238,8 @@
     transition-duration: 0.4s;
     margin-top: 40px;
     padding-bottom: 60px;
-    margin-left: 10%;
-    margin-right: 10%;
+    margin-left: 5%;
+    margin-right: 5%;
 }
 
 .main-container-full {
@@ -186,6 +266,26 @@
     max-width: 100%;
 }
 
+.m-10 {
+    margin: 10px;
+}
+
+.ml-5 {
+    left: 5px;
+}
+
+.ml-10 {
+    margin-left: 10px;
+}
+
+.mt-10 {
+    margin-top: 10px;
+}
+
+.mt-50 {
+    margin-top: 50px;
+}
+
 .obj-invisible {
     opacity: 0;
 }
@@ -194,12 +294,48 @@
     opacity: 1;
 }
 
+.p--0255 {
+    padding-top: 0px;
+    padding-bottom: 2px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.p-5 {
+    padding: 5px;
+}
+
+.p-10 {
+    padding: 10px;
+}
+
+.p-20 {
+    padding: 20px;
+}
+
 .p-40 {
     padding: 40px;
 }
 
+.p-l-10 {
+    padding-left: 10px;
+}
+
+.p-r-10 {
+    padding-right: 10px;
+}
+
+.participant-control {
+    position: relative;
+    bottom: 25px;
+}
+
 .room-enter:hover {
     cursor: pointer;
+}
+
+.rounded-borders {
+    border-radius: 3px;
 }
 
 .second-video {
@@ -213,10 +349,56 @@
     padding-bottom: 20px;
 }
 
+.tooltip-item {
+    cursor: default;
+}
+
+.tooltip-body-top {
+    position: absolute;
+    transform: translate(-25%, -120%);
+    z-index: 5;
+}
+
+.tooltip-body-left {
+    position: absolute;
+    z-index: 5;
+}
+
+.tooltip-red-arrow-bottom {
+    position: absolute;
+    width: 0px;
+    height: 0px;
+    transform: translate(30%, -50%);
+    border-top: 20px solid rgb(198, 40, 40);
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+    z-index: 4;
+}
+
+.tooltip-red-arrow-right {
+    position: absolute;
+    width: 0px;
+    height: 0px;
+    transform: translateX(400%);
+    border-left: 20px solid rgb(198, 40, 40);
+    border-top: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+    z-index: 4;
+}
+
 .valign-wrapper {
     margin: -10px !important;
 }
 
 .width-limit {
-    max-width: 662px;
+    /*max-width: 662px;*/
+    width: 90%;
+    max-width: 1020px;
+}
+
+.width-no-limit {
+    width: 100%;
+    max-width: 1280px;
 }

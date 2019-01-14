@@ -1,6 +1,9 @@
 /**
- *  Classe voltada ao controle de requisições AJAX para coletar dados cadastrados no módulo informado
- *  e criar uma listagem para consulta para formação de Autocomplete;
+ * Classe voltada ao controle de requisições AJAX para coletar dados cadastrados no módulo informado
+ * e criar uma listagem para consulta para formação de Autocomplete;
+ * 
+ * Instancia:
+ * Autocomplete
  */
 class AutocompleteController {
 
@@ -9,7 +12,6 @@ class AutocompleteController {
         this._origin = location.origin;
         this._admModule = location.pathname.split('/')[3];
         this._searched = false;
-
         this._search = doc.TAG(dom.SEARCH);
     }
 

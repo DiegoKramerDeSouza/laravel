@@ -16,9 +16,12 @@ class CreateCursosTable extends Migration
         if(!Schema::hasTable('cursos')){
             Schema::create('cursos', function (Blueprint $table) {
                 $table->increments('id');
-                $table->string('name');
-                $table->integer('modulo_id');
+                $table->string('name')->unique();
+                $table->integer('modulo_id')->unsigned();
                 $table->timestamps();
+                $table->foreign('modulo_id')
+                    ->references('id')->on('modulos')
+                    ->onDelete('cascade');
             });
         }
     }

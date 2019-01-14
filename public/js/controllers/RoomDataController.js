@@ -1,3 +1,11 @@
+/**
+ * Classe voltada à definição de dados específicos de salas criadas por um apresentador
+ * -> Trata a quantidade de espectadores e os grupos permitidos a vizualizar e acessar a sala
+ * 
+ * Instancia:
+ * RoomData
+ * RoomView
+ */
 class RoomDataController {
 
     constructor() {
@@ -13,18 +21,17 @@ class RoomDataController {
         else return this._myClass.value.split(';');
     }
 
-    initiateRoomData(roomid) {
+    initiateRoomData(roomid, assunto, materia, nome) {
 
         let arrRoomId = roomid.split('|');
-        arrRoomId.push(this._countRooms, this._allowed, this._setClasses());
+        arrRoomId.push(this._countRooms, this._allowed, this._setClasses(), conf.datacls.TRANSMITING, assunto, materia, nome);
         return new RoomData(...arrRoomId);
     }
 
     validateRoomName(labelRoom, roomsArray) {
 
         try {
-            labelRoom = atob(labelRoom);
-            if (!(labelRoom.split('|').length === 6)) return false;
+            if (!(labelRoom.split('|').length === 3)) return false;
         } catch (exp) {
             let roomView = new RoomView();
             if (roomsArray.length < 2) roomView.noRooms();

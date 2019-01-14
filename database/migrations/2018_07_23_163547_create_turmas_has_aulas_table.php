@@ -20,7 +20,7 @@ class CreateTurmasHasAulasTable extends Migration
                 $table->integer('aula_id')->unsigned();
                 $table->integer('qtd')->default(0);
                 $table->timestamps();
-                $table->foreign('turma_id')
+                $table->foreign('user_id')
                     ->references('id')->on('users')
                     ->onDelete('cascade');
                 $table->foreign('aula_id')

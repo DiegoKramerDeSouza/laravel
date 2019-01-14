@@ -8,16 +8,38 @@
                     <div class="col s12">
                     <h5 class="white-text">{{ $default->logo }}</h5>
                         <p class="grey-text text-lighten-1">
-                            Protótipo de aplicação voltado à comunicação via webconference utilizando WebRTC e compatível com os navegadores Google Chrome e Mozilla Firefox.
-                            <br/>
-                            Dispositívos: chrome://webrtc-internals/ 
+                            Protótipo de aplicação voltado a apresentações utilizando WebRTC. Compatível com o navegador Google Chrome.
                             <br/>
                             <br/>
-                            {!! $default->bookmarkIcon !!} Versão <span id="version"></span>
-                            <br/>
-                            <span class='grey-text right'>
-                                <a href="https://webrtc.github.io/samples/src/content/getusermedia/gum/" target="_blank" >{!! $default->chromeIcon !!}</a> &nbsp; {!! $default->firefoxIcon !!} 
-                            </span>
+                            @if(env('APP_ENV') != 'production')
+                                <b>Dispositívos detectados: </b>
+                                <br/>
+                                chrome://webrtc-internals/
+                                <br/> 
+                                <br/>
+                                <b>Logs de dispositívos: </b>
+                                <br/>
+                                chrome://device-log/
+                                <br/>
+                                <br/>
+                                <b>Configurações de desenvolvimento: </b>
+                                <br/>
+                                chrome://flags/<br/>
+                                chrome://apps/
+                                <br/>
+                                <br/>
+                                {!! $default->bookmarkIcon !!} Versão <span id="version"></span>
+                                <br/>
+                                <span class='grey-text right'>
+                                    <a href="https://webrtc.github.io/samples/src/content/getusermedia/gum/" target="_blank" >Teste WebRTC {!! $default->chromeIcon !!}</a> 
+                                </span>
+                            @else
+                                {!! $default->bookmarkIcon !!} Versão <span id="version"></span>
+                                <br/>
+                                <span class='grey-text right'>
+                                    {!! $default->chromeIcon !!}
+                                </span>
+                            @endif
                         </p>
                     </div>
                 </div>
@@ -31,7 +53,7 @@
 
         <!-- Inicialização de Javascript -->
         <script type="text/javascript" src="{!! asset('js/conf/conf.js') !!}"></script>
-        <script type="text/javascript" src="{!! asset('js/jquery-3.1.1.min.js') !!}"></script>
+        <script type="text/javascript" src="{!! asset('js/jquery-3.3.1.min.js') !!}"></script>
         <script type="text/javascript" src="{!! asset('js/materialize.min.js') !!}"></script>
         
         <script type="text/javascript" src="{!! asset('js/views/LoadingView.js') !!}"></script>
@@ -58,6 +80,13 @@
         @if(isset($streamPage))
             <!-- Formação de SALAS -->
             @if(! Auth::guest())
+                <!-- Inicializa player -->
+                <script type="text/javascript" src="{!! asset('js/controllers/NewerPlayerController.js') !!}"></script> 
+                <!--
+                <script type="text/javascript" src="{!! asset('js/player/videojs/video.js') !!}"></script>  
+                <script type="text/javascript" src="{!! asset('js/player/videojs/videojs-http-streaming.js') !!}"></script>
+                <script type="text/javascript" src="{!! asset('js/controllers/PlayerController.js') !!}"></script>  
+                -->
                 <!-- Inicializa o controle de dispositivos -->
                 <script type="text/javascript" src="{!! asset('js/controllers/DevicesController.js') !!}"></script>  
                 <script type="text/javascript" src="{!! asset('js/views/DevicesView.js') !!}"></script>
@@ -74,21 +103,31 @@
                 <script type="text/javascript" src="{!! asset('js/controllers/ConnectController.js') !!}"></script>  
                 <script type="text/javascript" src="{!! asset('js/models/Media.js') !!}"></script>  
                 <script type="text/javascript" src="{!! asset('js/controllers/MediaController.js') !!}"></script>
+                <script type="text/javascript" src="{!! asset('js/models/SerialValidation.js') !!}"></script>
+                <script type="text/javascript" src="{!! asset('js/controllers/SerialValidationController.js') !!}"></script>
+                <script type="text/javascript" src="{!! asset('js/controllers/RequestController.js') !!}"></script>  
+                <script type="text/javascript" src="{!! asset('js/models/Request.js') !!}"></script> 
                 <!-- Loader específico para controle de dispositivos -->
                 <script type="text/javascript" src="{!! asset('js/loaders/DeviceLoader.js') !!}"></script>
+                <script type="text/javascript" src="{!! asset('js/loaders/SerialValidationLoader.js') !!}"></script>
                 <!-- Views -->
                 <script type="text/javascript" src="{!! asset('js/views/MediaView.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/views/RoomView.js') !!}"></script>
                 <!-- Helpers -->
                 <script type="text/javascript" src="{!! asset('js/helpers/RoomHelper.js') !!}"></script>        
-                <!-- WebRTC -->
+                <!-- WebRTC Adapters -->
+                <!--<script type="text/javascript" src="{!! asset('js/player/webrtc_adaptor.js') !!}"></script>
+                <script type="text/javascript" src="{!! asset('js/player/adapter-latest.js') !!}"></script>-->
+                <script type="text/javascript" src="{!! asset('js/webrtc/webrtc_adaptor.js') !!}"></script>
+                <script type="text/javascript" src="{!! asset('js/webrtc/adapter-latest.js') !!}"></script>
+                <!-- WebRTC Modules -->
                 <script type="text/javascript" src="{!! asset('js/webrtc/socket.io.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/webrtc/getHTMLMediaElement.js') !!}"></script>
-                <script type="text/javascript" src="{!! asset('js/webrtc/adapter.js') !!}"></script>                      
+                <script type="text/javascript" src="{!! asset('js/webrtc/adapter.js') !!}"></script>                  
                 <script type="text/javascript" src="{!! asset('js/webrtc/NewRTCMultiConnection.min.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/webrtc/getScreenId.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/webrtc/FileBufferReader.js') !!}"></script>
-                
+    
                 <script type="text/javascript" src="{!! asset('js/controllers/webrtcController.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/loaders/webrtcLoader.js') !!}"></script>
             @endif

@@ -1,7 +1,11 @@
 /**
- * Controla mecanismos de elementos de mídia como vídeos, volume e câmeras
+ * Classe voltada ao controle de mecanismos de elementos de mídia como vídeos, volume e câmeras
  *  ->  Controla também as funções de operações relativas às mídias como
  *      pedir a vez e compartilhamento de tela
+ * 
+ * Instancia:
+ * MediaView
+ * Media
  */
 class MediaController {
 
@@ -33,10 +37,12 @@ class MediaController {
         this._fullsize = doc.TAG(dom.TOGGLE_VIDEO_SIZE);
         this._sharedFile = doc.TAG(dom.BTN_FILE_SHARING);
         this._spanSecondVideo = doc.TAG(dom.VIDEO_SECOND);
+        this._downloadedFiles = doc.TAG(dom.DIV_FILE_SHARING);
+        this._finish = doc.TAG(dom.FINISH);
 
         this._controlCam = true;
         this._controlVoice = true;
-        this._controlVolume = true;
+        this._controlVolume = false;
         this._controlSharing = false;
         this._session = false;
         this._videoIsMain = false;
@@ -46,6 +52,7 @@ class MediaController {
         this._spanMainVideo = doc.TAG(dom.VIDEO_MAIN);
         this._pageMainContainer = doc.TAG(dom.PAGE_MAIN_CONTENT);
         this._divIncomingVideo = doc.TAG(dom.DIV_INCOMING_VIDEO);
+        this.startTransmition = doc.TAG(dom.START_TRANSMITION);
         this._otherVideos = {
             screen: '',
             user: ''
@@ -77,7 +84,9 @@ class MediaController {
             this._textMessage,
             this._fullsize,
             this._sharedFile,
-            this._spanSecondVideo
+            this._spanSecondVideo,
+            this._downloadedFiles,
+            this._finish
         );
     }
 
@@ -105,10 +114,20 @@ class MediaController {
         return value ? false : true;
     }
 
+    removeElement(elem) {
+
+        this._mediaView.removeElement(elem);
+    }
+
     initiateStream() {
 
         this._mediaView.adjustStreamScreen();
-        this._mediaView.adjustChatPanel();
+        this._mediaView.adjustChatFilePanel();
+    }
+
+    initiateControls() {
+
+        this._mediaView.showControlElements();
     }
 
     getControlSharing() {
@@ -118,33 +137,27 @@ class MediaController {
 
     initiateVideo(targetVideo) {
 
-        setTimeout(() => {
-            let playPromise = targetVideo.play();
-            if (playPromise !== undefined) {
-                playPromise.then(_ => {
-                        targetVideo.play();
-                    })
-                    .catch(error => {
-                        console.log('ERRO AO INICIALIZAR VIDEO...', error);
-                        this.initiateVideo(targetVideo);
-                    });
-                return;
-            }
-        }, 700);
+        let playPromise = targetVideo.play();
+        if (playPromise !== undefined) {
+            playPromise.then(_ => {
+                    targetVideo.play();
+                })
+                .catch(error => {
+                    //console.log('Erro ao inicializar vídeo...', error);
+                    this.initiateVideo(targetVideo);
+                });
+            return;
+        }
     }
 
-    controlVolume(currentStream) {
+    controlVolume() {
 
         if (this._controlVolume) {
-            currentStream.forEach((stream) => {
-                stream.mute('audio');
-            });
+            this._mediaView.embeddedMessage(dom.FRAME_LAYER, 'mute');
             this._mediaView.setVolumeOff();
             this._controlVolume = false;
         } else {
-            currentStream.forEach((stream) => {
-                stream.unmute('audio');
-            });
+            this._mediaView.embeddedMessage(dom.FRAME_LAYER, 'unmute');
             this._mediaView.setVolumeOn();
             this._controlVolume = true;
         }
@@ -225,6 +238,8 @@ class MediaController {
 
         let mVideoP = this._videoPreview;
         let sVideoP = this._secondVideoPreview;
+        mVideoP.classList.add("obj-invisible");
+        sVideoP.classList.add("obj-invisible");
         let mainVideoSrc;
 
         this._videoIsMain ? mVideoP.classList.remove(misc.CLASS_WIDTH_LIMIT) : mVideoP.classList.add(misc.CLASS_WIDTH_LIMIT);
@@ -244,15 +259,17 @@ class MediaController {
                         sVideoP.play();
                     })
                     .catch(error => {
-                        console.log('Iniciando vídeo...');
+                        console.log('Iniciando vídeo...', error);
                     });
                 playReady.then(_ => {
                         mVideoP.play();
                     })
                     .catch(error => {
-                        console.log('Iniciando vídeo...');
+                        console.log('Iniciando vídeo...', error);
                     });
             }
+            mVideoP.classList.remove("obj-invisible");
+            sVideoP.classList.remove("obj-invisible");
         }, 500);
     }
 
@@ -288,7 +305,14 @@ class MediaController {
     switchShare() {
 
         this._controlSharing = this._switchValue(this._controlSharing);
+        console.log(this._controlSharing);
         this._controlSharing ? this._mediaView.startShare() : this._mediaView.exitShare();
+    }
+
+    setShareEnabled() {
+
+        this._controlSharing = false;
+        this._mediaView.shareEnabled();
     }
 
     disableShare() {
@@ -329,7 +353,7 @@ class MediaController {
         this._mediaView.pedirOff();
     }
 
-    enterFullScreen() {
+    toggleFullScreenOn() {
 
         if (this._spanMainVideo.mozRequestFullScreen) {
             this._spanMainVideo.mozRequestFullScreen();
@@ -341,7 +365,7 @@ class MediaController {
         this._mediaView.enterFullscreen();
     }
 
-    exitFullScreen() {
+    toggleFullScreenOff() {
 
         if (document.fullscreen) {
             document.cancelFullScreen();
@@ -351,6 +375,16 @@ class MediaController {
             document.webkitCancelFullScreen();
         }
         this._mediaView.exitFullscreen();
+    }
+
+    enterFullScreen() {
+
+        this._mediaView.embeddedMessage('#embedded_player', 'fullscreen');
+    }
+
+    exitFullScreen() {
+
+        this._mediaView.embeddedMessage('#embedded_player', 'exitfullscreen');
     }
 
     escFullScreen() {
@@ -390,6 +424,11 @@ class MediaController {
         }
     }
 
+    writeChatMessage(user, message) {
+
+        return this._mediaView.writeChatMessage(user, message);
+    }
+
     writeMessage(msg, rmt) {
 
         let msgbox;
@@ -403,6 +442,11 @@ class MediaController {
     disableFileSharing() {
 
         this._mediaView.fileSharingOff();
+    }
+
+    disableFileSharingList() {
+
+        this._mediaView.fileSharingListOff();
     }
 
     fileSharing(connection, count) {
@@ -436,6 +480,7 @@ class MediaController {
     incomingFile(event, connection) {
 
         let blob = this._dataURItoBlob(event.data.dataURL);
+        //console.log(event.data);
         let file = new File([blob], event.data.fileName, {
             type: event.data.fileType
         });
@@ -506,28 +551,85 @@ class MediaController {
 
     adjustMediaMenu(type) {
 
-        if (type === 'local') {
+        if (type === conf.con.STREAM_LOCAL) {
             this.disableVolume();
+            if (DetectRTC.isMobileDevice) this.disableShare();
             this._mediaView.adjustBroadCaster();
         } else {
             this.disableCam();
             this.disableMute();
+
             this.disableShare();
             this.disableFileSharing();
-            this._mediaView.adjustEspect();
+            this._mediaView.adjustEspectador();
         }
     }
 
-    displayElem(elem, delay) {
+    initBroadcasterVideo(roomid, media) {
 
-        this._mediaView.fadeInElem(elem, delay);
-        //delay != undefined ? this._mediaView.fadeInElem(elem, delay) : this._mediaView.displayElem(elem);
+        this._mediaView.initBroadcasterVideo(roomid, media);
     }
 
-    hideElem(elem, delay) {
+    initParticipantVideo(roomid, participant, name) {
 
-        this._mediaView.fadeOutElem(elem, delay)
-            //delay != undefined ? this._mediaView.fadeOutElem(elem, delay) : this._mediaView.hideElem(elem);
+        this._mediaView.initParticipantVideo(roomid, participant, name);
+    }
+
+    initScreenVideo(screen, media) {
+
+        this._mediaView.initScreenVideo(screen, media);
+    }
+
+    initTransmition(roomid, preVideo, preLoader, count) {
+
+        this._mediaView.initPreVideo(preVideo, preLoader, count);
+        if (roomid) {
+            setTimeout(() => {
+                //this.getMediaServerStream(roomid);
+            }, 5000);
+        }
+
+    }
+
+    startAnimation(webRTCadpt, roomid) {
+
+        this._mediaView.startAnimation(webRTCadpt, roomid);
+    }
+
+    recordAnimation(elem) {
+
+        this._mediaView.recordAnimation(elem);
+    }
+
+    getMediaServerStream(roomid) {
+
+        $.ajax({
+            url: conf.con.SOCKET_PLAYER,
+            type: 'GET',
+            data: { name: btoa(roomid) },
+            success: (data) => console.log(data),
+            error: (data) => console.error(data)
+        });
+    }
+
+    stopTransmition(roomid, broadcaster) {
+
+        try { roomid = atob(roomid) } catch (e) { /* Não faz nada */ }
+        if (roomid.startsWith('screen') || roomid.startsWith('participant')) return;
+        this._mediaView.stopTransmition();
+        if (broadcaster)
+            setTimeout(() => this._mediaView.createVideoLink(roomid), 3000);
+        else GeneralHelper.hideit(dom.WAITING_LINK);
+    }
+
+    changeTransmition(title, icon) {
+
+        this._mediaView.changeTransmition(this._finish, title, icon);
+    }
+
+    endPreTransmition() {
+
+        this._mediaView.endPreVideo();
     }
 
 }

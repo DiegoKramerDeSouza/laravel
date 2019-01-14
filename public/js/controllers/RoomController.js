@@ -1,3 +1,9 @@
+/**
+ * Classe voltada à definição básica de salas criadas pelo apresentador
+ * 
+ * Instancia:
+ * RoomView
+ */
 class RoomController {
 
     constructor() {
@@ -5,12 +11,14 @@ class RoomController {
         this._roomView = new RoomView();
 
         this._roomId = doc.TAG(dom.ROOM);
+        this._roomConId = doc.TAG(dom.CON_ID);
         this._inputMateria = doc.TAG(dom.MATERIA);
         this._inputAssunto = doc.TAG(dom.ASSUNTO);
         this._inputName = doc.TAG(dom.NAME);
+        this._numberOfViewers = doc.TAG(dom.NUMBER_VIEWS);
+
         this.audioList = doc.TAG(dom.LIST_AUDIO);
         this.videoList = doc.TAG(dom.LIST_VIDEO);
-        this._numberOfViewers = doc.TAG(dom.NUMBER_VIEWS);
     }
 
     createList() {
@@ -22,7 +30,7 @@ class RoomController {
     _createHash() {
 
         let timestamp = +new Date();
-        return btoa(`${ this._inputMateria.value }|${ this._inputName.value }|${ this._inputAssunto.value }|${ this.createList() }|${ this._roomId.value }|${ timestamp }`);
+        return `${ this.createList() }|${ this._roomId.value }|${ timestamp }`;
     }
 
     setRoomLabel(icon, classe, assunto) {
@@ -42,17 +50,22 @@ class RoomController {
 
     initiateRoom() {
 
-        return new Room(this._inputName.value, this._inputMateria.value, this._inputAssunto.value, this.createList(), this._createHash());
+        return new Room(this._inputName.value, this._roomConId.value, this._inputMateria.value, this._inputAssunto.value, this.createList(), this._createHash());
+    }
+
+    cleanRoomList(list) {
+
+        this._roomView.cleanRoomList(list);
     }
 
     constructAccessList(classe, assunto, apresentador, viwer, moderador) {
 
-        return this._roomView.createRoomCard(classe, assunto, apresentador, viwer, moderador)
+        return this._roomView.createRoomCard(classe, assunto, apresentador, viwer, moderador);
     }
 
-    initiateRoomCard(moderatorId, label, container, obj) {
+    initiateRoomCard(moderatorId, label, container, obj, type) {
 
-        this._roomView.setRoomCard(moderatorId, label, container, obj, this.checkViews());
+        this._roomView.setRoomCard(moderatorId, label, container, obj, type);
     }
 
     noRooms() {
@@ -65,14 +78,14 @@ class RoomController {
         this._roomView.clearLabelCon();
     }
 
-    constructConnectionList(userid, username, announce, deletable) {
+    constructConnectionList(userid, username, announce, itsMe) {
 
         let deleteButton;
         userid = userid.split('-')[0];
-        deletable ?
-            deleteButton = this._roomView.setRemoveConBtn(userid, username, announce) :
-            deleteButton = this._roomView.setDisabledConBtn(userid, username, announce);
-        this._roomView.newLabelCon(userid, username, deleteButton);
+        itsMe ?
+            deleteButton = this._roomView.setDisabledConBtn(userid, username, announce) :
+            deleteButton = this._roomView.setRemoveConBtn(userid, username, announce);
+        this._roomView.newLabelCon(userid, username, deleteButton, itsMe);
     }
 
     inputConList() {
@@ -99,12 +112,17 @@ class RoomController {
 
     validateViews() {
 
-        return this._numberOfViewers.value > 0 && this._numberOfViewers.value < 99999;
+        return this._numberOfViewers.value >= 0 && this._numberOfViewers.value < 99999;
     }
 
     checkViews() {
 
         return this._numberOfViewers.value != "" && this.validateViews();
+    }
+
+    changeCounter(viwers) {
+
+        this._roomView.changeCounter(viwers);
     }
 
 }

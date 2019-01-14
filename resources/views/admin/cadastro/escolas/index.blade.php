@@ -18,13 +18,13 @@
                     <label for="search-input">Procurar</label>
                 </div>
                 <div class="input-field col s12 m6" align='right'>
-                    Instituições encontradas: <b>{{ $escolas->total() }}</b>
+                    Instituições encontradas: <b>{{ $resultado->total() }}</b>
                     <h6><a class='load green-text text-darken-1' href='{{ route('admin.cadastro.escolas.adiciona') }}'>{!! $default->novoIcon !!} Nova Instituição</a></h6>
                 </div>
             </div>
             <div class='divider'></div>
             <div class='row'>
-                @if(count($escolas) > 0)
+                @if(count($resultado) > 0)
                     <table class='striped'>
                         <thead>
                             <tr>
@@ -34,7 +34,7 @@
                         </thead>
 
                         <tbody>
-                            @foreach($escolas as $escola)
+                            @foreach($resultado as $escola)
                                 <tr>
                                     <td><b> {{ $escola->name }}</b></td>
                                     <td> {{ $escola->created_at }}</td>
@@ -47,7 +47,7 @@
                         </tbody>
                     </table>
                     <div class='row center'>
-                        {{ $escolas->links() }}
+                        {{ $resultado->links() }}
                     </div>
                 @else
                     <div class='grey-text center' style='margin-top:40px; margin-bottom:40px;'>
@@ -64,7 +64,7 @@
             @endif
         </div>
     </div>
-    @foreach($escolas as $escola)
+    @foreach($resultado as $escola)
         <div id='confirm-message-{{$escola->id}}' class='modal'>
             <div class='modal-content'>
                 <h5> Deseja remover a instituição <b>{{$escola->name}}</b>?</h5>

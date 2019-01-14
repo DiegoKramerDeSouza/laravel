@@ -19,6 +19,7 @@ class CreateComponentesTable extends Migration
                 $table->string('name')->unique();
                 $table->string('cadastrado')->unique();
                 $table->string('model');
+                $table->string('icon');
                 $table->timestamps();
             });
         }

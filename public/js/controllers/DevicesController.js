@@ -1,3 +1,10 @@
+/**
+ *  Classe voltada ao tratamento dos dispositívos de áudio e vídeo detectados
+ * 
+ * Instancia:
+ * MessageController
+ * RoomController
+ */
 class DevicesController {
 
     constructor() {
@@ -5,21 +12,29 @@ class DevicesController {
         this._origin = location.origin;
         this._devices = [];
         this._alerta = new MessageController();
+        this._hasMic;
+        this._hasCan;
     }
 
     participantInitiateDevices() {
 
         DetectRTC.load();
+        setTimeout(() => {
+            this._hasMic = DetectRTC.hasMicrophone;
+            this._hasCan = DetectRTC.hasWebcam;
+            console.log(DetectRTC, this._hasMic, this._hasCan);
+        }, 500);
+
     }
 
     checkParticipation() {
 
         if (DetectRTC.isMobileDevice) return true;
-        if (DetectRTC.hasMicrophone !== true) {
+        if (this._hasMic !== true) {
             this._alerta.initiateMessage(conf.message.AUDIO_DEVICE_NOT_FOUND);
             return false;
         }
-        if (DetectRTC.hasWebcam !== true) {
+        if (this._hasCan !== true) {
             this._alerta.initiateMessage(conf.message.VIDEO_DEVICE_NOT_FOUND);
             return false;
         }

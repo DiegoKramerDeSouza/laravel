@@ -47,6 +47,7 @@ class Structure {
         this._targetUser;
         this._connections = [];
         this._streamVideos = [];
+        this._streamUsers;
     }
 
     get viewers() {
@@ -246,6 +247,16 @@ class Structure {
     set streamVideos(value) {
 
         this._streamVideos.push(value);
+    }
+
+    get streamUsers() {
+
+        return this._streamUsers;
+    }
+
+    set streamUsers(value) {
+
+        this._streamUsers = value;
     }
 
     emptyStreamVideos() {

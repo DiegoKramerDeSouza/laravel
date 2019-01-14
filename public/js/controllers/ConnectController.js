@@ -1,3 +1,9 @@
+/**
+ *  Classe voltada a definir os padrões de conexão websocket e as configurações padrões para abertura de salas
+ * 
+ * Instancia:
+ * Connect
+ */
 class ConnectController {
     constructor() {
 
@@ -8,6 +14,7 @@ class ConnectController {
         this._isPublic = conf.con.IS_PUBLIC;
         this._direction = conf.con.DIRECTION;
         this._fileSharing = conf.str.FILE_SHARING;
+        this.points = [];
     }
 
     initiateConnection() {
@@ -17,9 +24,11 @@ class ConnectController {
 
     checkDuplicatedCon(incomingCon, event, connection) {
 
+        console.warn("RECEBEMDO --> Nova conexão: ", event.stream.streamid, incomingCon);
         if (incomingCon == event.stream.streamid) {
+            console.warn("------------> Finalizando ", event.stream.streamid, event);
             connection.getAllParticipants().forEach((p) => {
-                if (p == event.userid) {
+                if (p + '' == event.userid + '') {
                     let peer = connection.peers[p].peer;
                     stream.stop();
                     peer.removeStream(event.stream);
@@ -29,4 +38,15 @@ class ConnectController {
         }
         return;
     }
+
+    cancelFullMeshConnection(connection, brodcaster) {
+
+        connection.extra.alteredValue = false;
+        connection.getAllParticipants().forEach((p) => {
+            if (p + '' != brodcaster + '') {
+                connection.disconnectWith(p);
+            }
+        });
+    }
+
 }

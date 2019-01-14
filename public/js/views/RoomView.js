@@ -6,6 +6,7 @@ class RoomView {
     constructor() {
 
         this._countUsers = doc.TAG(dom.LABEL_USERS);
+        this._currentUsers = doc.TAG(dom.CURRENT_USERS);
         this._roomLabel = doc.TAG(dom.CLASS_TITLE);
         this._label;
         this._publicRoomsDiv = doc.TAG(dom.PUBLIC_CONFERENCE);
@@ -15,22 +16,30 @@ class RoomView {
         this._roomList = doc.TAG(dom.PUBLIC_CONFERENCE);
         this._connectionList = doc.TAG(dom.CONNECTION_LIST);
         this._connectList = doc.TAG(dom.USERS_LIST);
+        this._hours = doc.TAG(dom.CURRENT_HOUR);
+        this._minutes = doc.TAG(dom.CURRENT_MIN);
+        this._seconds = doc.TAG(dom.CURRENT_SEC);
         this._listOfConCards = '';
     }
 
+    setCurrentTime(...time) {
+
+        this._hours.innerHTML = time[0];
+        this._minutes.innerHTML = time[1];
+        this._seconds.innerHTML = time[2];
+    }
+
     changeCounter(value) {
-        if (this._countUsers) {
-            if (this._countUsers.getAttribute('data-target') == '0') {
+
+        if (this._countUsers)
+            if (this._countUsers.getAttribute('data-target') == '0')
                 this._countUsers.innerHTML = value;
-            }
-        }
+        this._currentUsers.innerHTML = value;
     }
 
     createRoomLabel(icon, classe, assunto) {
 
-        this._label = `${ icon } <b>${ classe }</b> (${ assunto })
-                            <span class='right'><a href='' title='Sair' class='red-text text-darken-4'>
-                        <i class='fa fa-times'></i></a></span>`;
+        this._label = `${ icon } <b>${ classe }</b> (${ assunto })`;
         this._roomLabel.innerHTML = this._label;
     }
 
@@ -69,17 +78,18 @@ class RoomView {
         return this._roomCard;
     }
 
-    setRoomCard(moderatorId, label, container, obj, valid) {
+    setRoomCard(moderatorId, label, container, obj, type) {
 
         container.innerHTML = label;
         container.className = "card-panel hoverable";
         obj.id = moderatorId;
         obj.title = 'Acessar sala';
         obj.innerHTML = misc.ICON_PLAY;
-        obj.className = 'btn-floating room-enter blue darken-1 modal-trigger';
-        //valid ? null : obj.className += ' modal-trigger';
-        obj.href = "#msg-informa-espectadores";
-
+        obj.className = 'btn-floating room-enter blue darken-1 ';
+        if (type == 0) {
+            obj.className += 'modal-trigger';
+            obj.href = "#msg-informa-espectadores";
+        }
         this._roomList.appendChild(container);
         doc.ID('_' + moderatorId).appendChild(obj);
     }
@@ -89,11 +99,18 @@ class RoomView {
         this._listOfConCards = '';
     }
 
-    newLabelCon(userid, username, deleteBtn) {
+    cleanRoomList(list) {
 
+        list.innerHTML = '';
+    }
+
+    newLabelCon(userid, username, deleteBtn, itsMe) {
+
+        let me;
+        itsMe ? me = '(você)' : me = '';
         this._listOfConCards += `
-                            <div id="li-disconnect-${ userid }" data-sender="${ username }" class="li-disconnect truncate">
-                                <i class="fa fa-user-o blue-text lighten-2"></i> <b>${ username }</b>
+                            <div id="li-disconnect-${ userid }" data-sender="${ username }" class="li-disconnect truncate container p-5" title="${ username }">
+                                <i class="fa fa-user-o blue-text lighten-2"></i> <b>${ username } ${ me }</b>
                                 <span class="right">
                                     ${ deleteBtn }
                                 </span>
@@ -102,12 +119,12 @@ class RoomView {
 
     setDisabledConBtn(userid, username, announce) {
 
-        return '<a id="disabled-' + userid + '" name="' + username + '" data-announced="' + announce + '" ><i class="material-icons grey-text text-lighten-1">close</i></a>';
+        return '<a id="disabled-' + userid + '" name="' + username + '" data-announced="' + announce + '" >' + misc.ICON_REMOVE_DISABLED + '</a>';
     }
 
     setRemoveConBtn(userid, username, announce) {
 
-        return '<a id="disconnect-' + userid + '" name="' + username + '" data-announced="' + announce + '" title="Desconectar espectador" class="disconnect-btn"><i class="material-icons red-text text-darken-4">close</i></a>';;
+        return '<a id="disconnect-' + userid + '" name="' + username + '" data-announced="' + announce + '" title="Desconectar espectador" class="disconnect-btn">' + misc.ICON_REMOVE_USER + '</a>';;
     }
 
     putList() {

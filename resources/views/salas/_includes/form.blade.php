@@ -19,12 +19,12 @@
                 <!-- Loading de conteúdo -->
                 <div class="center blue-text text-darken-2" align='center'>
                     <h5>Encontrando salas...</h5>
-                    <a class="btn-floating btn-large blue pulse">{!! $default->searchIcon !!}</a>
+                    <a class="btn-floating btn-large blue pulse cursor-default">{!! $default->searchIcon !!}</a>
                     <br>
                     <br>
                     <br>                                                
                 </div>
-                <!--Listagem de Salas disponíveis-->
+                <!-- Listagem de Salas disponíveis -->
             </div>
         </div>
         @if(Auth::user()->type == 0)
@@ -78,6 +78,7 @@
 </div>
 
 <!-- Nome da conexão, tipo e nome do usuário -->
+<input type='hidden' id='con-id' name='con-id' value='{{ session()->get('turmaId') }}' disabled readonly />
 <input type='hidden' id='room-id' name='room-id' value='{{ Auth::user()->login }}-{{ Auth::user()->name }}-{!! rand(0,999) !!}' disabled readonly />
 <input type='hidden' id='room-type' name='room-type' value='{{ Auth::user()->type }}' disabled readonly />
 <input type='hidden' id='current-user' value='{{ Auth::user()->name }}' disabled readonly />
@@ -85,3 +86,45 @@
 <input type='hidden' id='broadcaster' name='broadcaster' disabled readonly />
 <input type='hidden' id='in-room' name='in-room' disabled readonly />
 <input type='hidden' id='in-screen' name='in-screen' disabled readonly />
+<!-- Tratamento de imagens de captura -->
+<div class='row d-none'>
+    <video id='classVideo' class='responsive-video' preload='none' loop ></video>
+    <div class='col s12 m6 d-none'>
+        <canvas id='classPhoto'>
+        </canvas>
+    </div>
+    <div class='col s12 m6'>
+        <img id='classImg'>
+    </div>
+    <div class='col s12 center'>
+        <span id='takeShot' class='btn blue'>Foto</span>
+    </div>
+</div>
+
+<!--
+<iframe id="embedded_player" style="width:100%;"
+    src="http://jitsitutorial443.com:5080/WebRTCApp/play.html?name=Mnw5ODYyc2R3cGplfDE1NDI2NDc1NDkxNzk=" frameborder="0" allowfullscreen>
+</iframe>
+
+<script>
+
+    let frame = document.getElementById('embedded_player');
+    
+    /*
+    setTimeout( () => {
+        let framePlay = document.getElementById('embedded_player').contentWindow.document.querySelector("button.vjs-big-play-button");
+        framePlay.onclick = () =>{
+            let viewerPlay = document.getElementById('embedded_player').contentWindow.document.getElementById("remoteVideo_html5_api");
+            setTimeout( () => {
+                console.log('===>', viewerPlay.videoHeight);
+            }, 500);
+        }
+    }, 5000);
+    */
+
+    frame.style.height = '480px';
+    
+</script>
+-->
+
+

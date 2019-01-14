@@ -4,7 +4,7 @@
  */
 class RoomData {
 
-    constructor(classe, apresentador, assunto, curso, whois, timestamp, activeRoom, allowed, classes) {
+    constructor(curso, whois, timestamp, activeRoom, allowed, classes, transmiting, assunto, classe, apresentador) {
 
         this._classe = classe;
         this._apresentador = apresentador;
@@ -15,6 +15,7 @@ class RoomData {
         this._activeRoom = activeRoom;
         this._allowed = allowed;
         this._classes = classes;
+        this._transmiting = transmiting;
     }
 
     get classe() {
@@ -105,5 +106,15 @@ class RoomData {
     set classes(classes) {
 
         this._classes = classes;
+    }
+
+    get transmiting() {
+
+        return this._transmiting;
+    }
+
+    set transmiting(transmiting) {
+
+        this._transmiting = transmiting;
     }
 }
