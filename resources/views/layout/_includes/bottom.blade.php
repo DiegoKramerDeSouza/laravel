@@ -24,7 +24,8 @@
                                 <br/>
                                 <b>Configurações de desenvolvimento: </b>
                                 <br/>
-                                chrome://flags/
+                                chrome://flags/<br/>
+                                chrome://apps/
                                 <br/>
                                 <br/>
                                 {!! $default->bookmarkIcon !!} Versão <span id="version"></span>

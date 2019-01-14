@@ -24,10 +24,10 @@ const doc = {
             URL: 'http://wtv.lrbtecnologia.com'
         },
         MEDIA: {
-            SSL: 'https://med2.lrbtecnologia.com',
-            URL: 'http://med2.lrbtecnologia.com',
-            WS: 'ws://med2.lrbtecnologia.com:5080/WebRTCApp/websocket',
-            WSS: 'wss://med2.lrbtecnologia.com:5443/WebRTCApp/websocket'
+            SSL: 'https://med.lrbtecnologia.com',
+            URL: 'http://med.lrbtecnologia.com',
+            WS: 'ws://med.lrbtecnologia.com:5080/WebRTCApp/websocket',
+            WSS: 'wss://med.lrbtecnologia.com:5443/WebRTCApp/websocket'
         },
         MEDIA2: {
             SSL: 'https://med.lrbtecnologia.com',
@@ -121,7 +121,7 @@ const conf = {
 
         STREAM_LOCAL: 'local',
         STREAM_REMOTE: 'remote',
-        TK_DETECT: false,
+        TK_DETECT: true,
         TK_KEY: 'fhnfigfpkkijpcpfhjaeajmgeelkkila',
         TK_MSG: 'MSG',
         TK_MSG_SEND: 'test',
