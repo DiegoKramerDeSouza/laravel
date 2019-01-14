@@ -437,9 +437,10 @@ class webrtcController {
                 websocketURL = 'ws://test.antmedia.io:5080/WebRTCAppEE/websocket';
         } else {
             location.protocol.startsWith("https") ? websocketURL = conf.con.SOCKET_SSL : websocketURL = conf.con.SOCKET_URL;
-            if (connection || videoLayer)
+            if (connection || videoLayer) {
                 websocketURL = conf.con.SOCKET_2_URL;
-            location.protocol.startsWith("https") ? websocketURL = conf.con.SOCKET_2_SSL : websocketURL = conf.con.SOCKET_2_URL;
+                location.protocol.startsWith("https") ? websocketURL = conf.con.SOCKET_2_SSL : websocketURL = conf.con.SOCKET_2_URL;
+            }
         }
         if (videoLayer || connection) {
             mediaConstraints = {
