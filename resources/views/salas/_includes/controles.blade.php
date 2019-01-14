@@ -4,24 +4,29 @@
             <div id='nav-controller' class='container'>
                 <!-- Barra de controle de mídia -->
                 <div class='controllers-container blue-text center dark-grey'>
-                    <span id='li-toggle-camera'>
+
+                    
+                    <span id='li-toggle-camera' class='d-none'>
                         <a id='toggle-camera' data-active='enabled' class='media-control btn-floating btn-large' data-position='top' title='Camera'>
                             {!! $default->videocamIcon !!}
                         </a>
                     </span>
-                    <span id='li-toggle-mute'>
+                    <span id='li-toggle-mute' class='d-none'>
                         <a id='toggle-mute' data-active='enabled' class='media-control btn-floating btn-large' data-position='top' title='Microfone'>
                             {!! $default->micIcon !!}
                         </a>
                     </span>
+                    
+
                     <span id='li-toggle-volume'>
-                        <a id='toggle-volume' data-active='enabled' class='media-control btn-floating btn-large' data-position='top' title='Áudio'>
-                            {!! $default->volumeUpIcon !!}
-                        </a>
-                    </span>
-                    <span id='li-share-screen'>
-                        <a id='share-screen' data-active='enabled' class='media-control btn-floating btn-large' data-position='top' title='Compartilhar Tela'>
-                            {!! $default->screenShareIcon !!}
+                        <span id='enable-sound' class='tooltip-item'>
+                            <span id='mute-tooltip' class='p-10 red darken-3 white-text rounded-borders tooltip-body-top'>
+                                <b class='tooltip-text truncate'>Habilite o som</b>
+                            </span>
+                            <span class='tooltip-red-arrow-bottom center'></span>
+                        </span>
+                        <a id='toggle-volume' data-active='mute' class='media-control btn-floating btn-large red' data-position='top' title='Mudo'>
+                            {!! $default->volumeDownIcon !!}
                         </a>
                     </span>
                     <span id='li-toggle-screen'>
@@ -30,10 +35,15 @@
                         </a>
                     </span>
                     <span id='li-toggle-size'>
-                            <a id='toggle-size' data-active='enabled' class='media-control btn-floating btn-large' data-position='top' title='Expandir'>
-                                {!! $default->sizeIcon !!}
-                            </a>
-                        </span>
+                        <a id='toggle-size' data-active='enabled' class='media-control btn-floating btn-large' data-position='top' title='Expandir'>
+                            {!! $default->sizeIcon !!}
+                        </a>
+                    </span>
+                    <span id='li-share-screen'>
+                        <a id='share-screen' data-active='enabled' class='media-control btn-floating btn-large' data-position='top' title='Compartilhar Tela'>
+                            {!! $default->screenShareIcon !!}
+                        </a>
+                    </span>
                     <span id='li-toggle-chat'>
                         <a id='toggle-chat' data-target='slide-out' class='media-control btn-floating btn-large sidenav-trigger' data-position='top' title='Chat'>
                             {!! $default->forumIcon !!}
@@ -76,10 +86,16 @@
         </div>
     </div>
     <!-- Controle de acesso de usuários à transmissão -->
+    <span id='close-participation' class='tooltip-item hide-on-med-and-down d-none'>
+        <span id='close-tooltip' class='p-10 red darken-3 white-text rounded-borders tooltip-body-left'>
+            <b class='tooltip-text truncate'>Finalizar participação</b>
+        </span>
+        <span class='tooltip-red-arrow-right'></span>
+    </span>
     @if(Auth::user()->type == 0)
         <!-- Botão de desconexão de usuário em transmissão -->
         <div id='div-end' class='fixed-action-btn d-none' title='Finalizar participação'>
-            <a id='end-session' class='btn-floating btn-large waves-effect waves-light red darken-2' data-active='disabled'>
+            <a id='end-session' class='btn-floating btn-large waves-effect waves-light red pulse' data-active='disabled'>
                 {!! $default->videocamoffLargeIcon !!}
             </a>
         </div>
@@ -90,3 +106,4 @@
             {!! $default->videocamLargeIcon !!}
         </a>
     </div>
+    

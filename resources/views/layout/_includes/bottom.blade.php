@@ -24,7 +24,8 @@
                                 <br/>
                                 <b>Configurações de desenvolvimento: </b>
                                 <br/>
-                                chrome://flags/
+                                chrome://flags/<br/>
+                                chrome://apps/
                                 <br/>
                                 <br/>
                                 {!! $default->bookmarkIcon !!} Versão <span id="version"></span>
@@ -79,6 +80,13 @@
         @if(isset($streamPage))
             <!-- Formação de SALAS -->
             @if(! Auth::guest())
+                <!-- Inicializa player -->
+                <script type="text/javascript" src="{!! asset('js/controllers/NewerPlayerController.js') !!}"></script> 
+                <!--
+                <script type="text/javascript" src="{!! asset('js/player/videojs/video.js') !!}"></script>  
+                <script type="text/javascript" src="{!! asset('js/player/videojs/videojs-http-streaming.js') !!}"></script>
+                <script type="text/javascript" src="{!! asset('js/controllers/PlayerController.js') !!}"></script>  
+                -->
                 <!-- Inicializa o controle de dispositivos -->
                 <script type="text/javascript" src="{!! asset('js/controllers/DevicesController.js') !!}"></script>  
                 <script type="text/javascript" src="{!! asset('js/views/DevicesView.js') !!}"></script>
@@ -97,6 +105,8 @@
                 <script type="text/javascript" src="{!! asset('js/controllers/MediaController.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/models/SerialValidation.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/controllers/SerialValidationController.js') !!}"></script>
+                <script type="text/javascript" src="{!! asset('js/controllers/RequestController.js') !!}"></script>  
+                <script type="text/javascript" src="{!! asset('js/models/Request.js') !!}"></script> 
                 <!-- Loader específico para controle de dispositivos -->
                 <script type="text/javascript" src="{!! asset('js/loaders/DeviceLoader.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/loaders/SerialValidationLoader.js') !!}"></script>
@@ -105,6 +115,11 @@
                 <script type="text/javascript" src="{!! asset('js/views/RoomView.js') !!}"></script>
                 <!-- Helpers -->
                 <script type="text/javascript" src="{!! asset('js/helpers/RoomHelper.js') !!}"></script>        
+                <!-- WebRTC Adapters -->
+                <!--<script type="text/javascript" src="{!! asset('js/player/webrtc_adaptor.js') !!}"></script>
+                <script type="text/javascript" src="{!! asset('js/player/adapter-latest.js') !!}"></script>-->
+                <script type="text/javascript" src="{!! asset('js/webrtc/webrtc_adaptor.js') !!}"></script>
+                <script type="text/javascript" src="{!! asset('js/webrtc/adapter-latest.js') !!}"></script>
                 <!-- WebRTC Modules -->
                 <script type="text/javascript" src="{!! asset('js/webrtc/socket.io.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/webrtc/getHTMLMediaElement.js') !!}"></script>

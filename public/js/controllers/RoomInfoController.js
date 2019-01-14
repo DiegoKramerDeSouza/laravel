@@ -1,3 +1,10 @@
+/**
+ * Classe voltada à definição de informações apresentadas ao espectadores
+ * 
+ * Instancia:
+ * RoomInfo
+ * RoomView
+ */
 class RoomInfoController {
 
     constructor() {
@@ -34,38 +41,31 @@ class RoomInfoController {
         );
     }
 
-    initiateClock() {
+    initiateClock(time) {
 
         setTimeout(() => {
-            if (!this.stoped) {
-                this._currentTime = this._startToCount();
-                this._view.setCurrentTime(...this._currentTime);
-            }
-            this.initiateClock();
+            if (!this.stoped) this._setCurrentTime(time);
+            this.initiateClock(time);
         }, 1000);
     }
 
-    _startToCount() {
+    _setCurrentTime(time) {
 
-        this._seconds++;
-        if (this._seconds >= 60) {
-            this._seconds = 0;
-            this._minutes++;
-            if (this._minutes >= 60) {
-                this._minutes = 0;
-                this._hours++;
-                this._formH = this._formatTime(this._hours);
-            }
-            this._formM = this._formatTime(this._minutes);
-        }
-        this._formS = this._formatTime(this._seconds);
-        return [this._formH, this._formM, this._formS];
+        let timeNow = new Date();
+        let diference = Math.abs(timeNow - time) / 1000;
+        this._hours = Math.floor(diference / 3600) % 24;
+        this._minutes = Math.floor(diference / 60) % 60;
+        this._seconds = Math.floor(diference % 60);
+        this._currentTime = this._formatCount();
+        this._view.setCurrentTime(...this._currentTime);
     }
 
-    _formatTime(value) {
+    _formatCount() {
 
-        if (value.toString().length <= 1) return '0' + value;
-        return '' + value;
+        this._formS = (this._seconds < 10 ? '0' : '') + this._seconds;
+        this._formM = (this._minutes < 10 ? '0' : '') + this._minutes;
+        this._formH = (this._hours < 10 ? '0' : '') + this._hours;
+        return [this._formH, this._formM, this._formS];
     }
 
 }

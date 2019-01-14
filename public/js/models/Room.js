@@ -4,9 +4,10 @@
  */
 class Room {
 
-    constructor(name, tema, assunto, cursos, hash) {
+    constructor(name, con, tema, assunto, cursos, hash) {
 
         this._name = name;
+        this._con = con;
         this._tema = tema;
         this._assunto = assunto;
         this._cursos = cursos;
@@ -22,6 +23,11 @@ class Room {
     get assunto() {
 
         return this._assunto;
+    }
+
+    get con() {
+
+        return this._con;
     }
 
     get name() {

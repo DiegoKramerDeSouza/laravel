@@ -29,10 +29,15 @@ class MediaView {
         this._fileListReceive = doc.TAG(dom.FILE_LIST_REICEIVED);
         this._fileListSend = doc.TAG(dom.FILE_LIST_SENDED);
         this._fileSideBar = doc.TAG(dom.FILE_EXP);
+        this._countdown = doc.TAG(dom.COUNTDOWN);
+        this._videoField = doc.TAG(dom.PRE_APRESENTACAO);
         this._listContent = '';
         this._countReceiveFiles = 0;
         this._countSendFiles = 0;
         this._otherVideos = false;
+        this._readyToPlay = false;
+        this._stop = false;
+
     }
 
     setInvisible(elem) {
@@ -64,20 +69,25 @@ class MediaView {
         this._mute.classList.add(misc.DISABLED_COLOR);
         this._mute.innerHTML = misc.ICON_MUTE_MIC;
         this._mute.disabled = true;
-        $(dom.LI_MUTE).hide();
+        GeneralHelper.hideit(dom.LI_MUTE);
     }
 
     setVolumeOn() {
 
         this._vol.classList.remove(misc.OFF_COLOR);
+        this._vol.classList.remove(misc.DISABLED_COLOR);
         this._vol.innerHTML = misc.ICON_VOL_ON;
+        this._vol.setAttribute(misc.ATTR_ACTIVE, 'unmute');
         this._alerta.initiateMessage(conf.message.VOL_UP);
+        GeneralHelper.showit(dom.LI_VOLUME);
     }
 
     setVolumeOff() {
 
         this._vol.classList.add(misc.OFF_COLOR);
+        this._vol.classList.remove(misc.DISABLED_COLOR);
         this._vol.innerHTML = misc.ICON_VOL_OFF;
+        this._vol.setAttribute(misc.ATTR_ACTIVE, 'mute');
         this._alerta.initiateMessage(conf.message.VOL_DOWN);
     }
 
@@ -85,8 +95,7 @@ class MediaView {
 
         this._vol.classList.add(misc.DISABLED_COLOR);
         this._vol.innerHTML = misc.ICON_VOL_OFF;
-        this._vol.disabled = true;
-        $(dom.LI_VOLUME).hide();
+        GeneralHelper.hideit(dom.LI_VOLUME);
     }
 
     setCamOn() {
@@ -108,7 +117,7 @@ class MediaView {
         this._cam.classList.add(misc.DISABLED_COLOR);
         this._cam.innerHTML = misc.ICON_CAM_OFF;
         this._cam.disabled = true;
-        $(dom.LI_CAM).hide();
+        GeneralHelper.hideit(dom.LI_CAM);
     }
 
     openIncomingVideos(mainVideo, inVideo) {
@@ -131,14 +140,14 @@ class MediaView {
 
     startShare() {
 
-        $(dom.SHARE).show();
+        GeneralHelper.showit(dom.SHARE);
         this._share.classList.add(misc.OFF_COLOR);
         this._share.innerHTML = misc.ICON_SHARE_OFF;
     }
 
     exitShare() {
 
-        $(dom.SHARE).show();
+        GeneralHelper.showit(dom.SHARE);
         this._share.classList.remove(misc.OFF_COLOR);
         this._share.innerHTML = misc.ICON_SHARE_ON;
     }
@@ -149,13 +158,22 @@ class MediaView {
         this._share.disabled = true;
         this._share.classList.add(misc.DISABLED_COLOR);
         this._share.innerHTML = misc.ICON_SHARE_ON;
-        this._share.disabled = true;
-        $(dom.LI_SHARE).hide();
+        GeneralHelper.hideit(dom.LI_SHARE);
+    }
+
+    shareEnabled() {
+
+        this._share.disabled = false;
+        this._share.classList.add(misc.ON_COLOR);
+        this._share.classList.remove(misc.OFF_COLOR);
+        this._share.classList.remove(misc.DISABLED_COLOR);
+        GeneralHelper.showit(dom.LI_SHARE);
     }
 
     startParticipation() {
 
-        $(dom.DIV_ENTER).show();
+        GeneralHelper.showit(dom.DIV_ENTER);
+        GeneralHelper.showit(dom.CLOSE_PARTICIPATION, 300);
         this._divParticipation.title = 'Finalizar participação';
         this._participation.classList.remove(misc.HILIGHT_COLOR);
         this._participation.classList.add(misc.OFF_COLOR);
@@ -164,7 +182,8 @@ class MediaView {
 
     endParticipation() {
 
-        $(dom.DIV_ENTER).show();
+        GeneralHelper.showit(dom.DIV_ENTER);
+        GeneralHelper.showit(dom.CLOSE_PARTICIPATION, 300);
         this._divParticipation.title = 'Ingressar';
         this._participation.classList.remove(misc.OFF_COLOR);
         this._participation.classList.add(misc.HILIGHT_COLOR);
@@ -177,18 +196,20 @@ class MediaView {
         this._participation.classList.add(misc.OFF_COLOR);
         this._participation.innerHTML = misc.ICON_CAM_OFF;
         this._participation.disabled = true;
-        $(dom.DIV_ENTER).hide();
+        GeneralHelper.hideit(dom.DIV_ENTER);
+        GeneralHelper.hideit(dom.CLOSE_PARTICIPATION, 300);
     }
 
     allowSolicitation() {
 
         this._alerta.initiateMessage(conf.message.SEND_ACP_SOLICITATION);
         setTimeout(() => {
-            $(dom.DIV_ENTER).fadeIn(300);
+            GeneralHelper.showit(dom.DIV_ENTER, 300);
+            GeneralHelper.showit(dom.CLOSE_PARTICIPATION, 300);
             this.endParticipation();
             $(dom.SESSION_ACCESS).click();
             this._alerta.initiateMessage(conf.message.SEND_START_SOLICITATION);
-        }, 2500);
+        }, 2000);
     }
 
     denySolicitation() {
@@ -201,7 +222,7 @@ class MediaView {
 
         this._pedir.classList.add(misc.OFF_COLOR);
         this._pedir.disabled = true;
-        $(dom.PEDIR).hide();
+        GeneralHelper.hideit(dom.LI_PERDIR);
     }
 
     fileSharingOff() {
@@ -209,7 +230,7 @@ class MediaView {
         this._sharedFile.classList.remove(misc.HILIGHT_COLOR);
         this._sharedFile.classList.add(misc.OFF_COLOR);
         this._sharedFile.disabled = true;
-        $(dom.BTN_FILE_SHARING).hide();
+        GeneralHelper.hideit(dom.BTN_FILE_SHARING);
     }
 
     fileSharingListOff() {
@@ -220,7 +241,7 @@ class MediaView {
         this._fileListSend.classList.add(misc.OFF_COLOR);
         this._fileListReceive.disabled = true;
         this._fileListSend.disabled = true;
-        $(dom.FILE_LIST).hide();
+        GeneralHelper.hideit(dom.FILE_LIST);
     }
 
     noFileSharing() {
@@ -230,7 +251,7 @@ class MediaView {
 
     exitFullscreen() {
 
-        $(dom.DIV_EXIT_FSCREEN).fadeOut(500);
+        GeneralHelper.hideit(dom.DIV_EXIT_FSCREEN, 500);
         this._spanMainVideo.classList.remove(misc.TURNOFF_COLOR);
         this._spanMainVideo.classList.add(misc.CLASS_WIDTH_LIMIT);
         this._spanMainVideo.style.height = misc.STYLE_HEIGHT_INHERIT;
@@ -239,10 +260,22 @@ class MediaView {
 
     enterFullscreen() {
 
-        $(dom.DIV_EXIT_FSCREEN).fadeIn(500);
+        GeneralHelper.showit(dom.DIV_EXIT_FSCREEN, 500);
         this._spanMainVideo.classList.add(misc.TURNOFF_COLOR);
         this._spanMainVideo.classList.remove(misc.CLASS_WIDTH_LIMIT);
         this._spanMainVideo.style.height = (window.innerHeight) + 'px';
+    }
+
+    fullScreamOff() {
+
+        GeneralHelper.hideit(dom.LI_SCREEN);
+    }
+
+    pedirOff() {
+
+        this._pedir.classList.add(misc.OFF_COLOR);
+        this._pedir.disabled = true;
+        GeneralHelper.hideit(dom.PEDIR);
     }
 
     expandVideoSize() {
@@ -263,7 +296,7 @@ class MediaView {
 
     adjustStreamScreen() {
 
-        $(dom.BG_DARK).fadeIn(500);
+        GeneralHelper.showit(dom.BG_DARK, 500);
         $(dom.ROOM_LOBBY).slideUp(500);
         $(dom.VIDEOS_PANEL).slideDown(500);
     }
@@ -280,14 +313,25 @@ class MediaView {
     showControlElements() {
 
         doc.TAG(dom.ALERT_SHARE).click();
-        $(dom.ROOM_STATUS).show(500);
-        $(dom.DIV_MAIN_VIDEO).show(500);
-        $(dom.DIV_INCOMING_VIDEO).show(500);
+        GeneralHelper.showit(dom.ROOM_STATUS, 500);
+        GeneralHelper.showit(dom.DIV_MAIN_VIDEO, 500);
+        GeneralHelper.showit(dom.DIV_INCOMING_VIDEO, 500);
         setTimeout(() => {
             doc.TAG(dom.ROOM_STATUS).classList.remove("obj-invisible");
             doc.TAG(dom.DIV_MAIN_VIDEO).classList.remove("obj-invisible");
             doc.TAG(dom.DIV_INCOMING_VIDEO).classList.remove("obj-invisible");
         }, 800);
+    }
+
+    hideControlElements() {
+
+        GeneralHelper.hideit(dom.ROOM_STATUS);
+        GeneralHelper.hideit(dom.DIV_MAIN_VIDEO);
+        GeneralHelper.hideit(dom.DIV_INCOMING_VIDEO);
+
+        doc.TAG(dom.ROOM_STATUS).classList.add("obj-invisible");
+        doc.TAG(dom.DIV_MAIN_VIDEO).classList.add("obj-invisible");
+        doc.TAG(dom.DIV_INCOMING_VIDEO).classList.add("obj-invisible");
     }
 
     writeChatMessage(user, message) {
@@ -307,12 +351,12 @@ class MediaView {
     showSolicitation(val) {
 
         this._countPedirVez.innerHTML = val;
-        $(dom.COUNT_PEDIR).fadeIn(300);
+        GeneralHelper.showit(dom.COUNT_PEDIR, 300);
     }
 
     hideSolicitation() {
 
-        $(dom.COUNT_PEDIR).fadeOut(300);
+        GeneralHelper.hideit(dom.COUNT_PEDIR, 300);
     }
 
     listSolicitation(count, username, userid) {
@@ -360,29 +404,281 @@ class MediaView {
         this._solicitationList.innerHTML = this._listContent;
     }
 
-    _adjustMediaMenu() {
-
-        $(dom.DIV_CONNECT).hide();
-        $(dom.DIV_CONTROLLER).fadeIn(300);
-
-    }
-
     adjustBroadCaster() {
 
-        this._prepareFileMenu(dom.LI_PERDIR, dom.DIV_RECEIVE_FILES, dom.MIN_RECEIVE);
+        this._prepareFileMenu(dom.LI_PERDIR, dom.DIV_RECEIVE_FILES, dom.MIN_RECEIVE, dom.PRE_VIDEO);
     }
 
-    adjustEspect() {
+    adjustEspectador() {
 
-        this._prepareFileMenu(dom.CTL_PEDIR, dom.DIV_UPLOADED_FILES, dom.MIN_SEND);
+        this._prepareFileMenu(dom.CTL_PEDIR, dom.DIV_UPLOADED_FILES, dom.MIN_SEND, dom.PRE_APRESENTACAO);
     }
 
-    _prepareFileMenu(pedir, files, filesMin) {
+    _prepareFileMenu(pedir, files, filesMin, preview) {
 
-        this._adjustMediaMenu();
-        $(pedir).hide();
-        $(files).hide();
-        $(filesMin).hide();
+        GeneralHelper.hideit(dom.DIV_CONNECT);
+        GeneralHelper.hideit(pedir);
+        GeneralHelper.hideit(files);
+        GeneralHelper.hideit(filesMin);
+        GeneralHelper.showit(preview, 500);
+    }
+
+    initPreVideo(preVideo, preLoader, count) {
+
+        GeneralHelper.hideit(preVideo);
+        this.prepareToInitiate(preLoader, count);
+    }
+
+    prepareToInitiate(preLoader, count) {
+
+        GeneralHelper.showit(preLoader, 300);
+        if (count) this._startCountDown();
+    }
+
+    changeTransmition(btn, title, icon) {
+
+        btn.title = title;
+        btn.innerHTML = icon;
+    }
+
+    removeElement(elem) {
+
+        $(elem).remove();
+    }
+
+    stopTransmition() {
+
+        this.hideControlElements();
+        GeneralHelper.showit(dom.PRE_VIDEO_FINISHED, 1000);
+        GeneralHelper.hideit(dom.LI_SCREEN);
+        GeneralHelper.hideit(dom.LI_VOLUME);
+        GeneralHelper.hideit(dom.LI_SHARE);
+        GeneralHelper.hideit(dom.LI_PERDIR);
+        GeneralHelper.hideit(dom.SOL_PEDIR);
+        GeneralHelper.hideit(dom.CTL_PEDIR);
+        try { this.removeElement(dom.FRAME_LAYER) } catch (e) { /* Não faz nada */ };
+    }
+
+    createVideoLink(roomid) {
+
+        let videoLink = doc.TAG(dom.DOWNLOAD_VIDEO);
+        videoLink.href = conf.con.SOCKET_DOWNLOAD + btoa(roomid) + '.mp4';
+        videoLink.setAttribute('download', btoa(roomid));
+        GeneralHelper.hideit(dom.WAITING_LINK);
+        GeneralHelper.showit(dom.DIV_DOWNLOAD_VIDEO, 300);
+    }
+
+    endPreVideo() {
+
+        GeneralHelper.hideit(dom.PRE_LOAD_VIDEO);
+        GeneralHelper.hideit(dom.EMBEDDED_FRAME);
+        GeneralHelper.showit(dom.DIV_CONTROLLER, 300);
+    }
+
+    _startCountDown() {
+
+        let count = 3
+        let interval = setInterval(() => {
+            this._countdown.innerHTML = count;
+            count--;
+            if (count <= 0) clearInterval(interval);
+        }, 1000);
+    }
+
+    startAnimation(webRTCadpt, roomid) {
+
+        $(dom.BROADCASTING_INFO).fadeIn(800, () => {
+            $(dom.BROADCASTING_INFO).fadeOut(800, () => {
+                let state = webRTCadpt.signallingState(btoa(roomid));
+                if (state != null && state != "closed") {
+                    let iceState = webRTCadpt.iceConnectionState(btoa(roomid));
+                    if (iceState != null && iceState != "failed" && iceState != "disconnected") {
+                        this.startAnimation(webRTCadpt, roomid);
+                    }
+                }
+            });
+        });
+    }
+
+    recordAnimation(elem) {
+
+        $(elem).fadeIn(800, () => {
+            $(elem).fadeOut(800, () => {
+                this.recordAnimation(elem);
+            });
+        });
+    }
+
+    _blinkControl(elem, triggerElem, trigger) {
+
+        let stop = false;
+        $(triggerElem).on(trigger, () => stop = true);
+        blink();
+
+        function blink() {
+            $(elem).fadeIn(800, () => {
+                $(elem).fadeOut(800, () => {
+                    if (!stop) blink();
+                });
+            });
+        }
+    }
+
+    initBroadcasterVideo(roomid, media) {
+
+        let name = btoa(roomid);
+        let frame = doc.TAG(dom.EMBEDDED_FRAME);
+        GeneralHelper.hideit(dom.VIDEOS);
+        GeneralHelper.hideit(dom.PRE_APRESENTACAO);
+        GeneralHelper.hideit(dom.PRE_LOAD_APRESENTACAO);
+        if (!conf.con.LOW_LATENCY) {
+            let addr = `<iframe id="embedded_player" class="embedded-video" src="${ conf.con.SOCKET_PLAYER_SSL }?name=${ name }" frameborder="0" allowfullscreen></iframe>`;
+            frame.innerHTML = addr;
+        }
+        GeneralHelper.showit(dom.DIV_MAIN_VIDEO);
+        doc.TAG(dom.DIV_MAIN_VIDEO).classList.remove("obj-invisible");
+        GeneralHelper.showit(dom.EMBEDDED_FRAME, 300);
+        GeneralHelper.showit(dom.DIV_CONTROLLER, 300);
+        this._blinkControl(dom.TOOLTIP_ENABLE_SOUND, dom.VOL, 'mouseenter');
+
+        if (conf.con.LOW_LATENCY) this._initNewPlayer(name, dom.REMOTE_VIDEO_ID, media, dom.PLAY_IT);
+    }
+
+    initParticipantVideo(participant, name) {
+
+        let rash = btoa(participant);
+        let addr = `<iframe id="embedded_player_v3" data-active="participant" class="embedded-video" src="${ conf.con.SOCKET_PLAYER_2_SSL }?name=${ rash }" frameborder="0" allowfullscreen></iframe>`;
+        let participantName = doc.TAG(dom.PARTICIPATION_NAME);
+        participantName.innerHTML = name;
+        this._controlEmbeddedVideo(
+            addr,
+            dom.EMBEDDED_FRAME_III,
+            dom.INCOMMING_VIDEO_PARTICIPANT,
+            dom.PARTICIPATION_CONTROL,
+            dom.PARTICIPATION_SWAP,
+            dom.PARTICIPATION_MUTE,
+            dom.FRAME_LAYER_III
+        );
+        if (conf.con.LOW_LATENCY) {
+            this._initNewPlayer(rash, dom.SECOND_VIDEO_ID, media, dom.PLAY_PARTICIPANT);
+            GeneralHelper.showit(dom.VIDEO_SECOND, 300);
+        }
+    }
+
+    initScreenVideo(screen, media) {
+
+        let rash = btoa(screen);
+        let addr = `<iframe id="embedded_player_v2" data-active="participant" class="embedded-video" src="${ conf.con.SOCKET_PLAYER_2_SSL }?name=${ rash }" frameborder="0" allowfullscreen></iframe>`;
+        this._controlEmbeddedVideo(
+            addr,
+            dom.EMBEDDED_FRAME_II,
+            dom.INCOMMING_VIDEO_SCREEN,
+            dom.SCREEN_CONTROL,
+            dom.SCREEN_SWAP,
+            false,
+            dom.FRAME_LAYER_II
+        );
+        if (conf.con.LOW_LATENCY) {
+            this._initNewPlayer(rash, dom.THIRD_VIDEO_ID, media, dom.PLAY_SCREEN);
+            GeneralHelper.showit(dom.VIDEO_THIRD, 300);
+        }
+    }
+
+    _initNewPlayer(name, video, media, btnPlay) {
+
+        let newplayer = new NewerPlayerController(name, video, media);
+        newplayer.startConfig();
+        doc.TAG(btnPlay).onclick = () => newplayer.startPlaying(name);
+        setTimeout(() => $(btnPlay).click(), 2000);
+    }
+
+    _controlEmbeddedVideo(content, embedded, container, control, itemSwap, itemMute, layer) {
+
+        if (!conf.con.LOW_LATENCY) {
+            let frame = doc.TAG(embedded);
+            frame.innerHTML = content;
+
+            GeneralHelper.showit(container, 300);
+            GeneralHelper.showit(embedded, 300);
+            GeneralHelper.showit(control, 300);
+        }
+        GeneralHelper.showit(dom.DIV_INCOMING_VIDEO);
+        doc.TAG(dom.DIV_INCOMING_VIDEO).classList.remove("obj-invisible");
+
+        setTimeout(() => {
+            let mute;
+            if (itemMute) {
+                mute = doc.TAG(itemMute);
+                this._toggleMute(mute, layer);
+            }
+            let swap = doc.TAG(itemSwap);
+            let mainMute = doc.TAG(dom.VOL);
+            this._swapParticipant(swap, mute, mainMute, layer, itemMute);
+
+        }, 300);
+    }
+
+    _swapParticipant(swap, mute, mainMute, layer, audioEnabled) {
+
+        swap.onclick = () => {
+            let main = doc.TAG(dom.FRAME_LAYER);
+            let incomming = doc.TAG(layer);
+            let swapScr = main.src;
+            main.src = incomming.src;
+            incomming.src = swapScr;
+            let active = swap.getAttribute(misc.ATTR_ACTIVE);
+            active == 'other' ?
+                swap.setAttribute(misc.ATTR_ACTIVE, 'main') :
+                swap.setAttribute(misc.ATTR_ACTIVE, 'other');
+
+            if (audioEnabled) {
+                setTimeout(() => {
+                    let status = mute.getAttribute(misc.ATTR_ACTIVE);
+                    if (status == 'unmute') this.embeddedMessage(layer, status);
+                    status = mainMute.getAttribute(misc.ATTR_ACTIVE);
+                    if (status == 'unmute') this.embeddedMessage(dom.FRAME_LAYER, status);
+                }, 1000);
+            }
+        };
+    }
+
+    _toggleMute(mute, layer) {
+
+        mute.onclick = () => {
+            let active = mute.getAttribute(misc.ATTR_ACTIVE);
+            let value;
+            active == 'mute' ? value = 'unmute' : value = 'mute';
+            mute.setAttribute(misc.ATTR_ACTIVE, value);
+            this._targetVolumeToggle(mute, value);
+            if (!conf.con.LOW_LATENCY) this.embeddedMessage(layer, value);
+        }
+    }
+
+    _targetVolumeToggle(vol, status) {
+
+        if (status == 'unmute') {
+            vol.classList.remove(misc.OFF_COLOR);
+            vol.innerHTML = misc.ICON_VOL_ON;
+            this._alerta.initiateMessage(conf.message.VOL_UP);
+        } else {
+            vol.classList.add(misc.OFF_COLOR);
+            vol.innerHTML = misc.ICON_VOL_OFF;
+            this._alerta.initiateMessage(conf.message.VOL_DOWN);
+        }
+    }
+
+    embeddedMessage(frameid, message) {
+
+        if (conf.con.LOW_LATENCY) {
+            let setvolume;
+            message == 'unmute' ?
+                setvolume = false :
+                setvolume = true;
+            doc.TAG(dom.REMOTE_VIDEO).muted = setvolume;
+        } else {
+            let framePlay = doc.TAG(frameid);
+            framePlay.contentWindow.postMessage(message, '*');
+        }
     }
 
     createProgressBar(file) {
@@ -434,25 +730,5 @@ class MediaView {
         let i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
         return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
     };
-
-    displayElem(elem) {
-
-        $(elem).show();
-    }
-
-    fadeInElem(elem, delay) {
-
-        $(elem).fadeIn(delay);
-    }
-
-    hideElem(elem) {
-
-        $(elem).hide();
-    }
-
-    fadeOutElem(elem, delay) {
-
-        $(elem).fadeOut(delay);
-    }
 
 }

@@ -1,18 +1,18 @@
 <!--Estende layout/site.blade.php-->
 @extends('layout.site')
 <!--Define yield('titulo') em layout._includes.top-->
-@section('titulo', 'Editar ' . $cursos->name)
+@section('titulo', 'Editar ' . $resultado->name)
 
 <!--Define yield('content') em layout.site-->
 @section('content')
     <div class='card z-depth-5'>
         <div class='card-content'>
             <h3 class='card-title'>
-                Editar {{ $cursos->name }}:
+                Editar {{ $resultado->name }}:
             </h3>
             <div class='divider'></div>
-            @if(isset($cursos->id))
-                <form class='' action='{{ route('admin.cadastro.cursos.atualiza', $cursos->id) }}' method='post' enctype="multipart/form-data">
+            @if(isset($resultado->id))
+                <form class='' action='{{ route('admin.cadastro.cursos.atualiza', $resultado->id) }}' method='post' enctype="multipart/form-data">
                     <!--Formulário de cadastro e edição de cursos--> 
                     {{ csrf_field() }}
                     @include('admin.cadastro.cursos._form')

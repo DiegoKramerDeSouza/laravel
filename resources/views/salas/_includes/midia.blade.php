@@ -1,4 +1,4 @@
-
+  
     <!--Video Panel -->
     <div id='video-panel' class='d-none'>
         <div class='col s12'>
@@ -8,7 +8,7 @@
                 <div id='started_room' class='card-content rounded-borders'>
                     <div id='class-suptitle' class='dark-grey p-10 rounded-borders'>
                         <span class='right'>
-                            <a href='' title='Sair' class='red-text text-darken-4'>{!! $default->exitRoom !!}</a>
+                            <a id='finish_btn' href='#navigation' title='Finalizar sala' class='red-text text-darken-4'>{!! $default->exitRoom !!}</a>
                         </span>
                         <span id='screen-share-alert' title='Você está transmintindo a sua tela' class='d-none left'>
                             <a href='#started_room' id='alert-share' class='btn-floating red darken-4 pulse'>{!! $default->tvIcon !!}</a>
@@ -25,41 +25,60 @@
                             <div align='center' class='mt-50'>
                                 <h6 class='blue-text'>{!! $default->connecting !!}</h6>
                             </div>
-                            <div class="progress grey darken-4">
-                                <div class="indeterminate blue"></div>
+                            <div class='progress grey darken-4'>
+                                <div class='indeterminate blue'></div>
                             </div>
                         </div>
                          
                         <div class='row'>
                             <div id='room-status' class='col s12 m12 l2 blue-text d-none obj-invisible'>
+                                
+                                <div id='broadcastingInfo' class='col s12 d-none' align='left'>
+                                    <span class='p-5 white-text'>{!! $default->circleRedIcon !!} Transmitindo</span>
+                                </div>
+                                <br />
                                 <div class='row p-10' align='center'>
                                     <!-- STATUS DA SALA -->
-                                    <div class="col s5 m4 l12 push-s1" title='Tempo conectado'>
+                                    <div class='col s5 m4 l12 push-s1' title='Tempo conectado'>
                                         {!! $default->timeIconLeft !!} 
                                         <span id='current-time' class='white-text left'>
-                                            <span id='currentHour'>--</span>:<span id='currentMin'>--</span>:<span id='currentSec'>--</span>
+                                            <span id='currentHour'>00</span>:<span id='currentMin'>00</span>:<span id='currentSec'>00</span>
                                         </span>
                                     </div>
-                                    <div class="col s5 m4 l12 push-s1" title='Espectadores'>
+                                    <div class='col s5 m4 l12 push-s1' title='Espectadores'>
                                         {!! $default->peopleIconLeft !!} <span id='current-users' class='white-text left'>0</span>
                                     </div>
-                                    <div id="token_Detection" class="col m4 l12 hide-on-small-and-down d-none" align="left">
-                                        <span id="tokenOn" class="d-none blue-text" title='Token Conectado'>{!! $default->tokenUsb !!}<b>ON</b></span>
-                                        <span id="tokenOff" class="d-none red-text" title='Token Desconectado'>{!! $default->tokenUsb !!}<b>OFF</b></span>
+                                    <div id='token_Detection' class='col m4 l12 hide-on-small-and-down d-none' align='left'>
+                                        <span id='tokenOn' class='d-none blue-text' title='Token Conectado'>{!! $default->tokenUsb !!}<b>ON</b></span>
+                                        <span id='tokenOff' class='d-none red-text' title='Token Desconectado'>{!! $default->tokenUsb !!}<b>OFF</b></span>
                                     </div>
-                                    <div class="d-none">
+                                    <div class='d-none'>
                                         <!-- BOTÃO DE VALIDAÇÃO DO TOKEN DE ACESSO -->
                                         <a id='call-token' class='btn btn-floating blue waves-effect waves-light'><i class='material-icons'>usb</i></a>
                                     </div>
                                 </div>
-                            </div>                 
+                            </div>
+
+                            <!-- Mensagens de apresentação -->
+                            @include('salas._includes.messages')
+
                             <div id='div-main-video' class='col s12 m8 l8 push-m2 d-none obj-invisible'>
                                 <div class=''>
                                     <div id='main-video' align='center' class='inroom mainView'>
+                                        <div id='embedded-container-iframe' class="embedded-container d-none rounded-borders z-depth-3 black">
+                                            <video id='remoteVideo' autoplay muted></video>
+                                            <br/>
+                                            <div class='d-none1'>
+                                                <span id='playit' class='btn small'>Play</span>
+                                                <span id='playscreen' class='btn small'>Play Screen</span>
+                                                <span id='playparticipant' class='btn small'>Play Participant</span>
+                                            </div>
+                                        </div>
                                         <div id='videos'>
                                             <!--VÍDEO PRINCIPAL-->
                                             <div id='span-video-preview' data-status='disabled' data-position='main' class='width-limit first-video'>
-                                                <video id="video-preview" class="responsive-video" preload="none" loop ></video>
+                                                <video id='video-preview' class='responsive-video' preload='none' loop ></video>
+                                                <video id='video-preview-incoming' class='responsive-video d-none' preload='none' loop ></video>
                                                 <div id='div-exit-fullscreen' class='fixed-action-btn d-none'>
                                                     <a id='exit-fullscreen' class='btn-floating btn-large blue darken-2'>
                                                         {!! $default->fullscreenExitLargeIcon !!}
@@ -72,33 +91,67 @@
                             </div>
                             <div id='div-incoming-videos' data-active='out' class='col s12 m2 l2 push-m2 d-none obj-invisible' align='center'>
                                 <div class='row'>
+                                    <div id='incommingVideo-screen' align='center' data-status='disabled' data-position='second' class='col s12 d-none'>
+                                        <span id='screen-name' class='white-text right ml-5'></span>
+                                        <br/>
+                                        <div id='embedded-container-iframe-v2' class="embedded-container d-none rounded-borders z-depth-3">
+                                        </div>
+                                        <div id='screen-control' class='col s12 p-10 participant-control d-none'>
+                                            <a id='screen-swap' class='media-control btn-floating blue left' data-active='other' data-position='top' title='Passar para tela principal'>
+                                                {!! $default->swapIcon !!}
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <br />
+                                    <div id='incommingVideo-participant' align='center' data-status='disabled' data-position='second' class='col s12 d-none'>
+                                        <span id='participation-name' class='white-text right ml-5'></span>
+                                        <br/>
+                                        <div id='embedded-container-iframe-v3' class="embedded-container d-none rounded-borders z-depth-3">
+                                        </div>
+                                        <div id='participation-control' class='col s12 p-10 participant-control d-none'>
+                                            <a id='participation-swap' class='media-control btn-floating blue left' data-active='other' data-position='top' title='Passar para tela principal'>
+                                                {!! $default->swapIcon !!}
+                                            </a>
+                                            <a id='participation-mute' class='media-control btn-floating red left' data-active='mute' data-position='top' title='Mudo'>
+                                                {!! $default->volumeDownIcon !!}
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <br />
+                                    
+                                    <a id='publish_participant' href='#' class='d-none'>publicar</a>
+
                                     <!--TERCEIRO VÍDEO-->
-                                    <div id='span-video-preview-3rd' align="center" data-status='disabled' data-position='second' class='col s12 d-none'>
-                                        <video id="thirdvideo-preview" draggable="false" preload="none" loop class='min-video responsive-video'></video>
+                                    <div id='span-video-preview-3rd' align='center' data-status='disabled' data-position='second' class='col s12 d-none'>
+                                        <video id='thirdvideo-preview' preload='none' loop class='min-video responsive-video'></video>
                                     </div>
                                     <!--SEGUNDO VÍDEO-->
-                                    <div id='span-video-preview-2nd' align="center" data-status='disabled' data-position='second' class='col s12 d-none'>
+                                    <div id='span-video-preview-2nd' align='center' data-status='disabled' data-position='second' class='col s12 d-none'>
                                         <a id='swap-video' title='Passar para vídeo principal' class='btn-floating blue darken-2 waves-effect waves-light obj-invisible'>
                                             {!! $default->swapIcon !!}
                                         </a>
-                                        <video id="secondvideo-preview" draggable="false" preload="none" loop class='min-video responsive-video'></video>
+                                        <div class='white-text'>
+                                            <span id='recording'>{!! $default->circleRedIcon !!}</span> Tela:
+                                        </div>
+                                        <video id='secondvideo-preview' draggable='false' preload='none' loop class='min-video responsive-video' muted></video>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class='col s12'>
+                            
                             <!-- Controles de mídia -->
                             @include('salas._includes.controles')
 
                             <div class='row'>
                                 <!-- Controle de espectadores conectados -->
-                                <ul id="connected-users" class='collapsible popout d-none'>
+                                <ul id='connected-users' class='collapsible popout d-none'>
                                     <li>
-                                        <div class="collapsible-header white-text dark-grey">
-                                            <span class="blue-text">{!! $default->peopleIconLeft !!}</span>
-                                            <b> Espectadores: <span id="users-counter" data-target='{{ Auth::user()->type  }}' class="blue-text">0</span></b>
+                                        <div class='collapsible-header white-text dark-grey'>
+                                            <span class='blue-text'>{!! $default->peopleIconLeft !!}</span>
+                                            <b> Espectadores: <span id='users-counter' data-target='{{ Auth::user()->type  }}' class='blue-text'>0</span></b>
                                         </div>
-                                        <div id="connected-users-list" class="collapsible-body active white-text">
+                                        <div id='connected-users-list' class='collapsible-body active white-text'>
                                             <!-- Lista de espectadores ativos -->
                                         </div>
                                     </li>
@@ -112,7 +165,7 @@
     </div>
 
     <!-- Sidebar de painel de chat -->
-    <ul id="slide-out" class="sidenav grey lighten-4 z-depth-5">
+    <ul id='slide-out' class='sidenav grey lighten-4 z-depth-5'>
         <div class='row'>
             <div id='chat-textarea'>
                 <div id='chat-panel' class='white-text'>

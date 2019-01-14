@@ -8,8 +8,8 @@ class LoadingView {
     // Inicia apresentação de tela de loading
     callLoading() {
 
-        $(dom.LOAD_LAYER_ELEM).show();
-        $(dom.LOAD_POSITION_ELEM).show();
+        GeneralHelper.showit(dom.LOAD_LAYER_ELEM);
+        GeneralHelper.showit(dom.LOAD_POSITION_ELEM);
         this._center.innerHTML = `<h5>
                                     <b>Aguarde...</b><br><br>
                                     <div class="preloader-wrapper big active">
@@ -31,8 +31,8 @@ class LoadingView {
     // Finaliza apresentação tela de loading
     destroyLoading() {
 
-        $(dom.LOAD_LAYER_ELEM).fadeOut(300);
-        $(dom.LOAD_POSITION_ELEM).fadeOut(300);
+        GeneralHelper.hideit(dom.LOAD_LAYER_ELEM, 300);
+        GeneralHelper.hideit(dom.LOAD_POSITION_ELEM, 300);
         this._center.innerHTML = '';
     }
 
@@ -41,8 +41,8 @@ class LoadingView {
         let icons = '';
         audio ? null : icons += '<i class="material-icons large">mic_off</i> ';
         video ? null : icons += '<i class="material-icons large">videocam_off</i> ';
-        $(dom.LOAD_LAYER_ELEM).show();
-        $(dom.LOAD_POSITION_ELEM).show();
+        GeneralHelper.showit(dom.LOAD_LAYER_ELEM);
+        GeneralHelper.showit(dom.LOAD_POSITION_ELEM);
         this._center.innerHTML = `<div align="center">
                                     ${ icons }
                                     <br>
@@ -54,7 +54,7 @@ class LoadingView {
                                     <a class="white-text" href="/"><u>Voltar</u></a>
                                 </div>`;
         $(dom.BTN_START_ROOM).focus();
-        $(dom.BTN_START_ROOM).fadeOut(300);
+        GeneralHelper.hideit(dom.BTN_START_ROOM, 300);
     }
 
     setVersion() {

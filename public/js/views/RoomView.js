@@ -16,22 +16,24 @@ class RoomView {
         this._roomList = doc.TAG(dom.PUBLIC_CONFERENCE);
         this._connectionList = doc.TAG(dom.CONNECTION_LIST);
         this._connectList = doc.TAG(dom.USERS_LIST);
+        this._hours = doc.TAG(dom.CURRENT_HOUR);
+        this._minutes = doc.TAG(dom.CURRENT_MIN);
+        this._seconds = doc.TAG(dom.CURRENT_SEC);
         this._listOfConCards = '';
     }
 
     setCurrentTime(...time) {
 
-        doc.TAG(dom.CURRENT_HOUR).innerHTML = time[0];
-        doc.TAG(dom.CURRENT_MIN).innerHTML = time[1];
-        doc.TAG(dom.CURRENT_SEC).innerHTML = time[2];
+        this._hours.innerHTML = time[0];
+        this._minutes.innerHTML = time[1];
+        this._seconds.innerHTML = time[2];
     }
 
     changeCounter(value) {
-        if (this._countUsers) {
-            if (this._countUsers.getAttribute('data-target') == '0') {
+
+        if (this._countUsers)
+            if (this._countUsers.getAttribute('data-target') == '0')
                 this._countUsers.innerHTML = value;
-            }
-        }
         this._currentUsers.innerHTML = value;
     }
 
@@ -76,17 +78,18 @@ class RoomView {
         return this._roomCard;
     }
 
-    setRoomCard(moderatorId, label, container, obj, valid) {
+    setRoomCard(moderatorId, label, container, obj, type) {
 
         container.innerHTML = label;
         container.className = "card-panel hoverable";
         obj.id = moderatorId;
         obj.title = 'Acessar sala';
         obj.innerHTML = misc.ICON_PLAY;
-        obj.className = 'btn-floating room-enter blue darken-1 modal-trigger';
-        //valid ? null : obj.className += ' modal-trigger';
-        obj.href = "#msg-informa-espectadores";
-
+        obj.className = 'btn-floating room-enter blue darken-1 ';
+        if (type == 0) {
+            obj.className += 'modal-trigger';
+            obj.href = "#msg-informa-espectadores";
+        }
         this._roomList.appendChild(container);
         doc.ID('_' + moderatorId).appendChild(obj);
     }
@@ -94,6 +97,11 @@ class RoomView {
     clearLabelCon() {
 
         this._listOfConCards = '';
+    }
+
+    cleanRoomList(list) {
+
+        list.innerHTML = '';
     }
 
     newLabelCon(userid, username, deleteBtn, itsMe) {

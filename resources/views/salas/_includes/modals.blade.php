@@ -94,12 +94,36 @@
         <div class='divider'></div>
         <p>Por favor informe quantas pessoas irão acompanhar esta apresentação com você</p>
         <div class='input-field col s12 m6 offset-m3'>
-            <input class='validate' required type="number" min='1' step='1' name='numViews' id='numViews' value='{{ isset($viewers) ? $viewers : ''}}' />
+            <input class='validate' required type="number" min='1' step='1' name='numViews' id='numViews' value='{{ isset($viewers) ? $viewers : '1'}}' />
             <label for='numViews'>{!! $default->usuariosIcon !!} Quantidade de espectadores:</label>
         </div>
         <br>
     </div>
     <div class='modal-footer grey lighten-3'>
         <button id='informViews' type='submit' class='btn-flat blue-text text-darken-2 waves-effect waves-teal modal-close'> {!! $default->applyIcon !!} Ok </button>
+    </div>
+</div>
+
+<div id='listaChamada' class='modal '>
+    <div class='modal-content'>
+        <div class='row'>
+            <div class='col s12'>
+                <h5>
+                    {!! $default->ulListBlueIcon !!} Lista de Presença:
+                    <span class='right'>
+                        <a class='modal-close'>
+                            {!! $default->cancelRedIcon !!}
+                        </a>
+                    </span>
+                </h5>
+            </div>
+            <div class='col s12'>
+                <h6>Por favor confirme os espectadores presentes durante esta apresentação</h6>
+            </div>
+        </div>
+        <div id='attendance'>
+            <!-- Gera listagem de presença -->
+        </div>
+        <br>
     </div>
 </div>

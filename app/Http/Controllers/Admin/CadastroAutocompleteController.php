@@ -25,73 +25,45 @@ class CadastroAutocompleteController extends Controller
     public function autocomplete($module){
 
         $components = Componente::where('cadastrado', $module)->first();
+        if($components == null) return;
         $model = 'App\\' . $components->model;
-        if($components->model == "User"){
-            $allData = $model::where('type', 0)->get();
-        } else {
+        $components->model == "User" ?
+            $allData = $model::where('type', 0)->get() :
             $allData = $model::all();
-        }
         
+        // Formação de atributo para o autocomplete do MaterializeCss
+        // Formato JSON: {nameX: "photo.png", nameY: null, ...}
         foreach($allData as $value){
             $data = str_replace("\0", "", $value->name);
-            // Formação de atributo para o modal o Materializecss
-            // -> JSON{<Nome do objeto>: <imagem opcional>}
             $result[$value->name] = null;
         }
         header('Content-Type: application/json; charset=utf-8');
-        echo json_encode($result, JSON_UNESCAPED_UNICODE);
+        return json_encode($result, JSON_UNESCAPED_UNICODE);
     }
 
     public function resultAutocomplete($module, $data){
 
-        $isAutocomplete = true;
-        if(isset($components)){
-            dd($components);
-        }
         $components = Componente::where('cadastrado', $module)->first();
+        if($components == null) return;
         $model = 'App\\' . $components->model;
         $searchResult = $model::where('name', '=', $data)->orderBy('name', 'asc')->paginate($this->pagination);
+        $resultado = $searchResult;
+        $isAutocomplete = true;
         $linkHome = true;
 
-        switch ($module) {
-            case 'cursos':
-                $cursos = $searchResult;
+        $users = array();
+        $modulos = array();
+        if($module == 'cursos' || $module == 'turmas'){
+            try{
                 $allmodulos = Modulo::all();
-                $modulos = array();
-                foreach($allmodulos as $modulo){
-                    $modulos[$modulo->id] = $modulo->name;
-                }
-                return view('admin.cadastro.' . $module . '.index', compact($module, 'modulos', 'isAutocomplete', 'linkHome'));
-                break;
-
-            case 'escolas':
-                $escolas = $searchResult;
-                return view('admin.cadastro.' . $module . '.index', compact($module, 'isAutocomplete', 'linkHome'));
-                break;
-            case 'modulos':
-                $modulos = $searchResult;
-                return view('admin.cadastro.' . $module . '.index', compact($module, 'isAutocomplete', 'linkHome'));
-                break;
-            case 'perfis':
-                $perfis = $searchResult;
-                return view('admin.cadastro.' . $module . '.index', compact($module, 'isAutocomplete', 'linkHome'));
-                break;
-            case 'turmas':
-                $turmas = $searchResult;
+                foreach($allmodulos as $modulo) $modulos[$modulo->id] = $modulo->name;
                 $accounts = User::where('type', 1)->get();
-                $users = array();
-                foreach($accounts as $account){
-                    $users[$account->id] = $account->login;
-                }
-                return view('admin.cadastro.' . $module . '.index', compact($module, 'users', 'isAutocomplete', 'linkHome'));
-                break;
-            case 'usuarios':
-                $users = $searchResult;
-                return view('admin.cadastro.' . $module . '.index', compact('users', 'isAutocomplete', 'linkHome'));
-                break;          
+                foreach($accounts as $account) $users[$account->id] = $account->login;
+            }catch(\Exception $e){
+                return;
+            }
         }
-        
-        
+        return view('admin.cadastro.' . $module . '.index', compact('resultado', 'users', 'modulos', 'isAutocomplete', 'linkHome'));
     }
     
 }

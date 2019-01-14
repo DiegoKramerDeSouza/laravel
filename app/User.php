@@ -26,4 +26,20 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function userDado(){
+
+        return $this->hasOne('App\UserDado');
+    }
+
+    public function turma(){
+
+        return $this->hasOne('App\Turma');
+    }
+
+    public function turmas_has_aula(){
+
+        return $this->hasMany('App\Turmas_has_aula');
+    }
+
 }
