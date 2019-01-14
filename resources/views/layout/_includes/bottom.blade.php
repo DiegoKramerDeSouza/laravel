@@ -81,7 +81,7 @@
             <!-- Formação de SALAS -->
             @if(! Auth::guest())
                 <!-- Inicializa player -->
-                <script type="text/javascript" src="{!! asset('js/controllers/newerPlayerController.js') !!}"></script> 
+                <script type="text/javascript" src="{!! asset('js/controllers/NewerPlayerController.js') !!}"></script> 
                 <!--
                 <script type="text/javascript" src="{!! asset('js/player/videojs/video.js') !!}"></script>  
                 <script type="text/javascript" src="{!! asset('js/player/videojs/videojs-http-streaming.js') !!}"></script>
