@@ -47,7 +47,6 @@ class MediaController {
         this._session = false;
         this._videoIsMain = false;
 
-        this._roomId = doc.TAG(dom.ROOM);
         this._divMainVideo = doc.TAG(dom.DIV_MAIN_VIDEO);
         this._spanMainVideo = doc.TAG(dom.VIDEO_MAIN);
         this._pageMainContainer = doc.TAG(dom.PAGE_MAIN_CONTENT);
@@ -59,6 +58,10 @@ class MediaController {
         };
     }
 
+    /**
+     * Inicializa instância de Media()
+     * @returns {Obj} Instância de Media()
+     */
     initiateMedia() {
 
         return new Media(
@@ -90,6 +93,9 @@ class MediaController {
         );
     }
 
+    /**
+     * Cria listeners para a função de tela cheia
+     */
     initListeners() {
 
         document.addEventListener('fullscreenchange', this.escFullScreen);
@@ -98,6 +104,15 @@ class MediaController {
         document.addEventListener('MSFullscreenChange', this.escFullScreen);
     }
 
+    /**
+     * Cria array para utilização de requisições internas via DataChanel
+     * @param {String} command Comando da requisição previamente definidos
+     * @param {String} firstData Informação da requisição
+     * @param {String} secondData Informação da requisição
+     * @param {String} thirdData Informação da requisição
+     * @param {String} fourthData Informação da requisição
+     * @returns {Array}
+     */
     createSolicitationArray(command, firstData, secondData, thirdData, fourthData) {
 
         return [
@@ -109,32 +124,56 @@ class MediaController {
         ];
     }
 
+    /**
+     * Troca valor de um boolean
+     * @param {Boolean} value  
+     * @returns {Boolean}
+     */
     _switchValue(value) {
 
         return value ? false : true;
     }
 
+    /**
+     * Remove elemento indicado da view
+     * @param {Obj} elem Elemento do DOM 
+     */
     removeElement(elem) {
 
         this._mediaView.removeElement(elem);
     }
 
+    /**
+     * Ajusta tela de apresentação para inicializar transmissão
+     */
     initiateStream() {
 
         this._mediaView.adjustStreamScreen();
         this._mediaView.adjustChatFilePanel();
     }
 
+    /**
+     * Apresenta controles de mídia na view no início da transmissão
+     */
     initiateControls() {
 
         this._mediaView.showControlElements();
     }
 
+    /**
+     * !!DESUSO!!
+     * Coleta valor de this._controlSharing
+     * @returns {Boolean}
+     */
     getControlSharing() {
 
         return this._controlSharing;
     }
 
+    /**
+     * Inicializa o vídeo selecionado
+     * @param {Obj} targetVideo Elemento HTML de vídeo 
+     */
     initiateVideo(targetVideo) {
 
         let playPromise = targetVideo.play();
@@ -143,13 +182,15 @@ class MediaController {
                     targetVideo.play();
                 })
                 .catch(error => {
-                    //console.log('Erro ao inicializar vídeo...', error);
                     this.initiateVideo(targetVideo);
                 });
             return;
         }
     }
 
+    /**
+     * Atribui aparência para o botão de áudio de acordo com o status do mesmo
+     */
     controlVolume() {
 
         if (this._controlVolume) {
@@ -163,11 +204,19 @@ class MediaController {
         }
     }
 
+    /**
+     * Atribui aparência de desabilitado ao botão de áudio
+     */
     disableVolume() {
 
         this._mediaView.volumeOff();
     }
 
+    /**
+     * !!DESUSO!!
+     * Desabilita microfone e atribui aparência do botão de microfone de acordo com seu status
+     * @param {*} currentStream Obj Stream RTCMultiConnection
+     */
     controlVoice(currentStream) {
 
         if (this._controlVoice) {
@@ -193,11 +242,20 @@ class MediaController {
         }
     }
 
+    /**
+     * !!DESUSO!!
+     * Atribui aparência de desabilitado ao botão de microfone
+     */
     disableMute() {
 
         this._mediaView.voiceOff();
     }
 
+    /**
+     * !!DESUSO!!
+     * Desabilita imagem e atribui aparência do botão de câmera de acordo com seu status
+     * @param {*} currentStream Obj Stream RTCMultiConnection
+     */
     controlCam(currentStream) {
 
         if (this._controlCam) {
@@ -229,11 +287,18 @@ class MediaController {
         }
     }
 
+    /**
+     * !!DESUSO!!
+     * Atribui aparência de desabilitado ao botão de câmera
+     */
     disableCam() {
 
         this._mediaView.camOff();
     }
 
+    /**
+     * Inverte as streams de vídeos entre o vídeo pricipal e os vídeos secundários
+     */
     controlSwapVideo() {
 
         let mVideoP = this._videoPreview;
@@ -273,6 +338,11 @@ class MediaController {
         }, 500);
     }
 
+    /**
+     * Inicializa vídeos recebidos além do vídeo do apresentador
+     * Altera a apresentação da view para comportar os demais vídeos
+     * @param {Obj} stream Obj Stream RTCMultiConnection
+     */
     openIncomingVideos(stream) {
 
         if (stream) {
@@ -283,6 +353,11 @@ class MediaController {
         }
     }
 
+    /**
+     * Finaliza apresentação de vídeos recebidos
+     * Altera a apresentação da view para remover as telas apresentadas
+     * @param {Obj} stream Obj Stream RTCMultiConnection
+     */
     closeIncomingVideos(stream) {
 
         if (stream) {
@@ -297,11 +372,18 @@ class MediaController {
         }
     }
 
+    /**
+     * Coleta status da posição do vídeo de compartilhamento de tela (principal/secundário)
+     * @returns {Boolean}
+     */
     getSharedValue() {
 
         return this._videoIsMain;
     }
 
+    /**
+     * Altera a apresentação para vídeos de compartilhamento de tela e apresenta na view
+     */
     switchShare() {
 
         this._controlSharing = this._switchValue(this._controlSharing);
@@ -309,84 +391,129 @@ class MediaController {
         this._controlSharing ? this._mediaView.startShare() : this._mediaView.exitShare();
     }
 
+    /**
+     * Altera aparência do botão de compartilhamento de tela e o define como ativo
+     */
     setShareEnabled() {
 
         this._controlSharing = false;
         this._mediaView.shareEnabled();
     }
 
+    /**
+     * Altera a apresentação do botão de compartilhamento de tela para desabilitado
+     */
     disableShare() {
 
         this._mediaView.shareOff();
     }
 
+    /**
+     * Altera a aparência do botão de finalizar participações e apresenta em view 
+     */
     startParticipation() {
 
         this._session = true;
         this._mediaView.startParticipation();
     }
 
+    /**
+     * Altera a aparência do botão de finalizar apresentações e o remove da view
+     */
     endParticipation() {
 
         this._session = false;
         this._mediaView.endParticipation();
     }
 
+    /**
+     * Altera a aparência do botão de finalizar apresentações e o desabilita
+     */
     disableParticipation() {
 
         this._session = false;
         this._mediaView.participationOff();
     }
 
+    /**
+     * Apresenta mensagem de acesso concedido como participante
+     * Trata os atributos e controles de de acesso à apresentações e apresenta alterações na view
+     */
     allow() {
 
         this._mediaView.allowSolicitation();
     }
 
+    /**
+     * Apresenta mensagem de acesso negado como participante
+     * Trata os atributos e controles de acesso à apresentação
+     */
     deny() {
 
         this._mediaView.denySolicitation();
     }
 
+    /**
+     * Altera a apresentação do botão pedir a vez como desabilitado
+     */
     disablePedir() {
 
         this._mediaView.pedirOff();
     }
 
+    /**
+     * Altera vídeo principal do Apresentador para fullscreen
+     * Funcional apenas para o Broadcaster
+     */
     toggleFullScreenOn() {
 
         if (this._spanMainVideo.mozRequestFullScreen) {
             this._spanMainVideo.mozRequestFullScreen();
         } else if (this._spanMainVideo.requestFullScreen) {
             this._spanMainVideo.requestFullScreen();
+            document.requestFullScreen();
         } else if (this._spanMainVideo.webkitRequestFullScreen) {
             this._spanMainVideo.webkitRequestFullScreen();
         }
         this._mediaView.enterFullscreen();
     }
 
+    /**
+     * Altera vídeo principal em fullscreen do Apresentador para o tamanho normal
+     * Funcional apenas para o Broadcaster
+     */
     toggleFullScreenOff() {
 
-        if (document.fullscreen) {
-            document.cancelFullScreen();
-        } else if (document.mozFullScreen) {
-            document.mozCancelFullScreen();
-        } else if (document.webkitIsFullScreen) {
-            document.webkitCancelFullScreen();
-        }
+        let documento = document.documentElement,
+            state = (document.webkitIsFullScreen || document.isFullScreen),
+            requestFunc = (documento.requestFullScreen || documento.webkitRequestFullScreen),
+            cancelFunc = (document.cancelFullScreen || document.webkitCancelFullScreen);
+        (!state) ? requestFunc.call(documento): cancelFunc.call(document);
+
         this._mediaView.exitFullscreen();
     }
 
+    /**
+     * Altera vídeo principal dos espectadores para fullscreen
+     * Funcional apenas para os espectadores
+     */
     enterFullScreen() {
 
         this._mediaView.embeddedMessage('#embedded_player', 'fullscreen');
     }
 
+    /**
+     * Altera vídeo principal em fullscreen dos espectadores para o tamanho normal
+     * Funcional apenas para os espectadores
+     */
     exitFullScreen() {
 
         this._mediaView.embeddedMessage('#embedded_player', 'exitfullscreen');
     }
 
+    /**
+     * Atribui à tecla ESC a função de finalização de fullscreen
+     */
     escFullScreen() {
 
         if (!document.fullscreenElement && !document.webkitIsFullScreen && !document.mozFullScreen && !document.msFullscreenElement) {
@@ -406,6 +533,9 @@ class MediaController {
         return;
     }
 
+    /**
+     * Controle de expansão de tela a partir do botão expandir
+     */
     toggleFullSize() {
 
         if (GeneralHelper.hasClass(this._pageMainContainer, misc.CLASS_MAIN_CONTAINER)) {
@@ -415,20 +545,33 @@ class MediaController {
         }
     }
 
+    /**
+     * Altera a visibilidade de um elemento indicado (visível ou invisível)
+     * @param {Obj} elem Elemento HTML
+     */
     toggleVisibility(elem) {
 
-        if (GeneralHelper.hasClass(elem, misc.CLASS_INVISIBLE)) {
-            this._mediaView.setVisible(elem);
-        } else {
+        GeneralHelper.hasClass(elem, misc.CLASS_INVISIBLE) ?
+            this._mediaView.setVisible(elem) :
             this._mediaView.setInvisible(elem);
-        }
     }
 
+    /**
+     * Modela e apresenta mensagens de texto Enviadas pelo chat 
+     * @param {String} user 
+     * @param {String} message
+     * @returns {String}
+     */
     writeChatMessage(user, message) {
 
         return this._mediaView.writeChatMessage(user, message);
     }
 
+    /**
+     * Modela e apresenta mensagens de texto Recebidas pelo chat 
+     * @param {String} msg Mensagem de texto
+     * @param {Boolean} rmt Status do painel de chat (Aberto ou fechado)
+     */
     writeMessage(msg, rmt) {
 
         let msgbox;
@@ -439,16 +582,27 @@ class MediaController {
         this._mediaView.writeReceiveMessage(message, msgbox, instance.isOpen);
     }
 
+    /**
+     * Altera apresentação do botão de envio de arquivos para desabilitado
+     */
     disableFileSharing() {
 
         this._mediaView.fileSharingOff();
     }
 
+    /**
+     * Desabilita botão de listagem de arquivos recebidos/enviados
+     */
     disableFileSharingList() {
 
         this._mediaView.fileSharingListOff();
     }
 
+    /**
+     * Constroi listagem de arquivos enviados e seus atributos: nome, tipo, tamanho e data de modificação
+     * @param {Obj} connection Instância do RTCMulticonnection 
+     * @param {Number} count Total de arquivos enviados
+     */
     fileSharing(connection, count) {
 
         if (count > 0) {
@@ -477,10 +631,14 @@ class MediaController {
         }
     }
 
+    /**
+     * Trata e apresenta o recebimento de arquivos pelo usuário
+     * @param {Obj} event Obj recebido pelo evento de entrada de mensagens pelo DataChanel 
+     * @param {Obj} connection Instância do RTCMultiConnection
+     */
     incomingFile(event, connection) {
 
         let blob = this._dataURItoBlob(event.data.dataURL);
-        //console.log(event.data);
         let file = new File([blob], event.data.fileName, {
             type: event.data.fileType
         });
@@ -489,27 +647,41 @@ class MediaController {
         return;
     }
 
+    /**
+     * Apresenta barra de progresso indeterminada para o recebimento de arquivos
+     * @param {String} file 
+     */
     createProgressBar(file) {
 
         this._mediaView.createProgressBar(file);
     }
 
+    /**
+     * Coleta informações de arquivo encaminhada pelo DataChanel e o reconstrói em um Blob
+     * @param {String} dataURI URI do arquivo recebido
+     * @returns {Blob} 
+     */
     _dataURItoBlob(dataURI) {
 
         let byteString = atob(dataURI.split(',')[1]);
         let mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
 
-        let ab = new ArrayBuffer(byteString.length);
-        let ia = new Uint8Array(ab);
+        let buffer = new ArrayBuffer(byteString.length);
+        let intArray = new Uint8Array(buffer);
         for (var i = 0; i < byteString.length; i++) {
-            ia[i] = byteString.charCodeAt(i);
+            intArray[i] = byteString.charCodeAt(i);
         }
-        let blob = new Blob([ab], {
+        let blob = new Blob([buffer], {
             type: mimeString
         });
         return blob;
     }
 
+    /**
+     * Define chamada de método para tratamento de envio de arquivos
+     * @param {Obj} file Arquivo selecionado
+     * @param {Function} callback Função de retorno
+     */
     _getDataURL(file, callback) {
 
         let reader = new FileReader();
@@ -517,15 +689,24 @@ class MediaController {
         reader.readAsDataURL(file);
     }
 
+    /**
+     * Apresenta mensagem de solicitações de participação efetuadas para o apresentador
+     * @param {Number} value Quantitativo de solicitações
+     */
     trataSolicitacao(value) {
 
         if (value > 0) this._mediaView.showSolicitation(value);
         else this._mediaView.hideSolicitation();
     }
 
-    listBox(text, count) {
+    /**
+     * Trata e apresenta lista de solicitações de participação efetuadas para o apresentador
+     * @param {Array} text Informações sobre o solicitante
+     * @param {Number} count Contador de solicitações efetuadas
+     */
+    listBox(text, count, userId) {
 
-        if (text[1] === this._roomId.value) {
+        if (text[1] === userId) {
             count++
             this.trataSolicitacao(count);
             this._mediaView.listSolicitation(count, text[0], text[2]);
@@ -533,15 +714,19 @@ class MediaController {
         return count;
     }
 
-    reconstructList(exp) {
+    /**
+     * Reconstrói e apresenta a listagem de solicitações de participação após alguma interação 
+     * @param {String} username Identificador do solicitante
+     */
+    reconstructList(username) {
 
         let responseList = doc.ALL(dom.SOL_RESPONSE);
         this._mediaView.clearSolicitationLis();
         if (responseList.length <= 1) this._mediaView.noSolicitation();
         else {
             responseList.forEach(response => {
-                console.log(response.id, exp);
-                if (response.id != exp) {
+                console.log(response.id, username);
+                if (response.id != username) {
                     this._mediaView.newSolicitation(response);
                 }
             });
@@ -549,6 +734,10 @@ class MediaController {
         this._mediaView.constructSolicitationList();
     }
 
+    /**
+     * Ajusta a apresentação dos controles de mídia para cada tipo de conexão (Apresentador e espectadores)
+     * @param {String} type Tipo de conexão efetuada (Local ou Remota)
+     */
     adjustMediaMenu(type) {
 
         if (type === conf.con.STREAM_LOCAL) {
@@ -565,21 +754,44 @@ class MediaController {
         }
     }
 
+    /**
+     * Constrói, inicializa e apresenta container de vídeo do apresentador ao iniciar a transmissão
+     * @param {String} roomid Identificador da sala
+     * @param {Obj} media Instância do MediaController()
+     */
     initBroadcasterVideo(roomid, media) {
 
         this._mediaView.initBroadcasterVideo(roomid, media);
     }
 
+    /**
+     * Constrói, inicializa e apresenta container de vídeo de um participante
+     * @param {String} roomid 
+     * @param {String} participant 
+     * @param {String} name 
+     */
     initParticipantVideo(roomid, participant, name) {
 
         this._mediaView.initParticipantVideo(roomid, participant, name);
     }
 
+    /**
+     * Constrói, inicializa e apresenta container de vídeo de compartilhamento de tela
+     * @param {String} screen Identificador de mídia 
+     * @param {Obj} media Instância do MediaController()
+     */
     initScreenVideo(screen, media) {
 
         this._mediaView.initScreenVideo(screen, media);
     }
 
+    /**
+     * Ajusta, constrói e apresenta telas e vídeo principal a partir da inicialização de uma transmissão
+     * @param {String} roomid Identificador da sala 
+     * @param {String} preVideo Identificador do vídeo
+     * @param {String} preLoader Identificador da tela de pré-load
+     * @param {Numeral} count Contagem regrassiva
+     */
     initTransmition(roomid, preVideo, preLoader, count) {
 
         this._mediaView.initPreVideo(preVideo, preLoader, count);
@@ -591,16 +803,30 @@ class MediaController {
 
     }
 
+    /**
+     * Verifica status de transmissão (Ativa/Inativa) e apresenta em view a mensagem correspondente
+     * @param {Obj} webRTCadpt Instância de WebRTCAdaptor() 
+     * @param {String} roomid Identificador da sala
+     */
     startAnimation(webRTCadpt, roomid) {
 
         this._mediaView.startAnimation(webRTCadpt, roomid);
     }
 
+    /**
+     * Apresenta status de gravação de tela (Ativo/Inativo) e apresenta em view a mensagem correspondente
+     * @param {String} elem identificador do elemento HTML 
+     */
     recordAnimation(elem) {
 
         this._mediaView.recordAnimation(elem);
     }
 
+    /**
+     * !!DESUSO!!
+     * Informa o status de transmissão da sala criada a partir do retorno da consulta à API Rest do serviço de mídia
+     * @param {String} roomid Identificador da sala
+     */
     getMediaServerStream(roomid) {
 
         $.ajax({
@@ -612,6 +838,12 @@ class MediaController {
         });
     }
 
+    /**
+     * Ajusta a apresentação de telas e vídeos ao finalizar a transmissão do apresentador
+     * Cria link para acesso ao video gravado durante a transmissão para acesso do apresentador
+     * @param {String} roomid Identificador da sala
+     * @param {Obj} broadcaster Instância do RTCMultiConnection()
+     */
     stopTransmition(roomid, broadcaster) {
 
         try { roomid = atob(roomid) } catch (e) { /* Não faz nada */ }
@@ -622,11 +854,19 @@ class MediaController {
         else GeneralHelper.hideit(dom.WAITING_LINK);
     }
 
+    /**
+     * Altera botão de finalização de transmissão e o apresenta como finalização da conexão
+     * @param {String} title Título do botão
+     * @param {String} icon Ícone do botão
+     */
     changeTransmition(title, icon) {
 
         this._mediaView.changeTransmition(this._finish, title, icon);
     }
 
+    /**
+     * Finaliza a tela de preparação para a transmissão e inicializa a tela de apresentação de vídeo e os controles de mídias
+     */
     endPreTransmition() {
 
         this._mediaView.endPreVideo();

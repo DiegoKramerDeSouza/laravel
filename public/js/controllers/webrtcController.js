@@ -31,32 +31,32 @@ class webrtcController {
         this._espectador;
         this._chamada;
 
-        this._publicRoomIdentifier = conf.con.ROOM_IDENTIFIER;
-        this._disconnectionMessage = conf.message.END_TRANSMITION;
         this._connect = this._connectController.initiateConnection();
         this._media = this._mediaController.initiateMedia();
         this._structure = this._structureController.initiateStructure();
         this._roomInfo = this._roomInfoController.initiateRoomInfo();
-        this._btnFinish = this._media.finish;
         this._roomData;
         this._room;
-        this._startedAt;
+        this._webRTCAdaptor;
+        this._selfConnection;
 
+        this._btnFinish = this._media.finish;
+
+        this._publicRoomIdentifier = conf.con.ROOM_IDENTIFIER;
+        this._disconnectionMessage = conf.message.END_TRANSMITION;
+        this._startedAt;
         this._startedStream = false;
         this._retransmiting = false;
         this._autologout = true;
-        this._isLowLatency = true;
         this._adaptors = [];
         this._streams = [];
         this._classList = [];
-
+        this._connectedUserData;
         this._retransmitingWho;
         this._roomId;
         this._currentUsers;
-        this._selfConnection;
         this._videoConstraints = true;
         this._audioConstraints = true;
-        this._webRTCAdaptor;
         this._participantIs;
         this._imAParticipant = false;
         this._screenId;
@@ -67,6 +67,8 @@ class webrtcController {
      */
     configureDefaults() {
 
+        // Coleta dados de usuário
+        this.requestConnectedUserData();
         // Configura padrões de conexão
         this._initiateConnection();
         // Inicia listeners de sockets
@@ -130,7 +132,8 @@ class webrtcController {
     /**
      * Procedimento de solicitação do gerenciador de listas de espectadores
      * @param { Int } turmaId 
-     * @param { String } aula 
+     * @param { String } aula
+     * @param { String } classe
      */
     _requestAttendance(turmaId, aula, classe) {
 
@@ -144,12 +147,27 @@ class webrtcController {
     }
 
     /**
+     * Procedimento de solicitação de lista de informaçoes sobre o usuário conectado no momento
+     */
+    requestConnectedUserData() {
+
+        let url = doc.URL_GROUPLIST_REQ;
+        let type = 'POST';
+        let dataType = 'json';
+        let data = { userData: true };
+        this._connectedUserData = new RequestController(url, type, data, dataType);
+        this._connectedUserData.requestUserData(this._roomInfo.currentRoomId.value);
+    }
+
+    /**
      * Listener de controle de requisições para lista de espectadores presentes
      * Gerada apenas para espectadores
+     * @param { boolean } auto
      */
     _controlAttendanceRequest(auto) {
 
-        if (this._structure.roomType == 0) return;
+        //if (this._structure.roomType == 0) return;
+        if (this._connectedUserData.list.type == 0) return;
         doc.TAG(dom.CLASS_LIST).onclick = () => {
             if (!this._room) return;
             let turmaId = this._room.connection;
@@ -169,9 +187,7 @@ class webrtcController {
 
         this._initiatePersonalConnection(this._connection);
         this._connection.enableScalableBroadcast = this._connect.enableScalableBroadcast;
-        //this._connection.maxRelayLimitPerUser = this._connect.maxRelayLimitPerUser;
         this._mediaController.initListeners();
-
     }
 
     /**
@@ -202,7 +218,8 @@ class webrtcController {
                     OfferToReceiveVideo: true,
                     OfferToReceiveAudio: true
                 };
-                connection.extra.modifiedValue = this._roomInfo.currentRoomId.value + '-' + this._roomInfo.currentUser.value;
+                //connection.extra.modifiedValue = this._roomInfo.currentRoomId.value + '-' + this._roomInfo.currentUser.value;
+                connection.extra.modifiedValue = this._connectedUserData.list.userId + '-' + this._connectedUserData.list.name;
                 connection.broadcastId = hintsToJoinBroadcast.broadcastId;
 
                 this._onStream(connection);
@@ -213,7 +230,7 @@ class webrtcController {
             // Socket - Broadcaster (apresentador) inicia uma nova sala
             socket.on(conf.socket.MSG_BROADCAST_START, (typeOfStreams) => {
 
-                console.log('start-broadcasting', typeOfStreams);
+                console.log('start-broadcasting', typeOfStreams, this._broadcaster);
                 let connection = this._broadcaster;
                 connection.direction = this._connect.direction;
                 connection.sdpConstraints.mandatory = {
@@ -379,7 +396,8 @@ class webrtcController {
 
                     let messageArray = this._mediaController.createSolicitationArray(
                         btoa(conf.req.END_PARTICIPATION),
-                        this._roomInfo.currentUser.value,
+                        //this._roomInfo.currentUser.value,
+                        this._connectedUserData.list.name,
                         this._structure.targetUser,
                         this._roomInfo.inRoom.value,
                         event.userid
@@ -424,6 +442,7 @@ class webrtcController {
      */
     _initAdaptor(roomid, videoLayer, connection) {
 
+        console.warn(roomid);
         let mediaConstraints;
         let sdpConstraints;
         let websocketURL;
@@ -550,10 +569,12 @@ class webrtcController {
 
         let msgrash = this._mediaController.createSolicitationArray(
             btoa(conf.req.NEW_SHARE),
-            this._roomInfo.currentUser.value,
+            //this._roomInfo.currentUser.value,
+            this._connectedUserData.list.name,
             this._screenId,
             this._roomInfo.inRoom.value,
-            this._roomInfo.currentRoomId.value
+            //this._roomInfo.currentRoomId.value
+            this._connectedUserData.list.userId
         );
         this._broadcaster.send(msgrash);
         msgrash = [];
@@ -681,10 +702,12 @@ class webrtcController {
                         username = admResponse[1];
                         let msgrash = this._mediaController.createSolicitationArray(
                             btoa(conf.req.RESP_PEDE_VEZ + userid),
-                            this._roomInfo.currentUser.value,
+                            //this._roomInfo.currentUser.value,
+                            this._connectedUserData.list.name,
                             username,
                             this._roomInfo.inRoom.value,
-                            this._roomInfo.currentRoomId.value
+                            //this._roomInfo.currentRoomId.value
+                            this._connectedUserData.list.userId
                         );
                         if (userid == conf.req.REQ_ALLOW && this._structure.lockSolicitation) {
                             this._alerta.initiateMessage(conf.message.ACCEPT_SOLICITATION);
@@ -718,7 +741,8 @@ class webrtcController {
                     let targetId = this._structure.targetUser;
                     let msgrash = this._mediaController.createSolicitationArray(
                         btoa(conf.req.END_PARTICIPATION),
-                        this._roomInfo.currentUser.value,
+                        //this._roomInfo.currentUser.value,
+                        this._connectedUserData.list.name,
                         connection.userid,
                         this._roomInfo.inRoom.value,
                         targetId
@@ -741,10 +765,12 @@ class webrtcController {
                 } else {
                     let msgrash = this._mediaController.createSolicitationArray(
                         btoa(conf.req.END_SHARE),
-                        this._roomInfo.currentUser.value,
+                        //this._roomInfo.currentUser.value,
+                        this._connectedUserData.list.name,
                         this._adaptors[index]['id'],
                         this._roomInfo.inRoom.value,
-                        this._roomInfo.currentRoomId.value
+                        //this._roomInfo.currentRoomId.value
+                        this._connectedUserData.list.userId
                     );
                     connection.send(msgrash);
                     msgrash = [];
@@ -785,10 +811,12 @@ class webrtcController {
                 if (this._structure.broadcastStatus == 1 && (this._structure.solicita === 0 && !this._structure.lockSolicitation)) {
                     let msgrash = this._mediaController.createSolicitationArray(
                         btoa(conf.req.PEDE_VEZ),
-                        this._roomInfo.currentUser.value,
+                        //this._roomInfo.currentUser.value,
+                        this._connectedUserData.list.name,
                         connection.userid,
                         this._roomInfo.inRoom.value,
-                        this._roomInfo.currentRoomId.value
+                        //this._roomInfo.currentRoomId.value
+                        this._connectedUserData.list.userId
                     );
                     try {
                         connection.send(msgrash, this._roomInfo.inRoom.value);
@@ -844,10 +872,12 @@ class webrtcController {
                     //this._removeStreams(connection);
                     let messageArray = this._mediaController.createSolicitationArray(
                         btoa(conf.req.END_PARTICIPANT),
-                        this._roomInfo.currentUser.value,
+                        //this._roomInfo.currentUser.value,
+                        this._connectedUserData.list.name,
                         connection.userid,
                         this._roomInfo.inRoom.value,
-                        this._roomInfo.currentRoomId.value
+                        //this._roomInfo.currentRoomId.value
+                        this._connectedUserData.list.userId
                     );
                     connection.send(messageArray, this._roomInfo.inRoom.value);
                     this._structure.lockSolicitation = false;
@@ -1083,6 +1113,7 @@ class webrtcController {
     }
 
     /**
+     * Definições de token e socket de conexão
      * Definição de ID do criador da sala (Broadcaster)
      */
     _setRoomBroadcastId() {
@@ -1093,6 +1124,7 @@ class webrtcController {
         } else {
             broadcastId = this._connection.token();
         }
+
         this._roomInfo.currentRoomId.onkeyup = function() {
             localStorage.setItem(this._connection.socketMessageEvent, this.value);
         };
@@ -1104,6 +1136,7 @@ class webrtcController {
             this._roomInfo.currentRoomId.value = broadcastId;
             localStorage.setItem(this._connection.socketMessageEvent, broadcastId);
         }
+        this._roomInfo.currentRoomId.parentNode.removeChild(this._roomInfo.currentRoomId);
     }
 
     /**
@@ -1133,10 +1166,12 @@ class webrtcController {
 
                 let messageSolicitationArray = this._mediaController.createSolicitationArray(
                     btoa(conf.req.NEW_SHARE),
-                    this._roomInfo.currentUser.value,
+                    //this._roomInfo.currentUser.value,
+                    this._connectedUserData.list.name,
                     screen,
                     this._roomInfo.inRoom.value,
-                    this._roomInfo.currentRoomId.value
+                    //this._roomInfo.currentRoomId.value
+                    this._connectedUserData.list.userId
                 );
 
                 if (userid && (this._startedStream || this._broadcaster.extra.streamEnded)) this._broadcaster.send(messageRash, userid);
@@ -1228,14 +1263,15 @@ class webrtcController {
         if (remoto && (Array.isArray(text) && text.length >= 5)) {
             let checkrash = event.data;
             let msgData = [];
-            let myRoom = doc.TAG(dom.ROOM).value;
+            //let myRoom = doc.TAG(dom.ROOM).value;
+            let myRoom = this._connectedUserData.list.userId;
 
             if (checkrash[0] === btoa(conf.req.PEDE_VEZ)) {
                 // Pedir vez para participação
                 msgData[0] = checkrash[1];
                 msgData[1] = checkrash[3].split('|')[1];
                 msgData[2] = checkrash[4];
-                this._structure.solicita = this._mediaController.listBox(msgData, this._structure.solicita);
+                this._structure.solicita = this._mediaController.listBox(msgData, this._structure.solicita, myRoom);
                 return;
 
             } else if (checkrash[0] === btoa(conf.req.RESP_PEDE_VEZ + conf.req.REQ_ALLOW)) {
@@ -1502,7 +1538,8 @@ class webrtcController {
 
                 let msgrash = this._mediaController.createSolicitationArray(
                     btoa(conf.req.END_PARTICIPATION),
-                    this._roomInfo.currentUser.value,
+                    //this._roomInfo.currentUser.value,
+                    this._connectedUserData.list.name,
                     this._structure.targetUser,
                     this._roomInfo.inRoom.value,
                     event.userid
@@ -1581,9 +1618,11 @@ class webrtcController {
      */
     createRoom() {
 
+        if (!this._structure.startRoom) return;
+
         this._structure.startRoom.onclick = () => {
 
-            this._room = this._roomController.initiateRoom();
+            this._room = this._roomController.initiateRoom(this._connectedUserData.list);
 
             if (this._roomController.validade()) {
 
@@ -1593,7 +1632,8 @@ class webrtcController {
                 this._broadcaster = new RTCMultiConnection();
                 this._broadcaster.extra.assunto = this._roomController._inputAssunto.value;
                 this._broadcaster.extra.materia = this._roomController._inputMateria.value;
-                this._broadcaster.extra.nome = this._roomController._inputName.value;
+                //this._broadcaster.extra.nome = this._roomController._inputName.value;
+                this._broadcaster.extra.nome = this._connectedUserData.list.name;
                 this._broadcaster.extra.onair = false;
                 this._broadcaster.extra.streamEnded = false;
 
@@ -1627,7 +1667,8 @@ class webrtcController {
                 this._structure.usuario = this._room.name;
                 this._structure.onlobby = false;
                 // Verificação de dispositivos de entrada de áudio e vídeo
-                if (!GeneralHelper.detectmob() && this._structure.roomType == 0) {
+                //if (!GeneralHelper.detectmob() && this._structure.roomType == 0) {
+                if (!GeneralHelper.detectmob() && this._connectedUserData.list.type == 0) {
                     if (!this._roomController.checkDevices()) {
                         this._alerta.initiateMessage(conf.message.DEVICE_ALERT);
                         this._structure.configDev.click();
@@ -1695,7 +1736,6 @@ class webrtcController {
                 this._roomController.noRooms();
                 return
             }
-
             // Cria o card de cada sala disponível
             rooms.forEach((array) => {
 
@@ -1708,29 +1748,33 @@ class webrtcController {
                     return;
                 }
                 if (moderatorId == this._connection.userid) return;
-                this._roomData = this._roomDataController.initiateRoomData(labelRoom, array.extra.assunto, array.extra.materia, array.extra.nome);
+                this._roomData = this._roomDataController.initiateRoomData(labelRoom, array.extra.assunto, array.extra.materia, array.extra.nome, this._connectedUserData.list.cursos);
                 this._roomData.allowed = this._roomDataController.validateAccess(this._roomData.curso, this._roomData.classes);
 
                 if (this._roomData.allowed) {
                     // Cria rótulo de sala se o acesso a ela for permitido
                     this._structure.countRooms += 1;
-                    this._structure.usuario = this._roomInfo.currentUser.value;
+                    //this._structure.usuario = this._roomInfo.currentUser.value;
+                    this._structure.usuario = this._connectedUserData.list.name;
                     let divOpen = doc.ADD('div');
                     let button = doc.ADD('a');
                     let card = this._roomController.constructAccessList(this._roomData.classe, this._roomData.assunto, this._roomData.apresentador, this._structure.viewers, moderatorId);
-                    this._roomController.initiateRoomCard(moderatorId, card, divOpen, button, this._structure.roomType);
+                    //this._roomController.initiateRoomCard(moderatorId, card, divOpen, button, this._structure.roomType);
+                    this._roomController.initiateRoomCard(moderatorId, card, divOpen, button, this._connectedUserData.list.type);
 
                     // Tratamento de ação de entrada na sala a partir do botão ENTRAR
                     button.onclick = () => {
                         this._roomId = moderatorId;
                         this._room = {
-                            connection: doc.TAG(dom.CON_ID).value,
+                            //connection: doc.TAG(dom.CON_ID).value,
+                            connection: this._connectedUserData.list.turmaId,
                             assunto: this._roomData.assunto,
                             classe: this._roomData.classe
                         }
                         this._roomController.setRoomLabel(misc.ICON_FA_TV, this._roomData.classe, this._roomData.assunto);
 
-                        if (this._structure.roomType == 1) {
+                        //if (this._structure.roomType == 1) {
+                        if (this._connectedUserData.list.type == 1) {
                             this._roomEntered(moderatorId, this._roomData.whois, this._connection);
                         } else {
                             // Trata botão de modal de espectadores presentes
@@ -1743,8 +1787,12 @@ class webrtcController {
                             setTimeout(() => doc.TAG(dom.NUMBER_VIEWS).focus(), 300);
                         }
                     }
+                } else this._structure.countRooms--;
+
+                if (this._structure.countRooms <= 0) {
+                    this._roomController.noRooms();
+                    this._structure.countRooms = 0;
                 }
-                if (this._structure.countRooms == 0) this._roomController.noRooms();
             });
         }
         return this._structure.onlobby;
@@ -1774,8 +1822,10 @@ class webrtcController {
             let user;
             if (connection.extra.modifiedValue) itsMe = (connection.extra.modifiedValue === participant[1]);
             if (itsMe) {
-                label = this._roomInfo.currentUser.value;
-                user = this._roomInfo.currentRoomId.value;
+                //label = this._roomInfo.currentUser.value;
+                label = this._connectedUserData.list.name;
+                //user = this._roomInfo.currentRoomId.value;
+                user = this._connectedUserData.list.userId;
             } else {
                 label = participant[1].split('-')[1];
                 user = participant[1];
@@ -1787,7 +1837,6 @@ class webrtcController {
                 this._roomController.inputConList();
                 GeneralHelper.showit(dom.UL_CON_USERS, 300);
             }
-            //this._roomView.changeCounter(this._structure.viewers);
             this._roomController.changeCounter(this._structure.viewers);
             let btnDisconnect = doc.ALL(dom.DISCONNECT_BTN);
             for (var j = 0; j < btnDisconnect.length; j++) {
@@ -1827,7 +1876,8 @@ class webrtcController {
 
         let msgrash = this._mediaController.createSolicitationArray(
             btoa(conf.req.END_CONNECTION),
-            this._roomInfo.currentUser.value,
+            //this._roomInfo.currentUser.value,
+            this._connectedUserData.list.name,
             this._roomInfo.inRoom.value
         );
         connection.send(msgrash, disconnectId);
@@ -1871,7 +1921,8 @@ class webrtcController {
             video: false
         };
 
-        this._espectador.extra.modifiedValue = this._roomInfo.currentRoomId.value + '-' + this._roomInfo.currentUser.value;
+        //this._espectador.extra.modifiedValue = this._roomInfo.currentRoomId.value + '-' + this._roomInfo.currentUser.value;
+        this._espectador.extra.modifiedValue = this._connectedUserData.list.userId + '-' + this._connectedUserData.list.name;
         this._structure.broadcastStatus = 1;
 
         let roomid = moderator.toString();
@@ -1897,7 +1948,8 @@ class webrtcController {
      */
     _forceShot() {
 
-        if (!this._startedStream || this._structure.roomType != 1) return;
+        //if (!this._startedStream || this._structure.roomType != 1) return;
+        if (!this._startedStream || this._connectedUserData.list.type != 1) return;
         $(dom.PIC_CLASS_TAKE_SHOT).click();
     }
 
@@ -1906,7 +1958,8 @@ class webrtcController {
      */
     _initShotInterval() {
 
-        if (this._structure.roomType != 1) return;
+        //if (this._structure.roomType != 1) return;
+        if (this._connectedUserData.list.type != 1) return;
 
         let shot = conf.str.TAKE_PIC_START;
         let finish = conf.str.TAKE_PIC_STOP;
@@ -1923,7 +1976,8 @@ class webrtcController {
      */
     _classSelfPicture() {
 
-        if (this._structure.roomType != 1) return;
+        //if (this._structure.roomType != 1) return;
+        if (this._connectedUserData.list.type != 1) return;
 
         let video = doc.TAG(dom.PIC_CLASS_VIDEO);
         let session = { audio: false, video: true };
@@ -2003,7 +2057,8 @@ class webrtcController {
     _startParticipation(connection) {
 
         let caller = new RTCMultiConnection();
-        caller.userid = this._roomInfo.currentRoomId.value;
+        //caller.userid = this._roomInfo.currentRoomId.value;
+        caller.userid = this._connectedUserData.list.userId;
         let targetRoomId = 'call' + this._roomId;
         this._initiatePersonalConnection(caller);
         this._afterJoinCallVideo(caller);
@@ -2022,7 +2077,8 @@ class webrtcController {
             OfferToReceiveAudio: true
         };
         caller.extra.caller = caller.userid;
-        caller.extra.modifiedValue = caller.userid + '-' + this._roomInfo.currentUser.value;
+        //caller.extra.modifiedValue = caller.userid + '-' + this._roomInfo.currentUser.value;
+        caller.extra.modifiedValue = caller.userid + '-' + this._connectedUserData.list.name;
         caller.checkPresence(targetRoomId, (isRoomExist, roomid) => {
             if (isRoomExist) {
                 caller.join(targetRoomId, (stream) => {

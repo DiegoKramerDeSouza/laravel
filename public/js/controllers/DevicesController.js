@@ -16,17 +16,23 @@ class DevicesController {
         this._hasCan;
     }
 
+    /**
+     * Detecta dispositivos padrões para Microfone e Câmera de um usuário ao entrar na sala
+     */
     participantInitiateDevices() {
 
         DetectRTC.load();
         setTimeout(() => {
             this._hasMic = DetectRTC.hasMicrophone;
             this._hasCan = DetectRTC.hasWebcam;
-            console.log(DetectRTC, this._hasMic, this._hasCan);
         }, 500);
 
     }
 
+    /**
+     * Valida a existência de dispositívos de Câmera e Microfone
+     * @return {Boolean}
+     */
     checkParticipation() {
 
         if (DetectRTC.isMobileDevice) return true;
@@ -41,6 +47,9 @@ class DevicesController {
         return true;
     }
 
+    /**
+     * Verifica todos os dispositívos disponíveis de áudio e vídeo ao acessar a página
+     */
     initiateDevices() {
 
         console.log('DetectRTC Versão: ', DetectRTC.version);
@@ -66,6 +75,9 @@ class DevicesController {
         });
     }
 
+    /**
+     * Define dispositivos de áudio e vídeo selecionados e grava seus identificadores em cookies
+     */
     setDevices() {
 
         let roomController = new RoomController();
@@ -81,6 +93,11 @@ class DevicesController {
         }
     }
 
+    /**
+     * Lista definições de cada dispositívo encontrado
+     * @param {Obj} device Objeto listado pelo DetectRTC
+     * @return {Obj}
+     */
     _collectDevice(device) {
 
         let input = {
@@ -92,6 +109,12 @@ class DevicesController {
         return input;
     }
 
+    /**
+     * Define os valores básicos de um cookie criado
+     * @param {String} cookiename Nome atribuido ao cookie
+     * @param {String} cookievalue Valor atribuido ao cookie
+     * @param {Integer} days Quantidade de dias de validade do cookie
+     */
     setCookies(cookiename, cookievalue, days) {
 
         let date = new Date();
@@ -101,6 +124,11 @@ class DevicesController {
         document.cookie = `${cookiename}=${cookievalue};${expires};`;
     }
 
+    /**
+     * Coleta os valores dos cookies indicados pelo nome
+     * @param {String} cookiename Nome do cookie
+     * @returns {String}
+     */
     _getCookies(cookiename) {
 
         let name = cookiename + "=";
@@ -118,6 +146,9 @@ class DevicesController {
         return result;
     }
 
+    /**
+     * Coleta os identificadores do dispositívo selecionado armazenado em cookies
+     */
     _collectCookiesDevices() {
 
         let deviceView = new DevicesView();
@@ -131,6 +162,11 @@ class DevicesController {
         }, 300);
     }
 
+    /**
+     * Atualiza view de listagem de dispositivos de áudio
+     * @param {String} data Identificador do dispositívo
+     * @param {Obj} view Instância de DevicesView()
+     */
     _updateSelectorAud(data, view) {
 
         this._devices.forEach(device => {
@@ -146,6 +182,11 @@ class DevicesController {
         view.createAudioSelector();
     }
 
+    /**
+     * Atualiza view de listagem de dispositivos de vídeo
+     * @param {String} data Identificador do dispositívo
+     * @param {Obj} view Instância de DevicesView()
+     */
     _updateSelectorVid(data, view) {
 
         this._devices.forEach(device => {

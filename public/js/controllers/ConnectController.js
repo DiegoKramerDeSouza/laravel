@@ -17,11 +17,31 @@ class ConnectController {
         this.points = [];
     }
 
+    /**
+     * Inicializa uma nova instância de Connect
+     * @returns {Obj}
+     */
     initiateConnection() {
 
-        return new Connect(this._urlSocket, this._enableScalableBroadcast, this._maxRelayLimitPerUser, this._socketMessageEvent, this._isPublic, this._direction, this._fileSharing);
+        return new Connect(
+            this._urlSocket,
+            this._enableScalableBroadcast,
+            this._maxRelayLimitPerUser,
+            this._socketMessageEvent,
+            this._isPublic,
+            this._direction,
+            this._fileSharing
+        );
     }
 
+    /**
+     * !!DESUSO!!
+     * Verifica se a conexão estabelecida está duplicada
+     * Finaliza qualquer conexão duplicada
+     * @param {String} incomingCon Identificador da Stream
+     * @param {Obj} event Evento de conexão
+     * @param {Obj} connection Instância de RTCMultiConnection()
+     */
     checkDuplicatedCon(incomingCon, event, connection) {
 
         console.warn("RECEBEMDO --> Nova conexão: ", event.stream.streamid, incomingCon);
@@ -39,6 +59,12 @@ class ConnectController {
         return;
     }
 
+    /**
+     * !!DESUSO!!
+     * Cancela qualquer conexão que não seja estabelecida entre o Broadcaster e outro usuário
+     * @param {Obj} connection Instância de RTCMultiConnection()
+     * @param {String} brodcaster Identificador do Broadcaster
+     */
     cancelFullMeshConnection(connection, brodcaster) {
 
         connection.extra.alteredValue = false;

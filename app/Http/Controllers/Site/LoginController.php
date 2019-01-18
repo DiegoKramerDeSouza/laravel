@@ -23,6 +23,7 @@ class LoginController extends Controller
 
         $data = $req->all();
         if(Auth::attempt(['login' => $data['login'], 'password' => $data['password']])){
+            session()->put('sessaoIniciada', true);
             if(Auth::user()->type == 0) return redirect()->route('home');
             else return redirect()->route('salas');
         }

@@ -6,6 +6,15 @@
  * const misc: elementos visuais de uso geral;
  */
 
+const url = {
+    MEDIA: 'med2.lrbtecnologia.com',
+    //MEDIA: 'med.pinechart.com',
+    LOCAL: 'localhost',
+    SIG: 'sig.lrbtecnologia.com',
+    TEST: 'test.antmedia.io',
+    WTV: 'wtv.lrbtecnologia.com'
+};
+
 const doc = {
     /*Constantes de configuração de elementos do documento */
     ALL: document.querySelectorAll.bind(document),
@@ -19,31 +28,48 @@ const doc = {
     /* Servidores de mídia med e med2 estão invertidos */
     SERVER: {
         HOME: {
-            LOCAL: 'http://localhost',
-            SSL: 'https://wtv.lrbtecnologia.com',
-            URL: 'http://wtv.lrbtecnologia.com'
+            LOCAL: 'http://' + url.LOCAL,
+            SSL: 'https://' + url.WTV,
+            URL: 'http://' + url.WTV
         },
         MEDIA: {
-            SSL: 'https://med.lrbtecnologia.com',
-            URL: 'http://med.lrbtecnologia.com',
-            WS: 'ws://med.lrbtecnologia.com:5080/WebRTCApp/websocket',
-            WSS: 'wss://med.lrbtecnologia.com:5443/WebRTCApp/websocket'
+            /*
+            SSL: 'https://' + url.TEST,
+            URL: 'https://' + url.TEST,
+            WS: 'wss://' + url.TEST + ':5443/WebRTCAppEE/websocket',
+            WSS: 'wss://' + url.TEST + ':5443/WebRTCAppEE/websocket'
+            */
+
+            SSL: 'https://' + url.MEDIA,
+            URL: 'https://' + url.MEDIA,
+            WS: 'wss://' + url.MEDIA + ':5443/WebRTCApp/websocket',
+            WSS: 'wss://' + url.MEDIA + ':5443/WebRTCApp/websocket'
+
         },
         MEDIA2: {
-            SSL: 'https://med.lrbtecnologia.com',
-            URL: 'http://med.lrbtecnologia.com',
-            WS: 'ws://med.lrbtecnologia.com:5080/WebRTCApp/websocket',
-            WSS: 'wss://med.lrbtecnologia.com:5443/WebRTCApp/websocket'
+            /*
+            SSL: 'https://' + url.TEST,
+            URL: 'https://' + url.TEST,
+            WS: 'wss://' + url.TEST + ':5443/WebRTCAppEE/websocket',
+            WSS: 'wss://' + url.TEST + ':5443/WebRTCAppEE/websocket'
+            */
+
+            SSL: 'https://' + url.MEDIA,
+            URL: 'https://' + url.MEDIA,
+            WS: 'wss://' + url.MEDIA + ':5443/WebRTCApp/websocket',
+            WSS: 'wss://' + url.MEDIA + ':5443/WebRTCApp/websocket'
+
         },
         SIG: {
-            SSL: 'https://sig.lrbtecnologia.com:443/',
-            URL: 'http://sig.lrbtecnologia.com:80/'
+            SSL: 'https://' + url.SIG + ':443/',
+            URL: 'http://' + url.SIG + ':80/'
         }
     },
     URL_ATTENDANCE_LIST: `${location.origin}/rest/listaPresenca`,
     /** APENAS TESTE */
     URL_ATTENDANCE_REQ: `${location.origin}/rest/testaPresenca`,
     URL_ATTENDANCE_UPDATE: `${location.origin}/rest/confirmaPresenca`,
+    URL_GROUPLIST_REQ: `${location.origin}/rest/listaCursos`,
     /** APENAS TESTE */
     URL_PHOTO_SEND: `${location.origin}/rest/testaPhoto`,
     URL_SALAS_SAVE: `${location.origin}/rest/salas/salvar`,
@@ -104,12 +130,24 @@ const conf = {
         SHARE_DENIED: 'permission-denied',
         SINGLE_CON: false,
 
+        /*------------------------------------------------------------------------------- */
+
+        /*
+        SOCKET_DOWNLOAD: doc.SERVER.MEDIA.SSL + ':5443/WebRTCAppEE/streams/',
+        SOCKET_PLAYER: doc.SERVER.MEDIA.URL + ':5080/WebRTCAppEE/play.html',
+        SOCKET_PLAYER_SSL: doc.SERVER.MEDIA.SSL + ':5443/WebRTCAppEE/play.html',
+
+        SOCKET_PLAYER_2: doc.SERVER.MEDIA2.URL + ':5080/WebRTCAppEE/play.html',
+        SOCKET_PLAYER_2_SSL: doc.SERVER.MEDIA2.SSL + ':5443/WebRTCAppEE/play.html',
+        */
         SOCKET_DOWNLOAD: doc.SERVER.MEDIA.SSL + ':5443/WebRTCApp/streams/',
-        SOCKET_PLAYER: doc.SERVER.MEDIA.URL + ':5080/WebRTCApp/play.html',
+        SOCKET_PLAYER: doc.SERVER.MEDIA.URL + ':5443/WebRTCApp/play.html',
         SOCKET_PLAYER_SSL: doc.SERVER.MEDIA.SSL + ':5443/WebRTCApp/play.html',
 
-        SOCKET_PLAYER_2: doc.SERVER.MEDIA2.URL + ':5080/WebRTCApp/play.html',
+        SOCKET_PLAYER_2: doc.SERVER.MEDIA2.URL + ':5443/WebRTCApp/play.html',
         SOCKET_PLAYER_2_SSL: doc.SERVER.MEDIA2.SSL + ':5443/WebRTCApp/play.html',
+
+        /*------------------------------------------------------------------------------- */
 
         SOCKET_REST_SSL: doc.SERVER.MEDIA.SSL + ':5443/WebRTCApp/rest/broadcast/getList/0/10',
         SOCKET_REST_URL: doc.SERVER.MEDIA.URL + ':5080/WebRTCApp/rest/broadcast/getList/0/10',
@@ -121,14 +159,14 @@ const conf = {
 
         STREAM_LOCAL: 'local',
         STREAM_REMOTE: 'remote',
-        TK_DETECT: true,
+        TK_DETECT: false,
         TK_KEY: 'fhnfigfpkkijpcpfhjaeajmgeelkkila',
         TK_MSG: 'MSG',
         TK_MSG_SEND: 'test',
         TK_TIME_REQ: (1000 * 15),
         TK_URL: 'http://*/*',
-        URL: 'https://sig.lrbtecnologia.com:443/',
-        URL_ADM: 'https://sig.lrbtecnologia.com:443/admin/'
+        URL: 'https://' + url.SIG + ':443/',
+        URL_ADM: 'https://' + url.SIG + ':443/admin/'
 
         //URL: 'https://rtcmulticonnection.herokuapp.com:443/',
         //URL: 'https://webrtcweb.com:9001/'
@@ -259,7 +297,6 @@ const dom = {
     CLASS_TITLE: '#class-title',
     CLOSE_PARTICIPATION: '#close-participation',
     COLLAPSIBLE: '.collapsible',
-    CON_ID: '#con-id',
     CONFIRM_ATTENDANCE: '#confirmAttendance',
     CONFIRM_ATTENDANCE_ID: 'confirmAttendance',
     CONFIRM_DEVICES: '#confirmDevices',
@@ -400,7 +437,8 @@ const dom = {
     THIRD_VIDEO: '#thirdvideo-preview',
     THIRD_VIDEO_ID: 'thirdvideo-preview',
     TK_DETECT: '#token_Detection',
-    TK_OBJ: '#token',
+    //TK_OBJ: '#token',
+    TK_OBJ: 'meta[name="csrf-token"]',
     TK_ON: '#tokenOn',
     TK_OFF: '#tokenOff',
     TOGGLE_CHAT: '#toggle-chat',

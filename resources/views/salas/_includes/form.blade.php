@@ -65,27 +65,21 @@
                     </div> 
                 </div>
             </div>
-            <input type='hidden' id='target' name='target' disabled readonly />
-
-        @else
-
-            <span id='btn-join-as-productor' class='d-none' readonly disabled></span>
-            <input type='hidden' id='target' name='target' readonly disabled value='{{ $turmas->curso_id }}' />
-
+            
         @endif
         <span id='token' class='d-none' data-content="{{ csrf_token() }}"></span>
     </div>
 </div>
 
-<!-- Nome da conexão, tipo e nome do usuário -->
-<input type='hidden' id='con-id' name='con-id' value='{{ session()->get('turmaId') }}' disabled readonly />
 <input type='hidden' id='room-id' name='room-id' value='{{ Auth::user()->login }}-{{ Auth::user()->name }}-{!! rand(0,999) !!}' disabled readonly />
 <input type='hidden' id='room-type' name='room-type' value='{{ Auth::user()->type }}' disabled readonly />
-<input type='hidden' id='current-user' value='{{ Auth::user()->name }}' disabled readonly />
+
+
 <!-- ID do broadcaster, sala e tela -->
 <input type='hidden' id='broadcaster' name='broadcaster' disabled readonly />
 <input type='hidden' id='in-room' name='in-room' disabled readonly />
 <input type='hidden' id='in-screen' name='in-screen' disabled readonly />
+
 <!-- Tratamento de imagens de captura -->
 <div class='row d-none'>
     <video id='classVideo' class='responsive-video' preload='none' loop ></video>
@@ -100,31 +94,5 @@
         <span id='takeShot' class='btn blue'>Foto</span>
     </div>
 </div>
-
-<!--
-<iframe id="embedded_player" style="width:100%;"
-    src="http://jitsitutorial443.com:5080/WebRTCApp/play.html?name=Mnw5ODYyc2R3cGplfDE1NDI2NDc1NDkxNzk=" frameborder="0" allowfullscreen>
-</iframe>
-
-<script>
-
-    let frame = document.getElementById('embedded_player');
-    
-    /*
-    setTimeout( () => {
-        let framePlay = document.getElementById('embedded_player').contentWindow.document.querySelector("button.vjs-big-play-button");
-        framePlay.onclick = () =>{
-            let viewerPlay = document.getElementById('embedded_player').contentWindow.document.getElementById("remoteVideo_html5_api");
-            setTimeout( () => {
-                console.log('===>', viewerPlay.videoHeight);
-            }, 500);
-        }
-    }, 5000);
-    */
-
-    frame.style.height = '480px';
-    
-</script>
--->
 
 

@@ -4,14 +4,13 @@
  */
 class RoomInfo {
 
-    constructor(currentRoomId, broadcaster, inRoom, inScreen, currentUser, myClass, countUsers) {
+    constructor(currentRoomId, broadcaster, inRoom, inScreen, countUsers) {
 
         this._currentRoomId = currentRoomId;
         this._broadcaster = broadcaster;
         this._inRoom = inRoom;
         this._inScreen = inScreen;
-        this._currentUser = currentUser;
-        this._myClass = myClass;
+        //this._currentUser = currentUser;
         this._countUsers = countUsers;
         Object.freeze(this);
     }
@@ -36,15 +35,12 @@ class RoomInfo {
         return this._inScreen;
     }
 
+    /*
     get currentUser() {
 
         return this._currentUser;
     }
-
-    get myClass() {
-
-        return this._myClass;
-    }
+    */
 
     get countUsers() {
 

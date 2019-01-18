@@ -19,7 +19,7 @@ class Structure {
         configDev,
         publicRoomsList,
         connectList,
-        roomType,
+        //roomType,
         countRooms,
         singlecon
     ) {
@@ -40,7 +40,7 @@ class Structure {
         this._configDev = configDev;
         this._publicRoomsList = publicRoomsList;
         this._connectList = connectList;
-        this._roomType = roomType;
+        //this._roomType = roomType;
         this._countRooms = countRooms;
         this._singleConnection = singlecon;
 
@@ -202,10 +202,12 @@ class Structure {
         return this._connectList;
     }
 
+    /*
     get roomType() {
 
         return this._roomType;
     }
+    */
 
     // ------------------------------------------
 

@@ -107,6 +107,7 @@ trait EspecialMethods{
         if(session()->has('aula')) session()->forget('aula');
         if(session()->has('tema')) session()->forget('tema');
         if(session()->has('allClassList')) session()->forget('allClassList');
+        if(session()->has('sessaoIniciada')) session()->forget('sessaoIniciada');
     }
 
 }

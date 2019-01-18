@@ -58,9 +58,8 @@ class GeneralHelper {
             navigator.userAgent.match(/Windows Phone/i)
         ) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     static showit(elem, time) {

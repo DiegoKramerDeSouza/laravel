@@ -6,7 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Auth;
 use App\Turma;
-use app\User;
+use App\UserDado;
+use App\User;
 
 
 class RestController extends Controller
@@ -17,6 +18,7 @@ class RestController extends Controller
         $found = true;
         $turmaId = session()->get('turmaId');
         $turmaName = session()->get('className');
+
         $aula = session()->get('aula');
         $data = session()->get('classList');
         $tema = session()->get('tema');
@@ -25,10 +27,59 @@ class RestController extends Controller
         return view('salas.chamada', compact('turmaId', 'turmaName', 'aula', 'tema', 'allData', 'found'));
     }
 
+    public function checkSession(){
+
+        //if(session()->has('sessaoIniciada')) echo 1;
+        //echo -1;
+        if(isset(Auth::user()->id)) echo Auth::user()->id;
+        else echo 'Nothing';
+    }
+
     public function listaTurmas(){
 
         $turmas = Turma::all();
         $json = json_encode($turmas, JSON_UNESCAPED_UNICODE);
+        return $json;
+    }
+
+    public function listaDadosDeUsuarios(Request $req){
+
+        if(! $req->userData) return;
+        if($req->typeOnly) {
+            $list['type'] = Auth::user()->type;
+            $json = json_encode($list, JSON_UNESCAPED_UNICODE);
+            return $json;
+        }
+        $list = array();
+        $user = Auth::user()->id;
+        $login = Auth::user()->login;
+        $name = Auth::user()->name;
+        $type = Auth::user()->type;
+        
+        $list['id'] = $user;
+        $list['turmaId'] = $user;
+        $list['login'] = $login;
+        $list['name'] = $name;
+        $list['type'] = $type;
+
+        if($type != 0){
+            $turma = Turma::where('user_id', $user)->first();
+            $turmaId = $turma->id;
+            $turmaName = $turma->name;
+            $cursos = $turma->curso_id;
+            $escolaId = $turma->school_id;
+            $escolaName = $turma->school_name;
+
+            if($cursos == '') $cursos = 0;
+            $list['turmaId'] = $turmaId;
+            $list['escolaName'] = $escolaName;
+            $list['escolaId'] = $escolaId;
+
+        } else $cursos = 'ADMIN';
+
+        $list['cursos'] = $cursos;
+
+        $json = json_encode($list, JSON_UNESCAPED_UNICODE);
         return $json;
     }
 

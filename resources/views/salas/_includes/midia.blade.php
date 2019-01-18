@@ -65,10 +65,10 @@
                             <div id='div-main-video' class='col s12 m8 l8 push-m2 d-none obj-invisible'>
                                 <div class=''>
                                     <div id='main-video' align='center' class='inroom mainView'>
-                                        <div id='embedded-container-iframe' class="embedded-container d-none rounded-borders z-depth-3 black">
+                                        <div id='embedded-container-iframe' class="embedded-container d-none rounded-borders transparent">
                                             <video id='remoteVideo' autoplay muted></video>
                                             <br/>
-                                            <div class='d-none1'>
+                                            <div class=''>
                                                 <span id='playit' class='btn small'>Play</span>
                                                 <span id='playscreen' class='btn small'>Play Screen</span>
                                                 <span id='playparticipant' class='btn small'>Play Participant</span>

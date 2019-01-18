@@ -1,4 +1,5 @@
 /**
+ * @author Diego Kramer
  * Classe voltada ao tratamento de chamadas de requisições Ajax
  *  
  * Instancia:
@@ -11,17 +12,22 @@ class RequestController {
 
         this._alerta = new MessageController();
         this._request = new Request(url, type, data, dataType);
+        this._list;
+    }
+
+    get list() {
+        return this._list;
     }
 
     /**
-     * Chamada de procedimento com estrutura Ajax básica 
-     * @param { Laravel Token } header 
-     * @param { String } url 
-     * @param { String } type 
-     * @param { Post Request data } data 
-     * @param { String } dataType 
-     * @param { function } callback 
-     * @param { function } callbackError 
+     * Chamada de procedimento com estrutura Ajax básica;
+     * @param {Object} header Token Laravel
+     * @param {String} url Caminho URL
+     * @param {String} type Tipo de requisição Ajax
+     * @param {Object} data  Data do request
+     * @param {String} dataType Tipo de data esperado para o retorno Ajax
+     * @param {function} callback Função de Callback
+     * @param {function} callbackError Função de Callback de erros 
      */
     _basicRequest(header, url, type, data, dataType, callback, callbackError) {
 
@@ -30,15 +36,14 @@ class RequestController {
         // Setup para permitir integração Laravel x Ajax 
         if (header) $.ajaxSetup({ headers: header });
         configuration = { url: url, type: type, data: data, dataType: dataType, success: (data) => callback(data), error: (data) => callbackError(data) };
-
         // Post para registro de eventos
         $.ajax(configuration);
     }
 
     /**
      * Chamada de procedimento de inserção/atualização de dados de salas criadas
-     * @param { Obj Request } req 
-     * @param { Boolean } response 
+     * @param {Object} req Instância de Request()
+     * @param {Boolean} response Gera mensagem em tela ou não
      */
     saveRoom(req, response) {
 
@@ -88,6 +93,29 @@ class RequestController {
     }
 
     /**
+     * Chamada de procedimento coletar os cursos a que o usuário logado pertence
+     */
+    requestUserData(proccessedId) {
+
+        let callback = (data) => {
+            console.log('Coleta efetuada com sucesso: ', data.cursos);
+            this._list = data;
+            if (proccessedId) {
+                this._list.userId = proccessedId;
+                //doc.TAG(dom.ROOM).value = null;
+            }
+        }
+        let error = (data) => {
+            console.error(data);
+            setTimeout(() => {
+                this.requestUserData(proccessedId);
+            }, 500);
+        };
+
+        this._basicRequest(this._request.header, this._request.url, this._request.type, this._request.data, this._request.dataType, callback, error);
+    }
+
+    /**
      * Chamada de procedimento para criação da lista de espectadores presentes
      */
     requestAttendance() {
@@ -105,10 +133,10 @@ class RequestController {
 
     /**
      * Chamada de procedimento para a construção da lista de espectadores presentes na apresentação
-     * @param { Array Int } arr 
-     * @param { Array list } all 
-     * @param { Int } turmaId 
-     * @param { Int } aula 
+     * @param {Array} arr Lista de presentes
+     * @param {Array} all Total de alunos
+     * @param {Int} turmaId Identificador da turma
+     * @param {Int} aula Identificador da aula
      */
     _createAttendance(arr, all, turmaId, aula, tema) {
 
@@ -122,7 +150,7 @@ class RequestController {
 
     /**
      * Chamada de procedimento para coleta de dados de espectadores presentes
-     * @param { Obj Request } req 
+     * @param {Object} req Instância de Request()
      */
     _generateAttendance(req) {
 
@@ -137,8 +165,8 @@ class RequestController {
 
     /**
      * Procedimento de criação da view de lista de gerenciamento de espectadores presentes
-     * @param { Array list } data 
-     * @param { Int } turma 
+     * @param {String} data Trecho HTML 
+     * @param {Int} turma Identificador da turma
      */
     _manageAttendanceList(data, turma) {
 
@@ -159,7 +187,7 @@ class RequestController {
 
     /**
      * Inicialização dos listeners de controle/tratamento de listas de espectadores
-     * @param { Int } turma 
+     * @param {Int} turma Identificador de turma
      */
     _saveAttendanceList(turma) {
 
@@ -191,7 +219,7 @@ class RequestController {
 
     /**
      * Chamada de procedimento para confirmação e envio da lista de espectadores presentes
-     * @param { Obj Request } req 
+     * @param {Object} req Instância de Request()
      */
     _confirmSendList(req) {
 

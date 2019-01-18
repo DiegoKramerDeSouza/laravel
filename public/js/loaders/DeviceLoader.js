@@ -4,21 +4,22 @@
  */
 $(document).ready(function() {
 
-    let userType = doc.TAG(dom.ROOM_TYPE).value;
+    let userType = doc.TAG(dom.ROOM_TYPE);
+    let userTypeValue = userType.value;
+    userType.parentNode.removeChild(userType);
+
     let loadDeviceSelector = doc.TAG(dom.CONFIRM_DEVICES);
     let deviceController = new DevicesController();
 
-    if (userType == 0) {
+    if (userTypeValue == 0) {
 
         deviceController.initiateDevices();
 
         if (!GeneralHelper.detectmob()) $(dom.BTN_CONF_DEVICES).fadeIn(300);
         else doc.TAG(dom.BTN_CONF_DEVICES).disabled = true;
 
-        loadDeviceSelector.onclick = () => {
+        loadDeviceSelector.onclick = () => deviceController.setDevices();
 
-            deviceController.setDevices();
-        };
     } else {
         deviceController.participantInitiateDevices();
     }

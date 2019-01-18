@@ -10,21 +10,24 @@ class RoomDataController {
 
     constructor() {
 
-        this._myClass = doc.TAG(dom.TARGET);
         this._countRooms = conf.datacls.COUNT_ROOMS;
         this._allowed = conf.datacls.ALLOWED;
     }
 
-    _setClasses() {
+    /**
+     * Verifica as permissões de cursos informadas e retorna um array
+     * @returns {Array}
+     */
+    _setClasses(courses) {
 
-        if (this._myClass.value === '') return conf.datacls.ADMIN_ACCESS
-        else return this._myClass.value.split(';');
+        if (courses === 'ADMIN') return conf.datacls.ADMIN_ACCESS
+        else return courses.split(';');
     }
 
-    initiateRoomData(roomid, assunto, materia, nome) {
+    initiateRoomData(roomid, assunto, materia, nome, courses) {
 
         let arrRoomId = roomid.split('|');
-        arrRoomId.push(this._countRooms, this._allowed, this._setClasses(), conf.datacls.TRANSMITING, assunto, materia, nome);
+        arrRoomId.push(this._countRooms, this._allowed, this._setClasses(courses), conf.datacls.TRANSMITING, assunto, materia, nome);
         return new RoomData(...arrRoomId);
     }
 
@@ -48,7 +51,6 @@ class RoomDataController {
             classes.forEach((cls) => {
                 if (curso.indexOf(cls) > -1) valid = true;
             });
-
         }
         return valid;
     }
