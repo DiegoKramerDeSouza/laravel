@@ -37,6 +37,7 @@ class MediaController {
         this._callMinSendFiles = doc.TAG(dom.CALL_SEND);
         this._callReceiveFiles = doc.TAG(dom.CALL_RECEIVE_MIN);
         this._callSendFiles = doc.TAG(dom.CALL_SEND_MIN);
+		this._finish = doc.TAG(dom.FINISH);
 
         this._controlCam = true;
         this._controlVoice = true;
@@ -95,6 +96,7 @@ class MediaController {
         document.addEventListener('webkitfullscreenchange', this.escFullScreen);
         document.addEventListener('mozfullscreenchange', this.escFullScreen);
         document.addEventListener('MSFullscreenChange', this.escFullScreen);
+		this._changeTransmition();
     }
 
     createSolicitationArray(command, firstData, secondData, thirdData, fourthData) {
@@ -560,6 +562,11 @@ class MediaController {
 
         this._mediaView.fadeOutElem(elem, delay)
             //delay != undefined ? this._mediaView.fadeOutElem(elem, delay) : this._mediaView.hideElem(elem);
+    }
+	
+	_changeTransmition() {
+
+        this._finish.onclick = (() => location.reload.bind(location));
     }
 
 

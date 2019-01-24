@@ -83,6 +83,7 @@ class webrtcController {
         $.ajaxSetup({
             headers: { 'X-CSRF-TOKEN': $(dom.TK_OBJ).attr('data-content') }
         });
+		console.log(postData, targetUrl);
         // Post para registro de eventos
         $.ajax({
             url: targetUrl,

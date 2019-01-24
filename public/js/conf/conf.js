@@ -20,8 +20,8 @@ const doc = {
     COOKIE_AUDIO_DEVICE: "audioDevice",
     COOKIE_LIFETIME: 365,
     COOKIE_VIDEO_DEVICE: "videoDevice",
-    URL_SALAS_SAVE: `${location.origin}/salas/salvar`,
-    URL_SALAS_UPDATE: `${location.origin}/salas/update`,
+    URL_SALAS_SAVE: `${location.origin}/rest/salas/salvar`,
+    URL_SALAS_UPDATE: `${location.origin}/rest/salas/update`,
     VERSION: "1.1.0.90"
 }
 
@@ -226,6 +226,7 @@ const dom = {
     FILE_MIN: '#min-files',
     FILE_SIDE_BAR: '#files-side-bar',
     FILE_TRANSFERING: '#file-transfering',
+	FINISH: '#finish_btn',
     FIRST_VIDEO: '#video-preview',
     IN_ROOM: '#in-room',
     IN_SCREEN: '#in-screen',
@@ -288,7 +289,8 @@ const dom = {
     TEXT_MESSAGE: '#text-message',
     THIRD_VIDEO: '#thirdvideo-preview',
     TK_DETEC: '#token_Detection',
-    TK_OBJ: '#token',
+    //TK_OBJ: '#token',
+	TK_OBJ: 'meta[name="csrf-token"]',
     TK_ON: '#tokenOn',
     TK_OFF: '#tokenOff',
     TOGGLE_CHAT: '#toggle-chat',

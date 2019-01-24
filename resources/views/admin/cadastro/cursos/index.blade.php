@@ -18,13 +18,13 @@
                     <label for="search-input">Procurar</label>
                 </div>
                 <div class="input-field col s12 m6" align='right'>
-                    Cursos encontrados: <b>{{ $cursos->total() }}</b>
+                    Cursos encontrados: <b>{{ $resultado->total() }}</b>
                     <h6><a class='green-text text-darken-1 load' href='{{ route('admin.cadastro.cursos.adiciona') }}'>{!! $default->novoIcon !!} Novo Curso</a></h6>
                 </div>
             </div>
             <div class='divider'></div>
             <div class='row'>
-                @if(count($cursos) > 0)
+                @if(count($resultado) > 0)
                     <table class='striped'>
                         <thead>
                             <tr>
@@ -35,7 +35,7 @@
                         </thead>
 
                         <tbody>
-                            @foreach($cursos as $curso)
+                            @foreach($resultado as $curso)
                                 <tr>
                                     <td><b> {{ $curso->name }}</b></td>
                                     <td> {{ $modulos[$curso->modulo_id] }}</td>
@@ -49,7 +49,7 @@
                         </tbody>
                     </table>
                     <div class='row center'>
-                        {{ $cursos->links() }}
+                        {{ $resultado->links() }}
                     </div>
                 @else
                     <div class='grey-text center' style='margin-top:40px; margin-bottom:40px;'>
@@ -66,7 +66,7 @@
             @endif
         </div>
     </div>
-    @foreach($cursos as $curso)
+    @foreach($resultado as $curso)
         <div id='confirm-message-{{$curso->id}}' class='modal'>
             <div class='modal-content'>
                 <h5>Deseja remover o curso <b>{{$curso->name}}</b>?</h5>

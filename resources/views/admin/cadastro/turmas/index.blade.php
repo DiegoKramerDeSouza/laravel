@@ -18,13 +18,13 @@
                     <label for="search-input">Procurar</label>
                 </div>
                 <div class="input-field col s12 m6" align='right'>
-                    Turmas encontradas: <b>{{ $turmas->total() }}</b>
+                    Turmas encontradas: <b>{{ $resultado->total() }}</b>
                     <h6><a class='load green-text text-darken-1' href='{{ route('admin.cadastro.turmas.adiciona') }}'>{!! $default->novoIcon !!} Nova Turma</a></h6>
                 </div>
             </div>
             <div class='divider'></div>
             <div class='row'>
-                @if(count($turmas) > 0)
+                @if(count($resultado) > 0)
                     <table class='striped'>
                         <thead>
                             <tr>
@@ -36,7 +36,7 @@
                         </thead>
 
                         <tbody>
-                            @foreach($turmas as $turma)
+                            @foreach($resultado as $turma)
                                 <tr>
                                     <td><b> {{ $turma->name }}</b></td>
                                     <td> {{ $users[$turma->user_id] }}</td>
@@ -51,7 +51,7 @@
                         </tbody>
                     </table>
                     <div class='row center'>
-                        {{ $turmas->links() }}
+                        {{ $resultado->links() }}
                     </div>
                 @else
                     <div class='grey-text center' style='margin-top:40px; margin-bottom:40px;'>
@@ -68,7 +68,7 @@
             @endif
         </div>
     </div>
-    @foreach($turmas as $turma)
+    @foreach($resultado as $turma)
         <div id='confirm-message-{{$turma->id}}' class='modal'>
             <div class='modal-content'>
                 <h5>Deseja remover a turma <b>{{$turma->name}}</b>?</h5>

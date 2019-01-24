@@ -1,7 +1,7 @@
 @include('admin.cadastro._includes.alert')
 <div class='row'>
     <div class='input-field col s12 m6'>
-        <input class='validate' required type='text' name='name' id='name' value='{{ isset($turmas->name) ? $turmas->name : ''}}'>
+        <input class='validate' required type='text' name='name' id='name' value='{{ isset($resultado->name) ? $resultado->name : ''}}'>
         <label for='name'>{!! $default->turmasIcon !!} Nome</label>
     </div>
     <div class='input-field col s12 m6'>
@@ -42,9 +42,9 @@
 
     <div class='input-field col s12 m6'>
         <select id='school_id' required name='school_id'>
-            @if(isset($turmas->school_id))
+            @if(isset($resultado->school_id))
                 @foreach($escolas as $escola)
-                    <option value="{{ $escola->id . '|' . $escola->name }}" {{ ($escola->id == $turmas->school_id) ? 'selected' : ''}}>{{ $escola->name }}</option>
+                    <option value="{{ $escola->id . '|' . $escola->name }}" {{ ($escola->id == $resultado->school_id) ? 'selected' : ''}}>{{ $escola->name }}</option>
                 @endforeach
             @else
                 <option value="" disabled selected>Escolha uma escola</option>
@@ -56,7 +56,7 @@
         <label for='school_id'>{!! $default->institutionIcon !!} Instituição</label>
     </div>
     <div class='input-field col s12'>
-        <input class='validate' type='text' name='description' id='description' value='{{ isset($turmas->description) ? $turmas->description : ''}}'>
+        <input class='validate' type='text' name='description' id='description' value='{{ isset($resultado->description) ? $resultado->description : ''}}'>
         <label for='description'>{!! $default->descricaoIcon !!} Descrição (opcional)</label>
     </div>
 </div>

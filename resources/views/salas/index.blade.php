@@ -7,7 +7,7 @@
     @if(isset($streamPage))
     
         <!-- Formulário de criação de salas -->
-        @include('salas._includes.form')
+        @include('salas._includes.formulario')
 
         <!-- Controles e Mídias -->
         @include('salas._includes.midia')

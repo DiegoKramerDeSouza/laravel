@@ -18,13 +18,13 @@
                     <label for="search-input">Procurar</label>
                 </div>
                 <div class="input-field col s12 m6" align='right'>
-                    Usuários encontrados: <b>{{ $users->total() }}</b>
+                    Usuários encontrados: <b>{{ $resultado->total() }}</b>
                     <h6><a class='load green-text text-darken-1' href='{{ route('admin.cadastro.usuarios.adiciona') }}'>{!! $default->novoIcon !!} Novo Usuário</a></h6>
                 </div>
             </div>
             <div class='divider'></div>
             <div class='row'>
-                @if(count($users) > 0)
+                @if(count($resultado) > 0)
                     <table class='striped'>
                         <thead>
                             <tr>
@@ -35,7 +35,7 @@
                         </thead>
 
                         <tbody>
-                            @foreach($users as $user)
+                            @foreach($resultado as $user)
                                 <tr>
                                     <td><b> {{ $user->name }}</b></td>
                                     <td> {{ $user->email }}</td>
@@ -49,7 +49,7 @@
                         </tbody>
                     </table>
                     <div class='row center'>
-                        {{ $users->links() }}
+                        {{ $resultado->links() }}
                     </div>
                 @else
                     <div class='grey-text center' style='margin-top:40px; margin-bottom:40px;'>
@@ -66,7 +66,7 @@
             @endif
         </div>
     </div>
-    @foreach($users as $user)
+    @foreach($resultado as $user)
         <div id='confirm-message-{{$user->id}}' class='modal'>
             <div class='modal-content'>
                 <h5>Deseja remover o usuário <b>{{$user->name}}</b>?</h5>

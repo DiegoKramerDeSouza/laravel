@@ -26,13 +26,13 @@ class CadastroModuloController extends Controller
     public function index(Request $req){
 
         if($this->validade($this->module)){
-            $modulos = Modulo::orderBy('name', 'asc')->paginate($this->pagination);
+            $resultado = Modulo::orderBy('name', 'asc')->paginate($this->pagination);
             $isAutocomplete = true;
             if(isset($req->success)) {
                 $success = $this->returnMessages($req, $this->module);
-                return view('admin.cadastro.modulos.index', compact('modulos', 'isAutocomplete', 'success'));
+                return view('admin.cadastro.modulos.index', compact('resultado', 'isAutocomplete', 'success'));
             }
-            return view('admin.cadastro.modulos.index', compact('modulos', 'isAutocomplete'));
+            return view('admin.cadastro.modulos.index', compact('resultado', 'isAutocomplete'));
         } else {
             return $this->accessDenied();
         }
@@ -46,8 +46,8 @@ class CadastroModuloController extends Controller
     public function add(){
 
         if($this->validade($this->module)){
-            $modulos = Modulo::all();
-            return view('admin.cadastro.modulos.adicionar', compact('modulos'));
+            $resultado = Modulo::all();
+            return view('admin.cadastro.modulos.adicionar', compact('resultado'));
         } else {
             return $this->accessDenied();
         }
@@ -73,7 +73,8 @@ class CadastroModuloController extends Controller
             
             $modulos = [
                 '_token'=>$req->_token,
-                'name'=>$req->name
+                'name'=>$req->name,
+                'description'=>$req->description
             ];
             Modulo::create($modulos);
 
@@ -91,8 +92,8 @@ class CadastroModuloController extends Controller
     public function edit($id){
 
         if($this->validade($this->module)){
-            $modulos = Modulo::find($id);
-            return view('admin.cadastro.modulos.editar', compact('modulos'));
+            $resultado = Modulo::find($id);
+            return view('admin.cadastro.modulos.editar', compact('resultado'));
         } else {
             return $this->accessDenied();
         }
@@ -118,7 +119,8 @@ class CadastroModuloController extends Controller
 
             $modulos = [
                 '_token'=>$req->_token,
-                'name'=>$req->name
+                'name'=>$req->name,
+                'description'=>$req->description
             ];
             Modulo::find($id)->update($modulos);
 

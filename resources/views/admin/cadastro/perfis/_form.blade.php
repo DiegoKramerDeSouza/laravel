@@ -1,7 +1,7 @@
 @include('admin.cadastro._includes.alert')
 <div class='row'>
     <div class='input-field col s12 m6'>
-        <input class='validate' required type='text' name='name' id='name' value='{{ isset($perfis->name) ? $perfis->name : ''}}'>
+        <input class='validate' required type='text' name='name' id='name' value='{{ isset($resultado->name) ? $resultado->name : ''}}'>
         <label for='name'>{!! $default->perfisIcon !!} Nome</label>
     </div>
     <div class='input-field col s12 m6'>
@@ -23,9 +23,8 @@
         <label for='school_id'>{!! $default->acessosIcon !!} Acessos</label>
     </div>
     <div class='input-field col s12'>
-        <input class='validate' required type='text' name='description' id='description' value='{{ isset($perfis->description) ? $perfis->description : ''}}'>
+        <input class='validate' required type='text' name='description' id='description' value='{{ isset($resultado->description) ? $resultado->description : ''}}'>
         <label for='description'>{!! $default->descricaoIcon !!} Descrição</label>
     </div>
-    <input class='validate' required type='hidden' readonly name='grant' id='grant' value='{{ isset($perfis->grant) ? $perfis->grant : ''}}'>
 
 </div>
