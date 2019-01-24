@@ -92,6 +92,7 @@ const conf = {
     str: {
         /*Constantes de configuração de inicialização da ESTRUTURA do documento de salas */
         BROADCAST_STATUS: 0,
+        COUNTDOWN_TO_START: 3,
         FILE_SHARING: true,
         FORM: 'Verificando...',
         IS_MODERATOR: true,
@@ -167,9 +168,6 @@ const conf = {
         TK_URL: 'http://*/*',
         URL: 'https://' + url.SIG + ':443/',
         URL_ADM: 'https://' + url.SIG + ':443/admin/'
-
-        //URL: 'https://rtcmulticonnection.herokuapp.com:443/',
-        //URL: 'https://webrtcweb.com:9001/'
     },
     socket: {
         /*Constantes de padronização de mensagens SOCKET.IO */
@@ -525,3 +523,6 @@ const misc = {
 /*Configurações gerais carregadas via JSON */
 //const jFile = `http://localhost/js/conf/config.json`;
 //const cfg = $.getJSON(jFile);
+
+//URL: 'https://rtcmulticonnection.herokuapp.com:443/',
+//URL: 'https://webrtcweb.com:9001/'

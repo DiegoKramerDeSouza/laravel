@@ -1,6 +1,6 @@
 /**
  * MANIPULAÇÃO DE ELEMENTOS DO WEBRTC EM CONJUNTO COM RTCMULTICONNECTION
- * Inicializa os elementos do webRTC para abertura, gerenciamento e controle de transmissões;
+ * Inicializa os elementos do webRTC para abertura, gerenciamento e controle de transmissões ao carregar o documento
  */
 
 let webrtc = new webrtcController();
@@ -53,6 +53,9 @@ function searchAvaliableRooms() {
 
 /**
  * Cria listener para mensagens enviadas por páginas aninhadas
+ * Permite apenas mensagens com as origens em:
+ * med2.lrbtecnologia.com
+ * wtv.lrbtecnologia.com
  */
 function listenEmbeddedMessages() {
 

@@ -15,7 +15,8 @@ class RoomDataController {
     }
 
     /**
-     * Verifica as permissões de cursos informadas e retorna um array
+     * Cria e retorna um array de permissões de acesso a cursos que o usuário possui
+     * @param {String} courses Lista de cursos a que aquele usuário possui acesso
      * @returns {Array}
      */
     _setClasses(courses) {
@@ -24,6 +25,15 @@ class RoomDataController {
         else return courses.split(';');
     }
 
+    /**
+     * Inicializa uma instância de RoomData
+     * @param {String} roomid Identificador da sala
+     * @param {String} assunto Assunto da sala
+     * @param {String} materia Matéria da sala
+     * @param {String} nome Nome completo da sala
+     * @param {String} courses cursos permitidos para aquela sala
+     * @returns {Obj}
+     */
     initiateRoomData(roomid, assunto, materia, nome, courses) {
 
         let arrRoomId = roomid.split('|');
@@ -31,6 +41,12 @@ class RoomDataController {
         return new RoomData(...arrRoomId);
     }
 
+    /**
+     * Valida o nome de sala criada
+     * @param {String} labelRoom Identificador da sala
+     * @param {Obj} roomsArray Dados da sala
+     * @returns {Boolean}
+     */
     validateRoomName(labelRoom, roomsArray) {
 
         try {
@@ -40,9 +56,14 @@ class RoomDataController {
             if (roomsArray.length < 2) roomView.noRooms();
             return false;
         }
-        return labelRoom;
+        return true;
     }
 
+    /**
+     * Valida o acesso de um usuário para com uma sala
+     * @param {Array} curso Lista de cursos permitidos para o usuário
+     * @param {Array} classes Lista de cursos permitidos para aquela sala
+     */
     validateAccess(curso, classes) {
 
         let valid = false;

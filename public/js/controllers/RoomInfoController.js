@@ -27,6 +27,10 @@ class RoomInfoController {
         this.stoped = true;
     }
 
+    /**
+     * Instancia RoomInfo
+     * @returns {Obj}
+     */
     initiateRoomInfo() {
 
         return new RoomInfo(
@@ -39,6 +43,10 @@ class RoomInfoController {
         );
     }
 
+    /**
+     * Inicializa a chamada do temporizador para o espectador a partir do timestamp da criação da sala 
+     * @param {Number} time Timestamp da criação da sala 
+     */
     initiateClock(time) {
 
         setTimeout(() => {
@@ -47,6 +55,10 @@ class RoomInfoController {
         }, 1000);
     }
 
+    /**
+     * Calcula a diferença de tempo entre a criação da sala e o tempo atual e o exibe na view
+     * @param {Number} time Timestamp da criação da sala 
+     */
     _setCurrentTime(time) {
 
         let timeNow = new Date();
@@ -58,6 +70,10 @@ class RoomInfoController {
         this._view.setCurrentTime(...this._currentTime);
     }
 
+    /**
+     * Formata a exibição do tempo correspondente
+     * @returns {String}
+     */
     _formatCount() {
 
         this._formS = (this._seconds < 10 ? '0' : '') + this._seconds;

@@ -766,13 +766,13 @@ class MediaController {
 
     /**
      * Constrói, inicializa e apresenta container de vídeo de um participante
-     * @param {String} roomid 
-     * @param {String} participant 
-     * @param {String} name 
+     * @param {String} roomid Identificador da participação
+     * @param {String} participant Nome do participante
+     * @param {Obj} media Objeto de MediaController
      */
-    initParticipantVideo(roomid, participant, name) {
+    initParticipantVideo(roomid, participant, media) {
 
-        this._mediaView.initParticipantVideo(roomid, participant, name);
+        this._mediaView.initParticipantVideo(roomid, participant, media);
     }
 
     /**
@@ -795,12 +795,13 @@ class MediaController {
     initTransmition(roomid, preVideo, preLoader, count) {
 
         this._mediaView.initPreVideo(preVideo, preLoader, count);
+        /*
         if (roomid) {
             setTimeout(() => {
-                //this.getMediaServerStream(roomid);
+                this.getMediaServerStream(roomid);
             }, 5000);
         }
-
+        */
     }
 
     /**

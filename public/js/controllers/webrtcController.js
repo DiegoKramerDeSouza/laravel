@@ -60,6 +60,7 @@ class webrtcController {
         this._participantIs;
         this._imAParticipant = false;
         this._screenId;
+
     }
 
     /**
@@ -672,7 +673,7 @@ class webrtcController {
                         connection.send(msgrash);
                         this._startedStream = true;
                     }, 3000);
-                }, 4000);
+                }, (conf.str.COUNTDOWN_TO_START * 1000));
             }
 
             // Apresenta o número de espectadores conectados
@@ -1344,7 +1345,7 @@ class webrtcController {
                     this._mediaController.initTransmition(checkrash[2], dom.PRE_APRESENTACAO, dom.PRE_LOAD_APRESENTACAO, false);
                     setTimeout(() => {
                         this._initateRoomStream(checkrash[2]);
-                    }, 4000);
+                    }, (conf.str.COUNTDOWN_TO_START * 1000));
                 }
                 this._forceShot();
 
@@ -1355,7 +1356,7 @@ class webrtcController {
 
             } else if (checkrash[0] === btoa(conf.req.NEW_PARTICIPATION)) {
                 // Participação de um espectador na transmissão
-                if (checkrash[3] != myRoom) setTimeout(() => this._mediaController.initParticipantVideo(checkrash[4], checkrash[1]), 2000);
+                if (checkrash[3] != myRoom) setTimeout(() => this._mediaController.initParticipantVideo(checkrash[4], checkrash[1], this._mediaController), 2000);
 
             } else {
                 // Mensagem sistêmica não definida
@@ -1742,13 +1743,13 @@ class webrtcController {
                 let moderatorId = array.sessionid;
                 this._connection.getNumberOfBroadcastViewers(moderatorId, numberOfBroadcastViewers => this._structure.viewers = numberOfBroadcastViewers);
 
-                let labelRoom = this._roomDataController.validateRoomName(moderatorId, array);
-                if (!labelRoom) {
+                let validate = this._roomDataController.validateRoomName(moderatorId, array);
+                if (!validate) {
                     array.length > 1 ? null : this._roomController.noRooms();
                     return;
                 }
                 if (moderatorId == this._connection.userid) return;
-                this._roomData = this._roomDataController.initiateRoomData(labelRoom, array.extra.assunto, array.extra.materia, array.extra.nome, this._connectedUserData.list.cursos);
+                this._roomData = this._roomDataController.initiateRoomData(moderatorId, array.extra.assunto, array.extra.materia, array.extra.nome, this._connectedUserData.list.cursos);
                 this._roomData.allowed = this._roomDataController.validateAccess(this._roomData.curso, this._roomData.classes);
 
                 if (this._roomData.allowed) {

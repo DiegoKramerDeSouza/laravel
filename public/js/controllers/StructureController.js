@@ -1,5 +1,5 @@
 /**
- * Classe voltada ao tratamento da estrutura da sala aberta
+ * Classe voltada ao tratamento da estrutura básica de configurações de salas e conexões
  * 
  * Instancia:
  * Structure
@@ -27,6 +27,10 @@ class StructureController {
         this._singlecon = conf.con.SINGLE_CON;
     }
 
+    /**
+     * Instancia Structure
+     * @returns {Obj}
+     */
     initiateStructure() {
 
         return new Structure(

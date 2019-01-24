@@ -141,7 +141,7 @@
                         <div class='col s12'>
                             
                             <!-- Controles de mídia -->
-                            @include('salas._includes.controles')
+                            @include('salas._includes.control')
 
                             <div class='row'>
                                 <!-- Controle de espectadores conectados -->

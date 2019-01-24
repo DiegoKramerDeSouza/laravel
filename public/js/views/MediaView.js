@@ -40,16 +40,28 @@ class MediaView {
 
     }
 
+    /**
+     * Torna o Objeto do DOM indicado invisível
+     * @param {Obj} elem Objeto do DOM a ser adicionada a classe invisível
+     */
     setInvisible(elem) {
 
         elem.classList.add(misc.CLASS_INVISIBLE);
     }
 
+    /**
+     * Torna o Objeto do DOM indicado visível
+     * @param {Obj} elem Objeto do DOM a ser adicionada a classe visível
+     */
     setVisible(elem) {
 
         elem.classList.remove(misc.CLASS_INVISIBLE);
     }
 
+    /**
+     * !!DESUSO!!
+     * Trata aparência do botão de microfone para o status ativo
+     */
     setVoiceOn() {
 
         this._mute.classList.remove(misc.OFF_COLOR);
@@ -57,6 +69,10 @@ class MediaView {
         this._alerta.initiateMessage(conf.message.MIC_ON);
     }
 
+    /**
+     * !!DESUSO!!
+     * Trata aparência do botão de microfone para o status inativo
+     */
     setVoiceOff() {
 
         this._mute.classList.add(misc.OFF_COLOR);
@@ -64,6 +80,10 @@ class MediaView {
         this._alerta.initiateMessage(conf.message.MIC_OFF);
     }
 
+    /**
+     * !!DESUSO!!
+     * Trata aparência do botão de microfone para o status desabilitado
+     */
     voiceOff() {
 
         this._mute.classList.add(misc.DISABLED_COLOR);
@@ -72,6 +92,9 @@ class MediaView {
         GeneralHelper.hideit(dom.LI_MUTE);
     }
 
+    /**
+     * Trata aparência do botão de áudio para o status ativo
+     */
     setVolumeOn() {
 
         this._vol.classList.remove(misc.OFF_COLOR);
@@ -82,6 +105,9 @@ class MediaView {
         GeneralHelper.showit(dom.LI_VOLUME);
     }
 
+    /**
+     * Trata aparência do botão de áudio para o status inativo
+     */
     setVolumeOff() {
 
         this._vol.classList.add(misc.OFF_COLOR);
@@ -91,6 +117,9 @@ class MediaView {
         this._alerta.initiateMessage(conf.message.VOL_DOWN);
     }
 
+    /**
+     * Trata aparência do botão de áudio para o status desabilitado
+     */
     volumeOff() {
 
         this._vol.classList.add(misc.DISABLED_COLOR);
@@ -98,6 +127,10 @@ class MediaView {
         GeneralHelper.hideit(dom.LI_VOLUME);
     }
 
+    /**
+     * !!DESUSO!!
+     * Trata aparência do botão de câmera para o status ativo
+     */
     setCamOn() {
 
         this._cam.classList.remove(misc.OFF_COLOR);
@@ -105,6 +138,10 @@ class MediaView {
         this._alerta.initiateMessage(conf.message.CAM_ON);
     }
 
+    /**
+     * !!DESUSO!!
+     * Trata aparência do botão de câmera para o status inativo
+     */
     setCamOff() {
 
         this._cam.classList.add(misc.OFF_COLOR);
@@ -112,6 +149,10 @@ class MediaView {
         this._alerta.initiateMessage(conf.message.CAM_OFF);
     }
 
+    /**
+     * !!DESUSO!!
+     * Trata aparência do botão de câmera para o status desabilitado
+     */
     camOff() {
 
         this._cam.classList.add(misc.DISABLED_COLOR);
@@ -120,6 +161,11 @@ class MediaView {
         GeneralHelper.hideit(dom.LI_CAM);
     }
 
+    /**
+     * Trata a disposição dos vídeos Princial e Secundário ao ser iniciada uma participação ou um compartilhamento de tela
+     * @param {Obj} mainVideo Objeto do DOM indicando o vídeo principal
+     * @param {Obj} inVideo Objeto do DOM indicando o vídeo secundário que é recebido
+     */
     openIncomingVideos(mainVideo, inVideo) {
 
         mainVideo.classList.remove("m8");
@@ -129,6 +175,11 @@ class MediaView {
         this._otherVideos = true;
     }
 
+    /**
+     * Trata a disposição dos vídeos Princial e Secundário ao ser finalizada uma participação ou um compartilhamento de tela
+     * @param {Obj} mainVideo Objeto do DOM indicando o vídeo principal
+     * @param {Obj} inVideo Objeto do DOM indicando o vídeo secundário que é recebido
+     */
     closeIncomingVideos(mainVideo, inVideo) {
 
         mainVideo.classList.add("m8");
@@ -138,6 +189,9 @@ class MediaView {
         this._otherVideos = false;
     }
 
+    /**
+     * Trata aparência do botão de compartilhamento de tela para o status ativo
+     */
     startShare() {
 
         GeneralHelper.showit(dom.SHARE);
@@ -145,6 +199,9 @@ class MediaView {
         this._share.innerHTML = misc.ICON_SHARE_OFF;
     }
 
+    /**
+     * Trata aparência do botão de compartilhamento de tela para o status inatvo
+     */
     exitShare() {
 
         GeneralHelper.showit(dom.SHARE);
@@ -152,7 +209,9 @@ class MediaView {
         this._share.innerHTML = misc.ICON_SHARE_ON;
     }
 
-
+    /**
+     * Trata aparência do botão de compartilhamento de tela para o status desabilitado
+     */
     shareOff() {
 
         this._share.disabled = true;
@@ -161,6 +220,9 @@ class MediaView {
         GeneralHelper.hideit(dom.LI_SHARE);
     }
 
+    /**
+     * Trata aparência do botão de compartilhamento de tela para o status habilitado
+     */
     shareEnabled() {
 
         this._share.disabled = false;
@@ -170,6 +232,9 @@ class MediaView {
         GeneralHelper.showit(dom.LI_SHARE);
     }
 
+    /**
+     * Trata disposição e apresentação do botão de finalização de participação ao iniciar uma nova participação
+     */
     startParticipation() {
 
         GeneralHelper.showit(dom.DIV_ENTER);
@@ -180,6 +245,9 @@ class MediaView {
         this._participation.innerHTML = misc.ICON_CAM_OFF;
     }
 
+    /**
+     * Trata disposição e apresentação do botão de finalização de participação ao finalizar uma participação
+     */
     endParticipation() {
 
         GeneralHelper.showit(dom.DIV_ENTER);
@@ -190,6 +258,9 @@ class MediaView {
         this._participation.innerHTML = misc.ICON_CAM_ON;
     }
 
+    /**
+     * Trata disposição e apresentação do botão de finalização de participação como desabilitado
+     */
     participationOff() {
 
         this._participation.classList.remove(misc.HILIGHT_COLOR);
@@ -200,6 +271,10 @@ class MediaView {
         GeneralHelper.hideit(dom.CLOSE_PARTICIPATION, 300);
     }
 
+    /**
+     * Trata e apresenta mensagens e controles de participação de um espectador em uma transmissão após a confirmação
+     * do pedido de participação pelo apresentador
+     */
     allowSolicitation() {
 
         this._alerta.initiateMessage(conf.message.SEND_ACP_SOLICITATION);
@@ -212,12 +287,19 @@ class MediaView {
         }, 2000);
     }
 
+    /**
+     * Trata e apresenta mensagens a um espectador em uma transmissão após a negação do pedido de participação
+     * pelo apresentador
+     */
     denySolicitation() {
 
         this.participationOff();
         this._alerta.initiateMessage(conf.message.NOT_ACP_SOLICITATION);
     }
 
+    /**
+     * Trata disposição e apresentação do botão de pedir vez como desabilitado
+     */
     pedirOff() {
 
         this._pedir.classList.add(misc.OFF_COLOR);
@@ -225,6 +307,9 @@ class MediaView {
         GeneralHelper.hideit(dom.LI_PERDIR);
     }
 
+    /**
+     * Trata disposição e apresentação do botão de compartilhamento de arquivos como desabilitado
+     */
     fileSharingOff() {
 
         this._sharedFile.classList.remove(misc.HILIGHT_COLOR);
@@ -233,6 +318,9 @@ class MediaView {
         GeneralHelper.hideit(dom.BTN_FILE_SHARING);
     }
 
+    /**
+     * Trata disposição e apresentação do botão de lista de arquivos enviados/recebidos como desabilitado
+     */
     fileSharingListOff() {
 
         this._fileListReceive.classList.remove(misc.HILIGHT_COLOR);
@@ -244,11 +332,17 @@ class MediaView {
         GeneralHelper.hideit(dom.FILE_LIST);
     }
 
+    /**
+     * Executa mensagem de quantidade de espectadores não suficientes para enviar arquivos (< 1)
+     */
     noFileSharing() {
 
         this._alerta.initiateMessage(conf.message.NO_PARTICIPANTS);
     }
 
+    /**
+     * Trata disposição e apresentação do botão de tela cheia como inativo
+     */
     exitFullscreen() {
 
         GeneralHelper.hideit(dom.DIV_EXIT_FSCREEN, 500);
@@ -258,6 +352,9 @@ class MediaView {
         this.shrinkVideoSize();
     }
 
+    /**
+     * Trata disposição e apresentação do botão de tela cheia como ativo
+     */
     enterFullscreen() {
 
         GeneralHelper.showit(dom.DIV_EXIT_FSCREEN, 500);
@@ -266,18 +363,17 @@ class MediaView {
         this._spanMainVideo.style.height = (window.innerHeight) + 'px';
     }
 
+    /**
+     * Tratamento da disposição do botão de tela cheia como invisível
+     */
     fullScreamOff() {
 
         GeneralHelper.hideit(dom.LI_SCREEN);
     }
 
-    pedirOff() {
-
-        this._pedir.classList.add(misc.OFF_COLOR);
-        this._pedir.disabled = true;
-        GeneralHelper.hideit(dom.PEDIR);
-    }
-
+    /**
+     * Tratamento e apresentação a ação de expansão de tela
+     */
     expandVideoSize() {
 
         this._pageMainContainer.classList.remove(misc.CLASS_MAIN_CONTAINER);
@@ -286,6 +382,9 @@ class MediaView {
         this._spanMainVideo.classList.remove(misc.CLASS_WIDTH_LIMIT);
     }
 
+    /**
+     * Tratamento e apresentação a ação de redução de tela
+     */
     shrinkVideoSize() {
 
         this._pageMainContainer.classList.remove(misc.CLASS_MAIN_CONTAINER_FULL);
@@ -294,6 +393,9 @@ class MediaView {
         this._spanMainVideo.classList.remove(misc.CLASS_WIDTH_LIMIT_NO);
     }
 
+    /**
+     * Tratamento e apresentação do fundo de tela ao ingressar ou ser iniciada uma sala
+     */
     adjustStreamScreen() {
 
         GeneralHelper.showit(dom.BG_DARK, 500);
@@ -301,6 +403,10 @@ class MediaView {
         $(dom.VIDEOS_PANEL).slideDown(500);
     }
 
+    /**
+     * Tratamento e apresentação da inicialização da função de chat
+     * Ajuste e disposição de paineis
+     */
     adjustChatFilePanel() {
 
         let chatHeight = window.screen.height;
@@ -310,6 +416,12 @@ class MediaView {
         this._fileSideBar.style.maxHeight = (chatHeight - 200) + 'px';
     }
 
+    /**
+     * Ajusta a apresentação dos elementos de controle da sala ao iniciar uma transmissão
+     * Status da sala (Temporizador, total de espectadores e utilizaçãodo token)
+     * Vídeo principal
+     * Vídeos secundários
+     */
     showControlElements() {
 
         doc.TAG(dom.ALERT_SHARE).click();
@@ -323,6 +435,12 @@ class MediaView {
         }, 800);
     }
 
+    /**
+     * Ajusta a apresentação dos elementos de controle da sala ao finalizar uma transmissão
+     * Status da sala (Temporizador, total de espectadores e utilizaçãodo token)
+     * Vídeo principal
+     * Vídeos secundários
+     */
     hideControlElements() {
 
         GeneralHelper.hideit(dom.ROOM_STATUS);
@@ -334,6 +452,11 @@ class MediaView {
         doc.TAG(dom.DIV_INCOMING_VIDEO).classList.add("obj-invisible");
     }
 
+    /**
+     * Monta corpo de mensagens enviadas por chat
+     * @param {String} user Nome do participante que encaminhou a mensagem
+     * @param {String} message Texto da mensagem
+     */
     writeChatMessage(user, message) {
 
         let texto = `<b class='small'>${user}</b> :<br>${message}`;
@@ -341,6 +464,12 @@ class MediaView {
         return texto;
     }
 
+    /**
+     * Registra o envio/recebimento de mensagens no corpo do painel de chat ou em forma de toast
+     * @param {String} message Corpo da mensagem
+     * @param {String} pContainer Caixa de texto com definições de aparência da mensagem
+     * @param {Boolean} isOpen Status do chat panel (aberto/fechado)
+     */
     writeReceiveMessage(message, pContainer, isOpen) {
 
         isOpen ? null : this._alerta.initiateMessage(conf.message.CHAT_MESSAGE, message);
@@ -348,17 +477,30 @@ class MediaView {
         this._chatTextArea.style.height = (window.innerHeight - 100) + 'px';
     }
 
+    /**
+     * Apresenta contador de solicitações de mensagens junto ao botão de "listar solicitações" do apresentador
+     * @param {Number} val Quantitativo de requisições pedindo vez recebidas
+     */
     showSolicitation(val) {
 
         this._countPedirVez.innerHTML = val;
         GeneralHelper.showit(dom.COUNT_PEDIR, 300);
     }
 
+    /**
+     * Remove contador de solicitações de mensagens junto ao botão de "listar solicitações"
+     */
     hideSolicitation() {
 
         GeneralHelper.hideit(dom.COUNT_PEDIR, 300);
     }
 
+    /**
+     * Trata e apresenta lista de itens criados para cada solicitação aberta para participar da trasmissão, feitas ao apresentador ainda aguardando resposta
+     * @param {Number} count Total de requisições já realizadas ainda aguardando resposta
+     * @param {String} username Nome do solicitante
+     * @param {String} userid Identificador do solicitante
+     */
     listSolicitation(count, username, userid) {
 
         if (count === 1) this._listContent = '';
@@ -375,16 +517,26 @@ class MediaView {
         this._alerta.initiateMessage(conf.message.NEW_SOLICITATION, username);
     }
 
+    /**
+     * Limpa listagem de solicitações de participação abertas
+     */
     clearSolicitationLis() {
 
         this._listContent = '';
     }
 
+    /**
+     * Mensagem padrão apresentada no modal de solicitações recebidas pelo apresentador quando não há mensagens aguardando resposta
+     */
     noSolicitation() {
 
         this._listContent = "<li align='center' class='red-text text-darken-3 p-40' ><b><i class='fa fa-times fa-lg'></i> Não há solicitações no momento.</b></li>";
     }
 
+    /**
+     * Cria nova lista de solicitação de participação a partir de elementos do DOM
+     * @param {Obj} item Objeto do DOM apresentando informações sobre o solicitante
+     */
     newSolicitation(item) {
 
         let sender = item.getAttribute(misc.ATTR_SOLICITATION);
@@ -399,21 +551,37 @@ class MediaView {
             </li>`;
     }
 
+    /**
+     * Constrói uma nova listagem de solicitações para exibição
+     */
     constructSolicitationList() {
 
         this._solicitationList.innerHTML = this._listContent;
     }
 
+    /**
+     * Ajusta a exibição das funções da barra de controles de mídia para o apresentador
+     */
     adjustBroadCaster() {
 
         this._prepareFileMenu(dom.LI_PERDIR, dom.DIV_RECEIVE_FILES, dom.MIN_RECEIVE, dom.PRE_VIDEO);
     }
 
+    /**
+     * Ajusta a exibição das funções da barra de controles de mídia para os espectadores
+     */
     adjustEspectador() {
 
         this._prepareFileMenu(dom.CTL_PEDIR, dom.DIV_UPLOADED_FILES, dom.MIN_SEND, dom.PRE_APRESENTACAO);
     }
 
+    /**
+     * Ajusta a exibição das funções de controle de mídia para todos os tipos de usuários
+     * @param {Obj} pedir Objeto do DOM do botão de pedir/atribuir vez
+     * @param {Obj} files Objeto do DOM do botão de envio/recebimento de arquivos
+     * @param {Obj} filesMin Objeto do DOM do botão do painel de arquivos enviados/recebidos 
+     * @param {Obj} preview Objeto do DOM do painel de vídeo principal
+     */
     _prepareFileMenu(pedir, files, filesMin, preview) {
 
         GeneralHelper.hideit(dom.DIV_CONNECT);
@@ -423,29 +591,53 @@ class MediaView {
         GeneralHelper.showit(preview, 500);
     }
 
+    /**
+     * Apresenta a tela de pré-visualização após o início da transmissão
+     * @param {Obj} preVideo Objeto do DOM da tela de pré-visualização do vídeo principal
+     * @param {Obj} preLoader Objeto do DOM da tela de contagem regressiva para início da transmissão
+     * @param {Boolean} count Utilização da contagem regressiva (Sim/Não)
+     */
     initPreVideo(preVideo, preLoader, count) {
 
         GeneralHelper.hideit(preVideo);
         this.prepareToInitiate(preLoader, count);
     }
 
+    /**
+     * Apresenta a tela de pré-visualização com contagem regressiva após o início da transmissão
+     * @param {Obj} preLoader Objeto do DOM da tela de contagem regressiva
+     * @param {Boolean} count Utilização da contagem regressiva (Sim/Não) 
+     */
     prepareToInitiate(preLoader, count) {
 
         GeneralHelper.showit(preLoader, 300);
         if (count) this._startCountDown();
     }
 
+    /**
+     * Altera a apresentação do botão de finalização de transmissão do apresentador
+     * @param {Obj} btn Objeto do DOM do botão de finalização de transmissão
+     * @param {String} title Título atribuído ao botão de finalização de transmissão 
+     * @param {String} icon Ícone atribuído ao botão de finalização de transmissão 
+     */
     changeTransmition(btn, title, icon) {
 
         btn.title = title;
         btn.innerHTML = icon;
     }
 
+    /**
+     * Remove Objeto do DOM indicado da estrutura HTML
+     * @param {Obj} elem Objeto do DOM a ser removido 
+     */
     removeElement(elem) {
 
         $(elem).remove();
     }
 
+    /**
+     * Ajusta e exibe a tela de finalização de transmissão 
+     */
     stopTransmition() {
 
         this.hideControlElements();
@@ -459,6 +651,10 @@ class MediaView {
         try { this.removeElement(dom.FRAME_LAYER) } catch (e) { /* Não faz nada */ };
     }
 
+    /**
+     * Cria e apresenta o link para download da aula transmitida ao térmido da transmissão
+     * @param {String} roomid Identificador da sala criada
+     */
     createVideoLink(roomid) {
 
         let videoLink = doc.TAG(dom.DOWNLOAD_VIDEO);
@@ -468,6 +664,9 @@ class MediaView {
         GeneralHelper.showit(dom.DIV_DOWNLOAD_VIDEO, 300);
     }
 
+    /**
+     * Finalização do da tela de pré-visualização e apresentação da tela do vídeo principal e controles de mídia
+     */
     endPreVideo() {
 
         GeneralHelper.hideit(dom.PRE_LOAD_VIDEO);
@@ -475,16 +674,25 @@ class MediaView {
         GeneralHelper.showit(dom.DIV_CONTROLLER, 300);
     }
 
+    /**
+     * Inicia a contagem regressiva na tela de prévisualização do vídeo principal
+     */
     _startCountDown() {
 
-        let count = 3
+        let count = conf.str.COUNTDOWN_TO_START;
+        this._countdown.innerHTML = count;
         let interval = setInterval(() => {
-            this._countdown.innerHTML = count;
             count--;
+            this._countdown.innerHTML = count;
             if (count <= 0) clearInterval(interval);
         }, 1000);
     }
 
+    /**
+     * Apresenta mensagem de transmissão enquanto a transmissão para o servidor ded mídia estiver ativa
+     * @param {Obj} webRTCadpt Objeto WebRTCAdaptor que valida e verifica a sala indicada
+     * @param {String} roomid Identificador da sala criada e da mídia criada no servidor ded mídia
+     */
     startAnimation(webRTCadpt, roomid) {
 
         $(dom.BROADCASTING_INFO).fadeIn(800, () => {
@@ -500,6 +708,10 @@ class MediaView {
         });
     }
 
+    /**
+     * Apresenta objeto do DOM em forma de animação (blinking)
+     * @param {Obj} elem Objeto do DOM a ser apresentado durante os processos de animação
+     */
     recordAnimation(elem) {
 
         $(elem).fadeIn(800, () => {
@@ -509,6 +721,12 @@ class MediaView {
         });
     }
 
+    /**
+     * Controla a animação de blink de um elemento indicado a partir de um evento
+     * @param {Obj} elem Objeto do DOM a ser animado
+     * @param {String} triggerElem Selector do elemento (# + identificador)
+     * @param {String} trigger Evento a ser verificado
+     */
     _blinkControl(elem, triggerElem, trigger) {
 
         let stop = false;
@@ -524,6 +742,11 @@ class MediaView {
         }
     }
 
+    /**
+     * Inicia apresentação de vídeo principal em iframe para os espectadores
+     * @param {String} roomid Identificador da sala
+     * @param {Obj} media Objeto MediaController 
+     */
     initBroadcasterVideo(roomid, media) {
 
         let name = btoa(roomid);
@@ -544,7 +767,13 @@ class MediaView {
         if (conf.con.LOW_LATENCY) this._initNewPlayer(name, dom.REMOTE_VIDEO_ID, media, dom.PLAY_IT);
     }
 
-    initParticipantVideo(participant, name) {
+    /**
+     * Inicializa o vídeo de um participante como um vídeo secundário em um iframe
+     * @param {String} participant Identificador da mídia do participante
+     * @param {String} name Nome do participante
+     * @param {Obj} media Objeto MediaController 
+     */
+    initParticipantVideo(participant, name, media) {
 
         let rash = btoa(participant);
         let addr = `<iframe id="embedded_player_v3" data-active="participant" class="embedded-video" src="${ conf.con.SOCKET_PLAYER_2_SSL }?name=${ rash }" frameborder="0" allowfullscreen></iframe>`;
@@ -565,6 +794,11 @@ class MediaView {
         }
     }
 
+    /**
+     * Inicializa o vídeo de compartilhamento de tela como um vídeo secundário em um iframe
+     * @param {String} screen Identificador do vídeo de compartilhamento de tela
+     * @param {Obj} media Objeto MediaController
+     */
     initScreenVideo(screen, media) {
 
         let rash = btoa(screen);
@@ -584,6 +818,13 @@ class MediaView {
         }
     }
 
+    /**
+     * trata e gerencia eventos de inicialização de vídeos através de uma ferramenta de vídeo JS  
+     * @param {String} name Identificador da sala
+     * @param {String} video Identificador do vídeo
+     * @param {Obj} media Objeto MediaController
+     * @param {Obj} btnPlay Objeto do DOM com a função de inicializador do vídeo 
+     */
     _initNewPlayer(name, video, media, btnPlay) {
 
         let newplayer = new NewerPlayerController(name, video, media);
@@ -592,6 +833,16 @@ class MediaView {
         setTimeout(() => $(btnPlay).click(), 2000);
     }
 
+    /**
+     * Trata a apresentação dos dos elementos de controle de mídias embutidas em iframe
+     * @param {String} content Conteúdo do iframe a ser implementado
+     * @param {String} embedded Identificador do objeto do DOM que irá receber o iframe
+     * @param {String} container Identificador do container que irá ser tratado para apresentar a mídia com o iframe aninhado
+     * @param {String} control Identificador do objeto do DOM que apresenta os controles de mídias embutidas
+     * @param {String} itemSwap Identificador do objeto do DOM que atende a função de botão de swap de vídeos embutidos
+     * @param {String} itemMute Identificador do objeto do DOM que atende a função de botão de mute de vídeos embutidos 
+     * @param {String} layer Identificador do objeto do DOM que representa o elemento a ser tratado nos
+     */
     _controlEmbeddedVideo(content, embedded, container, control, itemSwap, itemMute, layer) {
 
         if (!conf.con.LOW_LATENCY) {
@@ -671,9 +922,7 @@ class MediaView {
 
         if (conf.con.LOW_LATENCY) {
             let setvolume;
-            message == 'unmute' ?
-                setvolume = false :
-                setvolume = true;
+            message == 'unmute' ? setvolume = false : setvolume = true;
             doc.TAG(dom.REMOTE_VIDEO).muted = setvolume;
         } else {
             let framePlay = doc.TAG(frameid);
