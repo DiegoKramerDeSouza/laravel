@@ -17,7 +17,7 @@ No arquivo public/js/conf/conf.js:
  - Linhas 120 a 140, ajuste as portas do serviço de mídia se necessário.
 
 Configuração da página de apresentação do serviço de mídia (/usr/local/antmedia/webapps/WebRTCAppEE)
-Algumas alterações foram necessárias para o correto funcionamento das telas de apresentação do serviço de mídia. Favor utilizar a versão disponível na branch 2019-09-02--WebTV-Midia-AntMedia-WebRTCAppEE para a aplicação NO SERVIDOR DE MÍDIA.  
+Algumas alterações foram necessárias para o correto funcionamento das telas de apresentação do serviço de mídia. Favor utilizar versão disponível no repositório WebTV-Infraestrutura na branch 2019-09-02--WebTV-Midia-AntMedia-WebRTCAppEE para a aplicação WebAppEE NO SERVIDOR DE MÍDIA.
 
 ## About Laravel
 
