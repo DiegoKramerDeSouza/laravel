@@ -7,6 +7,18 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
 </p>
 
+## Alterações necessárias para configuração do ambiente
+
+Configuração dos serviços de mídia e sinalização.
+No arquivo public/js/conf/conf.js:
+
+ - Linhas 10 a 14, modifique a url dos serviços utilizados.
+ - Linhas 47, 48, 155 e 156, ajuste as portas dos serviços de sinalização.
+ - Linhas 120 a 140, ajuste as portas do serviço de mídia se necessário.
+
+Configuração da página de apresentação do serviço de mídia (/usr/local/antmedia/webapps/WebRTCAppEE)
+Algumas alterações foram necessárias para o correto funcionamento das telas de apresentação do serviço de mídia. Favor utilizar a versão disponível na branch 2019-09-02--WebTV-Midia-AntMedia-WebRTCAppEE para a aplicação NO SERVIDOR DE MÍDIA.  
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as:

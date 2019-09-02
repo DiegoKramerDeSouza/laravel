@@ -27,6 +27,7 @@ class webrtcController {
         this._roomDataController = new RoomDataController();
         this._roomView = new RoomView();
         this._connection = new RTCMultiConnection();
+        this._antMediaController = new AntMediaController(this._alerta, this._mediaController);
         this._broadcaster;
         this._espectador;
         this._chamada;
@@ -435,129 +436,6 @@ class webrtcController {
         }
     }
 
-    /**
-     * Inicia o adaptador para transmissão com WebRTC
-     * @param {String} roomid 
-     * @param {String} videoLayer 
-     * @param {Obj WebRTCAdaptor} connection 
-     */
-    _initAdaptor(roomid, videoLayer, connection) {
-
-        console.warn(roomid);
-        let mediaConstraints;
-        let sdpConstraints;
-        let websocketURL;
-        let pc_config = null;
-        let localVideo = dom.MAIN_VIDEO_ID;
-
-        if (connection) localVideo = dom.SECOND_VIDEO_ID;
-        if (conf.con.LOW_LATENCY) {
-            location.protocol.startsWith("https") ?
-                websocketURL = 'wss://test.antmedia.io:5443/WebRTCAppEE/websocket' :
-                websocketURL = 'ws://test.antmedia.io:5080/WebRTCAppEE/websocket';
-        } else {
-            location.protocol.startsWith("https") ? websocketURL = conf.con.SOCKET_SSL : websocketURL = conf.con.SOCKET_URL;
-            if (connection || videoLayer) {
-                websocketURL = conf.con.SOCKET_2_URL;
-                location.protocol.startsWith("https") ? websocketURL = conf.con.SOCKET_2_SSL : websocketURL = conf.con.SOCKET_2_URL;
-            }
-        }
-        if (videoLayer || connection) {
-            mediaConstraints = {
-                video: true,
-                audio: true
-            }
-        } else {
-            mediaConstraints = {
-                video: this._videoConstraints,
-                audio: this._audioConstraints
-            }
-        }
-        sdpConstraints = {
-            OfferToReceiveAudio: false,
-            OfferToReceiveVideo: false
-        };
-        this._webRTCAdaptor = new WebRTCAdaptor({
-            websocket_url: websocketURL,
-            mediaConstraints: mediaConstraints,
-            peerconnection_config: pc_config,
-            sdp_constraints: sdpConstraints,
-            localVideoId: localVideo,
-            debug: true,
-            callback: (info, description) => {
-
-                if (info == "initialized") {
-                    console.info("Conexão inicializada!");
-                } else if (info == "publish_started") {
-                    console.info("Iniciando Transmissão");
-                    if (!connection) this._mediaController.startAnimation(this._webRTCAdaptor, roomid);
-                } else if (info == "publish_finished") {
-                    console.warn("Finalizando Transmissão");
-                } else if (info == "closed") {
-                    if (typeof description != "undefined")
-                        console.warn("Conexão fechada: " + JSON.stringify(description));
-                } else if (info == "screen_share_extension_available") {
-                    console.log("Compartilhamento de tela disponível");
-                }
-            },
-            callbackError: (error) => {
-
-                let errorMessage = JSON.stringify(error);
-                if (error.indexOf("NotFoundError") != -1) {
-                    errorMessage = conf.message.DEVICES_MISSING;
-                } else if (error.indexOf("NotReadableError") != -1 || error.indexOf("TrackStartError") != -1) {
-                    errorMessage = conf.message.DEVICES_BUSY;
-                } else if (error.indexOf("OverconstrainedError") != -1 || error.indexOf("ConstraintNotSatisfiedError") != -1) {
-                    errorMessage = conf.message.DEVICES_NOT_FOUND;
-                } else if (error.indexOf("NotAllowedError") != -1 || error.indexOf("PermissionDeniedError") != -1) {
-                    errorMessage = conf.message.DEVICES_NOT_ALLOWED;
-                } else if (error.indexOf("TypeError") != -1) {
-                    errorMessage = conf.message.DEVICES_REQUIRED;
-                }
-                this._alerta.initiateMessage(errorMessage);
-            }
-        });
-        this._streams['adaptor'] = this._webRTCAdaptor;
-        this._streams['id'] = roomid;
-        if (!videoLayer) this._adaptors.push(this._streams);
-    }
-
-    /**
-     * Inicia publicação da mídia capturada para o socket do serviço de mídia 
-     * (informado em websocketURL) 
-     * @param {String} roomid 
-     */
-    _startPublishing(roomid) {
-
-        this._webRTCAdaptor.publish(btoa(roomid));
-    }
-
-    /**
-     * Finaliza a publicação de mídia para o serviço de mídia
-     * @param {String} roomid 
-     * @param {Boolean} isBroadcaster 
-     * @param {Obj WebRTCAdaptor} adaptor 
-     */
-    _stopPublishing(roomid, isBroadcaster, adaptor) {
-
-        console.warn('Finalizando transmissão...', roomid, isBroadcaster);
-        if (isBroadcaster) {
-            this._startedStream = false;
-            this._media.previewVideo.pause();
-            this._mediaController.changeTransmition(misc.TITLE_FINISH_ROOM, misc.ICON_END_ROOM);
-            this._mediaController.stopTransmition(roomid, this._broadcaster);
-        }
-        adaptor.stop(btoa(roomid));
-    }
-
-    /**
-     * Altera a captura de mídia para a ferramenta de compartilhamento de tela
-     * @param {String} streamId 
-     */
-    _enableDesktopCapture(streamId) {
-
-        this._webRTCAdaptor.switchDesktopCapture(btoa(streamId));
-    }
 
     /**
      * Apresenta a própria tela compartilhada para o apresentador
@@ -598,11 +476,11 @@ class webrtcController {
     _finishTransmition(connection) {
 
         this._btnFinish.onclick = () => {
-            if (this._startedStream && connection.isInitiator) {
+            if (this._antMediaController.startedStream && connection.isInitiator) {
                 connection.extra.streamEnded = true;
-                this._adaptors.forEach(adaptor => {
+                this._antMediaController.adaptors.forEach(adaptor => {
                     console.error('Finalizando: ', adaptor['id']);
-                    this._stopPublishing(adaptor['id'], true, adaptor['adaptor']);
+                    this._antMediaController.stopPublishing(adaptor['id'], true, adaptor['adaptor'], this._media, this._mediaController, this._broadcaster);
                 });
                 if (this._retransmiting) this._media.endSessionAccess.click();
                 return;
@@ -644,11 +522,11 @@ class webrtcController {
             // Ajusta elementos de exibição (define o menu de áudio e video para broadcaster)
             this._mediaController.adjustMediaMenu(conf.con.STREAM_LOCAL);
             this._mediaController.startTransmition.onclick = () => {
-                this._initAdaptor(roomid, false);
+                this._antMediaController.initAdaptor(roomid, false, false, this._videoConstraints, this._audioConstraints);
                 this._mediaController.initTransmition(false, dom.PRE_VIDEO, dom.PRE_LOAD_VIDEO, true);
                 setTimeout(() => {
                     this._mediaController.endPreTransmition();
-                    this._startPublishing(roomid);
+                    this._antMediaController.startPublishing(roomid);
                     this._mediaController.initiateControls();
                     connection.extra.onair = true;
                     connection.extra.streamEnded = false;
@@ -666,12 +544,12 @@ class webrtcController {
                         btoa(conf.req.NEW_ROOM),
                         this._startedAt,
                         roomid,
-                        this._startedStream,
+                        this._antMediaController.startedStream,
                         connection.extra.streamEnded
                     );
                     setTimeout(() => {
                         connection.send(msgrash);
-                        this._startedStream = true;
+                        this._antMediaController.startedStream = true;
                     }, 3000);
                 }, (conf.str.COUNTDOWN_TO_START * 1000));
             }
@@ -681,9 +559,10 @@ class webrtcController {
 
             // Tratamento de ação de controles de mídia==================================
 
+            // Novos controles AntMedia 29/08/2019
             // Tratamento para entrar e sair do modo fullscreen
-            this._media.screen.onclick = () => this._mediaController.toggleFullScreenOn();
-            this._media.exitscreen.onclick = () => this._mediaController.toggleFullScreenOff();
+            //this._media.screen.onclick = () => this._mediaController.toggleFullScreenOn();
+            //this._media.exitscreen.onclick = () => this._mediaController.toggleFullScreenOff();
 
             //Tratamento de controle de envio de arquivos
             this._media.sharedFile.onclick = () => this._mediaController.fileSharing(connection, this._structure.viewers);
@@ -756,26 +635,26 @@ class webrtcController {
             };
             this._media.share.onclick = () => {
 
-                index = this._adaptors.length - 1;
+                index = this._antMediaController.adaptors.length - 1;
                 if (index < 1) {
                     this._mediaController.disableShare();
                     let timestamp = +new Date();
                     this._screenId = 'screen' + timestamp;
-                    this._initAdaptor(this._screenId, false, connection);
-                    setTimeout(() => this._enableDesktopCapture(this._screenId), 1000);
+                    this._antMediaController.initAdaptor(this._screenId, false, connection, this._videoConstraints, this._audioConstraints);
+                    setTimeout(() => this._antMediaController.enableDesktopCapture(this._screenId), 1000);
                 } else {
                     let msgrash = this._mediaController.createSolicitationArray(
                         btoa(conf.req.END_SHARE),
                         //this._roomInfo.currentUser.value,
                         this._connectedUserData.list.name,
-                        this._adaptors[index]['id'],
+                        this._antMediaController.adaptors[index]['id'],
                         this._roomInfo.inRoom.value,
                         //this._roomInfo.currentRoomId.value
                         this._connectedUserData.list.userId
                     );
                     connection.send(msgrash);
                     msgrash = [];
-                    this._adaptors.splice(index, 1);
+                    this._antMediaController.adaptors.splice(index, 1);
                     GeneralHelper.hideit(dom.VIDEO_SECOND, 300);
                 }
             };
@@ -797,12 +676,14 @@ class webrtcController {
             this._mediaController.adjustMediaMenu(conf.con.STREAM_REMOTE);
             this._structure.viewers = connection.getAllParticipants().length;
 
+            // Novos controles AntMedia 29/08/2019
             // Tratamento para controle de mute e unmute
-            this._media.vol.onclick = () => this._mediaController.controlVolume();
+            //this._media.vol.onclick = () => this._mediaController.controlVolume();
 
+            // Novos controles AntMedia 29/08/2019
             // Tratamento para entrar e sair do modo fullscreen
-            this._media.screen.onclick = () => this._mediaController.enterFullScreen();
-            this._media.exitscreen.onclick = () => this._mediaController.exitFullScreen();
+            //this._media.screen.onclick = () => this._mediaController.enterFullScreen();
+            //this._media.exitscreen.onclick = () => this._mediaController.exitFullScreen();
 
             this._media.solPedir.onclick = () => {
 
@@ -868,7 +749,7 @@ class webrtcController {
 
                 this._mediaController.disableParticipation();
                 this._structure.onParticipation = false;
-                this._stopPublishing(roomid, false, this._webRTCAdaptor);
+                this._antMediaController.stopPublishing(roomid, false, this._webRTCAdaptor, this._media, this._mediaController, this._broadcaster);
                 try {
                     //this._removeStreams(connection);
                     let messageArray = this._mediaController.createSolicitationArray(
@@ -983,7 +864,7 @@ class webrtcController {
         try { midiaId = atob(message[1]) } catch (e) { return };
         // Vídeo principal
         if (command === 'ended' && midiaId == roomid) {
-            this._startedStream = false;
+            this._antMediaController.startedStream = false;
             this._controlAttendanceRequest(true);
             this._mediaController.stopTransmition(roomid, this._broadcaster);
         } else if (command === 'ended' && midiaId.startsWith("screen")) {
@@ -1153,7 +1034,7 @@ class webrtcController {
                     btoa(conf.req.NEW_ROOM),
                     this._startedAt,
                     this._roomInfo.inRoom.value,
-                    this._startedStream,
+                    this._antMediaController.startedStream,
                     this._broadcaster.extra.streamEnded
                 );
 
@@ -1175,7 +1056,7 @@ class webrtcController {
                     this._connectedUserData.list.userId
                 );
 
-                if (userid && (this._startedStream || this._broadcaster.extra.streamEnded)) this._broadcaster.send(messageRash, userid);
+                if (userid && (this._antMediaController.startedStream || this._broadcaster.extra.streamEnded)) this._broadcaster.send(messageRash, userid);
                 if (this._retransmiting && participant) this._broadcaster.send(messageArray, userid);
                 if (screen) this._broadcaster.send(messageSolicitationArray, userid);
                 this._broadcaster.send(this._connectController.points);
@@ -1375,17 +1256,19 @@ class webrtcController {
      */
     _initateRoomStream(room, isFinished) {
 
-        this._startedStream = true;
-        console.log('STATUS DA STREAM: ', this._startedStream);
-        this._mediaController.initBroadcasterVideo(room, this._mediaController);
-        this._mediaController.initiateControls();
-        this._autologout = false;
-        if (isFinished) {
-            this._startedStream = false;
-            this._mediaController.stopTransmition(room, this._broadcaster);
-            this._controlAttendanceRequest();
-        }
-        this._initShotInterval();
+        setTimeout(_ => {
+            this._antMediaController.startedStream = true;
+            console.log('STATUS DA STREAM: ', this._antMediaController.startedStream);
+            this._mediaController.initBroadcasterVideo(room, this._mediaController);
+            this._mediaController.initiateControls();
+            this._autologout = false;
+            if (isFinished) {
+                this._antMediaController.startedStream = false;
+                this._mediaController.stopTransmition(room, this._broadcaster);
+                this._controlAttendanceRequest();
+            }
+            this._initShotInterval();
+        }, 300);
         return;
     }
 
@@ -1590,11 +1473,12 @@ class webrtcController {
             this._videoConstraints = {
                 mandatory: {
                     minFrameRate: 30,
-                    /*
+                    /* Specs da câmera. Um erro ocorrerá se a câmera utilizada não for compatível com essa resolução 
                     minWidth: 1280,
                     minHeight: 720,
                     minAspectRatio: 1.77
                     */
+                    
                 },
                 optional: [{
                     sourceId: this._roomController.videoList.value
@@ -1922,7 +1806,6 @@ class webrtcController {
             video: false
         };
 
-        //this._espectador.extra.modifiedValue = this._roomInfo.currentRoomId.value + '-' + this._roomInfo.currentUser.value;
         this._espectador.extra.modifiedValue = this._connectedUserData.list.userId + '-' + this._connectedUserData.list.name;
         this._structure.broadcastStatus = 1;
 
@@ -1949,8 +1832,7 @@ class webrtcController {
      */
     _forceShot() {
 
-        //if (!this._startedStream || this._structure.roomType != 1) return;
-        if (!this._startedStream || this._connectedUserData.list.type != 1) return;
+        if (!this._antMediaController.startedStream || this._connectedUserData.list.type != 1) return;
         $(dom.PIC_CLASS_TAKE_SHOT).click();
     }
 
@@ -2137,9 +2019,9 @@ class webrtcController {
         let roomid = 'participant' + connection.userid;
         let publishing = doc.TAG(dom.PUBLISH_PARTICIPANT);
         GeneralHelper.showit(dom.VIDEO_THIRD, 300);
-        this._initAdaptor(roomid, true);
+        this._antMediaController.initAdaptor(roomid, true, false, this._videoConstraints, this._audioConstraints);
         publishing.onclick = () => {
-            this._startPublishing(roomid);
+            this._antMediaController.startPublishing(roomid);
         };
         setTimeout(() => {
             publishing.click();

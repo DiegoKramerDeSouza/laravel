@@ -7,10 +7,9 @@
  */
 
 const url = {
-    MEDIA: 'med2.lrbtecnologia.com',
-    //MEDIA: 'med.pinechart.com',
+    MEDIA: 'med.pinechart.com',
     LOCAL: 'localhost',
-    SIG: 'sig.lrbtecnologia.com',
+    SIG: 'sig.pinechart.com',
     TEST: 'test.antmedia.io',
     WTV: 'wtv.lrbtecnologia.com'
 };
@@ -32,37 +31,21 @@ const doc = {
             SSL: 'https://' + url.WTV,
             URL: 'http://' + url.WTV
         },
-        MEDIA: {
-            /*
-            SSL: 'https://' + url.TEST,
-            URL: 'https://' + url.TEST,
-            WS: 'wss://' + url.TEST + ':5443/WebRTCAppEE/websocket',
-            WSS: 'wss://' + url.TEST + ':5443/WebRTCAppEE/websocket'
-            */
-
+        MEDIA: {           
             SSL: 'https://' + url.MEDIA,
             URL: 'https://' + url.MEDIA,
-            WS: 'wss://' + url.MEDIA + ':5443/WebRTCApp/websocket',
-            WSS: 'wss://' + url.MEDIA + ':5443/WebRTCApp/websocket'
-
+            WS: 'wss://' + url.MEDIA + ':5443/WebRTCAppEE/websocket',
+            WSS: 'wss://' + url.MEDIA + ':5443/WebRTCAppEE/websocket'
         },
-        MEDIA2: {
-            /*
-            SSL: 'https://' + url.TEST,
-            URL: 'https://' + url.TEST,
-            WS: 'wss://' + url.TEST + ':5443/WebRTCAppEE/websocket',
-            WSS: 'wss://' + url.TEST + ':5443/WebRTCAppEE/websocket'
-            */
-
+        MEDIA2: {  
             SSL: 'https://' + url.MEDIA,
             URL: 'https://' + url.MEDIA,
-            WS: 'wss://' + url.MEDIA + ':5443/WebRTCApp/websocket',
-            WSS: 'wss://' + url.MEDIA + ':5443/WebRTCApp/websocket'
-
+            WS: 'wss://' + url.MEDIA + ':5443/WebRTCAppEE/websocket',
+            WSS: 'wss://' + url.MEDIA + ':5443/WebRTCAppEE/websocket'
         },
         SIG: {
-            SSL: 'https://' + url.SIG + ':443/',
-            URL: 'http://' + url.SIG + ':80/'
+            SSL: 'https://' + url.SIG + ':9001/',
+            URL: 'http://' + url.SIG + ':9001/'
         }
     },
     URL_ATTENDANCE_LIST: `${location.origin}/rest/listaPresenca`,
@@ -74,7 +57,7 @@ const doc = {
     URL_PHOTO_SEND: `${location.origin}/rest/testaPhoto`,
     URL_SALAS_SAVE: `${location.origin}/rest/salas/salvar`,
     URL_SALAS_UPDATE: `${location.origin}/rest/salas/update`,
-    VERSION: "1.1.0.95"
+    VERSION: "1.1.0.96"
 }
 
 const apr = {
@@ -133,14 +116,14 @@ const conf = {
 
         /*------------------------------------------------------------------------------- */
 
-        /*
+        
         SOCKET_DOWNLOAD: doc.SERVER.MEDIA.SSL + ':5443/WebRTCAppEE/streams/',
         SOCKET_PLAYER: doc.SERVER.MEDIA.URL + ':5080/WebRTCAppEE/play.html',
         SOCKET_PLAYER_SSL: doc.SERVER.MEDIA.SSL + ':5443/WebRTCAppEE/play.html',
 
         SOCKET_PLAYER_2: doc.SERVER.MEDIA2.URL + ':5080/WebRTCAppEE/play.html',
         SOCKET_PLAYER_2_SSL: doc.SERVER.MEDIA2.SSL + ':5443/WebRTCAppEE/play.html',
-        */
+        /*
         SOCKET_DOWNLOAD: doc.SERVER.MEDIA.SSL + ':5443/WebRTCApp/streams/',
         SOCKET_PLAYER: doc.SERVER.MEDIA.URL + ':5443/WebRTCApp/play.html',
         SOCKET_PLAYER_SSL: doc.SERVER.MEDIA.SSL + ':5443/WebRTCApp/play.html',
@@ -149,9 +132,12 @@ const conf = {
         SOCKET_PLAYER_2_SSL: doc.SERVER.MEDIA2.SSL + ':5443/WebRTCApp/play.html',
 
         /*------------------------------------------------------------------------------- */
-
+/*
         SOCKET_REST_SSL: doc.SERVER.MEDIA.SSL + ':5443/WebRTCApp/rest/broadcast/getList/0/10',
         SOCKET_REST_URL: doc.SERVER.MEDIA.URL + ':5080/WebRTCApp/rest/broadcast/getList/0/10',
+*/
+        SOCKET_REST_URL: doc.SERVER.MEDIA.URL + ':5443/WebRTCAppEE/rest/broadcast/getList/0/10',
+        SOCKET_REST_URL: doc.SERVER.MEDIA.URL + ':5080/WebRTCAppEE/rest/broadcast/getList/0/10',
         SOCKET_SSL: doc.SERVER.MEDIA.WSS,
         SOCKET_URL: doc.SERVER.MEDIA.WS,
 
@@ -166,8 +152,8 @@ const conf = {
         TK_MSG_SEND: 'test',
         TK_TIME_REQ: (1000 * 15),
         TK_URL: 'http://*/*',
-        URL: 'https://' + url.SIG + ':443/',
-        URL_ADM: 'https://' + url.SIG + ':443/admin/'
+        URL: 'https://' + url.SIG + ':9001/',
+        URL_ADM: 'https://' + url.SIG + ':9001/admin/'
     },
     socket: {
         /*Constantes de padronização de mensagens SOCKET.IO */

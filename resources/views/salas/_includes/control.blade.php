@@ -17,8 +17,8 @@
                         </a>
                     </span>
                     
-
-                    <span id='li-toggle-volume'>
+                    
+                    <!--span id='li-toggle-volume'>
                         <span id='enable-sound' class='tooltip-item'>
                             <span id='mute-tooltip' class='p-10 red darken-3 white-text rounded-borders tooltip-body-top'>
                                 <b class='tooltip-text truncate'>Habilite o som</b>
@@ -33,7 +33,7 @@
                         <a id='toggle-screen' data-active='enabled' class='media-control btn-floating btn-large' data-position='top' title='Tela cheia'>
                             {!! $default->fullscreenIcon !!}
                         </a>
-                    </span>
+                    </span -->
                     <span id='li-toggle-size'>
                         <a id='toggle-size' data-active='enabled' class='media-control btn-floating btn-large' data-position='top' title='Expandir'>
                             {!! $default->sizeIcon !!}

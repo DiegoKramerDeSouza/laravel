@@ -9,7 +9,8 @@ class MediaView {
 
         this._mute = doc.TAG(dom.MUTE);
         this._cam = doc.TAG(dom.CAM);
-        this._vol = doc.TAG(dom.VOL);
+        // Novos controles AntMedia 29/08/2019
+        //this._vol = doc.TAG(dom.VOL);
         this._share = doc.TAG(dom.SHARE);
         this._pedir = doc.TAG(dom.PEDIR);
         this._sharedFile = doc.TAG(dom.BTN_FILE_SHARING);
@@ -97,12 +98,13 @@ class MediaView {
      */
     setVolumeOn() {
 
-        this._vol.classList.remove(misc.OFF_COLOR);
-        this._vol.classList.remove(misc.DISABLED_COLOR);
-        this._vol.innerHTML = misc.ICON_VOL_ON;
-        this._vol.setAttribute(misc.ATTR_ACTIVE, 'unmute');
-        this._alerta.initiateMessage(conf.message.VOL_UP);
-        GeneralHelper.showit(dom.LI_VOLUME);
+        // Novos controles AntMedia 29/08/2019
+        //this._vol.classList.remove(misc.OFF_COLOR);
+        //this._vol.classList.remove(misc.DISABLED_COLOR);
+        //this._vol.innerHTML = misc.ICON_VOL_ON;
+        //this._vol.setAttribute(misc.ATTR_ACTIVE, 'unmute');
+        //this._alerta.initiateMessage(conf.message.VOL_UP);
+        //GeneralHelper.showit(dom.LI_VOLUME);
     }
 
     /**
@@ -110,11 +112,12 @@ class MediaView {
      */
     setVolumeOff() {
 
-        this._vol.classList.add(misc.OFF_COLOR);
-        this._vol.classList.remove(misc.DISABLED_COLOR);
-        this._vol.innerHTML = misc.ICON_VOL_OFF;
-        this._vol.setAttribute(misc.ATTR_ACTIVE, 'mute');
-        this._alerta.initiateMessage(conf.message.VOL_DOWN);
+        // Novos controles AntMedia 29/08/2019
+        //this._vol.classList.add(misc.OFF_COLOR);
+        //this._vol.classList.remove(misc.DISABLED_COLOR);
+        //this._vol.innerHTML = misc.ICON_VOL_OFF;
+        //this._vol.setAttribute(misc.ATTR_ACTIVE, 'mute');
+        //this._alerta.initiateMessage(conf.message.VOL_DOWN);
     }
 
     /**
@@ -122,9 +125,10 @@ class MediaView {
      */
     volumeOff() {
 
-        this._vol.classList.add(misc.DISABLED_COLOR);
-        this._vol.innerHTML = misc.ICON_VOL_OFF;
-        GeneralHelper.hideit(dom.LI_VOLUME);
+        // Novos controles AntMedia 29/08/2019
+        //this._vol.classList.add(misc.DISABLED_COLOR);
+        //this._vol.innerHTML = misc.ICON_VOL_OFF;
+        //GeneralHelper.hideit(dom.LI_VOLUME);
     }
 
     /**
@@ -368,7 +372,8 @@ class MediaView {
      */
     fullScreamOff() {
 
-        GeneralHelper.hideit(dom.LI_SCREEN);
+        // Novos controles AntMedia 29/08/2019
+        //GeneralHelper.hideit(dom.LI_SCREEN);
     }
 
     /**
@@ -642,8 +647,9 @@ class MediaView {
 
         this.hideControlElements();
         GeneralHelper.showit(dom.PRE_VIDEO_FINISHED, 1000);
-        GeneralHelper.hideit(dom.LI_SCREEN);
-        GeneralHelper.hideit(dom.LI_VOLUME);
+        // Novos controles AntMedia 29/08/2019
+        //GeneralHelper.hideit(dom.LI_SCREEN);
+        //GeneralHelper.hideit(dom.LI_VOLUME);
         GeneralHelper.hideit(dom.LI_SHARE);
         GeneralHelper.hideit(dom.LI_PERDIR);
         GeneralHelper.hideit(dom.SOL_PEDIR);
@@ -762,7 +768,7 @@ class MediaView {
         doc.TAG(dom.DIV_MAIN_VIDEO).classList.remove("obj-invisible");
         GeneralHelper.showit(dom.EMBEDDED_FRAME, 300);
         GeneralHelper.showit(dom.DIV_CONTROLLER, 300);
-        this._blinkControl(dom.TOOLTIP_ENABLE_SOUND, dom.VOL, 'mouseenter');
+        //this._blinkControl(dom.TOOLTIP_ENABLE_SOUND, dom.VOL, 'mouseenter');
 
         if (conf.con.LOW_LATENCY) this._initNewPlayer(name, dom.REMOTE_VIDEO_ID, media, dom.PLAY_IT);
     }
