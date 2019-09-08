@@ -112,9 +112,9 @@
                                             <a id='participation-swap' class='media-control btn-floating blue left' data-active='other' data-position='top' title='Passar para tela principal'>
                                                 {!! $default->swapIcon !!}
                                             </a>
-                                            <a id='participation-mute' class='media-control btn-floating red left' data-active='mute' data-position='top' title='Mudo'>
+                                            <!--a id='participation-mute' class='media-control btn-floating red left d-none' data-active='mute' data-position='top' title='Mudo'>
                                                 {!! $default->volumeDownIcon !!}
-                                            </a>
+                                            </a-->
                                         </div>
                                     </div>
                                     <br />

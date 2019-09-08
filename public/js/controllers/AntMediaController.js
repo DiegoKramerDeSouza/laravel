@@ -13,8 +13,16 @@ class AntMediaController{
         return this._webRTCAdaptor;
     }
 
+    get streams(){
+        return this._streams;
+    }
+
     get adaptors(){
         return this._adaptors;
+    }
+
+    set adaptors(adaptor){
+        this._adaptors.push(adaptor);
     }
 
     get startedStream(){
@@ -112,7 +120,9 @@ class AntMediaController{
         });
         this._streams['adaptor'] = this._webRTCAdaptor;
         this._streams['id'] = roomid;
-        if (!videoLayer) this._adaptors.push(this._streams);
+        if (!videoLayer){
+            this._adaptors.push(this._streams);
+        } 
     }
 
     /**

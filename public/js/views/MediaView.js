@@ -6,6 +6,7 @@ class MediaView {
     constructor() {
 
         this._alerta = new MessageController();
+        this._videoController = new VideoController();
 
         this._mute = doc.TAG(dom.MUTE);
         this._cam = doc.TAG(dom.CAM);
@@ -244,8 +245,6 @@ class MediaView {
         GeneralHelper.showit(dom.DIV_ENTER);
         GeneralHelper.showit(dom.CLOSE_PARTICIPATION, 300);
         this._divParticipation.title = 'Finalizar participação';
-        this._participation.classList.remove(misc.HILIGHT_COLOR);
-        this._participation.classList.add(misc.OFF_COLOR);
         this._participation.innerHTML = misc.ICON_CAM_OFF;
     }
 
@@ -257,8 +256,6 @@ class MediaView {
         GeneralHelper.showit(dom.DIV_ENTER);
         GeneralHelper.showit(dom.CLOSE_PARTICIPATION, 300);
         this._divParticipation.title = 'Ingressar';
-        this._participation.classList.remove(misc.OFF_COLOR);
-        this._participation.classList.add(misc.HILIGHT_COLOR);
         this._participation.innerHTML = misc.ICON_CAM_ON;
     }
 
@@ -267,8 +264,6 @@ class MediaView {
      */
     participationOff() {
 
-        this._participation.classList.remove(misc.HILIGHT_COLOR);
-        this._participation.classList.add(misc.OFF_COLOR);
         this._participation.innerHTML = misc.ICON_CAM_OFF;
         this._participation.disabled = true;
         GeneralHelper.hideit(dom.DIV_ENTER);
@@ -286,7 +281,6 @@ class MediaView {
             GeneralHelper.showit(dom.DIV_ENTER, 300);
             GeneralHelper.showit(dom.CLOSE_PARTICIPATION, 300);
             this.endParticipation();
-            $(dom.SESSION_ACCESS).click();
             this._alerta.initiateMessage(conf.message.SEND_START_SOLICITATION);
         }, 2000);
     }
@@ -769,7 +763,10 @@ class MediaView {
         GeneralHelper.showit(dom.EMBEDDED_FRAME, 300);
         GeneralHelper.showit(dom.DIV_CONTROLLER, 300);
         //this._blinkControl(dom.TOOLTIP_ENABLE_SOUND, dom.VOL, 'mouseenter');
-
+        setTimeout(_ =>{
+            this._videoController.getVideos(conf.con.SOCKET_PLAYER_SSL);
+        }, 1000);
+        
         if (conf.con.LOW_LATENCY) this._initNewPlayer(name, dom.REMOTE_VIDEO_ID, media, dom.PLAY_IT);
     }
 
@@ -859,6 +856,7 @@ class MediaView {
             GeneralHelper.showit(embedded, 300);
             GeneralHelper.showit(control, 300);
         }
+        this._videoController.getVideos(conf.con.SOCKET_PLAYER_2_SSL);
         GeneralHelper.showit(dom.DIV_INCOMING_VIDEO);
         doc.TAG(dom.DIV_INCOMING_VIDEO).classList.remove("obj-invisible");
 
@@ -901,6 +899,8 @@ class MediaView {
 
     _toggleMute(mute, layer) {
 
+        // Novos controles AntMedia 29/08/2019
+        /*
         mute.onclick = () => {
             let active = mute.getAttribute(misc.ATTR_ACTIVE);
             let value;
@@ -909,6 +909,7 @@ class MediaView {
             this._targetVolumeToggle(mute, value);
             if (!conf.con.LOW_LATENCY) this.embeddedMessage(layer, value);
         }
+        */
     }
 
     _targetVolumeToggle(vol, status) {

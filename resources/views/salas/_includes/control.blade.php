@@ -102,7 +102,7 @@
     @endif
     <!-- Botão de ingresso de usuário em transmissão -->
     <div id='div-enter' class='fixed-action-btn d-none' title='Ingressar'>
-        <a id='enter-session' class='btn-floating btn-large waves-effect waves-light cyan pulse' data-active='disabled'>
+        <a id='enter-session' class='btn-floating btn-large waves-effect waves-light red pulse' data-active='disabled'>
             {!! $default->videocamLargeIcon !!}
         </a>
     </div>

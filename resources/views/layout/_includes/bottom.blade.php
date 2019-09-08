@@ -106,7 +106,8 @@
                 <script type="text/javascript" src="{!! asset('js/models/SerialValidation.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/controllers/SerialValidationController.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/controllers/RequestController.js') !!}"></script>  
-                <script type="text/javascript" src="{!! asset('js/models/Request.js') !!}"></script> 
+                <script type="text/javascript" src="{!! asset('js/models/Request.js') !!}"></script>
+                <script type="text/javascript" src="{!! asset('js/controllers/VideoController.js') !!}"></script>  
                 <!-- Loader específico para controle de dispositivos -->
                 <script type="text/javascript" src="{!! asset('js/loaders/DeviceLoader.js') !!}"></script>
                 <script type="text/javascript" src="{!! asset('js/loaders/SerialValidationLoader.js') !!}"></script>
